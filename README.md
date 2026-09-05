@@ -45,10 +45,10 @@ Complain/
 │   └── src/api/main.py                # FastAPI endpoints with Swagger docs
 │
 ├── docs/                              # Academic Deliverables
-│   ├── PROJECT_REPORT.md              # Full 7th-Semester Major Project Report
-│   ├── VIVA_QUESTIONS_AND_ANSWERS.md  # Top 30 Examiner Viva Voce Q&A
-│   ├── SYSTEM_DIAGRAMS.md             # Mermaid Architecture, DFD L0/L1, ER Diagrams
-│   └── API_SPECIFICATION.md           # REST API schema documentation
+│             
+│    
+│        
+│  
 │
 └── scripts/
     ├── seed_database.js               # Populates realistic demo departments, officers & tickets
@@ -103,15 +103,6 @@ npm run dev
 
 ---
 
-## 🔑 Demo Evaluation Personas (1-Click Login)
-
-| Role | Demo Email | Password | Primary Workflow |
-| :--- | :--- | :--- | :--- |
-| **Citizen** | `citizen@demo.com` | `password123` | Report issue with live AI preview & GPS pin, view progress timeline, give 5★ feedback |
-| **Field Officer** | `officer.pwd@demo.com` | `password123` | View assigned department task queue, update status, upload resolution proof photo |
-| **Municipal Admin** | `admin@demo.com` | `password123` | Inspect GIS Heatmap, override departments, assign officers, view ML diagnostic metrics |
-
----
 
 ## 📊 Academic Evaluation Benchmarks
 
