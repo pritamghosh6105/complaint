@@ -1,0 +1,147 @@
+{
+  "Agriculture & Irrigation": [
+    "Canal Water Siltation",
+    "Defective Irrigation Pump"
+  ],
+  "Animal Husbandry & Veterinary": [
+    "Cattle Stray Menace",
+    "Veterinary Clinic Shortage"
+  ],
+  "Backward Classes & Tribal Welfare": [
+    "Scholarship Disbursement",
+    "Tribal Hostel Infrastructure"
+  ],
+  "Building & Municipal Engineering": [
+    "Dangerous Dilapidated Building",
+    "Unauthorized Construction"
+  ],
+  "Consumer Affairs & Fair Price": [
+    "Ration Shop PDS Irregularity",
+    "Weight Discrepancy in Market"
+  ],
+  "Cyber Crime": [
+    "Account Hacking",
+    "Cyber Harassment / Stalking",
+    "Net Banking Fraud",
+    "Phishing / Scam Calls",
+    "UPI / Payment Fraud"
+  ],
+  "Disaster Management": [
+    "Cyclone Damage",
+    "Flood Inundation"
+  ],
+  "Drainage & Sewerage": [
+    "Blocked / Clogged Drain",
+    "Foul Sewer Odor",
+    "Open / Missing Manhole",
+    "Sewage Water Overflow",
+    "Waterlogging / Stagnant Water"
+  ],
+  "Education & School Infrastructure": [
+    "Classroom Roof Seepage",
+    "School Toilet Defect"
+  ],
+  "Electricity & Power": [
+    "Defective Meter",
+    "Frequent Voltage Fluctuation",
+    "Open Live Wire / Electrical Hazard",
+    "Prolonged Blackout",
+    "Transformer Sparking / Overheating"
+  ],
+  "Environment & Pollution": [
+    "Chemical Effluent Discharge",
+    "Industrial Air Smoke"
+  ],
+  "Fire & Emergency Services": [
+    "Chemical Smoke Incident",
+    "LPG Cylinder Leak / Blast",
+    "Residential Structure Fire"
+  ],
+  "Fisheries & Aquaculture": [
+    "Fish Farmers Support Scheme",
+    "Pond Water Contamination"
+  ],
+  "Food & Supplies (PDS)": [
+    "Adulterated Food Commodity",
+    "Defective Ration Card"
+  ],
+  "Forest & Wildlife Protection": [
+    "Illegal Timber Logging",
+    "Wild Animal Intrusion in Village"
+  ],
+  "Healthcare & Hospital Facilities": [
+    "Hospital OPD Service Delay",
+    "Shortage of Critical Medicine"
+  ],
+  "Housing & Urban Development": [
+    "Housing Scheme Disbursement",
+    "Slum Civic Infrastructure"
+  ],
+  "Land & Land Records": [
+    "Encroachment on Govt Land",
+    "Mutation Record Discrepancy"
+  ],
+  "Parks & Public Spaces": [
+    "Damaged Swings & Playground",
+    "Park Lighting Outage"
+  ],
+  "Police & Law Enforcement": [
+    "Extortion / Threat",
+    "Physical Assault",
+    "Public Violence / Rioting",
+    "Theft / Burglary"
+  ],
+  "Public Health & Sanitation": [
+    "Mosquito Breeding & Dengue Risk",
+    "Public Toilet & Urinal Hygiene"
+  ],
+  "Public Transport": [
+    "Bus Route Absence",
+    "Passenger Overcharging"
+  ],
+  "Roads & Public Works": [
+    "Broken / Eroded Road",
+    "Broken Divider / Railing",
+    "Damaged Bridge / Flyover",
+    "Pothole / Crater",
+    "Road Cave-in / Sinkhole"
+  ],
+  "Social Welfare & Pensions": [
+    "Disability Scheme Verification",
+    "Old Age Pension Non-Credit"
+  ],
+  "Solid Waste Management": [
+    "Dead Animal Carcass Removal",
+    "Hazardous Biomedical Waste",
+    "Illegal Open Waste Dumping",
+    "Missed Door-to-Door Collection",
+    "Overflowing Garbage Vat / Bin"
+  ],
+  "Street Lighting & Electrical": [
+    "Damaged / Leaning Electric Pole",
+    "Exposed Junction Box",
+    "Flickering / Damaged LED",
+    "Streetlight Completely Off"
+  ],
+  "Traffic & Road Safety": [
+    "Dangerous / Rash Driving",
+    "Illegal / Obstructive Parking",
+    "Missing Road Signage",
+    "Traffic Congestion",
+    "Traffic Signal Failure"
+  ],
+  "Water Supply": [
+    "Contaminated / Muddy Water",
+    "Low Pressure / No Supply",
+    "Pipeline Burst / Leakage"
+  ],
+  "Women & Child Safety": [
+    "Child Abuse / Neglect",
+    "Stalking",
+    "Street Harassment / Eve Teasing"
+  ],
+  "Youth Services & Sports": [
+    "Defunct Sports Complex",
+    "Youth Development Training"
+  ]
+}

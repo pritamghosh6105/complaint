@@ -1,0 +1,12 @@
+{
+  "python.defaultInterpreterPath": "C:\\Python314\\python.exe",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/ml-service",
+    "${workspaceFolder}"
+  ],
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/ml-service",
+    "${workspaceFolder}"
+  ],
+  "pyrefly.interpreterPath": "C:\\Python314\\python.exe"
+}

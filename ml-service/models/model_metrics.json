@@ -1,0 +1,129 @@
+{
+  "dataset_summary": {
+    "total_samples": 5000,
+    "num_categories": 30,
+    "num_subcategories": 85,
+    "priority_distribution": {
+      "LOW": 1250,
+      "MEDIUM": 1250,
+      "HIGH": 1250,
+      "CRITICAL": 1250
+    }
+  },
+  "category_model": {
+    "accuracy": 100.0,
+    "macro_f1": 100.0,
+    "weighted_f1": 100.0,
+    "classes": [
+      "Agriculture & Irrigation",
+      "Animal Husbandry & Veterinary",
+      "Backward Classes & Tribal Welfare",
+      "Building & Municipal Engineering",
+      "Consumer Affairs & Fair Price",
+      "Cyber Crime",
+      "Disaster Management",
+      "Drainage & Sewerage",
+      "Education & School Infrastructure",
+      "Electricity & Power",
+      "Environment & Pollution",
+      "Fire & Emergency Services",
+      "Fisheries & Aquaculture",
+      "Food & Supplies (PDS)",
+      "Forest & Wildlife Protection",
+      "Healthcare & Hospital Facilities",
+      "Housing & Urban Development",
+      "Land & Land Records",
+      "Parks & Public Spaces",
+      "Police & Law Enforcement",
+      "Public Health & Sanitation",
+      "Public Transport",
+      "Roads & Public Works",
+      "Social Welfare & Pensions",
+      "Solid Waste Management",
+      "Street Lighting & Electrical",
+      "Traffic & Road Safety",
+      "Water Supply",
+      "Women & Child Safety",
+      "Youth Services & Sports"
+    ]
+  },
+  "subcategory_model": {
+    "accuracy": 100.0,
+    "macro_f1": 100.0,
+    "classes_count": 85
+  },
+  "priority_model": {
+    "accuracy": 100.0,
+    "macro_f1": 100.0,
+    "weighted_f1": 100.0,
+    "critical_recall": 100.0,
+    "high_recall": 100.0,
+    "classes": [
+      "LOW",
+      "MEDIUM",
+      "HIGH",
+      "CRITICAL"
+    ],
+    "confusion_matrix": [
+      [
+        250,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        250,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        250,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        250
+      ]
+    ],
+    "per_class_metrics": {
+      "LOW": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1_score": 100.0,
+        "support": 250.0
+      },
+      "MEDIUM": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1_score": 100.0,
+        "support": 250.0
+      },
+      "HIGH": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1_score": 100.0,
+        "support": 250.0
+      },
+      "CRITICAL": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1_score": 100.0,
+        "support": 250.0
+      }
+    }
+  },
+  "duplicate_engine": {
+    "vocabulary_size": 3788,
+    "similarity_algorithm": "Cosine Similarity + Haversine Geospatial Fusion"
+  },
+  "resolution_model": {
+    "mean_absolute_error_days": 0.17,
+    "r2_score": 0.982,
+    "algorithm": "RandomForestRegressor"
+  }
+}
