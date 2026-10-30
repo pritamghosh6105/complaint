@@ -38,7 +38,7 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = '60
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <h3 style={{ fontSize: '1.2rem', color: '#fff' }}>{title}</h3>
+          <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)' }}>{title}</h3>
           <button 
             onClick={onClose}
             className="btn btn-secondary btn-sm"

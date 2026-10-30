@@ -73,8 +73,8 @@ export default function DuplicateAlert({ duplicateData, onViewExisting }) {
                 }}
               >
                 <div>
-                  <strong style={{ color: '#fff' }}>Ticket #{m.complaint_id}</strong>
-                  {m.title && <span style={{ color: '#e2e8f0', marginLeft: '6px' }}>— {m.title}</span>}
+                  <strong style={{ color: 'var(--text-primary)' }}>Ticket #{m.complaint_id}</strong>
+                  {m.title && <span style={{ color: 'var(--text-secondary)', marginLeft: '6px' }}>— {m.title}</span>}
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem', marginTop: '2px' }}>
                     Distance: ~{m.distance_meters}m | Similarity: {m.combined_similarity}%
                   </div>

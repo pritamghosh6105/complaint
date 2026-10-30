@@ -1,63 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   MapPin, 
   Navigation, 
   Building2, 
   Trees, 
   Sparkles, 
-  Search, 
   Shield, 
   CheckCircle2, 
   AlertCircle,
   Hash,
   Compass,
-  Layers
+  Layers,
+  ChevronRight,
+  RefreshCw,
+  Info
 } from 'lucide-react';
 import SearchableSelect from '../common/SearchableSelect';
+import LocationMapPicker from './LocationMapPicker';
 import api from '../../services/api';
-
-const pinIcon = L.divIcon({
-  html: `
-    <div style="
-      background-color: #ef4444;
-      width: 32px;
-      height: 32px;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      border: 3px solid #ffffff;
-      box-shadow: 0 0 15px rgba(239,68,68,0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    ">
-      <div style="width: 8px; height: 8px; background: white; border-radius: 50%;"></div>
-    </div>
-  `,
-  className: 'custom-pin-marker',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32]
-});
-
-function MapClickHandler({ onLocationSelect }) {
-  useMapEvents({
-    click(e) {
-      const lat = parseFloat(e.latlng.lat.toFixed(5));
-      const lng = parseFloat(e.latlng.lng.toFixed(5));
-      onLocationSelect(lat, lng);
-    }
-  });
-  return null;
-}
 
 export default function LocationSelector({ 
   value = {}, 
   onChange,
   onGPSDetectionMessage = null 
 }) {
-  // Mode: 'urban' | 'rural' | 'custom'
+  // Mode: 'Urban' | 'Rural' | 'Other'
   const [adminType, setAdminType] = useState(value.administrative_type || 'Urban');
 
   // Master Data Options from Backend
@@ -70,171 +37,281 @@ export default function LocationSelector({
   const [villages, setVillages] = useState([]);
   const [policeStations, setPoliceStations] = useState([]);
 
-  // Selections
-  const [selectedDistrictId, setSelectedDistrictId] = useState(value.district_id || 2); // Default North 24 Parganas
-  const [selectedSubdivisionId, setSelectedSubdivisionId] = useState(value.subdivision_id || 2);
-  const [selectedULBId, setSelectedULBId] = useState(value.ulb_id || 3);
-  const [selectedWardId, setSelectedWardId] = useState(value.ward_id || '');
-  const [selectedWardName, setSelectedWardName] = useState(value.ward || 'Ward 1');
-  const [selectedBlockId, setSelectedBlockId] = useState(value.block_id || 1);
-  const [selectedGPId, setSelectedGPId] = useState(value.gram_panchayat_id || 1);
-  const [selectedVillageId, setSelectedVillageId] = useState(value.village_id || '');
-  const [selectedPSId, setSelectedPSId] = useState(value.police_station_id || '');
+  // Selected Identifiers (String IDs)
+  const [selectedDistrictId, setSelectedDistrictId] = useState(value.district_id ? String(value.district_id) : '');
+  const [selectedSubdivisionId, setSelectedSubdivisionId] = useState(value.subdivision_id ? String(value.subdivision_id) : '');
+  const [selectedULBId, setSelectedULBId] = useState(value.ulb_id ? String(value.ulb_id) : '');
+  const [selectedWardId, setSelectedWardId] = useState(value.ward_id ? String(value.ward_id) : '');
+  const [selectedWardName, setSelectedWardName] = useState(value.ward || '');
+  const [selectedBlockId, setSelectedBlockId] = useState(value.block_id ? String(value.block_id) : '');
+  const [selectedGPId, setSelectedGPId] = useState(value.gram_panchayat_id ? String(value.gram_panchayat_id) : '');
+  const [selectedVillageId, setSelectedVillageId] = useState(value.village_id ? String(value.village_id) : '');
+  const [selectedPSId, setSelectedPSId] = useState(value.police_station_id ? String(value.police_station_id) : '');
+  
+  // Text fields
   const [locality, setLocality] = useState(value.locality || '');
+  const [street, setStreet] = useState(value.street || '');
   const [landmark, setLandmark] = useState(value.landmark || '');
   const [postalCode, setPostalCode] = useState(value.postal_code || '');
 
-  // GPS Map state
-  const [lat, setLat] = useState(value.latitude || 22.7230);
-  const [lng, setLng] = useState(value.longitude || 88.4800);
+  // Fast Client-side In-Memory Cache (0ms re-selections)
+  const clientCache = React.useRef(new Map());
+
+  // Real-time PIN Code Validation & Post Office Picker state
+  const [pincodeValidation, setPincodeValidation] = useState({
+    loading: false,
+    valid: null,
+    warning: null,
+    district: null,
+    postOffices: []
+  });
+
+  // GPS Map state (Default center: Kolkata / West Bengal centroid 22.5726, 88.3639)
+  const [lat, setLat] = useState(typeof value.latitude === 'number' ? value.latitude : 22.5726);
+  const [lng, setLng] = useState(typeof value.longitude === 'number' ? value.longitude : 88.3639);
+  const [userGpsLocation, setUserGpsLocation] = useState(null);
   const [loadingGPS, setLoadingGPS] = useState(false);
   const [gpsNotification, setGpsNotification] = useState('');
+  const [resolutionDetails, setResolutionDetails] = useState(null);
 
-  // 1. Initial Load: Fetch All Districts
+  // Helper to match entity by id or _id
+  const findItem = (list, id) => {
+    if (!id) return null;
+    return list.find(item => String(item.id || item._id) === String(id)) || null;
+  };
+
+  // 1. Initial Load: Fetch All 23 West Bengal Districts (with cache)
   useEffect(() => {
+    let isMounted = true;
     const fetchDistricts = async () => {
+      if (clientCache.current.has('districts_wb')) {
+        setDistricts(clientCache.current.get('districts_wb'));
+        return;
+      }
       try {
-        const res = await api.get('/location/districts');
-        setDistricts(res.data.districts || []);
+        const res = await api.get('/locations/districts');
+        const list = res.data.districts || res.data || [];
+        if (isMounted) {
+          clientCache.current.set('districts_wb', list);
+          setDistricts(list);
+          if (!selectedDistrictId && list.length > 0) {
+            const defaultDist = list.find(d => d.name === 'Kolkata') || list[0];
+            setSelectedDistrictId(String(defaultDist.id || defaultDist._id));
+          }
+        }
       } catch (err) {
         console.error('Failed to load districts:', err);
       }
     };
     fetchDistricts();
+    return () => { isMounted = false; };
   }, []);
 
-  // 2. Fetch Subdivisions when District changes
+  // 2. Fetch Subdivisions and Police Stations when District changes (Client-side cached)
   useEffect(() => {
     if (!selectedDistrictId) {
       setSubdivisions([]);
+      setPoliceStations([]);
       return;
     }
-    const fetchSubdivisions = async () => {
+    const cacheKeySub = `sub_${selectedDistrictId}`;
+    const cacheKeyPs = `ps_${selectedDistrictId}`;
+
+    if (clientCache.current.has(cacheKeySub) && clientCache.current.has(cacheKeyPs)) {
+      setSubdivisions(clientCache.current.get(cacheKeySub));
+      setPoliceStations(clientCache.current.get(cacheKeyPs));
+      return;
+    }
+
+    let isMounted = true;
+    const fetchDistrictChildren = async () => {
       try {
-        const res = await api.get(`/location/subdivisions?district_id=${selectedDistrictId}`);
-        setSubdivisions(res.data.subdivisions || []);
+        const [subRes, psRes] = await Promise.all([
+          api.get(`/locations/subdivisions?districtId=${selectedDistrictId}`),
+          api.get(`/locations/police-stations?districtId=${selectedDistrictId}`)
+        ]);
+        if (isMounted) {
+          const subList = subRes.data.subdivisions || [];
+          const psList = psRes.data.policeStations || psRes.data.police_stations || [];
+          clientCache.current.set(cacheKeySub, subList);
+          clientCache.current.set(cacheKeyPs, psList);
+          setSubdivisions(subList);
+          setPoliceStations(psList);
+        }
       } catch (err) {
-        console.error('Failed to load subdivisions:', err);
+        console.error('Failed to load subdivisions or police stations:', err);
       }
     };
-    fetchSubdivisions();
+    fetchDistrictChildren();
+    return () => { isMounted = false; };
   }, [selectedDistrictId]);
 
-  // 3. Fetch ULBs, Blocks, and Police Stations when District/Subdivision changes
+  // 3. Smart Conditional Fetching: ULBs for Urban, Blocks for Rural (Client-side cached)
   useEffect(() => {
-    if (!selectedDistrictId) return;
+    if (!selectedDistrictId) {
+      setUlbs([]);
+      setBlocks([]);
+      return;
+    }
+    const subQuery = selectedSubdivisionId ? `&subdivisionId=${selectedSubdivisionId}` : '';
+    let isMounted = true;
 
-    const fetchDistrictLocations = async () => {
-      try {
-        const subQuery = selectedSubdivisionId ? `&subdivision_id=${selectedSubdivisionId}` : '';
-        const [ulbRes, blkRes, psRes] = await Promise.all([
-          api.get(`/location/ulbs?district_id=${selectedDistrictId}${subQuery}`),
-          api.get(`/location/blocks?district_id=${selectedDistrictId}${subQuery}`),
-          api.get(`/location/police-stations?district_id=${selectedDistrictId}${subQuery}`)
-        ]);
-        setUlbs(ulbRes.data.ulbs || []);
-        setBlocks(blkRes.data.blocks || []);
-        setPoliceStations(psRes.data.police_stations || []);
-      } catch (err) {
-        console.error('Failed to load district entities:', err);
+    if (adminType === 'Urban') {
+      const cacheKeyUlb = `ulb_${selectedDistrictId}_${selectedSubdivisionId || 'all'}`;
+      if (clientCache.current.has(cacheKeyUlb)) {
+        setUlbs(clientCache.current.get(cacheKeyUlb));
+        return;
       }
-    };
-    fetchDistrictLocations();
-  }, [selectedDistrictId, selectedSubdivisionId]);
+      api.get(`/locations/ulbs?districtId=${selectedDistrictId}${subQuery}`)
+        .then(res => {
+          if (isMounted) {
+            const list = res.data.ulbs || [];
+            clientCache.current.set(cacheKeyUlb, list);
+            setUlbs(list);
+          }
+        })
+        .catch(err => console.error('Failed to load ULBs:', err));
+    } else if (adminType === 'Rural') {
+      const cacheKeyBlk = `blk_${selectedDistrictId}_${selectedSubdivisionId || 'all'}`;
+      if (clientCache.current.has(cacheKeyBlk)) {
+        setBlocks(clientCache.current.get(cacheKeyBlk));
+        return;
+      }
+      api.get(`/locations/blocks?districtId=${selectedDistrictId}${subQuery}`)
+        .then(res => {
+          if (isMounted) {
+            const list = res.data.blocks || [];
+            clientCache.current.set(cacheKeyBlk, list);
+            setBlocks(list);
+          }
+        })
+        .catch(err => console.error('Failed to load Blocks:', err));
+    }
+    return () => { isMounted = false; };
+  }, [selectedDistrictId, selectedSubdivisionId, adminType]);
 
-  // 4. Fetch Wards when ULB changes
+  // 4. Fetch Wards when ULB changes (Urban only, Client-side cached)
   useEffect(() => {
-    if (!selectedULBId) {
+    if (!selectedULBId || adminType !== 'Urban') {
       setWards([]);
       return;
     }
-    const fetchWards = async () => {
-      try {
-        const res = await api.get(`/location/wards?ulb_id=${selectedULBId}`);
-        setWards(res.data.wards || []);
-      } catch (err) {
-        console.error('Failed to load wards:', err);
-      }
-    };
-    fetchWards();
-  }, [selectedULBId]);
+    const cacheKeyWard = `ward_${selectedULBId}`;
+    if (clientCache.current.has(cacheKeyWard)) {
+      setWards(clientCache.current.get(cacheKeyWard));
+      return;
+    }
+    let isMounted = true;
+    api.get(`/locations/wards?ulbId=${selectedULBId}`)
+      .then(res => {
+        if (isMounted) {
+          const list = res.data.wards || [];
+          clientCache.current.set(cacheKeyWard, list);
+          setWards(list);
+        }
+      })
+      .catch(err => console.error('Failed to load wards:', err));
+    return () => { isMounted = false; };
+  }, [selectedULBId, adminType]);
 
-  // 5. Fetch Gram Panchayats when Block changes
+  // 5. Fetch Gram Panchayats when Block changes (Rural only, Client-side cached)
   useEffect(() => {
-    if (!selectedBlockId) {
+    if (!selectedBlockId || adminType !== 'Rural') {
       setGramPanchayats([]);
       return;
     }
-    const fetchGPs = async () => {
-      try {
-        const res = await api.get(`/location/gram-panchayats?block_id=${selectedBlockId}`);
-        setGramPanchayats(res.data.gram_panchayats || []);
-      } catch (err) {
-        console.error('Failed to load GPs:', err);
-      }
-    };
-    fetchGPs();
-  }, [selectedBlockId]);
+    const cacheKeyGp = `gp_${selectedBlockId}`;
+    if (clientCache.current.has(cacheKeyGp)) {
+      setGramPanchayats(clientCache.current.get(cacheKeyGp));
+      return;
+    }
+    let isMounted = true;
+    api.get(`/locations/gram-panchayats?blockId=${selectedBlockId}`)
+      .then(res => {
+        if (isMounted) {
+          const list = res.data.gramPanchayats || res.data.gram_panchayats || [];
+          clientCache.current.set(cacheKeyGp, list);
+          setGramPanchayats(list);
+        }
+      })
+      .catch(err => console.error('Failed to load GPs:', err));
+    return () => { isMounted = false; };
+  }, [selectedBlockId, adminType]);
 
-  // 6. Fetch Villages when Gram Panchayat changes
+  // 6. Fetch Villages when Gram Panchayat changes (Rural only, Client-side cached)
   useEffect(() => {
-    if (!selectedGPId) {
+    if (!selectedGPId || adminType !== 'Rural') {
       setVillages([]);
       return;
     }
-    const fetchVillages = async () => {
-      try {
-        const res = await api.get(`/location/villages?gram_panchayat_id=${selectedGPId}`);
-        setVillages(res.data.villages || []);
-      } catch (err) {
-        console.error('Failed to load villages:', err);
-      }
-    };
-    fetchVillages();
-  }, [selectedGPId]);
+    const cacheKeyVil = `vil_${selectedGPId}`;
+    if (clientCache.current.has(cacheKeyVil)) {
+      setVillages(clientCache.current.get(cacheKeyVil));
+      return;
+    }
+    let isMounted = true;
+    api.get(`/locations/villages?gramPanchayatId=${selectedGPId}&limit=100`)
+      .then(res => {
+        if (isMounted) {
+          const list = res.data.villages || [];
+          clientCache.current.set(cacheKeyVil, list);
+          setVillages(list);
+        }
+      })
+      .catch(err => console.error('Failed to load villages:', err));
+    return () => { isMounted = false; };
+  }, [selectedGPId, adminType]);
 
   // Emit updated Location state to parent component whenever changes occur
   useEffect(() => {
-    const distObj = districts.find(d => d.id === Number(selectedDistrictId));
-    const subObj = subdivisions.find(s => s.id === Number(selectedSubdivisionId));
-    const ulbObj = ulbs.find(u => u.id === Number(selectedULBId));
-    const wardObj = wards.find(w => w.id === Number(selectedWardId));
-    const blkObj = blocks.find(b => b.id === Number(selectedBlockId));
-    const gpObj = gramPanchayats.find(g => g.id === Number(selectedGPId));
-    const vilObj = villages.find(v => v.id === Number(selectedVillageId));
-    const psObj = policeStations.find(p => p.id === Number(selectedPSId));
+    const distObj = findItem(districts, selectedDistrictId);
+    const subObj = findItem(subdivisions, selectedSubdivisionId);
+    const ulbObj = findItem(ulbs, selectedULBId);
+    const wardObj = findItem(wards, selectedWardId);
+    const blkObj = findItem(blocks, selectedBlockId);
+    const gpObj = findItem(gramPanchayats, selectedGPId);
+    const vilObj = findItem(villages, selectedVillageId);
+    const psObj = findItem(policeStations, selectedPSId);
 
     const finalWard = adminType === 'Urban' 
-      ? (wardObj ? wardObj.name : selectedWardName || 'Ward 1')
+      ? (wardObj ? wardObj.name : selectedWardName)
       : (gpObj ? gpObj.name : '');
 
     const locationPayload = {
       state: 'West Bengal',
       administrative_type: adminType,
-      district_id: selectedDistrictId ? Number(selectedDistrictId) : null,
-      district: distObj ? distObj.name : 'North 24 Parganas',
-      subdivision_id: selectedSubdivisionId ? Number(selectedSubdivisionId) : null,
+      district_id: selectedDistrictId || null,
+      district: distObj ? distObj.name : 'West Bengal',
+      subdivision_id: selectedSubdivisionId || null,
       subdivision: subObj ? subObj.name : '',
-      ulb_id: adminType === 'Urban' && selectedULBId ? Number(selectedULBId) : null,
+      
+      // Urban Specific
+      ulb_id: adminType === 'Urban' && selectedULBId ? selectedULBId : null,
       ulb_type: adminType === 'Urban' && ulbObj ? ulbObj.type : null,
       municipality: adminType === 'Urban' && ulbObj ? ulbObj.name : '',
-      ward_id: adminType === 'Urban' && selectedWardId ? Number(selectedWardId) : null,
-      ward: finalWard,
-      block_id: adminType === 'Rural' && selectedBlockId ? Number(selectedBlockId) : null,
+      ward_id: adminType === 'Urban' && selectedWardId ? selectedWardId : null,
+      ward: adminType === 'Urban' ? finalWard : '',
+      
+      // Rural Specific
+      block_id: adminType === 'Rural' && selectedBlockId ? selectedBlockId : null,
       block: adminType === 'Rural' && blkObj ? blkObj.name : '',
-      gram_panchayat_id: adminType === 'Rural' && selectedGPId ? Number(selectedGPId) : null,
+      gram_panchayat_id: adminType === 'Rural' && selectedGPId ? selectedGPId : null,
       gram_panchayat: adminType === 'Rural' && gpObj ? gpObj.name : '',
-      village_id: adminType === 'Rural' && selectedVillageId ? Number(selectedVillageId) : null,
-      village: adminType === 'Rural' && vilObj ? vilObj.name : (adminType === 'Rural' && gpObj ? gpObj.name : ''),
-      mouza: adminType === 'Rural' && vilObj ? vilObj.mouza : '',
-      police_station_id: selectedPSId ? Number(selectedPSId) : null,
+      village_id: adminType === 'Rural' && selectedVillageId ? selectedVillageId : null,
+      village: adminType === 'Rural' && vilObj ? vilObj.name : '',
+      mouza: adminType === 'Rural' && vilObj ? (vilObj.mouza || vilObj.name) : '',
+
+      // Police & Postal
+      police_station_id: selectedPSId || null,
       police_station: psObj ? psObj.name : '',
       locality: locality.trim(),
+      street: street.trim(),
       landmark: landmark.trim(),
       postal_code: postalCode.trim(),
       latitude: lat,
       longitude: lng,
       address_formatted: [
+        street,
         locality,
         adminType === 'Urban' ? (wardObj?.name || selectedWardName) : (vilObj?.name || gpObj?.name),
         adminType === 'Urban' ? ulbObj?.name : blkObj?.name,
@@ -260,28 +337,38 @@ export default function LocationSelector({
     selectedVillageId,
     selectedPSId,
     locality,
+    street,
     landmark,
     postalCode,
     lat,
-    lng
+    lng,
+    districts,
+    subdivisions,
+    ulbs,
+    wards,
+    blocks,
+    gramPanchayats,
+    villages,
+    policeStations
   ]);
 
-  // Handle District Change -> clean child dependencies
+  // Handle District Change -> reset dependent child selections
   const handleDistrictChange = (distId) => {
     setSelectedDistrictId(distId);
     setSelectedSubdivisionId('');
     setSelectedULBId('');
     setSelectedWardId('');
+    setSelectedWardName('');
     setSelectedBlockId('');
     setSelectedGPId('');
     setSelectedVillageId('');
     setSelectedPSId('');
 
     // Pan map to district centroid if available
-    const dist = districts.find(d => d.id === Number(distId));
-    if (dist && dist.center_lat && dist.center_lng) {
-      setLat(dist.center_lat);
-      setLng(dist.center_lng);
+    const dist = findItem(districts, distId);
+    if (dist && dist.latitude && dist.longitude) {
+      setLat(dist.latitude);
+      setLng(dist.longitude);
     }
   };
 
@@ -290,36 +377,126 @@ export default function LocationSelector({
     setSelectedSubdivisionId(subId);
     setSelectedULBId('');
     setSelectedWardId('');
+    setSelectedWardName('');
     setSelectedBlockId('');
     setSelectedGPId('');
     setSelectedVillageId('');
   };
 
-  // Handle PIN Code Quick Lookup
+  // Handle PIN Code Quick Lookup & Real-Time Validation
   const handlePincodeChange = async (pin) => {
     setPostalCode(pin);
-    if (pin.length === 6 && /^\d+$/.test(pin)) {
-      try {
-        const res = await api.get(`/location/pincode/${pin}`);
-        if (res.data && res.data.district_id) {
-          setSelectedDistrictId(res.data.district_id);
-          if (res.data.subdivision_id) {
-            setSelectedSubdivisionId(res.data.subdivision_id);
-          }
-          if (res.data.locality && !locality) {
-            setLocality(res.data.locality);
-          }
-          if (res.data.latitude && res.data.longitude) {
-            setLat(res.data.latitude);
-            setLng(res.data.longitude);
-          }
-          setGpsNotification(`PIN Code identified: ${res.data.locality}, ${res.data.district_name}`);
+    const cleanPin = pin.trim();
+
+    if (cleanPin.length !== 6) {
+      setPincodeValidation({ loading: false, valid: null, warning: null, district: null, postOffices: [] });
+      return;
+    }
+
+    if (!/^[1-9][0-9]{5}$/.test(cleanPin)) {
+      setPincodeValidation({
+        loading: false,
+        valid: false,
+        warning: 'Invalid PIN format. Must be a 6-digit number.',
+        district: null,
+        postOffices: []
+      });
+      return;
+    }
+
+    try {
+      setPincodeValidation(prev => ({ ...prev, loading: true }));
+      const selectedDist = findItem(districts, selectedDistrictId);
+      const distName = selectedDist?.name || '';
+      
+      const res = await api.get(`/locations/validate-pincode?pincode=${cleanPin}&district=${encodeURIComponent(distName)}`);
+      if (res.data && res.data.success) {
+        const d = res.data;
+        setPincodeValidation({
+          loading: false,
+          valid: d.valid,
+          warning: d.warning || null,
+          district: d.district || null,
+          postOffices: d.postOffices || []
+        });
+
+        // If district not selected, auto-select from PIN
+        if (d.district && !selectedDistrictId) {
+          const matchDist = districts.find(item => item.name.toLowerCase() === d.district.toLowerCase());
+          if (matchDist) setSelectedDistrictId(String(matchDist.id || matchDist._id));
         }
-      } catch (err) {
-        // code not indexed yet
+
+        // Set default locality if empty
+        if (d.postOffices && d.postOffices.length > 0 && !locality) {
+          setLocality(d.postOffices[0]);
+        }
       }
+    } catch (err) {
+      setPincodeValidation({ loading: false, valid: false, warning: 'Failed to validate PIN code.', district: null, postOffices: [] });
     }
   };
+
+  // Handle GPS coordinate resolution and auto-filling
+  const handleResolveCoordinates = useCallback(async (targetLat, targetLng) => {
+    try {
+      const res = await api.get(`/locations/resolve?lat=${targetLat}&lng=${targetLng}`);
+      if (res.data && res.data.success && res.data.resolution) {
+        const r = res.data.resolution;
+        setResolutionDetails(r);
+
+        // Auto-select administrative hierarchy if resolved
+        if (r.district && r.district.id) {
+          setSelectedDistrictId(String(r.district.id));
+        } else if (r.district && r.district.name) {
+          const d = districts.find(item => item.name.toLowerCase() === r.district.name.toLowerCase());
+          if (d) setSelectedDistrictId(String(d.id || d._id));
+        }
+
+        if (r.subdivision && r.subdivision.id) {
+          setSelectedSubdivisionId(String(r.subdivision.id));
+        }
+
+        // Set Urban vs Rural based on resolution
+        if (r.urbanOrRural === 'Urban') {
+          setAdminType('Urban');
+          if (r.municipality?.id || r.corporation?.id) {
+            const ulbId = String(r.municipality?.id || r.corporation?.id);
+            setSelectedULBId(ulbId);
+          }
+          if (r.ward?.id) {
+            setSelectedWardId(String(r.ward.id));
+          }
+        } else if (r.urbanOrRural === 'Rural') {
+          setAdminType('Rural');
+          if (r.block?.id) {
+            setSelectedBlockId(String(r.block.id));
+          }
+          if (r.gramPanchayat?.id) {
+            setSelectedGPId(String(r.gramPanchayat.id));
+          }
+        }
+
+        // Nearest Police Station
+        if (r.policeStation?.id) {
+          setSelectedPSId(String(r.policeStation.id));
+        }
+
+        // Postal, Street & Locality
+        if (r.pincode && !postalCode) setPostalCode(r.pincode);
+        if (r.locality && !locality) setLocality(r.locality);
+        if (r.street && !street) setStreet(r.street);
+        if (r.landmark && !landmark) setLandmark(r.landmark);
+
+        const summary = `${r.district ? r.district.name : 'West Bengal'}${r.policeStation ? ` • PS: ${r.policeStation.name}` : ''}`;
+        const msg = `📍 Detected: ${summary} (${r.accuracy})`;
+        setGpsNotification(msg);
+        if (onGPSDetectionMessage) onGPSDetectionMessage(msg);
+      }
+    } catch (err) {
+      console.warn('Coordinates resolution notice:', err);
+      setGpsNotification('Location coordinates recorded. Please verify administrative area.');
+    }
+  }, [districts, postalCode, locality, street, landmark, onGPSDetectionMessage]);
 
   // Handle "Use My GPS"
   const handleUseGPS = () => {
@@ -332,96 +509,45 @@ export default function LocationSelector({
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         setLoadingGPS(false);
-        const newLat = parseFloat(pos.coords.latitude.toFixed(5));
-        const newLng = parseFloat(pos.coords.longitude.toFixed(5));
+        const newLat = parseFloat(pos.coords.latitude.toFixed(6));
+        const newLng = parseFloat(pos.coords.longitude.toFixed(6));
+        const accuracy = pos.coords.accuracy || 20;
+        setUserGpsLocation({ lat: newLat, lng: newLng, accuracy });
         setLat(newLat);
         setLng(newLng);
-
-        try {
-          const res = await api.post('/location/reverse-geocode', {
-            latitude: newLat,
-            longitude: newLng
-          });
-
-          if (res.data) {
-            const data = res.data;
-            if (data.administrative_type) {
-              setAdminType(data.administrative_type);
-            }
-            if (data.district_id) {
-              setSelectedDistrictId(data.district_id);
-            }
-            if (data.subdivision_id) {
-              setSelectedSubdivisionId(data.subdivision_id);
-            }
-            if (data.ulb_id) {
-              setSelectedULBId(data.ulb_id);
-            }
-            if (data.block_id) {
-              setSelectedBlockId(data.block_id);
-            }
-            if (data.gram_panchayat_id) {
-              setSelectedGPId(data.gram_panchayat_id);
-            }
-            if (data.village_id) {
-              setSelectedVillageId(data.village_id);
-            }
-            if (data.police_station_id) {
-              setSelectedPSId(data.police_station_id);
-            }
-            if (data.village && !locality) {
-              setLocality(data.village);
-            }
-
-            const label = data.detected_location_label || `${data.district}, West Bengal`;
-            const msg = `📍 Location detected: ${label}. Please verify.`;
-            setGpsNotification(msg);
-            if (onGPSDetectionMessage) onGPSDetectionMessage(msg);
-          }
-        } catch (err) {
-          setGpsNotification('Coordinates detected. Please verify administrative area.');
-        }
+        await handleResolveCoordinates(newLat, newLng);
       },
       (err) => {
         setLoadingGPS(false);
-        alert('GPS permission denied or unavailable. You can click on the map to set location.');
+        alert('GPS permission denied or unavailable. You can click on the map to pinpoint your location.');
       },
-      { timeout: 10000, enableHighAccuracy: true }
+      { timeout: 12000, enableHighAccuracy: true }
     );
   };
 
-  // Map Click handler
+  // Map Click / Pin Drag handler
   const handleMapPinSelect = async (clickedLat, clickedLng) => {
     setLat(clickedLat);
     setLng(clickedLng);
-
-    try {
-      const res = await api.post('/location/reverse-geocode', {
-        latitude: clickedLat,
-        longitude: clickedLng
-      });
-      if (res.data && res.data.detected_location_label) {
-        setGpsNotification(`Map pin: ${res.data.detected_location_label}.`);
-      }
-    } catch (e) {
-      // ignore
-    }
+    await handleResolveCoordinates(clickedLat, clickedLng);
   };
 
-  const currentDistrict = districts.find(d => d.id === Number(selectedDistrictId));
-  const currentULB = ulbs.find(u => u.id === Number(selectedULBId));
-  const currentBlock = blocks.find(b => b.id === Number(selectedBlockId));
-  const currentGP = gramPanchayats.find(g => g.id === Number(selectedGPId));
+  const currentDistrict = findItem(districts, selectedDistrictId);
+  const currentSubdivision = findItem(subdivisions, selectedSubdivisionId);
+  const currentULB = findItem(ulbs, selectedULBId);
+  const currentBlock = findItem(blocks, selectedBlockId);
+  const currentGP = findItem(gramPanchayats, selectedGPId);
+  const currentPS = findItem(policeStations, selectedPSId);
 
   return (
     <div style={{
-      background: 'rgba(15, 23, 42, 0.55)',
-      backdropFilter: 'blur(14px)',
-      border: '1px solid rgba(56, 189, 248, 0.2)',
-      borderRadius: '14px',
-      padding: '18px',
-      marginBottom: '20px',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)'
+      background: 'rgba(15, 23, 42, 0.65)',
+      backdropFilter: 'blur(16px)',
+      border: '1px solid rgba(56, 189, 248, 0.25)',
+      borderRadius: '16px',
+      padding: '20px',
+      marginBottom: '22px',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.45)'
     }}>
       {/* Header Bar */}
       <div style={{ 
@@ -432,38 +558,40 @@ export default function LocationSelector({
         gap: '12px',
         marginBottom: '16px',
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        paddingBottom: '12px'
+        paddingBottom: '14px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '8px',
-            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(37, 99, 235, 0.3))',
+            width: '36px',
+            height: '36px',
+            borderRadius: '10px',
+            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(37, 99, 235, 0.35))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#38bdf8'
+            color: '#38bdf8',
+            boxShadow: '0 0 12px rgba(56, 189, 248, 0.3)'
           }}>
-            <MapPin size={18} />
+            <MapPin size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.05rem', margin: 0, fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              📍 Location & Jurisdiction
+            <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              West Bengal Jurisdiction & Location
               <span style={{
-                fontSize: '0.7rem',
-                fontWeight: 600,
-                background: 'rgba(56, 189, 248, 0.12)',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                background: 'rgba(56, 189, 248, 0.15)',
                 color: '#38bdf8',
-                border: '1px solid rgba(56, 189, 248, 0.25)',
-                padding: '2px 8px',
-                borderRadius: '12px'
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                padding: '2px 10px',
+                borderRadius: '14px',
+                letterSpacing: '0.02em'
               }}>
                 🏛️ State: West Bengal
               </span>
             </h3>
-            <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-              Comprehensive administrative coverage across all 23 districts (Urban ULBs & Rural Panchayats).
+            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+              Official 23-district administrative system with verified GIS boundary routing.
             </span>
           </div>
         </div>
@@ -475,37 +603,105 @@ export default function LocationSelector({
           disabled={loadingGPS}
           className="btn btn-secondary btn-sm"
           style={{
-            fontSize: '0.8rem',
-            padding: '6px 14px',
+            fontSize: '0.82rem',
+            padding: '7px 16px',
             borderRadius: '10px',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '6px',
-            background: 'rgba(56, 189, 248, 0.1)',
-            borderColor: 'rgba(56, 189, 248, 0.3)',
-            color: '#38bdf8'
+            gap: '8px',
+            background: 'rgba(56, 189, 248, 0.12)',
+            borderColor: 'rgba(56, 189, 248, 0.35)',
+            color: '#38bdf8',
+            cursor: loadingGPS ? 'not-allowed' : 'pointer',
+            transition: 'all 0.2s ease'
           }}
         >
-          <Navigation size={14} className={loadingGPS ? 'animate-spin' : ''} />
-          {loadingGPS ? 'Detecting via GPS...' : '📍 Use My GPS'}
+          <Navigation size={15} className={loadingGPS ? 'animate-spin' : ''} />
+          {loadingGPS ? 'Detecting via GPS...' : '📍 Use My Current Location'}
         </button>
       </div>
 
+      {/* Detected Location Card (if GPS / Map clicked) */}
+      {resolutionDetails && (
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))',
+          border: '1px solid rgba(56, 189, 248, 0.35)',
+          borderRadius: '12px',
+          padding: '14px 16px',
+          marginBottom: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sparkles size={16} color="#38bdf8" />
+              <strong style={{ fontSize: '0.88rem', color: '#f8fafc' }}>
+                GIS Auto-Detected Jurisdiction
+              </strong>
+            </div>
+            <span style={{
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              padding: '3px 8px',
+              borderRadius: '6px',
+              background: resolutionDetails.accuracy.includes('HIGH') ? 'rgba(16, 185, 129, 0.2)' : 'rgba(234, 179, 8, 0.2)',
+              color: resolutionDetails.accuracy.includes('HIGH') ? '#34d399' : '#facc15',
+              border: resolutionDetails.accuracy.includes('HIGH') ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(234, 179, 8, 0.4)'
+            }}>
+              {resolutionDetails.accuracy}
+            </span>
+          </div>
+
+          <div style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+            {resolutionDetails.formattedAddress && (
+              <div><strong>Address:</strong> {resolutionDetails.formattedAddress}</div>
+            )}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '4px' }}>
+              {resolutionDetails.district && (
+                <span>District: <strong>{resolutionDetails.district.name}</strong></span>
+              )}
+              {resolutionDetails.policeStation && (
+                <span>Police: <strong>{resolutionDetails.policeStation.name}</strong> ({resolutionDetails.policeStation.distanceMeters}m)</span>
+              )}
+              {resolutionDetails.pincode && (
+                <span>PIN: <strong>{resolutionDetails.pincode}</strong></span>
+              )}
+            </div>
+          </div>
+
+          <div style={{
+            fontSize: '0.75rem',
+            color: '#94a3b8',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            paddingTop: '6px',
+            marginTop: '2px'
+          }}>
+            <Info size={13} color="#38bdf8" />
+            <span>Please verify that the selected administrative dropdowns match your complaint location.</span>
+          </div>
+        </div>
+      )}
+
       {/* GPS Notification Banner */}
-      {gpsNotification && (
+      {gpsNotification && !resolutionDetails && (
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          padding: '8px 12px',
+          padding: '10px 14px',
           background: 'rgba(56, 189, 248, 0.12)',
           border: '1px solid rgba(56, 189, 248, 0.3)',
-          borderRadius: '8px',
-          marginBottom: '14px',
-          fontSize: '0.82rem',
+          borderRadius: '10px',
+          marginBottom: '16px',
+          fontSize: '0.84rem',
           color: '#e0f2fe'
         }}>
-          <Sparkles size={14} color="#38bdf8" />
+          <Sparkles size={15} color="#38bdf8" />
           <span style={{ flex: 1 }}>{gpsNotification}</span>
           <button 
             type="button" 
@@ -517,35 +713,59 @@ export default function LocationSelector({
         </div>
       )}
 
-      {/* Administrative Area Mode Selector */}
-      <div style={{ marginBottom: '14px' }}>
-        <label className="form-label" style={{ fontSize: '0.8rem', color: '#cbd5e1', marginBottom: '6px' }}>
-          Administrative Hierarchy:
+      {/* Administrative Area Mode Tabs */}
+      <div style={{ marginBottom: '16px' }}>
+        <label className="form-label" style={{ fontSize: '0.82rem', color: '#cbd5e1', marginBottom: '8px' }}>
+          Select Administrative Hierarchy:
         </label>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={() => setAdminType('Urban')}
             className={`btn btn-sm ${adminType === 'Urban' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.8rem', padding: '6px 14px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            style={{ 
+              fontSize: '0.84rem', 
+              padding: '8px 18px', 
+              borderRadius: '10px', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              fontWeight: 600
+            }}
           >
-            <Building2 size={14} /> 🏢 Urban / Municipal
+            <Building2 size={16} /> 🏢 Urban / Municipality / Ward
           </button>
           <button
             type="button"
             onClick={() => setAdminType('Rural')}
             className={`btn btn-sm ${adminType === 'Rural' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.8rem', padding: '6px 14px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            style={{ 
+              fontSize: '0.84rem', 
+              padding: '8px 18px', 
+              borderRadius: '10px', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              fontWeight: 600
+            }}
           >
-            <Trees size={14} /> 🌾 Rural / Panchayat
+            <Trees size={16} /> 🌾 Rural / Block / Panchayat
           </button>
           <button
             type="button"
             onClick={() => setAdminType('Other')}
             className={`btn btn-sm ${adminType === 'Other' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.8rem', padding: '6px 14px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            style={{ 
+              fontSize: '0.84rem', 
+              padding: '8px 18px', 
+              borderRadius: '10px', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              fontWeight: 600
+            }}
           >
-            <Compass size={14} /> ✍️ Other / Custom
+            <Compass size={16} /> ✍️ Custom / Unclassified
           </button>
         </div>
       </div>
@@ -553,31 +773,31 @@ export default function LocationSelector({
       {/* Cascading Form Fields Grid */}
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', 
-        gap: '12px',
-        marginBottom: '14px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+        gap: '14px',
+        marginBottom: '16px'
       }}>
-        {/* District (All 23 Districts) */}
+        {/* District (All 23 West Bengal Districts) */}
         <div>
-          <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+          <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
             District (West Bengal) *
           </label>
           <SearchableSelect
             options={districts}
             value={selectedDistrictId}
             onChange={handleDistrictChange}
-            placeholder="Search district..."
+            placeholder="Search 23 districts..."
             searchPlaceholder="Type district name..."
             labelKey="name"
             valueKey="id"
-            secondaryKey="division"
+            secondaryKey="lgdCode"
             storageKey="wb_districts"
           />
         </div>
 
         {/* Sub-Division */}
         <div>
-          <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+          <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
             Sub-Division
           </label>
           <SearchableSelect
@@ -592,10 +812,10 @@ export default function LocationSelector({
           />
         </div>
 
-        {/* URBAN: Municipality / Corporation */}
+        {/* URBAN: Municipality / Corporation / ULB */}
         {adminType === 'Urban' && (
           <div>
-            <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+            <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
               Municipality / Corporation *
             </label>
             <SearchableSelect
@@ -604,8 +824,9 @@ export default function LocationSelector({
               onChange={(ulbId) => {
                 setSelectedULBId(ulbId);
                 setSelectedWardId('');
+                setSelectedWardName('');
               }}
-              placeholder="Search municipality/corp..."
+              placeholder={ulbs.length > 0 ? "Search municipality/corp..." : "No ULB in selected area"}
               disabled={ulbs.length === 0}
               labelKey="name"
               valueKey="id"
@@ -618,7 +839,7 @@ export default function LocationSelector({
         {/* URBAN: Ward */}
         {adminType === 'Urban' && (
           <div>
-            <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+            <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
               Municipal Ward *
             </label>
             <SearchableSelect
@@ -628,7 +849,7 @@ export default function LocationSelector({
                 setSelectedWardId(wId);
                 if (item) setSelectedWardName(item.name);
               }}
-              placeholder={wards.length > 0 ? "Search ward..." : "Select ULB first"}
+              placeholder={wards.length > 0 ? "Search ward..." : (selectedULBId ? "Select ward or type below" : "Select ULB first")}
               disabled={wards.length === 0}
               labelKey="name"
               valueKey="id"
@@ -637,11 +858,11 @@ export default function LocationSelector({
           </div>
         )}
 
-        {/* RURAL: CD Block */}
+        {/* RURAL: Community Development Block */}
         {adminType === 'Rural' && (
           <div>
-            <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
-              Community Development Block *
+            <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+              CD Block (Rural) *
             </label>
             <SearchableSelect
               options={blocks}
@@ -651,7 +872,7 @@ export default function LocationSelector({
                 setSelectedGPId('');
                 setSelectedVillageId('');
               }}
-              placeholder="Search CD block..."
+              placeholder={blocks.length > 0 ? "Search CD block..." : "No blocks in area"}
               disabled={blocks.length === 0}
               labelKey="name"
               valueKey="id"
@@ -663,7 +884,7 @@ export default function LocationSelector({
         {/* RURAL: Gram Panchayat */}
         {adminType === 'Rural' && (
           <div>
-            <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+            <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
               Gram Panchayat *
             </label>
             <SearchableSelect
@@ -685,7 +906,7 @@ export default function LocationSelector({
         {/* RURAL: Village / Mouza */}
         {adminType === 'Rural' && (
           <div>
-            <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+            <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
               Village / Mouza
             </label>
             <SearchableSelect
@@ -695,11 +916,10 @@ export default function LocationSelector({
                 setSelectedVillageId(vId);
                 if (item && !locality) setLocality(item.name);
               }}
-              placeholder={villages.length > 0 ? "Search village..." : "Type custom below"}
+              placeholder={villages.length > 0 ? "Search village..." : "Type custom locality below"}
               disabled={villages.length === 0}
               labelKey="name"
               valueKey="id"
-              secondaryKey="jl_no"
               storageKey="wb_villages"
             />
           </div>
@@ -707,8 +927,8 @@ export default function LocationSelector({
 
         {/* Police Station Jurisdiction */}
         <div>
-          <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Shield size={12} color="#38bdf8" /> Police Station Jurisdiction
+          <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Shield size={13} color="#38bdf8" /> Police Station Jurisdiction
           </label>
           <SearchableSelect
             options={policeStations}
@@ -718,15 +938,15 @@ export default function LocationSelector({
             disabled={policeStations.length === 0}
             labelKey="name"
             valueKey="id"
-            secondaryKey="commissionerate"
+            secondaryKey="policeDistrict"
             storageKey="wb_police_stations"
           />
         </div>
 
         {/* Postal PIN Code */}
         <div>
-          <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Hash size={12} /> Postal PIN Code
+          <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Hash size={13} /> Postal PIN Code (6 Digits)
           </label>
           <input
             type="text"
@@ -734,29 +954,114 @@ export default function LocationSelector({
             maxLength={6}
             value={postalCode}
             onChange={(e) => handlePincodeChange(e.target.value)}
-            placeholder="e.g. 700124, 741235..."
-            style={{ fontSize: '0.85rem', padding: '7px 10px' }}
+            placeholder="e.g. 700073, 700124..."
+            style={{ fontSize: '0.88rem', padding: '8px 12px' }}
           />
+
+          {pincodeValidation.loading && (
+            <div style={{ fontSize: '0.74rem', color: '#38bdf8', marginTop: '4px' }}>
+              Validating PIN code...
+            </div>
+          )}
+
+          {pincodeValidation.warning && (
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#f59e0b',
+              marginTop: '5px',
+              padding: '6px 10px',
+              background: 'rgba(245, 158, 11, 0.12)',
+              border: '1px solid rgba(245, 158, 11, 0.35)',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <AlertCircle size={14} />
+              <span>{pincodeValidation.warning}</span>
+            </div>
+          )}
+
+          {pincodeValidation.valid && !pincodeValidation.warning && (
+            <div style={{
+              fontSize: '0.74rem',
+              color: '#10b981',
+              marginTop: '5px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}>
+              <CheckCircle2 size={13} />
+              <span>Verified PIN: <strong>{pincodeValidation.district}</strong></span>
+            </div>
+          )}
+
+          {pincodeValidation.postOffices && pincodeValidation.postOffices.length > 0 && (
+            <div style={{ marginTop: '8px' }}>
+              <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginBottom: '4px' }}>
+                Select Post Office / Locality:
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {pincodeValidation.postOffices.slice(0, 8).map((po, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setLocality(po)}
+                    style={{
+                      fontSize: '0.72rem',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      background: locality === po ? 'rgba(56, 189, 248, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                      border: locality === po ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.12)',
+                      color: locality === po ? '#38bdf8' : '#cbd5e1',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {po}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Street / Landmark / Locality Detail Inputs */}
-      <div className="grid-cols-2" style={{ marginBottom: '14px' }}>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
+        gap: '14px',
+        marginBottom: '16px' 
+      }}>
         <div>
-          <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
-            Locality / Street / Colony / Para
+          <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+            Street / Road / Lane
+          </label>
+          <input
+            type="text"
+            className="form-input"
+            value={street}
+            onChange={(e) => setStreet(e.target.value)}
+            placeholder="e.g. Park Street, Jessore Road, GP Main Road..."
+            style={{ fontSize: '0.88rem', padding: '8px 12px' }}
+          />
+        </div>
+        <div>
+          <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+            Locality / Colony / Para / Mohalla
           </label>
           <input
             type="text"
             className="form-input"
             value={locality}
             onChange={(e) => setLocality(e.target.value)}
-            placeholder="e.g. Adhata Bazar, Deshbandhu Park, Jessore Road..."
-            style={{ fontSize: '0.85rem', padding: '7px 10px' }}
+            placeholder="e.g. Bowbazar, Salt Lake Sector V, Adhata..."
+            style={{ fontSize: '0.88rem', padding: '8px 12px' }}
           />
         </div>
         <div>
-          <label className="form-label" style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+          <label className="form-label" style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
             Landmark
           </label>
           <input
@@ -764,50 +1069,32 @@ export default function LocationSelector({
             className="form-input"
             value={landmark}
             onChange={(e) => setLandmark(e.target.value)}
-            placeholder="e.g. Near BDO Office, Opposite Hospital, Behind Primary School..."
-            style={{ fontSize: '0.85rem', padding: '7px 10px' }}
+            placeholder="e.g. Near BDO Office, Opposite Hospital..."
+            style={{ fontSize: '0.88rem', padding: '8px 12px' }}
           />
         </div>
       </div>
 
       {/* Interactive Map Pinning */}
-      <div style={{ marginTop: '8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-          <span style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <Layers size={13} color="#38bdf8" /> OpenStreetMap GIS Incident Pin:
+      <div style={{ marginTop: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+          <span style={{ fontSize: '0.82rem', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Layers size={14} color="#38bdf8" /> OpenStreetMap GIS Incident Location:
           </span>
-          <span style={{ fontSize: '0.74rem', color: '#38bdf8' }}>
-            *Click anywhere or use GPS to position pin
+          <span style={{ fontSize: '0.76rem', color: '#38bdf8' }}>
+            *Click on map or drag pin to update incident coordinates
           </span>
         </div>
 
-        <div 
-          className="leaflet-map-responsive"
-          style={{ 
-            height: '210px', 
-            width: '100%', 
-            borderRadius: '10px', 
-            overflow: 'hidden', 
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            position: 'relative'
-          }}>
-          <MapContainer
-            center={[lat || 22.7230, lng || 88.4800]}
-            zoom={12}
-            scrollWheelZoom={false}
-            style={{ width: '100%', height: '100%' }}
-            key={`${lat}-${lng}`}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <MapClickHandler onLocationSelect={handleMapPinSelect} />
-            {lat && lng && (
-              <Marker position={[lat, lng]} icon={pinIcon} />
-            )}
-          </MapContainer>
-        </div>
+        {/* Reusable Leaflet Map Picker */}
+        <LocationMapPicker
+          lat={lat}
+          lng={lng}
+          userGpsLocation={userGpsLocation}
+          onLocationChange={handleMapPinSelect}
+          height="230px"
+          zoom={13}
+        />
 
         {/* Live Coordinate Badges */}
         <div style={{
@@ -816,45 +1103,56 @@ export default function LocationSelector({
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: '8px',
-          marginTop: '8px',
-          fontSize: '0.75rem',
+          marginTop: '10px',
+          fontSize: '0.78rem',
           color: '#94a3b8'
         }}>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <span>Lat: <strong style={{ color: '#ffffff' }}>{lat ? lat.toFixed(4) : '22.7230'}</strong></span>
-            <span>Lng: <strong style={{ color: '#ffffff' }}>{lng ? lng.toFixed(4) : '88.4800'}</strong></span>
+          <div style={{ display: 'flex', gap: '14px' }}>
+            <span>Lat: <strong style={{ color: 'var(--text-primary)' }}>{typeof lat === 'number' ? lat.toFixed(5) : '22.5726'}</strong></span>
+            <span>Lng: <strong style={{ color: 'var(--text-primary)' }}>{typeof lng === 'number' ? lng.toFixed(5) : '88.3639'}</strong></span>
           </div>
 
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <span style={{
-              background: 'rgba(56, 189, 248, 0.12)',
+              background: 'rgba(56, 189, 248, 0.15)',
               color: '#38bdf8',
-              padding: '2px 8px',
-              borderRadius: '6px',
+              padding: '3px 10px',
+              borderRadius: '8px',
               fontWeight: 600
             }}>
-              District: {currentDistrict ? currentDistrict.name : 'North 24 Parganas'}
+              District: {currentDistrict ? currentDistrict.name : 'West Bengal'}
             </span>
-            {(currentULB || currentBlock) && (
+            {currentSubdivision && (
               <span style={{
-                background: 'rgba(16, 185, 129, 0.12)',
-                color: '#34d399',
-                padding: '2px 8px',
-                borderRadius: '6px',
+                background: 'rgba(147, 51, 234, 0.15)',
+                color: '#c084fc',
+                padding: '3px 10px',
+                borderRadius: '8px',
                 fontWeight: 600
               }}>
-                Area: {adminType === 'Urban' ? (currentULB?.name || '') : (currentBlock?.name || '')}
+                Subdiv: {currentSubdivision.name}
               </span>
             )}
-            {locality && (
+            {(currentULB || currentBlock) && (
               <span style={{
-                background: 'rgba(244, 63, 94, 0.12)',
-                color: '#fb7185',
-                padding: '2px 8px',
-                borderRadius: '6px',
+                background: 'rgba(16, 185, 129, 0.15)',
+                color: '#34d399',
+                padding: '3px 10px',
+                borderRadius: '8px',
                 fontWeight: 600
               }}>
-                Locality: {locality}
+                {adminType === 'Urban' ? `ULB: ${currentULB?.name || ''}` : `Block: ${currentBlock?.name || ''}`}
+              </span>
+            )}
+            {currentPS && (
+              <span style={{
+                background: 'rgba(234, 179, 8, 0.15)',
+                color: '#facc15',
+                padding: '3px 10px',
+                borderRadius: '8px',
+                fontWeight: 600
+              }}>
+                PS: {currentPS.name}
               </span>
             )}
           </div>

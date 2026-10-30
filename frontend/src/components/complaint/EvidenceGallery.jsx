@@ -104,7 +104,7 @@ export default function EvidenceGallery({
                 <CheckCircle2 size={22} color="var(--accent-emerald)" />
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff' }}>
+                <h4 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-primary)' }}>
                   Field Resolution Verification Chain
                 </h4>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>

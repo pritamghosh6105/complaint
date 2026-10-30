@@ -18,6 +18,8 @@ import HeatmapPage from './pages/admin/HeatmapPage';
 import MLInspector from './pages/admin/MLInspector';
 import DepartmentsPage from './pages/DepartmentsPage';
 
+import AppShell from './components/layout/AppShell';
+
 function AppContent() {
   const { user } = useAuth();
   const [currentRoute, setCurrentRoute] = useState('home');
@@ -58,6 +60,9 @@ function AppContent() {
           />
         );
       case 'officer-dashboard':
+        if (!user || (user.role !== 'officer' && user.role !== 'admin')) {
+          return <Home setCurrentRoute={setCurrentRoute} setSelectedComplaintId={setSelectedComplaintId} />;
+        }
         return (
           <OfficerDashboard 
             setCurrentRoute={setCurrentRoute} 
@@ -65,6 +70,9 @@ function AppContent() {
           />
         );
       case 'admin-dashboard':
+        if (!user || user.role !== 'admin') {
+          return <Home setCurrentRoute={setCurrentRoute} setSelectedComplaintId={setSelectedComplaintId} />;
+        }
         return (
           <AdminDashboard 
             setCurrentRoute={setCurrentRoute} 
@@ -72,6 +80,9 @@ function AppContent() {
           />
         );
       case 'gis-heatmap':
+        if (!user || user.role !== 'admin') {
+          return <Home setCurrentRoute={setCurrentRoute} setSelectedComplaintId={setSelectedComplaintId} />;
+        }
         return (
           <HeatmapPage 
             setCurrentRoute={setCurrentRoute} 
@@ -79,6 +90,9 @@ function AppContent() {
           />
         );
       case 'ml-inspector':
+        if (!user || user.role !== 'admin') {
+          return <Home setCurrentRoute={setCurrentRoute} setSelectedComplaintId={setSelectedComplaintId} />;
+        }
         return <MLInspector setCurrentRoute={setCurrentRoute} />;
       case 'departments':
         return <DepartmentsPage setCurrentRoute={setCurrentRoute} />;
@@ -93,13 +107,9 @@ function AppContent() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Navbar currentRoute={currentRoute} setCurrentRoute={setCurrentRoute} />
-      <main style={{ flex: 1 }}>
-        {renderRoute()}
-      </main>
-      <Footer />
-    </div>
+    <AppShell currentRoute={currentRoute} setCurrentRoute={setCurrentRoute}>
+      {renderRoute()}
+    </AppShell>
   );
 }
 

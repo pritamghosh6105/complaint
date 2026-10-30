@@ -95,7 +95,6 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [roleRedirectMsg, setRoleRedirectMsg] = useState('');
-  const [activeDemo, setActiveDemo] = useState(null);
 
   // Handle switching role in Sign-In
   const handleRoleTabChange = (role) => {
@@ -190,25 +189,6 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute }) {
     }
   };
 
-  // Handle 1-Click Demo Login
-  const handleDemo = async (role) => {
-    setActiveDemo(role);
-    setSelectedRole(role);
-    setLoading(true);
-    setError('');
-    try {
-      const user = await quickDemoLogin(role);
-      if (role === 'citizen') setCurrentRoute('citizen-dashboard');
-      else if (role === 'officer') setCurrentRoute('officer-dashboard');
-      else if (role === 'admin') setCurrentRoute('admin-dashboard');
-    } catch (err) {
-      setError('Demo login failed. Make sure your database server is running.');
-    } finally {
-      setLoading(false);
-      setActiveDemo(null);
-    }
-  };
-
   const currentRoleConfig = ROLE_CONFIG[selectedRole] || ROLE_CONFIG.citizen;
 
   return (
@@ -224,13 +204,10 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute }) {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="glass-card"
+          className="glass-card auth-main-card"
           style={{
             padding: 'clamp(20px, 4vw, 36px)',
-            position: 'relative',
-            background: 'rgba(17, 24, 39, 0.88)',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 35px rgba(59, 130, 246, 0.12)',
-            border: '1px solid rgba(255, 255, 255, 0.12)'
+            position: 'relative'
           }}
         >
           {/* Top Segmented Mode Switcher Tabs */}
@@ -254,7 +231,7 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute }) {
           {/* Heading */}
           <div style={{ marginBottom: '18px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
-              <h2 style={{ fontSize: 'clamp(1.3rem, 3.5vw, 1.65rem)', fontWeight: 700, color: '#ffffff', margin: 0 }}>
+              <h2 style={{ fontSize: 'clamp(1.3rem, 3.5vw, 1.65rem)', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                 {mode === 'signin' ? 'Role-Based Portal Login' : 'Register New Account'}
               </h2>
               {mode === 'signin' && (
@@ -377,22 +354,10 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute }) {
                   </span>
                   <button
                     type="button"
+                    className="role-autofill-btn"
                     onClick={() => {
                       setSignInEmail(currentRoleConfig.demoEmail);
                       setSignInPassword(currentRoleConfig.demoPassword);
-                    }}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      borderRadius: '4px',
-                      padding: '3px 8px',
-                      fontSize: '0.72rem',
-                      color: '#ffffff',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
                     }}
                     title="Pre-populate sample login credentials for this role"
                   >
@@ -499,90 +464,6 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute }) {
                   )}
                 </button>
               </form>
-
-              {/* 4. FAST 1-CLICK PERSONA SWITCHER */}
-              <div className="demo-personas-container">
-                <div style={{
-                  fontSize: '0.75rem',
-                  color: 'var(--text-muted)',
-                  textTransform: 'uppercase',
-                  fontWeight: 700,
-                  letterSpacing: '0.5px',
-                  marginBottom: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}>
-                  <Sparkles size={14} color="#eab308" />
-                  <span>Or Instant 1-Click Demo Login:</span>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
-                  {/* Citizen Persona */}
-                  <button
-                    type="button"
-                    onClick={() => handleDemo('citizen')}
-                    className="demo-persona-tile citizen"
-                    disabled={loading}
-                  >
-                    <div className="demo-avatar" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399' }}>
-                      <UserCheck size={16} />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f8fafc' }}>Rahul Sharma</span>
-                        <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontWeight: 700 }}>
-                          CITIZEN
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>citizen@demo.com • Ward 4</div>
-                    </div>
-                  </button>
-
-                  {/* Field Officer Persona */}
-                  <button
-                    type="button"
-                    onClick={() => handleDemo('officer')}
-                    className="demo-persona-tile officer"
-                    disabled={loading}
-                  >
-                    <div className="demo-avatar" style={{ background: 'rgba(6, 182, 212, 0.15)', color: '#22d3ee' }}>
-                      <Building2 size={16} />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f8fafc' }}>Sourav Roy</span>
-                        <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', background: 'rgba(6, 182, 212, 0.15)', color: '#22d3ee', fontWeight: 700 }}>
-                          PWD OFFICER
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>officer.pwd@demo.com • Taskforce</div>
-                    </div>
-                  </button>
-
-                  {/* Admin Persona */}
-                  <button
-                    type="button"
-                    onClick={() => handleDemo('admin')}
-                    className="demo-persona-tile admin"
-                    disabled={loading}
-                  >
-                    <div className="demo-avatar" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24' }}>
-                      <ShieldCheck size={16} />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f8fafc' }}>Pritam Ghosh</span>
-                        <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', fontWeight: 700 }}>
-                          ADMINISTRATOR
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>admin@demo.com • Municipal Commissioner</div>
-                    </div>
-                  </button>
-                </div>
-              </div>
             </div>
           )}
 
@@ -701,66 +582,44 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute }) {
                 </div>
               )}
 
-              {/* Password & Ward Grid */}
-              <div className="grid-cols-2" style={{ gap: '14px', marginBottom: '16px' }}>
-                <div>
-                  <label className="form-label">Password</label>
-                  <div className="input-with-icon">
-                    <span className="input-icon-left">
-                      <Lock size={17} />
-                    </span>
-                    <input
-                      type={showSignUpPassword ? 'text' : 'password'}
-                      className="form-input"
-                      placeholder="At least 6 characters"
-                      required
-                      minLength={6}
-                      value={signUpPassword}
-                      onChange={(e) => setSignUpPassword(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      className="input-action-right"
-                      onClick={() => setShowSignUpPassword(!showSignUpPassword)}
-                      aria-label={showSignUpPassword ? 'Hide password' : 'Show password'}
-                    >
-                      {showSignUpPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                  {/* Password Strength Meter */}
-                  {signUpPassword && (
-                    <div style={{ marginTop: '6px' }}>
-                      <div className="pw-strength-bar">
-                        <div className="pw-strength-segment" style={{ background: pwStrength >= 1 ? strengthColors[pwStrength - 1] : 'rgba(255,255,255,0.1)' }} />
-                        <div className="pw-strength-segment" style={{ background: pwStrength >= 2 ? strengthColors[pwStrength - 1] : 'rgba(255,255,255,0.1)' }} />
-                        <div className="pw-strength-segment" style={{ background: pwStrength >= 3 ? strengthColors[pwStrength - 1] : 'rgba(255,255,255,0.1)' }} />
-                      </div>
-                      <div style={{ fontSize: '0.72rem', color: strengthColors[Math.max(0, pwStrength - 1)], marginTop: '3px', textAlign: 'right' }}>
-                        {strengthLabels[Math.max(0, pwStrength - 1)]} Password
-                      </div>
+              {/* Password */}
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label className="form-label">Password</label>
+                <div className="input-with-icon">
+                  <span className="input-icon-left">
+                    <Lock size={17} />
+                  </span>
+                  <input
+                    type={showSignUpPassword ? 'text' : 'password'}
+                    className="form-input"
+                    placeholder="At least 6 characters"
+                    required
+                    minLength={6}
+                    value={signUpPassword}
+                    onChange={(e) => setSignUpPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="input-action-right"
+                    onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+                    aria-label={showSignUpPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showSignUpPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                {/* Password Strength Meter */}
+                {signUpPassword && (
+                  <div style={{ marginTop: '6px' }}>
+                    <div className="pw-strength-bar">
+                      <div className="pw-strength-segment" style={{ background: pwStrength >= 1 ? strengthColors[pwStrength - 1] : 'rgba(255,255,255,0.1)' }} />
+                      <div className="pw-strength-segment" style={{ background: pwStrength >= 2 ? strengthColors[pwStrength - 1] : 'rgba(255,255,255,0.1)' }} />
+                      <div className="pw-strength-segment" style={{ background: pwStrength >= 3 ? strengthColors[pwStrength - 1] : 'rgba(255,255,255,0.1)' }} />
                     </div>
-                  )}
-                </div>
-
-                <div>
-                  <label className="form-label">{signUpRole === 'officer' ? 'Jurisdiction Ward' : 'Residential Ward'}</label>
-                  <div className="input-with-icon">
-                    <span className="input-icon-left">
-                      <MapPin size={17} />
-                    </span>
-                    <select
-                      className="form-select"
-                      value={ward}
-                      onChange={(e) => setWard(e.target.value)}
-                    >
-                      {Array.from({ length: 20 }, (_, i) => (
-                        <option key={i + 1} value={`Ward ${i + 1}`}>
-                          Ward {i + 1}
-                        </option>
-                      ))}
-                    </select>
+                    <div style={{ fontSize: '0.72rem', color: strengthColors[Math.max(0, pwStrength - 1)], marginTop: '3px', textAlign: 'right' }}>
+                      {strengthLabels[Math.max(0, pwStrength - 1)]} Password
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Terms Checkbox */}

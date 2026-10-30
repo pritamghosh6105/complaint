@@ -136,4 +136,4 @@ $$\hat{y} = \frac{1}{B} \sum_{b=1}^B T_b(\vec{x})$$
 ---
 
 ### 6. CONCLUSION & FUTURE SCOPE
-The developed system demonstrates the feasibility of combining Machine Learning and Geospatial Analytics to transform civic governance from passive, delayed ticketing into an automated, proactive municipal intelligence ecosystem. Future enhancements include edge mobile device deployment, multilingual voice-to-text intake in regional dialects (e.g. Bengali, Hindi), and computer vision models (MobileNet/YOLO) for autonomous damage segmentation from drone/satellite feeds.
+The developed system demonstrates the feasibility of combining Machine Learning and Geospatial Analytics to transform civic governance from passive, delayed ticketing into an automated, proactive municipal intelligence ecosystem. Future enhancements include edge mobile device deployment, real-time voice-to-text intake, and computer vision models (MobileNet/YOLO) for autonomous damage segmentation from drone/satellite feeds.

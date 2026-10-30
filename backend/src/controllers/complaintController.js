@@ -3,6 +3,7 @@ const mlClient = require('../services/mlClient');
 const assignmentService = require('../services/assignmentService');
 const imageVerificationService = require('../services/imageVerificationService');
 const cloudinaryService = require('../services/cloudinaryService');
+const locationResolutionService = require('../services/locationResolutionService');
 const upload = require('../middleware/uploadMiddleware');
 
 class ComplaintController {
@@ -79,6 +80,13 @@ class ComplaintController {
         mouza,
         police_station_id,
         police_station,
+        nearest_police_station,
+        nearest_police_station_distance,
+        jurisdiction_police_station,
+        jurisdiction_verified,
+        location_source,
+        verification_status,
+        sources,
         locality,
         landmark,
         postal_code
@@ -86,6 +94,34 @@ class ComplaintController {
 
       if (!description || description.trim().length < 5) {
         return res.status(400).json({ error: 'Complaint description is required' });
+      }
+
+      // Server-side administrative hierarchy & location validation (Section 22)
+      const hierarchyValidation = locationResolutionService.validateHierarchy({
+        district: district || 'North 24 Parganas',
+        districtId: district_id,
+        subdivision,
+        subdivisionId: subdivision_id,
+        urbanRural: administrative_type || 'Urban',
+        ulb: municipality,
+        ulbId: ulb_id,
+        ward,
+        wardId: ward_id,
+        block,
+        blockId: block_id,
+        gramPanchayat: gram_panchayat,
+        gramPanchayatId: gram_panchayat_id,
+        village,
+        villageId: village_id,
+        pincode: postal_code,
+        policeStation: police_station || jurisdiction_police_station || nearest_police_station
+      });
+
+      if (!hierarchyValidation.valid) {
+        return res.status(400).json({ 
+          error: hierarchyValidation.errors.join(' '), 
+          warnings: hierarchyValidation.warnings 
+        });
       }
 
       // 1. Get active complaints for duplicate detection
@@ -117,9 +153,14 @@ class ComplaintController {
         existing_complaints: activeComplaints
       });
 
-      const predictedCategory = mlRes.category_prediction.category;
-      const predictedSubcategory = mlRes.category_prediction.subcategory || mlRes.summary.subcategory || 'General Issue';
-      const mlConfidence = mlRes.category_prediction.confidence;
+      const predictedCategory = mlRes.summary?.primaryDepartment || mlRes.category_prediction?.category || 'CLASSIFICATION_UNCERTAIN';
+      const predictedSubcategory = mlRes.category_prediction?.subcategory || mlRes.summary?.subcategory || 'General Issue';
+      const secondaryDepartments = mlRes.summary?.secondaryDepartments || mlRes.category_prediction?.secondaryDepartments || [];
+      const requiresHumanReview = Boolean(mlRes.summary?.requiresHumanReview || mlRes.category_prediction?.requiresHumanReview);
+      const incidentType = mlRes.summary?.incidentType || mlRes.category_prediction?.incidentType || 'Standard Civic Complaint';
+      const causeKnown = Boolean(mlRes.summary?.causeKnown !== undefined ? mlRes.summary.causeKnown : mlRes.category_prediction?.causeKnown);
+      const classificationReason = mlRes.summary?.reason || mlRes.category_prediction?.reason || '';
+      const mlConfidence = mlRes.summary?.departmentConfidence !== undefined ? mlRes.summary.departmentConfidence : mlRes.category_prediction?.confidence;
       const isCrimeDetected = mlRes.summary.is_crime || ['Police & Law Enforcement', 'Cyber Crime', 'Women & Child Safety'].includes(predictedCategory);
       const isEmergencyDetected = Boolean(manualEmergency || mlRes.summary.is_emergency);
 
@@ -247,6 +288,7 @@ class ComplaintController {
         officer_id: officerId,
         latitude: lat,
         longitude: lng,
+        userEnteredAddress: req.body.userEnteredAddress || req.body.user_entered_address || address || '',
         address: address || `${locationLabel}, ${district || 'North 24 Parganas'}`,
         // Normalized location fields:
         state: state || 'West Bengal',
@@ -268,7 +310,14 @@ class ComplaintController {
         village: village || '',
         mouza: mouza || '',
         police_station_id: police_station_id ? Number(police_station_id) : null,
-        police_station: police_station || '',
+        police_station: police_station || jurisdiction_police_station || nearest_police_station || '',
+        nearest_police_station: nearest_police_station || null,
+        nearest_police_station_distance: nearest_police_station_distance !== undefined ? nearest_police_station_distance : null,
+        jurisdiction_police_station: jurisdiction_police_station || null,
+        jurisdiction_verified: Boolean(jurisdiction_verified),
+        location_source: location_source || 'Citizen GPS & CivicPulse GIS Engine',
+        verification_status: verification_status || 'PARTIALLY_VERIFIED',
+        sources: sources || {},
         locality: locality || '',
         landmark: landmark || '',
         postal_code: postal_code || '',
@@ -280,7 +329,6 @@ class ComplaintController {
         impact_label: mlRes.impact_assessment?.label || mlRes.summary?.impact_label || 'Moderate Public Impact',
         root_causes: mlRes.root_cause_analysis?.possible_causes || [],
         recommended_actions: mlRes.root_cause_analysis?.recommended_actions || [],
-        detected_language: mlRes.summary?.detected_language || 'en',
         upvote_count: 0,
         upvoter_ids: [],
         is_duplicate: isDup,
@@ -291,6 +339,14 @@ class ComplaintController {
         ml_predicted_priority: finalPriority,
         predicted_category: predictedCategory,
         predicted_subcategory: predictedSubcategory,
+        primary_department: predictedCategory,
+        secondary_departments: secondaryDepartments,
+        requires_human_review: requiresHumanReview,
+        incident_type: incidentType,
+        cause_known: causeKnown,
+        classification_reason: classificationReason,
+        original_predicted_department: predictedCategory,
+        final_department: finalCategory,
         is_emergency: isEmergencyDetected ? 1 : 0,
         is_crime: isCrimeDetected ? 1 : 0,
         is_sensitive: isCrimeDetected ? 1 : 0,
@@ -476,7 +532,7 @@ class ComplaintController {
     try {
       const { id } = req.params;
       const user = req.user;
-      const complaint = db.prepare('SELECT * FROM complaints WHERE id = ?').get(id);
+      const complaint = db.prepare('SELECT * FROM complaints WHERE id = ? OR tracking_id = ?').get(id, id);
 
       if (!complaint) {
         return res.status(404).json({ error: 'Complaint not found' });
@@ -654,6 +710,293 @@ class ComplaintController {
     } catch (err) {
       console.error('Reopen error:', err);
       res.status(500).json({ error: 'Failed to reopen complaint' });
+    }
+  }
+
+  /**
+   * GET /api/complaints/map - Admin GIS Complaint Map
+   * Exposes individual complaint points for authorized administrators.
+   * Protects complainant PII (phone, email, identity) for unauthorized callers.
+   */
+  async getComplaintMap(req, res) {
+    try {
+      // Check auth header for admin/officer privilege
+      let isAuthorizedAdmin = false;
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
+        try {
+          const jwt = require('jsonwebtoken');
+          const { JWT_SECRET } = require('../middleware/authMiddleware');
+          const decoded = jwt.verify(token, JWT_SECRET);
+          if (decoded && (decoded.role === 'admin' || decoded.role === 'officer')) {
+            isAuthorizedAdmin = true;
+          }
+        } catch (e) {}
+      }
+
+      const { district, police_station, category, status, priority, date_from, date_to } = req.query;
+      let complaints = db.prepare('SELECT * FROM complaints').all();
+
+      if (district && district !== 'All') {
+        complaints = complaints.filter(c => (c.district || '').toLowerCase() === district.toLowerCase());
+      }
+      if (police_station && police_station !== 'All') {
+        complaints = complaints.filter(c => (c.police_station || '').toLowerCase().includes(police_station.toLowerCase()));
+      }
+      if (category && category !== 'All') {
+        complaints = complaints.filter(c => c.category === category);
+      }
+      if (status && status !== 'All') {
+        complaints = complaints.filter(c => c.status === status);
+      }
+      if (priority && priority !== 'All') {
+        complaints = complaints.filter(c => c.priority === priority);
+      }
+      if (date_from) {
+        const fromDate = new Date(date_from);
+        complaints = complaints.filter(c => new Date(c.created_at) >= fromDate);
+      }
+      if (date_to) {
+        const toDate = new Date(date_to);
+        complaints = complaints.filter(c => new Date(c.created_at) <= toDate);
+      }
+
+      // Map to safe GIS points
+      const points = complaints
+        .filter(c => c.latitude && c.longitude && Math.abs(c.latitude) > 0.1)
+        .map(c => {
+          const isCrime = c.is_crime === 1 || ['Police & Law Enforcement', 'Cyber Crime', 'Women & Child Safety'].includes(c.category);
+          
+          return {
+            id: c.id,
+            tracking_id: c.tracking_id,
+            title: (isCrime && !isAuthorizedAdmin) ? `[Protected Case: ${c.category}]` : c.title,
+            description: (isCrime && !isAuthorizedAdmin) ? 'Details protected for law enforcement jurisdiction.' : (c.description ? c.description.slice(0, 160) : ''),
+            category: c.category,
+            subcategory: c.subcategory,
+            priority: c.priority,
+            status: c.status,
+            latitude: c.latitude,
+            longitude: c.longitude,
+            location: c.location || {
+              type: 'Point',
+              coordinates: [c.longitude, c.latitude],
+              address: c.address,
+              pincode: c.postal_code,
+              district: c.district,
+              policeStation: c.police_station
+            },
+            district: c.district || 'West Bengal',
+            police_station: c.police_station || null,
+            pincode: c.postal_code || '',
+            date: c.created_at,
+            created_at: c.created_at,
+            image_url: c.image_url,
+            is_crime: isCrime,
+            // Sensitive PII only included if authorized admin
+            complainant: isAuthorizedAdmin ? {
+              name: c.citizen_name || 'Citizen',
+              phone: c.citizen_phone || '',
+              email: c.citizen_email || ''
+            } : null
+          };
+        });
+
+      res.json({ success: true, count: points.length, complaints: points });
+    } catch (err) {
+      console.error('getComplaintMap error:', err);
+      res.status(500).json({ success: false, error: 'Failed to fetch complaint map data.' });
+    }
+  }
+
+  /**
+   * GET /api/complaints/heatmap - Real Complaint Density Heatmap
+   * Generated from REAL complaint coordinates stored in MongoDB.
+   */
+  async getComplaintHeatmap(req, res) {
+    try {
+      const {
+        district,
+        subdivision,
+        block,
+        gram_panchayat,
+        municipality,
+        ward,
+        police_station,
+        pincode,
+        category,
+        priority,
+        status,
+        date_from,
+        date_to,
+        startDate,
+        endDate
+      } = req.query;
+
+      let complaints = db.prepare('SELECT * FROM complaints').all();
+
+      // Filters
+      if (district && district !== 'All') {
+        complaints = complaints.filter(c => (c.district || '').toLowerCase() === district.toLowerCase());
+      }
+      if (subdivision && subdivision !== 'All') {
+        complaints = complaints.filter(c => (c.subdivision || '').toLowerCase() === subdivision.toLowerCase());
+      }
+      if (block && block !== 'All') {
+        complaints = complaints.filter(c => (c.block || '').toLowerCase().includes(block.toLowerCase()));
+      }
+      if (gram_panchayat && gram_panchayat !== 'All') {
+        complaints = complaints.filter(c => (c.gram_panchayat || '').toLowerCase().includes(gram_panchayat.toLowerCase()));
+      }
+      if (municipality && municipality !== 'All') {
+        complaints = complaints.filter(c => (c.municipality || '').toLowerCase().includes(municipality.toLowerCase()));
+      }
+      if (ward && ward !== 'All') {
+        complaints = complaints.filter(c => (c.ward || '').toLowerCase() === ward.toLowerCase());
+      }
+      if (police_station && police_station !== 'All') {
+        complaints = complaints.filter(c => (c.police_station || '').toLowerCase().includes(police_station.toLowerCase()));
+      }
+      if (pincode && pincode !== 'All') {
+        complaints = complaints.filter(c => String(c.postal_code || '').trim() === String(pincode).trim());
+      }
+      if (category && category !== 'All') {
+        complaints = complaints.filter(c => c.category === category);
+      }
+      if (priority && priority !== 'All') {
+        complaints = complaints.filter(c => c.priority === priority);
+      }
+      if (status && status !== 'All') {
+        complaints = complaints.filter(c => c.status === status);
+      }
+
+      const dFrom = date_from || startDate;
+      const dTo = date_to || endDate;
+      if (dFrom) {
+        const fromDate = new Date(dFrom);
+        complaints = complaints.filter(c => new Date(c.created_at) >= fromDate);
+      }
+      if (dTo) {
+        const toDate = new Date(dTo);
+        complaints = complaints.filter(c => new Date(c.created_at) <= toDate);
+      }
+
+      // Filter real coordinates and compute density weights
+      const points = complaints
+        .filter(c => c.latitude && c.longitude && Math.abs(c.latitude) > 0.1)
+        .map(c => {
+          let weight = 0.5;
+          if (c.priority === 'CRITICAL') weight = 1.0;
+          else if (c.priority === 'HIGH') weight = 0.8;
+          else if (c.priority === 'MEDIUM') weight = 0.6;
+          else weight = 0.4;
+
+          return {
+            id: c.id,
+            tracking_id: c.tracking_id,
+            latitude: c.latitude,
+            longitude: c.longitude,
+            coordinates: [c.longitude, c.latitude],
+            weight,
+            intensity: weight,
+            category: c.category,
+            priority: c.priority,
+            status: c.status,
+            district: c.district || 'West Bengal',
+            police_station: c.police_station || null,
+            pincode: c.postal_code || '',
+            date: c.created_at
+          };
+        });
+
+      res.json({ success: true, count: points.length, points });
+    } catch (err) {
+      console.error('getComplaintHeatmap error:', err);
+      res.status(500).json({ success: false, error: 'Failed to fetch complaint heatmap data.' });
+    }
+  }
+
+  /**
+   * GET /api/complaints/nearby - Geospatial Query using MongoDB $near
+   * Finds complaints within 1km, 5km, 10km, etc.
+   */
+  async getNearbyComplaints(req, res) {
+    try {
+      const lat = parseFloat(req.query.lat || req.query.latitude);
+      const lng = parseFloat(req.query.lng || req.query.longitude);
+      const maxDistance = parseInt(req.query.radius || req.query.maxDistance || req.query.distance) || 5000; // default 5km in meters
+
+      if (isNaN(lat) || isNaN(lng)) {
+        return res.status(400).json({ success: false, error: 'Valid lat and lng query parameters are required.' });
+      }
+
+      const mongoose = require('mongoose');
+      let nearbyComplaints = [];
+
+      if (mongoose.connection.readyState === 1) {
+        const mongoModels = require('../models/mongo');
+        nearbyComplaints = await mongoModels.Complaint.find({
+          location: {
+            $near: {
+              $geometry: { type: 'Point', coordinates: [lng, lat] },
+              $maxDistance: maxDistance
+            }
+          }
+        })
+        .select('id tracking_id title category priority status location latitude longitude district police_station postal_code created_at')
+        .limit(50)
+        .lean();
+      }
+
+      // Fallback: Haversine distance from memory if MongoDB not connected or 0 results returned
+      if (!nearbyComplaints || nearbyComplaints.length === 0) {
+        const complaints = db.prepare('SELECT * FROM complaints').all();
+        const haversine = (lat1, lon1, lat2, lon2) => {
+          const R = 6371e3;
+          const toRad = x => (x * Math.PI) / 180;
+          const dLat = toRad(lat2 - lat1);
+          const dLon = toRad(lon2 - lon1);
+          const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+          return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        };
+
+        nearbyComplaints = complaints
+          .filter(c => c.latitude && c.longitude && Math.abs(c.latitude) > 0.1)
+          .map(c => {
+            const dist = haversine(lat, lng, c.latitude, c.longitude);
+            return { ...c, distanceMeters: Math.round(dist) };
+          })
+          .filter(c => c.distanceMeters <= maxDistance)
+          .sort((a, b) => a.distanceMeters - b.distanceMeters)
+          .slice(0, 50);
+      }
+
+      res.json({
+        success: true,
+        count: nearbyComplaints.length,
+        radiusMeters: maxDistance,
+        center: { latitude: lat, longitude: lng },
+        complaints: nearbyComplaints.map(c => ({
+          id: c.id,
+          tracking_id: c.tracking_id,
+          title: c.title,
+          category: c.category,
+          priority: c.priority,
+          status: c.status,
+          latitude: c.latitude,
+          longitude: c.longitude,
+          district: c.district,
+          police_station: c.police_station || c.location?.policeStation,
+          pincode: c.postal_code || c.location?.pincode,
+          date: c.created_at
+        }))
+      });
+    } catch (err) {
+      console.error('getNearbyComplaints error:', err);
+      res.status(500).json({ success: false, error: 'Failed to search nearby complaints.' });
     }
   }
 }

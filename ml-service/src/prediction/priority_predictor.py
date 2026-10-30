@@ -64,25 +64,37 @@ class PriorityPredictor:
         
         # Temporal cues from text
         inferred_duration = duration_days
-        if any(k in text_lower for k in ["for a week", "for several days", "एक हफ्ते", "এক সপ্তাহ", "কয়েকদিন"]):
+        if any(k in text_lower for k in ["for a week", "for several days"]):
             inferred_duration = max(duration_days, 7)
-        elif any(k in text_lower for k in ["missed once", "yesterday", "last night", "একবার", "কালকে", "कल"]):
+        elif any(k in text_lower for k in ["missed once", "yesterday", "last night"]):
             inferred_duration = 1
-        elif any(k in text_lower for k in ["right now", "currently", "এই মুহূর্তে", "इस समय"]):
+        elif any(k in text_lower for k in ["right now", "currently"]):
             inferred_duration = 1
 
+        # Check fatal or death indicators
+        is_fatal_mention = any(k in text_lower for k in [
+            "killed", "killing", "fatal", "fatality", "death", "died", "dead body", "loss of a life",
+            "loss of life", "murder", "unnatural death"
+        ])
+        
         # Perceived severity from text cues if default was provided
         inferred_severity = severity
         if severity == "Medium" or not severity:
-            if (not has_negation and (risk_signals.get("immediate_danger") or risk_signals.get("life_threat") or risk_signals.get("electrical_hazard"))) or (risk_signals.get("child_safety_risk") and risk_signals.get("public_infrastructure_risk")):
+            if not has_negation and (
+                any(k in text_lower for k in ["active shooter", "ongoing violence", "currently attacking", "bombing", "fire spreading"]) or
+                (risk_signals.get("immediate_danger") and not is_fatal_mention)
+            ):
                 inferred_severity = "Critical"
+            elif is_fatal_mention:
+                # Fatal incident without active ongoing danger: triage is High severity
+                inferred_severity = "High"
             elif any(k in text_lower for k in ["charged", "debited", "fraudulently", "transferred", "₹25,000", "₹", "siphoned", "financial fraud"]) and risk_signals.get("cyber_fraud"):
                 inferred_severity = "High"
-            elif any(k in text_lower for k in ["suspicious", "phishing", "asking for", "spam", "received", "সন্দেহজনক", "संदिग्ध"]) and risk_signals.get("cyber_fraud"):
+            elif any(k in text_lower for k in ["suspicious", "phishing", "asking for", "spam", "received"]) and risk_signals.get("cyber_fraud"):
                 inferred_severity = "Low"
             elif risk_signals.get("accident_risk") or risk_signals.get("women_safety_risk") or risk_signals.get("major_health_risk"):
                 inferred_severity = "High"
-            elif has_negation or any(k in text_lower for k in ["one streetlight", "missed once", "minor", "quiet lane", "কোনও বিপদ নেই", "কোনো বিপদ নেই", "একটি স্ট্রিট লাইট"]):
+            elif (has_negation and not is_fatal_mention) or any(k in text_lower for k in ["one streetlight", "missed once", "minor", "quiet lane"]):
                 inferred_severity = "Low"
                 
         # Calculate continuous safety risk score
@@ -142,12 +154,11 @@ class PriorityPredictor:
             not has_negation and (
                 is_emergency or
                 risk_signals.get("immediate_danger") or
-                risk_signals.get("life_threat") or
-                ("attacking a person right now" in text_lower or "physically attacked right now" in text_lower or "শারীরিক আক্রমণ করা হচ্ছে" in text_lower or "शारीरिक हमला हो रहा है" in text_lower) or
-                ("child is currently in immediate danger" in text_lower or "শিশু এই মুহূর্তে চরম বিপদের" in text_lower or "बच्चा इस समय गंभीर खतरे" in text_lower) or
-                ("live electrical wire" in text_lower or "electrocuted" in text_lower or "ছেঁড়া বিদ্যুতের তার" in text_lower or "बिजली का नंगा तार" in text_lower) or
-                ("active fire" in text_lower or "building fully ablaze" in text_lower or "ভয়াবহ আগুন" in text_lower or "भीषण आग" in text_lower) or
-                ("uncovered manhole" in text_lower and ("school" in text_lower or "children" in text_lower or "fall" in text_lower or "স্কুল" in text_lower or "শিশু" in text_lower or "बच्चे" in text_lower))
+                ("attacking a person right now" in text_lower or "physically attacked right now" in text_lower) or
+                ("child is currently in immediate danger" in text_lower) or
+                ("live electrical wire" in text_lower or "electrocuted" in text_lower) or
+                ("active fire" in text_lower or "building fully ablaze" in text_lower) or
+                ("uncovered manhole" in text_lower and ("school" in text_lower or "children" in text_lower or "fall" in text_lower))
             )
         )
         

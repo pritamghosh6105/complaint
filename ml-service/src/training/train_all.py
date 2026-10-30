@@ -83,23 +83,75 @@ def train_all_models():
     )
     
     cat_pipeline = Pipeline([
-        ('tfidf', TfidfVectorizer(ngram_range=(1, 2), max_features=10000, sublinear_tf=True)),
+        ('tfidf', TfidfVectorizer(ngram_range=(1, 2), token_pattern=r'(?u)\b\w+\b', max_features=15000, sublinear_tf=True)),
         ('clf', LogisticRegression(C=3.0, max_iter=1000, random_state=42))
     ])
     
     cat_pipeline.fit(X_train, y_train)
     y_cat_pred = cat_pipeline.predict(X_test)
+    y_cat_proba = cat_pipeline.predict_proba(X_test)
     
     cat_report = classification_report(y_test, y_cat_pred, output_dict=True, zero_division=0)
+    cat_cm = confusion_matrix(y_test, y_cat_pred, labels=cat_pipeline.classes_)
+    
+    # Calculate top-3 accuracy
+    top3_indices = np.argsort(y_cat_proba, axis=1)[:, -3:]
+    top3_correct = [
+        y_test.iloc[i] in [cat_pipeline.classes_[idx] for idx in top3_indices[i]]
+        for i in range(len(y_test))
+    ]
+    top3_acc = np.mean(top3_correct) * 100.0
+    
     print(f"Category Model Accuracy: {cat_report['accuracy'] * 100:.2f}%")
+    print(f"Category Model Top-3 Accuracy: {top3_acc:.2f}%")
     print(f"Category Model Macro F1: {cat_report['macro avg']['f1-score'] * 100:.2f}%")
+    print(f"Category Model Weighted F1: {cat_report['weighted avg']['f1-score'] * 100:.2f}%")
+    
+    # Specific inspection pairs
+    class_to_idx = {c: i for i, c in enumerate(cat_pipeline.classes_)}
+    confusion_pairs = [
+        ("Police & Law Enforcement", "Roads & Public Works"),
+        ("Police & Law Enforcement", "Traffic & Road Safety"),
+        ("Police & Law Enforcement", "Health & Hospitals"),
+        ("Cyber Crime", "Consumer Affairs"),
+        ("Women & Child Safety", "Police & Law Enforcement"),
+        ("Drainage & Sewerage", "Water Supply"),
+        ("Street Lighting & Electrical", "Electricity & Power"),
+        ("Building & Municipal Engineering", "Roads & Public Works")
+    ]
+    pairwise_inspection = {}
+    for c1, c2 in confusion_pairs:
+        if c1 in class_to_idx and c2 in class_to_idx:
+            i1, i2 = class_to_idx[c1], class_to_idx[c2]
+            pairwise_inspection[f"{c1} vs {c2}"] = {
+                f"{c1} predicted as {c2}": int(cat_cm[i1, i2]),
+                f"{c2} predicted as {c1}": int(cat_cm[i2, i1]),
+                f"{c1} total test samples": int(cat_cm[i1].sum()),
+                f"{c2} total test samples": int(cat_cm[i2].sum()),
+            }
+    
+    per_class_metrics = {}
+    for c in cat_pipeline.classes_:
+        if c in cat_report:
+            per_class_metrics[c] = {
+                "precision": round(cat_report[c]['precision'] * 100, 2),
+                "recall": round(cat_report[c]['recall'] * 100, 2),
+                "f1_score": round(cat_report[c]['f1-score'] * 100, 2),
+                "support": cat_report[c]['support']
+            }
     
     joblib.dump(cat_pipeline, os.path.join(models_dir, "category_model.joblib"))
     metrics["category_model"] = {
         "accuracy": round(cat_report['accuracy'] * 100, 2),
+        "top3_accuracy": round(top3_acc, 2),
+        "macro_precision": round(cat_report['macro avg']['precision'] * 100, 2),
+        "macro_recall": round(cat_report['macro avg']['recall'] * 100, 2),
         "macro_f1": round(cat_report['macro avg']['f1-score'] * 100, 2),
         "weighted_f1": round(cat_report['weighted avg']['f1-score'] * 100, 2),
-        "classes": list(cat_pipeline.classes_)
+        "classes": list(cat_pipeline.classes_),
+        "per_class_metrics": per_class_metrics,
+        "pairwise_inspection": pairwise_inspection,
+        "confusion_matrix": cat_cm.tolist()
     }
     
     # -------------------------------------------------------------
@@ -113,7 +165,7 @@ def train_all_models():
         )
         
         sub_pipeline = Pipeline([
-            ('tfidf', TfidfVectorizer(ngram_range=(1, 2), max_features=12000, sublinear_tf=True)),
+            ('tfidf', TfidfVectorizer(ngram_range=(1, 2), token_pattern=r'(?u)\b\w+\b', max_features=15000, sublinear_tf=True)),
             ('clf', LogisticRegression(C=2.5, max_iter=1000, random_state=42))
         ])
         sub_pipeline.fit(X_sub_train, y_sub_train)
@@ -215,7 +267,7 @@ def train_all_models():
     # 4. MODEL 4: DUPLICATE DETECTION TF-IDF VECTORIZER
     # -------------------------------------------------------------
     print("--- 4. Fitting Duplicate Detection TF-IDF Vectorizer ---")
-    dup_vectorizer = TfidfVectorizer(ngram_range=(1, 2), max_features=12000, sublinear_tf=True)
+    dup_vectorizer = TfidfVectorizer(ngram_range=(1, 2), token_pattern=r'(?u)\b\w+\b', max_features=15000, sublinear_tf=True)
     dup_vectorizer.fit(df['cleaned_text'])
     joblib.dump(dup_vectorizer, os.path.join(models_dir, "duplicate_vectorizer.joblib"))
     metrics["duplicate_engine"] = {

@@ -11,10 +11,13 @@ async function connectMongoDB() {
     return false;
   }
 
+  // Disable command buffering so queries don't hang when disconnected
+  mongoose.set('bufferCommands', false);
+
   try {
     console.log('\x1b[36m%s\x1b[0m', '⚡ [MongoDB Atlas] Connecting to MongoDB cluster...');
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 12000,
+      serverSelectionTimeoutMS: 5000,
     });
     isConnected = true;
     const host = mongoose.connection.host;
@@ -22,8 +25,7 @@ async function connectMongoDB() {
     console.log('\x1b[32m%s\x1b[0m', `✓ [MongoDB Atlas] Successfully connected to: ${host}/${dbName}`);
     return true;
   } catch (err) {
-    console.error('\x1b[31m%s\x1b[0m', `✗ [MongoDB Atlas] Connection failed: ${err.message}`);
-    console.log('\x1b[33m%s\x1b[0m', 'ℹ [Database] Falling back gracefully to local storage engine.');
+    console.warn('\x1b[33m%s\x1b[0m', `ℹ [MongoDB Atlas] Atlas unreachable (${err.message}). Using local embedded storage.`);
     isConnected = false;
     return false;
   }

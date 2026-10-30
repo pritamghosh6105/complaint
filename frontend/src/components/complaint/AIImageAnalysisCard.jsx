@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 import { 
   BrainCircuit, 
   CheckCircle2, 
@@ -20,6 +21,7 @@ export default function AIImageAnalysisCard({
   previewUrl = null,
   fusedPriority = null
 }) {
+  const { isDark } = useTheme();
   const [showTechnicalMetrics, setShowTechnicalMetrics] = useState(false);
 
   if (loading) {
@@ -63,9 +65,9 @@ export default function AIImageAnalysisCard({
   const confidencePercent = `${Math.round(confidence * 100)}%`;
 
   const getQualityBadgeStyle = (q) => {
-    if (q === 'GOOD') return { bg: 'rgba(16, 185, 129, 0.15)', border: '#10b981', color: '#6ee7b7', text: '✓ GOOD' };
-    if (q === 'ACCEPTABLE') return { bg: 'rgba(59, 130, 246, 0.15)', border: '#3b82f6', color: '#93c5fd', text: 'ACCEPTABLE' };
-    return { bg: 'rgba(239, 68, 68, 0.15)', border: '#ef4444', color: '#fca5a5', text: '⚠️ POOR' };
+    if (q === 'GOOD') return { bg: isDark ? 'rgba(16, 185, 129, 0.15)' : '#dcfce7', border: '#10b981', color: isDark ? '#6ee7b7' : '#15803d', text: '✓ GOOD' };
+    if (q === 'ACCEPTABLE') return { bg: isDark ? 'rgba(59, 130, 246, 0.15)' : '#dbeafe', border: '#3b82f6', color: isDark ? '#93c5fd' : '#1d4ed8', text: 'ACCEPTABLE' };
+    return { bg: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2', border: '#ef4444', color: isDark ? '#fca5a5' : '#b91c1c', text: '⚠️ POOR' };
   };
 
   const getSeverityBadgeClass = (s) => {
@@ -83,13 +85,15 @@ export default function AIImageAnalysisCard({
       style={{ 
         padding: '20px', 
         borderRadius: 'var(--radius-md)',
-        border: '1px solid rgba(59, 130, 246, 0.45)',
-        background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.65))',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)'
+        border: isDark ? '1px solid rgba(59, 130, 246, 0.45)' : '1px solid rgba(59, 130, 246, 0.3)',
+        background: isDark 
+          ? 'linear-gradient(145deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.65))' 
+          : 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+        boxShadow: isDark ? '0 8px 32px rgba(0, 0, 0, 0.35)' : 'var(--shadow-md)'
       }}
     >
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <BrainCircuit size={20} color="var(--accent-cyan)" />
           <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.5px' }}>
@@ -169,17 +173,17 @@ export default function AIImageAnalysisCard({
         {/* Mismatch Alert Callout */}
         {isMismatch && (
           <div style={{
-            background: 'rgba(234, 179, 8, 0.12)',
-            border: '1px solid rgba(234, 179, 8, 0.4)',
+            background: isDark ? 'rgba(234, 179, 8, 0.12)' : '#fef9c3',
+            border: isDark ? '1px solid rgba(234, 179, 8, 0.4)' : '1px solid #facc15',
             borderRadius: 'var(--radius-sm)',
             padding: '10px 12px',
             fontSize: '0.78rem',
-            color: '#fef08a',
+            color: isDark ? '#fef08a' : '#854d0e',
             display: 'flex',
             alignItems: 'flex-start',
             gap: '8px'
           }}>
-            <AlertTriangle size={16} color="#eab308" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <AlertTriangle size={16} color={isDark ? '#eab308' : '#ca8a04'} style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <strong>Advisory:</strong> AI detected content that may not directly match the reported description. Ticket forwarded for human officer verification.
             </div>
@@ -189,12 +193,12 @@ export default function AIImageAnalysisCard({
         {/* Poor Quality Alert Callout */}
         {isPoorQuality && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
+            background: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fef2f2',
+            border: isDark ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid #fca5a5',
             borderRadius: 'var(--radius-sm)',
             padding: '8px 12px',
             fontSize: '0.76rem',
-            color: '#fca5a5'
+            color: isDark ? '#fca5a5' : '#b91c1c'
           }}>
             ⚠️ {quality_note || 'Image may be too dark or blurry for reliable AI analysis. Submission is still accepted.'}
           </div>
@@ -205,29 +209,29 @@ export default function AIImageAnalysisCard({
           marginTop: '6px',
           padding: '10px 14px',
           borderRadius: 'var(--radius-sm)',
-          background: 'rgba(14, 165, 233, 0.12)',
-          border: '1px solid rgba(14, 165, 233, 0.3)',
+          background: isDark ? 'rgba(14, 165, 233, 0.12)' : 'rgba(14, 165, 233, 0.08)',
+          border: isDark ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid rgba(14, 165, 233, 0.25)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
           <div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '0.72rem', color: isDark ? 'var(--accent-cyan)' : '#0284c7', fontWeight: 700, textTransform: 'uppercase' }}>
               Multimodal Priority Recommendation
             </div>
-            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#fff' }}>
-              Priority: <span style={{ color: fusedPriority === 'CRITICAL' ? '#ef4444' : (fusedPriority === 'HIGH' ? '#f97316' : '#3b82f6') }}>
+            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+              Priority: <span style={{ color: fusedPriority === 'CRITICAL' ? (isDark ? '#ef4444' : '#dc2626') : (fusedPriority === 'HIGH' ? (isDark ? '#f97316' : '#ea580c') : (isDark ? '#3b82f6' : '#2563eb')) }}>
                 {fusedPriority || visual_severity}
               </span>
             </div>
           </div>
 
-          <Sparkles size={20} color="var(--accent-cyan)" />
+          <Sparkles size={20} color={isDark ? 'var(--accent-cyan)' : '#0284c7'} />
         </div>
       </div>
 
       {/* Collapsible Technical CV Metrics (Blur variance, luminance, contrast) */}
-      <div style={{ marginTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '8px' }}>
+      <div style={{ marginTop: '12px', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px' }}>
         <button
           type="button"
           onClick={() => setShowTechnicalMetrics(!showTechnicalMetrics)}

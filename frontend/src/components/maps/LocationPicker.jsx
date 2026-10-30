@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import React, { useState, useEffect } from 'react';
+import { MapContainer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Navigation, MapPin, Sparkles, CheckCircle2 } from 'lucide-react';
+import { MapAutoInvalidate, FastTileLayer, getSavedProviderId } from './MapConfig';
+import UserGpsMarker from './UserGpsMarker';
 
 const pinIcon = L.divIcon({
   html: `
@@ -37,9 +39,20 @@ function MapClickHandler({ onLocationSelect }) {
   return null;
 }
 
+function MapPanController({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center && center[0] && center[1]) {
+      map.flyTo(center, Math.max(map.getZoom(), 15), { duration: 1.0 });
+    }
+  }, [center, map]);
+  return null;
+}
+
 export default function LocationPicker({ latitude, longitude, onLocationChange }) {
   const [loadingGps, setLoadingGps] = useState(false);
   const [detectedLocality, setDetectedLocality] = useState('');
+  const [userGps, setUserGps] = useState(null);
 
   const fetchLocality = async (lat, lng) => {
     try {
@@ -74,12 +87,15 @@ export default function LocationPicker({ latitude, longitude, onLocationChange }
           setLoadingGps(false);
           const lat = parseFloat(position.coords.latitude.toFixed(5));
           const lng = parseFloat(position.coords.longitude.toFixed(5));
+          const accuracy = position.coords.accuracy || 20;
+          setUserGps({ lat, lng, accuracy });
           await handleSelectPoint(lat, lng);
         },
         (error) => {
           setLoadingGps(false);
           alert('GPS permission was denied or unavailable. You can click anywhere on the map to set the location pin.');
-        }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
       );
     } else {
       alert('Geolocation is not supported by your browser.');
@@ -99,10 +115,21 @@ export default function LocationPicker({ latitude, longitude, onLocationChange }
           onClick={handleUseGPS}
           className="btn btn-secondary btn-sm"
           disabled={loadingGps}
-          style={{ fontSize: '0.8rem', padding: '5px 12px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          style={{ 
+            fontSize: '0.8rem', 
+            padding: '5px 12px', 
+            borderRadius: '10px', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px',
+            background: userGps ? 'rgba(37, 99, 235, 0.2)' : undefined,
+            borderColor: userGps ? '#2563eb' : undefined,
+            color: userGps ? '#38bdf8' : undefined
+          }}
+          title="Detect device GPS coordinates and display exact location as a blue dot"
         >
           <Navigation size={13} className={loadingGps ? 'animate-spin' : ''} /> 
-          {loadingGps ? 'Detecting GPS...' : 'Use My GPS'}
+          {loadingGps ? 'Detecting GPS...' : userGps ? '📍 GPS Blue Dot Active' : 'Use My GPS'}
         </button>
       </div>
 
@@ -113,11 +140,21 @@ export default function LocationPicker({ latitude, longitude, onLocationChange }
           scrollWheelZoom={false}
           style={{ width: '100%', height: '100%' }}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <MapAutoInvalidate />
+          <FastTileLayer providerId={getSavedProviderId()} />
+          <MapPanController center={userGps ? [userGps.lat, userGps.lng] : center} />
           <MapClickHandler onLocationSelect={handleSelectPoint} />
+
+          {/* Exact GPS Blue Dot of User Location */}
+          {userGps && (
+            <UserGpsMarker
+              position={[userGps.lat, userGps.lng]}
+              accuracy={userGps.accuracy}
+              showAccuracyCircle={true}
+              label="Your Exact Location"
+            />
+          )}
+
           {latitude && longitude && (
             <Marker position={[latitude, longitude]} icon={pinIcon} />
           )}
@@ -126,8 +163,8 @@ export default function LocationPicker({ latitude, longitude, onLocationChange }
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginTop: '8px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span>Lat: <strong style={{ color: '#ffffff' }}>{latitude ? latitude.toFixed(4) : '22.7000'}</strong></span>
-          <span>Lng: <strong style={{ color: '#ffffff' }}>{longitude ? longitude.toFixed(4) : '88.4000'}</strong></span>
+          <span>Lat: <strong style={{ color: 'var(--text-primary)' }}>{latitude ? latitude.toFixed(4) : '22.7000'}</strong></span>
+          <span>Lng: <strong style={{ color: 'var(--text-primary)' }}>{longitude ? longitude.toFixed(4) : '88.4000'}</strong></span>
         </div>
 
         {detectedLocality && (

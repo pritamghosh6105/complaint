@@ -57,7 +57,7 @@ export default function AnalyticsCharts({ breakdownData, departmentData }) {
       <div className="grid-cols-2">
         {/* Category Breakdown (Donut) */}
         <div className="glass-card" style={{ padding: '20px' }}>
-          <h3 style={{ fontSize: '1.05rem', color: '#fff', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '16px' }}>
             Complaints by Civic Category
           </h3>
           <div style={{ height: '260px', width: '100%' }}>
@@ -96,7 +96,7 @@ export default function AnalyticsCharts({ breakdownData, departmentData }) {
 
         {/* Priority Distribution (Bar) */}
         <div className="glass-card" style={{ padding: '20px' }}>
-          <h3 style={{ fontSize: '1.05rem', color: '#fff', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '16px' }}>
             ML Priority Distribution & Risk Levels
           </h3>
           <div style={{ height: '260px', width: '100%' }}>
@@ -128,7 +128,7 @@ export default function AnalyticsCharts({ breakdownData, departmentData }) {
 
       {/* Department Resolution Leaderboard */}
       <div className="glass-card" style={{ padding: '20px' }}>
-        <h3 style={{ fontSize: '1.05rem', color: '#fff', marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '16px' }}>
           Department Workload & Resolution Performance
         </h3>
         <div style={{ overflowX: 'auto' }}>
@@ -147,7 +147,7 @@ export default function AnalyticsCharts({ breakdownData, departmentData }) {
             <tbody>
               {departments.map((d) => (
                 <tr key={d.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                  <td style={{ padding: '12px 14px', fontWeight: 600, color: '#fff' }}>
+                  <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     {d.name} <span style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)' }}>({d.code})</span>
                   </td>
                   <td style={{ padding: '12px 14px', color: 'var(--text-secondary)' }}>{d.head_name || 'N/A'}</td>

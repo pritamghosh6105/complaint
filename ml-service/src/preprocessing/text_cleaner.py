@@ -27,9 +27,9 @@ STOPWORDS: Set[str] = {
 
 def clean_text(text: str, remove_stopwords: bool = False) -> str:
     """
-    Cleans complaint raw text across English, Bengali, and Hindi:
+    Cleans complaint raw text for English-only NLP pipeline:
     - Lowercases text
-    - Preserves all Unicode Letters (L), Combining Marks (M - matras/vowel signs), and Numbers (N)
+    - Preserves letters, numbers, and spaces
     - Replaces punctuation and special symbols with spaces
     - Normalizes extra whitespace
     - Optionally removes generic English stop words
@@ -40,7 +40,7 @@ def clean_text(text: str, remove_stopwords: bool = False) -> str:
     text = text.lower().strip()
     text = re.sub(r'[\r\n\t]+', ' ', text)
     
-    # Unicode-aware filter: keep Letters, Marks (vital for Bengali/Hindi vowel signs), Numbers, and spaces
+    # Text filter: keep Letters, Numbers, and spaces
     chars = []
     for ch in text:
         cat = unicodedata.category(ch)

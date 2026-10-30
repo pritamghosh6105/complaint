@@ -175,17 +175,17 @@ export default function EvidenceUploader({
         onClick={() => fileInputRef.current?.click()}
         style={{
           border: dragActive 
-            ? '2px dashed var(--accent-cyan)' 
-            : '2px dashed rgba(59, 130, 246, 0.35)',
+            ? '2px dashed var(--accent-primary)' 
+            : '2px dashed var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '24px 20px',
           textAlign: 'center',
           background: dragActive 
-            ? 'rgba(14, 165, 233, 0.12)' 
-            : 'rgba(15, 23, 42, 0.5)',
+            ? 'rgba(37, 99, 235, 0.08)' 
+            : 'var(--bg-surface-elevated)',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
-          boxShadow: dragActive ? '0 0 20px rgba(14, 165, 233, 0.25)' : 'none'
+          boxShadow: dragActive ? '0 0 20px rgba(37, 99, 235, 0.2)' : 'none'
         }}
       >
         <input 
@@ -205,22 +205,22 @@ export default function EvidenceUploader({
           width: '48px',
           height: '48px',
           borderRadius: '50%',
-          background: 'rgba(59, 130, 246, 0.15)',
+          background: 'rgba(37, 99, 235, 0.12)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 12px'
         }}>
-          <Upload size={24} color="var(--accent-cyan)" />
+          <Upload size={24} color="var(--accent-primary)" />
         </div>
 
         <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
           Drag & drop incident photos or video proof here
         </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-          or <span style={{ color: 'var(--accent-cyan)', textDecoration: 'underline' }}>browse from your device</span>
+        <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+          or <span style={{ color: 'var(--accent-primary)', textDecoration: 'underline', fontWeight: 600 }}>browse from your device</span>
         </div>
-        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+        <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
           Supported: <strong>JPG, PNG, WebP</strong> (max 10MB) • <strong>MP4, WebM, MOV</strong> (max 50MB) • Up to {maxFiles} files
         </div>
       </div>
@@ -236,7 +236,7 @@ export default function EvidenceUploader({
           alignItems: 'center',
           gap: '10px',
           fontSize: '0.82rem',
-          color: '#fca5a5'
+          color: '#ef4444'
         }}>
           <AlertCircle size={18} color="#ef4444" style={{ flexShrink: 0 }} />
           <span>{errorMessage}</span>
@@ -273,8 +273,8 @@ export default function EvidenceUploader({
                 style={{
                   padding: '10px',
                   borderRadius: 'var(--radius-sm)',
-                  border: index === 0 ? '1px solid rgba(14, 165, 233, 0.5)' : '1px solid var(--border-subtle)',
-                  background: 'rgba(15, 23, 42, 0.65)',
+                  border: index === 0 ? '1px solid rgba(37, 99, 235, 0.5)' : '1px solid var(--border-subtle)',
+                  background: 'var(--bg-surface-elevated)',
                   position: 'relative',
                   overflow: 'hidden'
                 }}

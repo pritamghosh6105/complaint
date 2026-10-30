@@ -2,18 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, X, Sparkles, Check, Globe, AlertCircle } from 'lucide-react';
 
 export default function VoiceInputModal({ isOpen, onClose, onApplyTranscript, defaultLanguage = 'en' }) {
-  const [selectedLang, setSelectedLang] = useState(defaultLanguage === 'bn' ? 'bn-IN' : (defaultLanguage === 'hi' ? 'hi-IN' : 'en-IN'));
+  const [selectedLang, setSelectedLang] = useState('en-IN');
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [interimText, setInterimText] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const recognitionRef = useRef(null);
-
-  const languages = [
-    { code: 'en-IN', label: 'English (India)', flag: '🇮🇳' },
-    { code: 'bn-IN', label: 'বাংলা (Bengali)', flag: '🇧🇩/🇮🇳' },
-    { code: 'hi-IN', label: 'हिन्दी (Hindi)', flag: '🇮🇳' }
-  ];
 
   useEffect(() => {
     if (!isOpen) {
@@ -150,7 +144,7 @@ export default function VoiceInputModal({ isOpen, onClose, onApplyTranscript, de
                 Voice Complaint Dictation
               </h3>
               <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Speak in Bengali, Hindi, or English
+                Speak clearly in English (India standard)
               </span>
             </div>
           </div>
@@ -161,35 +155,6 @@ export default function VoiceInputModal({ isOpen, onClose, onApplyTranscript, de
           >
             <X size={16} />
           </button>
-        </div>
-
-        {/* Language Selector */}
-        <div style={{ marginBottom: '18px' }}>
-          <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Globe size={14} color="var(--accent-cyan)" /> Select Spoken Language:
-          </label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-            {languages.map(lang => (
-              <button
-                key={lang.code}
-                type="button"
-                onClick={() => {
-                  if (isListening) stopListening();
-                  setSelectedLang(lang.code);
-                }}
-                className={`btn btn-sm ${selectedLang === lang.code ? 'btn-primary' : 'btn-secondary'}`}
-                style={{
-                  fontSize: '0.82rem',
-                  fontWeight: selectedLang === lang.code ? 700 : 500,
-                  justifyContent: 'center',
-                  padding: '8px 6px'
-                }}
-              >
-                <span>{lang.flag}</span>
-                <span>{lang.label}</span>
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Microphone Button & Wave Visualization */}
@@ -266,9 +231,9 @@ export default function VoiceInputModal({ isOpen, onClose, onApplyTranscript, de
             </div>
           ) : (
             <span style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.85rem' }}>
-              Example in Bengali: "আমাদের এলাকায় ড্রেন উপচে রাস্তায় জল জমেছে"<br/>
-              Example in Hindi: "सड़क पर गहरा गड्ढा है जिससे दुर्घटना हो सकती है"<br/>
-              Example in English: "Streetlight pole sparking near market gate"
+              Example: "Streetlight pole sparking near market gate causing safety risk."<br/>
+              Example: "Overflowing storm drain causing waterlogging across the main street."<br/>
+              Example: "Multiple deep potholes on Station Road near the railway junction."
             </span>
           )}
         </div>

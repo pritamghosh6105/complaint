@@ -1,43 +1,48 @@
 import React from 'react';
-import { MapPin, BrainCircuit, Clock, ArrowRight, ShieldAlert, CheckCircle2 } from 'lucide-react';
-import Badge from '../ui/Badge';
-import Card from '../ui/Card';
+import { MapPin, BrainCircuit, ArrowRight, Shield, Clock } from 'lucide-react';
+import { PriorityBadge } from '../ui/PriorityBadge';
+import { StatusBadge } from '../ui/StatusBadge';
 
 export default function ComplaintCard({ complaint, onClick }) {
   if (!complaint) return null;
 
-  const isCritical = complaint.priority === 'CRITICAL';
-  const isResolved = complaint.status === 'Resolved';
+  const trackingCode = complaint.tracking_id || `CP-${complaint.id}`;
 
   return (
-    <Card 
-      interactive 
+    <div 
+      className="gov-card gov-card-interactive" 
       onClick={onClick}
       style={{
-        padding: '20px',
+        padding: '18px 20px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        position: 'relative',
-        overflow: 'hidden',
-        borderLeft: isCritical ? '4px solid var(--status-critical)' : isResolved ? '4px solid var(--status-low)' : '1px solid var(--border-subtle)'
+        position: 'relative'
+      }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick && onClick();
+        }
       }}
     >
       <div>
-        {/* Card Header: Tracking ID & Priority */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+        {/* Card Header: Tracking ID & Priority Badge */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ 
-              fontFamily: 'monospace', 
-              fontSize: '0.8rem', 
+              fontFamily: 'var(--font-mono)', 
+              fontSize: '0.78125rem', 
               fontWeight: 700, 
-              color: 'var(--accent-cyan)',
-              background: 'rgba(6, 182, 212, 0.1)',
+              color: 'var(--color-accent)',
+              background: 'var(--color-accent-subtle)',
               padding: '2px 8px',
-              borderRadius: 'var(--radius-sm)',
-              border: '1px solid rgba(6, 182, 212, 0.25)'
+              borderRadius: 'var(--radius-xs)',
+              border: '1px solid rgba(37, 99, 235, 0.2)'
             }}>
-              #{complaint.tracking_id || `CMP-${complaint.id}`}
+              #{trackingCode}
             </span>
             {complaint.created_at && (
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
@@ -45,71 +50,69 @@ export default function ComplaintCard({ complaint, onClick }) {
               </span>
             )}
           </div>
-          <Badge variant={complaint.priority} pulsing={isCritical}>
-            {complaint.priority}
-          </Badge>
+
+          <PriorityBadge priority={complaint.priority} />
         </div>
 
-        {/* Title */}
+        {/* Issue Title */}
         <h4 style={{ 
-          fontSize: '1.05rem', 
+          fontSize: '1rem', 
           fontWeight: 700, 
           color: 'var(--text-primary)', 
           marginBottom: '8px',
-          lineHeight: 1.3
+          lineHeight: 1.35
         }}>
           {complaint.title || complaint.category}
         </h4>
 
-        {/* Location & Ward */}
+        {/* Location & Jurisdiction Details */}
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
           gap: '6px', 
-          fontSize: '0.8rem', 
+          fontSize: '0.8125rem', 
           color: 'var(--text-secondary)',
-          marginBottom: '14px'
+          marginBottom: '12px'
         }}>
-          <MapPin size={14} color="var(--accent-primary)" />
-          <span>{complaint.ward || 'Municipal Area'}</span>
-          {complaint.location_type && (
-            <>
-              <span style={{ color: 'var(--border-subtle)' }}>•</span>
-              <span>{complaint.location_type} Zone</span>
-            </>
-          )}
+          <MapPin size={14} color="var(--color-accent)" style={{ flexShrink: 0 }} />
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {complaint.district ? `${complaint.district} • ` : ''}
+            {complaint.ward || complaint.police_station || 'Municipal Sector'}
+          </span>
         </div>
 
-        {/* AI Classification & Department Badge */}
+        {/* AI Categorization Summary */}
         <div style={{ 
-          background: 'rgba(59, 130, 246, 0.08)',
-          border: '1px solid rgba(59, 130, 246, 0.18)',
+          background: 'var(--bg-surface-elevated)',
+          border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-sm)',
           padding: '8px 12px',
           marginBottom: '14px',
-          fontSize: '0.8rem'
+          fontSize: '0.8125rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-secondary)' }}>
-              <BrainCircuit size={13} color="var(--accent-primary)" /> AI Category:
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+              <BrainCircuit size={13} color="var(--color-accent)" /> Department:
             </span>
-            <strong style={{ color: 'var(--text-primary)' }}>{complaint.category}</strong>
+            <strong style={{ color: 'var(--text-primary)', fontSize: '0.8125rem' }}>
+              {complaint.category}
+            </strong>
           </div>
           {complaint.subcategory && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginTop: '2px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginTop: '4px' }}>
               <span style={{ color: 'var(--text-muted)' }}>Subcategory:</span>
-              <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{complaint.subcategory}</span>
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{complaint.subcategory}</span>
             </div>
           )}
           {complaint.is_crime && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', color: '#38bdf8', marginTop: '4px' }}>
-              <span>🔒 Protected Law Enforcement Case</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.6875rem', color: 'var(--color-info)', marginTop: '4px' }}>
+              <Shield size={11} /> Sensitive Jurisdiction Protected
             </div>
           )}
         </div>
       </div>
 
-      {/* Card Footer: Status & Link */}
+      {/* Card Footer: Status Badge & View Details Link */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
@@ -117,20 +120,19 @@ export default function ComplaintCard({ complaint, onClick }) {
         paddingTop: '12px',
         borderTop: '1px solid var(--border-subtle)'
       }}>
-        <Badge variant={complaint.status}>
-          {complaint.status}
-        </Badge>
+        <StatusBadge status={complaint.status} />
+
         <span style={{ 
           display: 'inline-flex', 
           alignItems: 'center', 
           gap: '4px', 
-          fontSize: '0.8rem', 
+          fontSize: '0.8125rem', 
           fontWeight: 600, 
-          color: 'var(--accent-primary)' 
+          color: 'var(--color-accent)' 
         }}>
-          Audit Trail <ArrowRight size={14} />
+          View Details <ArrowRight size={13} />
         </span>
       </div>
-    </Card>
+    </div>
   );
 }

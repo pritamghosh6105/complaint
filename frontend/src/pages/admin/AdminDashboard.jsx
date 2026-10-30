@@ -1415,7 +1415,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
         >
           <form onSubmit={handleOverridePrioritySubmit}>
             <div style={{ marginBottom: '14px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              Target: <strong style={{ color: '#fff' }}>{overridePriorityComplaint?.title}</strong>
+              Target: <strong style={{ color: 'var(--text-primary)' }}>{overridePriorityComplaint?.title}</strong>
               <div style={{ marginTop: '4px' }}>
                 Current Priority: <span className={`badge ${getPriorityBadgeClass(overridePriorityComplaint?.priority)}`}>
                   {overridePriorityComplaint?.priority}
@@ -1473,7 +1473,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
           {inspectEvidenceComplaint && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <h4 style={{ fontSize: '1.05rem', color: '#fff', marginBottom: '4px' }}>
+                <h4 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '4px' }}>
                   {inspectEvidenceComplaint.title}
                 </h4>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>

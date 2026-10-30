@@ -246,9 +246,16 @@ class RelationalStorage {
       } else if (qLower.includes('where c.citizen_id = ?') || qLower.includes('where citizen_id = ?')) {
         const cid = Number(params[0]);
         list = list.filter(c => c.citizen_id === cid);
+      } else if (qLower.includes('officer_id = ? or department_id = ?') || qLower.includes('c.officer_id = ? or c.department_id = ?') || qLower.includes('officer_id = ? or c.department_id = ?')) {
+        const oid = Number(params[0]);
+        const did = Number(params[1]);
+        list = list.filter(c => (c.officer_id !== null && c.officer_id === oid) || (c.department_id !== null && c.department_id === did));
       } else if (qLower.includes('where c.officer_id = ?') || qLower.includes('where officer_id = ?')) {
         const oid = Number(params[0]);
         list = list.filter(c => c.officer_id === oid);
+      } else if (qLower.includes('where c.department_id = ?') || qLower.includes('where department_id = ?')) {
+        const did = Number(params[0]);
+        list = list.filter(c => c.department_id === did);
       } else if (qLower.includes('where status in')) {
         if (params.length > 0) {
           list = list.filter(c => params.includes(c.status));
@@ -411,6 +418,12 @@ class RelationalStorage {
       mouza: cData.mouza || '',
       police_station_id: cData.police_station_id ? Number(cData.police_station_id) : null,
       police_station: cData.police_station || '',
+      nearest_police_station: cData.nearest_police_station || cData.nearestPoliceStation || null,
+      nearest_police_station_distance: cData.nearest_police_station_distance !== undefined && cData.nearest_police_station_distance !== null ? Number(cData.nearest_police_station_distance) : null,
+      jurisdiction_police_station: cData.jurisdiction_police_station || cData.jurisdictionPoliceStation || null,
+      jurisdiction_verified: Boolean(cData.jurisdiction_verified || cData.jurisdictionVerified),
+      location_source: cData.location_source || cData.locationSource || 'Interactive GIS Map Pin (Auto-Decoded)',
+      verification_status: cData.verification_status || cData.verificationStatus || (cData.isConfirmed ? 'VERIFIED' : 'PARTIALLY_VERIFIED'),
       locality: cData.locality || '',
       landmark: cData.landmark || '',
       postal_code: cData.postal_code || '',
@@ -427,6 +440,18 @@ class RelationalStorage {
       ml_predicted_priority: cData.ml_predicted_priority || cData.priority || 'MEDIUM',
       predicted_category: cData.predicted_category || cData.category,
       predicted_subcategory: cData.predicted_subcategory || cData.subcategory || null,
+      primary_department: cData.primary_department || cData.primaryDepartment || cData.predicted_category || cData.category,
+      secondary_departments: cData.secondary_departments || cData.secondaryDepartments || [],
+      requires_human_review: Boolean(cData.requires_human_review || cData.requiresHumanReview),
+      incident_type: cData.incident_type || cData.incidentType || 'Standard Civic Complaint',
+      cause_known: Boolean(cData.cause_known || cData.causeKnown),
+      classification_reason: cData.classification_reason || cData.classificationReason || cData.reason || null,
+      original_predicted_department: cData.original_predicted_department || cData.originalPredictedDepartment || cData.predicted_category || cData.category,
+      final_department: cData.final_department || cData.finalDepartment || cData.category,
+      reviewed_by: cData.reviewed_by || cData.reviewedBy || null,
+      reviewed_at: cData.reviewed_at || cData.reviewedAt || null,
+      admin_override: Boolean(cData.admin_override || cData.adminOverride),
+      admin_override_reason: cData.admin_override_reason || cData.adminOverrideReason || null,
       is_emergency: Number(cData.is_emergency || 0),
       is_crime: Number(cData.is_crime || 0),
       is_sensitive: Number(cData.is_sensitive || 0),
@@ -443,7 +468,82 @@ class RelationalStorage {
       upvoter_ids: cData.upvoter_ids || [],
       reopen_count: Number(cData.reopen_count || 0),
       reopen_reason: cData.reopen_reason || null,
-      detected_language: cData.detected_language || 'en',
+      userEnteredAddress: cData.userEnteredAddress || cData.user_entered_address || cData.address || '',
+      location: {
+        type: 'Point',
+        coordinates: [Number(cData.longitude || 88.4800), Number(cData.latitude || 22.7230)], // [longitude, latitude]
+        address: cData.address || '',
+        pincode: cData.postal_code || '',
+        postOffice: cData.post_office || cData.postOffice || '',
+        district: cData.district || 'North 24 Parganas',
+        subdivision: cData.subdivision || '',
+        state: cData.state || 'West Bengal',
+        policeStation: cData.police_station || null,
+        nearestPoliceStation: cData.nearest_police_station || cData.nearestPoliceStation || null,
+        nearestPoliceStationDistance: cData.nearest_police_station_distance !== undefined && cData.nearest_police_station_distance !== null ? Number(cData.nearest_police_station_distance) : null,
+        jurisdictionPoliceStation: cData.jurisdiction_police_station || cData.jurisdictionPoliceStation || null,
+        jurisdictionVerified: Boolean(cData.jurisdiction_verified || cData.jurisdictionVerified),
+        verificationStatus: cData.verification_status || cData.verificationStatus || (cData.isConfirmed ? 'VERIFIED' : 'PARTIALLY_VERIFIED'),
+        administrativeUnit: cData.administrative_type || 'Urban',
+        urbanRural: cData.administrative_type || 'Urban',
+        ulb: cData.municipality || null,
+        ward: cData.ward || null,
+        block: cData.block || null,
+        gramPanchayat: cData.gram_panchayat || null,
+        village: cData.village || null,
+        districtId: cData.district_id || null,
+        subdivisionId: cData.subdivision_id || null,
+        municipalityId: cData.ulb_id || null,
+        wardId: cData.ward_id || null,
+        blockId: cData.block_id || null,
+        gramPanchayatId: cData.gram_panchayat_id || null,
+        villageId: cData.village_id || null,
+        policeStationId: cData.police_station_id || null,
+        locality: cData.locality || '',
+        street: cData.street || '',
+        landmark: cData.landmark || '',
+        source: cData.locationSource || 'Citizen GPS & CivicPulse GIS Engine'
+      },
+      locationSnapshot: {
+        latitude: Number(cData.latitude || 22.7230),
+        longitude: Number(cData.longitude || 88.4800),
+        address: cData.address || '',
+        district: cData.district || 'North 24 Parganas',
+        subdivision: cData.subdivision || '',
+        urbanRural: cData.administrative_type || 'Urban',
+        ulb: cData.municipality || null,
+        ward: cData.ward || null,
+        block: cData.block || null,
+        gramPanchayat: cData.gram_panchayat || null,
+        village: cData.village || null,
+        pincode: cData.postal_code || '',
+        postOffice: cData.post_office || cData.postOffice || '',
+        nearestPoliceStation: cData.nearest_police_station || cData.nearestPoliceStation || null,
+        nearestPoliceStationDistance: cData.nearest_police_station_distance !== undefined && cData.nearest_police_station_distance !== null ? Number(cData.nearest_police_station_distance) : null,
+        jurisdictionPoliceStation: cData.jurisdiction_police_station || cData.jurisdictionPoliceStation || null,
+        jurisdictionVerified: Boolean(cData.jurisdiction_verified || cData.jurisdictionVerified),
+        locationSource: cData.locationSource || 'Citizen GPS & CivicPulse GIS Engine',
+        verificationStatus: cData.verification_status || cData.verificationStatus || (cData.isConfirmed ? 'VERIFIED' : 'PARTIALLY_VERIFIED'),
+        sources: cData.sources || {},
+        coordinates: {
+          type: 'Point',
+          coordinates: [Number(cData.longitude || 88.4800), Number(cData.latitude || 22.7230)]
+        },
+        mode: cData.administrative_type || 'Urban',
+        state: cData.state || 'West Bengal',
+        districtId: cData.district_id || null,
+        subdivisionId: cData.subdivision_id || null,
+        ulbId: cData.ulb_id || null,
+        wardId: cData.ward_id || null,
+        blockId: cData.block_id || null,
+        gramPanchayatId: cData.gram_panchayat_id || null,
+        villageId: cData.village_id || null,
+        policeStation: cData.police_station || '',
+        policeStationId: cData.police_station_id || null,
+        landmark: cData.landmark || '',
+        locationConfidence: cData.locationConfidence || 0.95,
+        jurisdictionSource: cData.jurisdictionSource || 'Official West Bengal LGD & GIS Boundaries'
+      },
       created_at: now,
       updated_at: now,
       resolved_at: null
@@ -654,35 +754,69 @@ class RelationalStorage {
       }
       const c = this.data.complaints.find(comp => comp.id === targetId);
       if (c) {
-        if (qLower.includes('set status = ?')) {
-          c.status = params[0];
-          c.updated_at = now;
-          if (params[0] === 'Resolved') {
-            c.resolved_at = now;
+        const setMatch = query.match(/set\s+([\s\S]+?)\s+where/i);
+        if (setMatch) {
+          const assignments = setMatch[1].split(',').map(s => s.trim());
+          let paramIdx = 0;
+          for (const assign of assignments) {
+            const parts = assign.split('=').map(p => p.trim());
+            if (parts.length === 2) {
+              const col = parts[0].toLowerCase();
+              const valExpr = parts[1];
+              if (valExpr === '?') {
+                const val = params[paramIdx++];
+                if (col === 'status') {
+                  c.status = String(val);
+                  if (val === 'Resolved') c.resolved_at = now;
+                } else if (col === 'officer_id') {
+                  c.officer_id = val !== null && val !== undefined ? Number(val) : null;
+                } else if (col === 'department_id') {
+                  c.department_id = val !== null && val !== undefined ? Number(val) : null;
+                } else if (col === 'resolution_notes') {
+                  c.resolution_notes = val || '';
+                } else if (col === 'category') {
+                  c.category = String(val);
+                  c.final_department = String(val);
+                } else if (col === 'subcategory') {
+                  c.subcategory = val ? String(val) : null;
+                } else if (col === 'priority') {
+                  c.priority = String(val);
+                } else if (col === 'final_priority') {
+                  c.final_priority = String(val);
+                } else if (col === 'final_department') {
+                  c.final_department = String(val);
+                } else if (col === 'admin_override') {
+                  c.admin_override = Boolean(val);
+                } else if (col === 'admin_override_reason') {
+                  c.admin_override_reason = val || null;
+                } else if (col === 'reviewed_by') {
+                  c.reviewed_by = val || null;
+                } else if (col === 'reviewed_at') {
+                  c.reviewed_at = now;
+                } else if (col === 'sla_deadline') {
+                  c.sla_deadline = val || null;
+                } else if (col === 'resolution_image_url') {
+                  c.resolution_image_url = val || null;
+                } else if (col === 'resolution_evidence_id') {
+                  c.resolution_evidence_id = val !== null && val !== undefined ? Number(val) : null;
+                }
+              } else if (valExpr.toUpperCase() === 'NULL' && col === 'officer_id') {
+                c.officer_id = null;
+              } else if (valExpr.toUpperCase() === "'RESOLVED'" && col === 'status') {
+                c.status = 'Resolved';
+                c.resolved_at = now;
+              } else if (valExpr === '1' && col === 'admin_override') {
+                c.admin_override = true;
+              }
+            }
           }
-        }
-        if (qLower.includes('officer_id = ?')) {
-          const offId = params.find((p, idx) => qLower.includes('officer_id = ?') && idx === 0);
-          c.officer_id = offId ? Number(offId) : c.officer_id;
-        }
-        if (qLower.includes('resolution_notes = ?') || qLower.includes('resolution_image_url = ?')) {
-          c.status = 'Resolved';
-          c.resolution_notes = params[0];
-          c.resolution_image_url = params[1] || null;
-          c.resolved_at = now;
-          c.updated_at = now;
         }
         if (qLower.includes('is_escalated')) {
           const currentLevel = c.escalation_level || 0;
           c.is_escalated = 1;
           c.escalation_level = Math.min(3, currentLevel + 1);
-          c.updated_at = now;
         }
-        if (qLower.includes('department_id = ?')) {
-          c.department_id = Number(params[0]);
-          c.officer_id = null;
-          c.updated_at = now;
-        }
+        c.updated_at = now;
         this.save();
         this.pushToMongo('Complaint', { id: c.id }, c);
         return { changes: 1 };
@@ -722,41 +856,56 @@ class RelationalStorage {
       
       if (deptCount > 0) {
         console.log('\x1b[36m%s\x1b[0m', '⚡ [MongoDB Atlas] Syncing collections from Cloud to memory...');
-        const [depts, users, complaints, timeline, feedback, notifs, evidence, visual, audits] = await Promise.all([
+        const [depts, users, complaints, timeline, feedback, notifs, evidence, aiPreds, locs, postals, police, bounds] = await Promise.all([
           mongoModels.Department.find().lean(),
           mongoModels.User.find().lean(),
           mongoModels.Complaint.find().lean(),
-          mongoModels.ComplaintTimeline.find().lean(),
+          mongoModels.ComplaintHistory.find().lean(),
           mongoModels.Feedback.find().lean(),
           mongoModels.Notification.find().lean(),
-          mongoModels.ComplaintEvidence.find().lean(),
-          mongoModels.VisualAnalysis.find().lean(),
-          mongoModels.EvidenceAuditLog.find().lean()
+          mongoModels.Evidence.find().lean(),
+          mongoModels.AiPrediction.find().lean(),
+          mongoModels.Location.find().lean(),
+          mongoModels.PostalLocation.find().lean(),
+          mongoModels.PoliceStation.find().lean(),
+          mongoModels.LocationBoundary.find().lean()
         ]);
 
         if (depts.length) this.data.departments = depts.map(d => ({ ...d, id: d.id || d._id }));
         if (users.length) this.data.users = users.map(u => ({ ...u, id: u.id || u._id }));
         if (complaints.length) this.data.complaints = complaints.map(c => ({ ...c, id: c.id || c._id }));
-        if (timeline.length) this.data.complaint_timeline = timeline.map(t => ({ ...t, id: t.id || t._id }));
+        if (timeline.length) {
+          this.data.complaint_timeline = timeline.map(t => ({ ...t, id: t.id || t._id }));
+          this.data.complaint_history = this.data.complaint_timeline;
+        }
         if (feedback.length) this.data.feedback = feedback.map(f => ({ ...f, id: f.id || f._id }));
         if (notifs.length) this.data.notifications = notifs.map(n => ({ ...n, id: n.id || n._id }));
-        if (evidence && evidence.length) this.data.complaint_evidence = evidence.map(e => ({ ...e, id: e.id || e._id }));
-        if (visual && visual.length) this.data.visual_analyses = visual.map(v => ({ ...v, id: v.id || v._id }));
-        if (audits && audits.length) this.data.evidence_audit_logs = audits.map(a => ({ ...a, id: a.id || a._id }));
+        if (evidence && evidence.length) {
+          this.data.complaint_evidence = evidence.map(e => ({ ...e, id: e.id || e._id }));
+          this.data.evidence = this.data.complaint_evidence;
+        }
+        if (aiPreds && aiPreds.length) {
+          this.data.ai_predictions = aiPreds.map(a => ({ ...a, id: a.id || a._id }));
+          this.data.visual_analyses = this.data.ai_predictions;
+        }
+        if (locs && locs.length) this.data.locations = locs.map(l => ({ ...l, id: l.id || l._id }));
+        if (postals && postals.length) this.data.postal_locations = postals.map(p => ({ ...p, id: p.id || p._id }));
+        if (police && police.length) this.data.police_stations = police.map(p => ({ ...p, id: p.id || p._id }));
+        if (bounds && bounds.length) this.data.location_boundaries = bounds.map(b => ({ ...b, id: b.id || b._id }));
 
         // Update counter sequences
         this.data._counters.departments = Math.max(...this.data.departments.map(d => d.id || 0), 0) + 1;
         this.data._counters.users = Math.max(...this.data.users.map(u => u.id || 0), 0) + 1;
         this.data._counters.complaints = Math.max(...this.data.complaints.map(c => c.id || 0), 0) + 1;
         this.data._counters.complaint_timeline = Math.max(...this.data.complaint_timeline.map(t => t.id || 0), 0) + 1;
+        this.data._counters.complaint_history = this.data._counters.complaint_timeline;
         this.data._counters.feedback = Math.max(...this.data.feedback.map(f => f.id || 0), 0) + 1;
         this.data._counters.notifications = Math.max(...this.data.notifications.map(n => n.id || 0), 0) + 1;
-        this.data._counters.complaint_evidence = Math.max(...(this.data.complaint_evidence || []).map(e => e.id || 0), 0) + 1;
-        this.data._counters.visual_analyses = Math.max(...(this.data.visual_analyses || []).map(v => v.id || 0), 0) + 1;
-        this.data._counters.evidence_audit_logs = Math.max(...(this.data.evidence_audit_logs || []).map(a => a.id || 0), 0) + 1;
+        this.data._counters.evidence = Math.max(...(this.data.evidence || []).map(e => e.id || 0), 0) + 1;
+        this.data._counters.ai_predictions = Math.max(...(this.data.ai_predictions || []).map(a => a.id || 0), 0) + 1;
 
         this.save();
-        console.log('\x1b[32m%s\x1b[0m', `✓ [MongoDB Atlas] Synced ${complaints.length} complaints, ${users.length} users, ${depts.length} departments, ${(evidence || []).length} evidence files.`);
+        console.log('\x1b[32m%s\x1b[0m', `✓ [MongoDB Atlas] Synced all 12 collections (${complaints.length} complaints, ${users.length} users, ${depts.length} depts, ${locs.length} locations).`);
       } else {
         console.log('\x1b[36m%s\x1b[0m', '⚡ [MongoDB Atlas] Empty cluster detected. Uploading seed data to Atlas...');
         await this.syncAllToMongo();

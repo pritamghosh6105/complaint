@@ -1,0 +1,64 @@
+{
+  "totalEntities": 9784,
+  "validRecords": 9784,
+  "invalidRecords": 0,
+  "duplicates": 0,
+  "orphans": 0,
+  "missingParent": 0,
+  "invalidPin": 0,
+  "invalidCoordinates": 0,
+  "nonWestBengal": 0,
+  "deliveryStatusViolations": 0,
+  "details": {
+    "districts": {
+      "total": 23,
+      "valid": 0,
+      "issues": []
+    },
+    "subdivisions": {
+      "total": 65,
+      "valid": 0,
+      "issues": []
+    },
+    "blocks": {
+      "total": 56,
+      "valid": 0,
+      "issues": []
+    },
+    "ulbs": {
+      "total": 54,
+      "valid": 0,
+      "issues": []
+    },
+    "gramPanchayats": {
+      "total": 54,
+      "valid": 0,
+      "issues": []
+    },
+    "wards": {
+      "total": 150,
+      "valid": 0,
+      "issues": []
+    },
+    "villages": {
+      "total": 33,
+      "valid": 0,
+      "issues": []
+    },
+    "postalLocations": {
+      "total": 8772,
+      "valid": 0,
+      "issues": []
+    },
+    "policeStations": {
+      "total": 573,
+      "valid": 0,
+      "issues": []
+    },
+    "boundaries": {
+      "total": 4,
+      "valid": 0,
+      "issues": []
+    }
+  }
+}

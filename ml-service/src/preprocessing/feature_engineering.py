@@ -4,224 +4,14 @@ import numpy as np
 import pandas as pd
 from typing import Dict, List, Any
 
-# Negation patterns to avoid false positives (e.g. "no immediate danger", "কোনও জরুরি বিপদ নেই")
+# English Negation patterns to avoid false positives (e.g. "no immediate danger", "no threat to the public")
 NEGATION_PATTERNS = [
     r'\bno\s+(?:immediate\s+)?(?:danger|threat|risk|emergency|hazard|harm)\b',
+    r'\bno\s+indication\s+of\s+(?:an?\s+)?(?:ongoing|immediate|active)\s+(?:safety\s+hazard|threat|danger|risk)\b',
+    r'\bno\s+ongoing\s+(?:safety\s+hazard|threat|danger|risk|hazard)\b',
+    r'\bno\s+(?:ongoing\s+)?(?:safety\s+hazard\s+or\s+immediate\s+threat|threat\s+to\s+the\s+public)\b',
     r'\bnot\s+(?:dangerous|fatal|critical|threatening|urgent)\b',
-    r'\bwithout\s+any\s+(?:immediate\s+)?(?:danger|threat|risk)\b',
-    r'কোনও\s+(?:জরুরি\s+)?বিপদ\s+নেই',
-    r'কোনো\s+(?:জরুরি\s+)?বিপদ\s+নেই',
-    r'বিপদ\s+নেই',
-    r'জরুরি\s+নয়',
-    r'ঝুঁকি\s+নেই',
-    r'কোনও\s+ভয়\s+নেই',
-    r'কোনো\s+ভয়\s+নেই',
-    r'কোনও\s+ক্ষতি\s+হয়নি',
-    r'কোনো\s+ক্ষতি\s+হয়নি',
-    r'কোনও\s+আঘাত\s+হয়নি',
-    r'কোনো\s+আঘাত\s+হয়নি',
-    r'কোনও\s+সমস্যা\s+নেই',
-    r'কোনো\s+সমস্যা\s+নেই',
-    r'কোনও\s+অসুবিধা\s+নেই',
-    r'কোনো\s+অসুবিধা\s+নেই',
-    r'কোনো\s+জরুরি\s+পরিস্থিতি\s+নেই',
-    r'কোনও\s+জরুরি\s+পরিস্থিতি\s+নেই',
-    r'কোনো\s+জীবনহানির\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+জীবনহানির\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+প্রাণনাশের\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+প্রাণনাশের\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+দুর্ঘটনা\s+ঘটেনি',
-    r'কোনও\s+দুর্ঘটনা\s+ঘটেনি',
-    r'কোনো\s+ক্ষতিসাধন\s+হয়নি',
-    r'কোনও\s+ক্ষতিসাধন\s+হয়নি',
-    r'কোনো\s+আতঙ্ক\s+নেই',
-    r'কোনও\s+আতঙ্ক\s+নেই',
-    r'কোনো\s+বড়\s+সমস্যা\s+নেই',
-    r'কোনও\s+বড়\s+সমস্যা\s+নেই',
-    r'কোনো\s+মারাত্মক\s+কিছু\s+নয়',
-    r'কোনও\s+মারাত্মক\s+কিছু\s+নয়',
-    r'কোনো\s+তাৎক্ষণিক\s+বিপদ\s+নেই',
-    r'কোনও\s+তাৎক্ষণিক\s+বিপদ\s+নেই',
-    r'কোনো\s+জরুরি\s+ঝুঁকি\s+নেই',
-    r'কোনও\s+জরুরি\s+ঝুঁকি\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনো\s+জরুরি\s+সমস্যা\s+নেই',
-    r'কোনও\s+জরুরি\s+সমস্যা\s+নেই',
-    r'কোনো\s+জরুরি\s+অবস্থা\s+নেই',
-    r'কোনও\s+জরুরি\s+অবস্থা\s+নেই',
-    r'কোনো\s+জরুরি\s+সাহায্যের\s+প্রয়োজন\s+নেই',
-    r'কোনও\s+জরুরি\s+সাহায্যের\s+প্রয়োজন\s+নেই',
-    r'কোনো\s+জরুরি\s+পদক্ষেপের\s+প্রয়োজন\s+নেই',
-    r'কোনও\s+জরুরি\s+পদক্ষেপের\s+প্রয়োজন\s+নেই',
-    r'কোনো\s+জরুরি\s+হুমকি\s+নেই',
-    r'কোনও\s+জরুরি\s+হুমকি\s+নেই',
-    r'কোনো\s+জরুরি\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+সম্ভাবনা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+সম্ভাবনা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ঝুঁকি\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ঝুঁকি\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ভয়\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ভয়\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+উদ্বেগ\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+উদ্বেগ\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+শঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+শঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ত্রাস\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ত্রাস\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+হুলস্থুল\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+হুলস্থুল\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+হইচই\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+হইচই\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+গোলমাল\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+গোলমাল\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+অশান্তি\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+অশান্তি\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+বিশৃঙ্খলা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+বিশৃঙ্খলা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+বিপর্যয়\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+বিপর্যয়\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\_ধ্বংস\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ধ্বংস\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনো\s+তাৎক্ষণিক\s+বিপদ\s+নেই',
-    r'কোনও\s+তাৎক্ষণিক\s+বিপদ\s+নেই',
-    r'কোনো\s+জরুরি\s+ঝুঁকি\s+নেই',
-    r'কোনও\s+জরুরি\s+ঝুঁকি\s+নেই',
-    r'কোনো\s+জরুরি\s+সমস্যা\s+নেই',
-    r'কোনও\s+জরুরি\s+সমস্যা\s+নেই',
-    r'কোনও\s+ক্ষতি\s+হয়নি',
-    r'কোনো\s+ক্ষতি\s+হয়নি',
-    r'বিপদ\s+নেই',
-    r'জরুরি\s+নয়',
-    r'কোনো\s+বিপদ\s+নেই',
-    r'কোনও\s+বিপদ\s+নেই',
-    r'কোনও\s+জরুরি\s+নেই',
-    r'কোনো\s+জরুরি\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনো\s+জরুরি\s+অবস্থা\s+নেই',
-    r'কোনও\s+জরুরি\s+অবস্থা\s+নেই',
-    r'কোনো\s+জরুরি\s+সাহায্যের\s+প্রয়োজন\s+নেই',
-    r'কোনও\s+জরুরি\s+সাহায্যের\s+প্রয়োজন\s+নেই',
-    r'কোনো\s+জরুরি\s+পদক্ষেপের\s+প্রয়োজন\s+নেই',
-    r'কোনও\s+জরুরি\s+পদক্ষেপের\s+প্রয়োজন\s+নেই',
-    r'কোনো\s+জরুরি\s+হুমকি\s+নেই',
-    r'কোনও\s+জরুরি\s+হুমকি\s+নেই',
-    r'কোনো\s+জরুরি\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+সম্ভাবনা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+সম্ভাবনা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ঝুঁকি\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ঝুঁকি\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ভয়\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ভয়\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+উদ্বেগ\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+উদ্বেগ\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+শঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+শঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ত্রাস\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ত্রাস\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+হুলস্থুল\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+হুলস্থুল\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+হইচই\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+হইচই\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+গোলমাল\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+গোলমাল\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+অশান্তি\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+অশান্তি\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+বিশৃঙ্খলা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+বিশৃঙ্খলা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+বিপর্যয়\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+বিপর্যয়\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ধ্বংস\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ধ্বংস\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনও\s+ক্ষতি\s+হয়নি',
-    r'কোনো\s+ক্ষতি\s+হয়নি',
-    r'কোনও\s+আঘাত\s+হয়নি',
-    r'কোনো\s+আঘাত\s+হয়নি',
-    r'কোনও\s+সমস্যা\s+নেই',
-    r'কোনো\s+সমস্যা\s+নেই',
-    r'কোনও\s+অসুবিধা\s+নেই',
-    r'কোনো\s+অসুবিধা\s+নেই',
-    r'কোনও\s+জরুরি\s+পরিস্থিতি\s+নেই',
-    r'কোনো\s+জরুরি\s+পরিস্থিতি\s+নেই',
-    r'কোনও\s+জীবনহানির\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+জীবনহানির\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+প্রাণনাশের\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+প্রাণনাশের\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+দুর্ঘটনা\s+ঘটেনি',
-    r'কোনো\s+দুর্ঘটনা\s+ঘটেনি',
-    r'কোনও\s+ক্ষতিসাধন\s+হয়নি',
-    r'কোনো\s+ক্ষতিসাধন\s+হয়নি',
-    r'কোনও\s+আতঙ্ক\s+নেই',
-    r'কোনো\s+আতঙ্ক\s+নেই',
-    r'কোনও\s+বড়\s+সমস্যা\s+নেই',
-    r'কোনো\s+বড়\s+সমস্যা\s+নেই',
-    r'কোনও\s+মারাত্মক\s+কিছু\s+নয়',
-    r'কোনো\s+মারাত্মক\s+কিছু\s+নয়',
-    r'কোনও\s+তাৎক্ষণিক\s+বিপদ\s+নেই',
-    r'কোনো\s+তাৎক্ষণিক\s+বিপদ\s+নেই',
-    r'কোনও\s+জরুরি\s+ঝুঁকি\s+নেই',
-    r'কোনো\s+জরুরি\s+ঝুঁকি\s+নেই',
-    r'কোনও\s+জরুরি\s+সমস্যা\s+নেই',
-    r'কোনো\s+জরুরি\s+সমস্যা\s+নেই',
-    r'কোনও\s+জরুরি\s+অবস্থা\s+নেই',
-    r'কোনো\s+জরুরি\s+অবস্থা\s+নেই',
-    r'কোনও\s+জরুরি\s+সাহায্যের\s+প্রয়োজন\s+নেই',
-    r'কোনো\s+জরুরি\s+সাহায্যের\s+প্রয়োজন\s+নেই',
-    r'কোনও\s+জরুরি\s+পদক্ষেপের\s+প্রয়োজন\s+নেই',
-    r'কোনো\s+জরুরি\s+পদক্ষেপের\s+প্রয়োজন\s+নেই',
-    r'কোনও\s+জরুরি\s+হুমকি\s+নেই',
-    r'কোনো\s+জরুরি\s+হুমকি\s+নেই',
-    r'কোনও\s+জরুরি\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+আশঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+আশঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+সম্ভাবনা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+সম্ভাবনা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ঝুঁকি\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ঝুঁকি\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ভয়\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ভয়\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+উদ্বেগ\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+উদ্বেগ\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+শঙ্কা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+শঙ্কা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ত্রাস\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ত্রাস\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+হুলস্থুল\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+হুলস্থুল\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+হইচই\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+হইচই\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+গোলমাল\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+গোলমাল\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+অশান্তি\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+অশান্তি\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+বিশৃঙ্খলা\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+বিশৃঙ্খলা\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+বিপর্যয়\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+বিপর্যয়\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+ঘটার\s+ধ্বংস\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+ঘটার\s+ধ্বংস\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনো\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনও\s+জরুরি\s+বিপদ\s+নেই',
-    r'কোনো\s+বিপদ\s+নেই',
-    r'কোনও\s+বিপদ\s+নেই',
-    r'कोई\s+(?:तत्काल\s+)?खतरा\s+नहीं',
-    r'खतरा\s+नहीं\s+है',
-    r'कोई\s+खतरा\s+नहीं',
-    r'कोई\s+आपातकालीन\s+नहीं'
+    r'\bwithout\s+any\s+(?:immediate\s+)?(?:danger|threat|risk)\b'
 ]
 
 def check_has_negation(text_lower: str) -> bool:
@@ -232,7 +22,7 @@ def check_has_negation(text_lower: str) -> bool:
 
 def extract_safety_features(text: str) -> Dict[str, int]:
     """
-    Extracts binary risk indicators across English, Bengali, and Hindi.
+    Extracts binary risk indicators for English complaints.
     Properly accounts for danger negations.
     """
     if not isinstance(text, str):
@@ -240,10 +30,9 @@ def extract_safety_features(text: str) -> Dict[str, int]:
     t = text.lower()
     has_neg = check_has_negation(t)
     
-    # Check if ongoing active crisis (e.g. "right now", "currently", "at this moment", "এই মুহূর্তে", "इस समय")
+    # Check if ongoing active crisis (e.g. "right now", "currently", "at this moment")
     is_active_now = bool(
-        re.search(r'\b(right now|currently|happening now|in progress|at this moment)\b', t) or
-        'এই মুহূর্তে' in t or 'এই মুহুর্তে' in t or 'এখনই' in t or 'इस समय' in t or 'अभी' in t
+        re.search(r'\b(right now|currently|happening now|in progress|at this moment)\b', t)
     )
     
     # 1. Immediate danger
@@ -251,8 +40,7 @@ def extract_safety_features(text: str) -> Dict[str, int]:
     if not has_neg:
         if (
             is_active_now or
-            bool(re.search(r'\b(immediate danger|grave danger|critical danger|lethal peril|mortal peril)\b', t)) or
-            'চরম বিপদ' in t or 'প্রাণঘাতী বিপদ' in t or 'মারাত্মক বিপদ' in t or 'तत्काल खतरा' in t or 'जानलेवा खतरा' in t
+            bool(re.search(r'\b(immediate danger|grave danger|critical danger|lethal peril|mortal peril)\b', t))
         ):
             imm_danger = 1
             
@@ -260,81 +48,68 @@ def extract_safety_features(text: str) -> Dict[str, int]:
     life_threat = 0
     if not has_neg:
         if (
-            bool(re.search(r'\b(electrocuted|electrocution|life[- ]threatening|drowning|suffocating|bloodshed|fatal|kill|dying)\b', t)) or
-            'বিদ্যুৎস্পৃষ্ট' in t or 'প্রাণহানি' in t or 'প্রাণনাশের' in t or 'জানলেভা' in t or 'करंट लगना' in t or 'मौत' in t
+            bool(re.search(r'\b(electrocuted|electrocution|life[- ]threatening|drowning|suffocating|bloodshed|fatal|kill|dying)\b', t))
         ):
             life_threat = 1
             
     # 3. Electrical hazard
     elec_hazard = 1 if bool(
-        re.search(r'\b(live.*wire|sparking|electric shock|high voltage|11kv|transformer blast|electrocuted|electrocution|overhead wire snapped)\b', t) or
-        'বিদ্যুতের তার' in t or 'ছেঁড়া তার' in t or 'বিদ্যুৎস্পৃষ্ট' in t or 'ট্রান্সফর্মার' in t or 'স্পার্ক' in t or 'बिजली का तार' in t or 'करंट' in t or 'नंगा तार' in t
+        re.search(r'\b(live.*wire|sparking|electric shock|high voltage|11kv|transformer blast|electrocuted|electrocution|overhead wire snapped)\b', t)
     ) else 0
 
     # 4. Violence detected
     violence = 1 if bool(
-        re.search(r'\b(attack|assault|attacking|attacked|beating|mob clash|firing|bomb|stabbing|armed)\b', t) or
-        'আক্রমণ' in t or 'শারীরিক আক্রমণ' in t or 'মারধর' in t or 'বোমা' in t or 'গুলি' in t or 'হামলা' in t or 'मारपीट' in t or 'हमला' in t or 'गोलीबारी' in t
+        re.search(r'\b(attack|assault|attacking|attacked|beating|mob clash|firing|bomb|stabbing|armed)\b', t)
     ) else 0
 
     # 5. Fire detected
     fire = 1 if bool(
-        re.search(r'\b(fire|blaze|ablaze|burning|flames|smoke|cylinder blast|explosion|gas leak)\b', t) or
-        'আগুন' in t or 'অগ্নিকাণ্ড' in t or 'ধোঁয়া' in t or 'সিলিন্ডার ব্লাস্ট' in t or 'বিস্ফোরণ' in t or 'आग' in t or 'धुआं' in t or 'विस्फोट' in t
+        re.search(r'\b(fire|blaze|ablaze|burning|flames|smoke|cylinder blast|explosion|gas leak)\b', t)
     ) else 0
 
     # 6. Child safety
     child = 1 if bool(
-        re.search(r'\b(child|children|minor|baby|school entrance|school gate|kidnap|abduction)\b', t) or
-        'শিশু' in t or 'বাচ্চা' in t or 'বাচ্চারা' in t or 'স্কুল' in t or 'স্কুলের' in t or 'बच्चा' in t or 'बच्चे' in t or 'स्कूल' in t or 'अपहरण' in t
+        re.search(r'\b(child|children|minor|baby|school entrance|school gate|kidnap|abduction)\b', t)
     ) else 0
 
     # 7. Women safety
     woman = 1 if bool(
-        re.search(r'\b(woman|female|girl|girls|harassed|harassment|stalking|stalked|followed|eve teasing|molestation)\b', t) or
-        'নারী' in t or 'নারীকে' in t or 'মহিলা' in t or 'মেয়েদের' in t or 'হেনস্থা' in t or 'অনুসরণ' in t or 'महिला' in t or 'छेड़छाड़' in t or 'पीछा' in t
+        re.search(r'\b(woman|female|girl|girls|harassed|harassment|stalking|stalked|followed|eve teasing|molestation)\b', t)
     ) else 0
 
     # 8. Cyber fraud
     cyber = 1 if bool(
-        re.search(r'\b(otp|online fraud|fraud|bank account|charged|debited|hacked|siphoned|phishing|scam)\b', t) or
-        'জালিয়াতি' in t or 'হ্যাকিং' in t or 'ওটিপি' in t or 'ধোঁকাবাজি' in t or 'ধোखाधड़ी' in t or 'हैक' in t or 'ओटीपी' in t or 'धोखाधड़ी' in t
+        re.search(r'\b(otp|online fraud|fraud|bank account|charged|debited|hacked|siphoned|phishing|scam)\b', t)
     ) else 0
 
     # 9. Stolen / Crime
     crime = 1 if bool(
-        re.search(r'\b(stole|stolen|theft|burglary|robbery|snatching|thieves|thief|break-in|extortion)\b', t) or
-        'চুরি' in t or 'ডাকাতি' in t or 'ছিনতাই' in t or 'তোলাবাজ' in t or 'चोरी' in t or 'डकैती' in t or 'छीनना' in t
+        re.search(r'\b(stole|stolen|theft|burglary|robbery|snatching|thieves|thief|break-in|extortion)\b', t)
     ) else 0
 
     # 10. Major health risk
     health = 1 if bool(
-        re.search(r'\b(large pile of waste|health risk|severe health|stench|carcass|epidemic|cholera|diarrhea|toxic|rotting)\b', t) or
-        'স্বাস্থ্যঝুঁকি' in t or 'দুর্গন্ধ' in t or 'পচা' in t or 'কলেরা' in t or 'বিমারি' in t or 'बीमारी' in t or 'महामारी' in t or 'कचरे का ढेर' in t
+        re.search(r'\b(large pile of waste|health risk|severe health|stench|carcass|epidemic|cholera|diarrhea|toxic|rotting)\b', t)
     ) else 0
 
     # 11. Accident risk
     accident = 1 if bool(
-        re.search(r'\b(pothole|craters|suddenly brake|accidents are becoming likely|accidents occurring|skid|crash|collision|reckless speed)\b', t) or
-        'গর্ত' in t or 'গর্তের' in t or 'দুর্ঘটনা' in t or 'ব্রেক' in t or 'পিছলে' in t or 'गड्ढा' in t or 'हादसा' in t or 'दुर्घटना' in t or 'ब्रेक' in t
+        re.search(r'\b(pothole|craters|suddenly brake|accidents are becoming likely|accidents occurring|skid|crash|collision|reckless speed)\b', t)
     ) else 0
 
     # 12. Public infrastructure risk
     infra = 1 if bool(
-        re.search(r'\b(uncovered manhole|open manhole|manhole|bridge pier|bridge crack|sinkhole|cave-in|flyover)\b', t) or
-        'ম্যানহোল' in t or 'ব্রিজ' in t or 'সেতু' in t or 'ধস' in t or 'मैनहोल' in t or 'पुल' in t or 'धंसाव' in t
+        re.search(r'\b(uncovered manhole|open manhole|manhole|bridge pier|bridge crack|sinkhole|cave-in|flyover)\b', t)
     ) else 0
 
     # 13. Injury reported
     injury = 1 if bool(
-        re.search(r'\b(injury|injured|bleeding|fractured|hospitalized|casualties|casualty)\b', t) or
-        'আহত' in t or 'রক্তপাত' in t or 'হাসপাতালে' in t or 'घायल' in t or 'चोट' in t
+        re.search(r'\b(injury|injured|bleeding|fractured|hospitalized|casualties|casualty)\b', t)
     ) else 0
 
     # 14. Disaster detected
     disaster = 1 if bool(
-        re.search(r'\b(flood|cyclone|inundation|landslide|dam breach|collapsed)\b', t) or
-        'বন্যা' in t or 'ঘূর্ণিঝড়' in t or 'ভেঙে পড়েছে' in t or 'बाढ़' in t or 'तूफान' in t
+        re.search(r'\b(flood|cyclone|inundation|landslide|dam breach|collapsed)\b', t)
     ) else 0
 
     return {

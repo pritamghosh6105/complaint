@@ -92,22 +92,22 @@ TEST_CASES = [
     },
     {
         "id": 16,
-        "text": "আমাদের পাড়ার একটি স্ট্রিট লাইট কয়েকদিন ধরে খারাপ। কোনও জরুরি বিপদ নেই।",
+        "text": "A single streetlight on our lane has been broken for a few days. There is no immediate danger.",
         "expected": ["LOW"]
     },
     {
         "id": 17,
-        "text": "একটি শিশু এই মুহূর্তে চরম বিপদের মধ্যে আছে, অবিলম্বে সাহায্য প্রয়োজন।",
+        "text": "A minor child is currently in immediate critical peril near the open railway track, urgent emergency assistance needed!",
         "expected": ["CRITICAL"]
     },
     {
         "id": 18,
-        "text": "गली की एक स्ट्रीट लाइट खराब है। कोई तत्काल खतरा नहीं है।",
+        "text": "Streetlight in the alley is defunct. There is no ongoing danger or safety threat.",
         "expected": ["LOW"]
     },
     {
         "id": 19,
-        "text": "एक व्यक्ति पर अभी जानलेवा हमला हो रहा है, तुरंत पुलिस भेजें।",
+        "text": "An individual is undergoing an active violent physical assault with weapons right now, dispatch police immediately!",
         "expected": ["CRITICAL"]
     }
 ]

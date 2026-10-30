@@ -23,17 +23,23 @@ async function clearAllComplaints() {
       const timeRes = await mongoModels.ComplaintTimeline.deleteMany({});
       const feedRes = await mongoModels.Feedback.deleteMany({});
       const notifRes = await mongoModels.Notification.deleteMany({});
+      const evidRes = await mongoModels.Evidence.deleteMany({});
+      const aiRes = await mongoModels.AiPrediction.deleteMany({});
 
       // Reset sequence counters in Mongo
       await mongoModels.Counter.findOneAndUpdate({ _id: 'complaints' }, { $set: { seq: 1 } }, { upsert: true });
       await mongoModels.Counter.findOneAndUpdate({ _id: 'complaint_timeline' }, { $set: { seq: 1 } }, { upsert: true });
       await mongoModels.Counter.findOneAndUpdate({ _id: 'feedback' }, { $set: { seq: 1 } }, { upsert: true });
       await mongoModels.Counter.findOneAndUpdate({ _id: 'notifications' }, { $set: { seq: 1 } }, { upsert: true });
+      await mongoModels.Counter.findOneAndUpdate({ _id: 'evidence' }, { $set: { seq: 1 } }, { upsert: true });
+      await mongoModels.Counter.findOneAndUpdate({ _id: 'ai_predictions' }, { $set: { seq: 1 } }, { upsert: true });
 
       console.log('\x1b[32m%s\x1b[0m', `✓ MongoDB: Removed ${compRes.deletedCount} complaints.`);
       console.log('\x1b[32m%s\x1b[0m', `✓ MongoDB: Removed ${timeRes.deletedCount} complaint timeline events.`);
       console.log('\x1b[32m%s\x1b[0m', `✓ MongoDB: Removed ${feedRes.deletedCount} feedback entries.`);
       console.log('\x1b[32m%s\x1b[0m', `✓ MongoDB: Removed ${notifRes.deletedCount} complaint notifications.`);
+      console.log('\x1b[32m%s\x1b[0m', `✓ MongoDB: Removed ${evidRes.deletedCount} evidence records.`);
+      console.log('\x1b[32m%s\x1b[0m', `✓ MongoDB: Removed ${aiRes.deletedCount} AI predictions.`);
       console.log('\x1b[32m%s\x1b[0m', `✓ MongoDB: Reset complaint ID counters.`);
 
       await mongoose.disconnect();
@@ -53,15 +59,21 @@ async function clearAllComplaints() {
       data.complaint_timeline = [];
       data.feedback = [];
       data.notifications = [];
+      data.complaint_evidence = [];
+      data.visual_analyses = [];
+      data.evidence_audit_logs = [];
 
       if (!data._counters) data._counters = {};
       data._counters.complaints = 1;
       data._counters.complaint_timeline = 1;
       data._counters.feedback = 1;
       data._counters.notifications = 1;
+      data._counters.complaint_evidence = 1;
+      data._counters.visual_analyses = 1;
+      data._counters.evidence_audit_logs = 1;
 
       fs.writeFileSync(dbJsonPath, JSON.stringify(data, null, 2), 'utf-8');
-      console.log('\x1b[32m%s\x1b[0m', `✓ Local JSON: Cleared ${prevComplaints} complaints and reset counters.`);
+      console.log('\x1b[32m%s\x1b[0m', `✓ Local JSON: Cleared ${prevComplaints} complaints, evidence, timeline, and reset counters.`);
     } catch (e) {
       console.error('Local JSON clear error:', e.message);
     }

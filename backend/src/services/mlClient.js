@@ -1,186 +1,185 @@
 const axios = require('axios');
-const multilingualService = require('./multilingualService');
 
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000';
 
 // Comprehensive 30-Department Category Keywords with Subcategories & Taxonomies
 const CATEGORY_TAXONOMY = {
   'Police & Law Enforcement': {
-    keywords: ['police', 'thana', 'fir', 'theft', 'stolen', 'burglary', 'robbery', 'assault', 'snatching', 'fight', 'gambling', 'illegal liquor', 'patrol', 'चोरी', 'पुलिस', 'চুরি', 'ছিনতাই'],
+    keywords: ['police', 'thana', 'fir', 'theft', 'stolen', 'burglary', 'robbery', 'assault', 'snatching', 'fight', 'gambling', 'illegal liquor', 'patrol'],
     subcategories: ['Theft & Burglary', 'Physical Assault', 'Vandalism', 'Public Nuisance', 'Missing Person Report'],
     causes: ['Low evening police patrolling', 'Lack of surveillance cameras in perimeter', 'Inadequate street lighting'],
     actions: ['Dispatch beat patrol unit', 'Review local CCTV feeds', 'Initiate preliminary FIR inquiry', 'Increase perimeter night rounds']
   },
   'Cyber Crime': {
-    keywords: ['cyber', 'otp', 'scam', 'fraud', 'bank fraud', 'upi', 'phishing', 'hacked', 'blackmail', 'fake account', 'cyberbullying', 'धोखाधड़ी', 'অনলাইন জালিয়াতি'],
+    keywords: ['cyber', 'otp', 'scam', 'fraud', 'bank fraud', 'upi', 'phishing', 'hacked', 'blackmail', 'fake account', 'cyberbullying'],
     subcategories: ['Financial Banking Fraud (UPI/Card)', 'Identity Theft & Impersonation', 'Social Media Harassment', 'Phishing & Ransomware', 'Data Breach'],
     causes: ['Social engineering attack via phishing SMS/call', 'Compromised digital authentication credential', 'Malicious APK or web link'],
     actions: ['Freeze suspect transaction nodes via 1930 portal', 'Notify cyber cell nodal officer', 'Secure digital audit trails & IP logs']
   },
   'Women & Child Safety': {
-    keywords: ['women safety', 'harassment', 'eve teasing', 'stalking', 'molestation', 'domestic violence', 'child abuse', 'child labour', 'trafficking', 'helpline 1098', 'छेड़छाड़', 'নারী সুরক্ষা'],
+    keywords: ['women safety', 'harassment', 'eve teasing', 'stalking', 'molestation', 'domestic violence', 'child abuse', 'child labour', 'trafficking', 'helpline 1098'],
     subcategories: ['Public Harassment / Stalking', 'Domestic Grievance', 'Child Labour Hazard', 'Unsafe Dark Corridor', 'Emergency Distress Signal'],
     causes: ['Poor corridor illumination at transit stops', 'Absence of dedicated civic surveillance', 'Unregulated congregation points'],
     actions: ['Deploy rapid women safety mobile patrol', 'Inspect lighting along transit corridor', 'Coordinate with designated Child Welfare Officer']
   },
   'Traffic & Road Safety': {
-    keywords: ['traffic', 'signal', 'red light', 'parking', 'zebra crossing', 'congestion', 'traffic jam', 'illegal parking', 'accident zone', 'over speeding', 'ट्रैफिक', 'যানজট'],
+    keywords: ['traffic', 'signal', 'red light', 'parking', 'zebra crossing', 'congestion', 'traffic jam', 'illegal parking', 'accident zone', 'over speeding'],
     subcategories: ['Traffic Signal Outage', 'Illegal Road Parking & Encroachment', 'Chronic Junction Congestion', 'Missing Pedestrian Crossing / Signage', 'Frequent Accident Hotspot'],
     causes: ['Sensor failure or power glitch at junction signal', 'Unauthorized commercial parking on carriage-way', 'Peak commuter volume exceeding bottleneck capacity'],
     actions: ['Dispatch traffic control team for manual flow regulation', 'Initiate electronic signal repair', 'Deploy tow crane to clear lane encroachment']
   },
   'Roads & Public Works': {
-    keywords: ['pothole', 'road', 'asphalt', 'caved', 'crater', 'divider', 'tar', 'trench', 'speed breaker', 'damaged road', 'pavement', 'গর্ত', 'ভাঙা রাস্তা', 'सड़क पर गड्ढा'],
+    keywords: ['pothole', 'road', 'asphalt', 'caved', 'crater', 'divider', 'tar', 'trench', 'speed breaker', 'damaged road', 'pavement'],
     subcategories: ['Pothole / Surface Crater', 'Caved-in Carriageway', 'Broken Road Divider / Median', 'Damaged Footpath / Paver Blocks', 'Unmarked Speed Breaker Hazard'],
     causes: ['Heavy monsoon runoff penetrating sub-base layer', 'Wearing course fatigue from heavy axle vehicles', 'Recent utility trenching left uncompacted'],
     actions: ['Deploy road maintenance team with cold-mix asphalt', 'Erect safety hazard cones & warning retro-reflectors', 'Perform subsurface compaction and tar leveling']
   },
   'Drainage & Sewerage': {
-    keywords: ['drain', 'manhole', 'sewer', 'sewage', 'overflow', 'gutter', 'nullah', 'waterlogging', 'choked drain', 'blocked drain', 'ম্যানহোল', 'জল জমা', 'जलभराव', 'নালা'],
+    keywords: ['drain', 'manhole', 'sewer', 'sewage', 'overflow', 'gutter', 'nullah', 'waterlogging', 'choked drain', 'blocked drain'],
     subcategories: ['Open / Missing Manhole Cover', 'Severe Monsoon Waterlogging', 'Blocked Storm Water Drain', 'Sewage Line Overflow', 'Collapsed Nullah Embankment'],
     causes: ['Plastic waste accumulation in subterranean conduit', 'Inadequate drainage discharge gradient', 'Precipitation exceeding storm water pipe capacity'],
     actions: ['Deploy super-sucker / vacuum jetting machine', 'Install heavy-duty ductile iron manhole cover immediately', 'Clear culvert inlet grate of solid debris']
   },
   'Water Supply': {
-    keywords: ['water', 'pipeline', 'drinking water', 'tap', 'burst pipe', 'tanker', 'low pressure', 'contaminated water', 'dirty water', 'leakage', 'পানীয় জল', 'पानी की आपूर्ति', 'পাইপ লিক'],
+    keywords: ['water', 'pipeline', 'drinking water', 'tap', 'burst pipe', 'tanker', 'low pressure', 'contaminated water', 'dirty water', 'leakage'],
     subcategories: ['Pipeline Burst / Severe Leakage', 'Contaminated / Muddy Water Supply', 'Low Pressure / No Supply', 'Public Standpost Broken', 'Illegal Water Tapping'],
     causes: ['Aging cast-iron distribution mains rupture under pressure', 'Cross-contamination due to adjacent drain seepage', 'Booster pump trip or valve malfunction'],
     actions: ['Isolate distribution sector valve to stem loss', 'Dispatch emergency water tanker for residents', 'Excavate and weld clamp repair on affected main']
   },
   'Solid Waste Management': {
-    keywords: ['garbage', 'waste', 'dustbin', 'dumping', 'trash', 'stench', 'dead animal', 'overflowing bin', 'litter', 'plastic waste', 'আবর্জনা', 'ময়লা', 'कचरा'],
+    keywords: ['garbage', 'waste', 'dustbin', 'dumping', 'trash', 'stench', 'dead animal', 'overflowing bin', 'litter', 'plastic waste'],
     subcategories: ['Overflowing Garbage Vat / Bin', 'Illegal Open Waste Dumping', 'Dead Animal Carcass Removal', 'Missed Door-to-Door Collection', 'Hazardous Biomedical Waste'],
     causes: ['Irregular compactor vehicle haulage cycle', 'Inadequate bin capacity relative to market density', 'Unauthorized dumping by commercial establishments'],
     actions: ['Dispatch hydraulic tipper & backhoe loader', 'Disinfect spot with bleaching powder and lime', 'Enforce commercial waste disposal compliance notice']
   },
   'Street Lighting & Electrical': {
-    keywords: ['streetlight', 'lamp', 'darkness', 'flickering', 'pole', 'blackout', 'bulb', 'light pole', 'high mast', 'রাস্তার আলো', 'स्ट्रीट लाइट', 'অন্ধকার'],
+    keywords: ['streetlight', 'lamp', 'darkness', 'flickering', 'pole', 'blackout', 'bulb', 'light pole', 'high mast'],
     subcategories: ['Streetlight Completely Off (Dark Corridor)', 'Flickering / Damaged LED Luminaire', 'Damaged / Leaning Electric Pole', 'Exposed High-Mast Junction Box', 'Timer / Feeder Panel Fault'],
     causes: ['Phase feeder fuse blown at distribution kiosk', 'Cable insulation degradation due to underground moisture', 'LED driver board failure'],
     actions: ['Send hydraulic sky-lift maintenance truck', 'Replace burnt LED driver / luminaire fixture', 'Insulate and seal open cable joints']
   },
   'Public Health & Sanitation': {
-    keywords: ['mosquito', 'dengue', 'malaria', 'fogging', 'public toilet', 'urinal', 'hygiene', 'defecation', 'filth', 'bleaching powder', 'মশা', 'ডেঙ্গু', 'सार्वजनिक शौचालय'],
+    keywords: ['mosquito', 'dengue', 'malaria', 'fogging', 'public toilet', 'urinal', 'hygiene', 'defecation', 'filth', 'bleaching powder'],
     subcategories: ['Mosquito Breeding & Dengue Risk', 'Unsanitary Public Toilet / Urinal', 'Need for Fogging / Larvicide Spray', 'Open Defecation / Filth Hotspot', 'Stagnant Cesspool Sanitation'],
     causes: ['Stagnant clean water pools supporting Aedes breeding', 'Lack of dedicated maintenance staff for civic toilets', 'Blocked septic tank outlet'],
     actions: ['Deploy vector-control team with thermal fogger & larvicide', 'Deep chemical sanitation of public facilities', 'Issue health advisory to ward residents']
   },
   'Fire & Emergency Services': {
-    keywords: ['fire', 'flames', 'blaze', 'cylinder blast', 'explosion', 'smoke', 'gas leak', 'building on fire', 'trapped in fire', 'আগুন', 'দমকল', 'आग لگنا'],
+    keywords: ['fire', 'flames', 'blaze', 'cylinder blast', 'explosion', 'smoke', 'gas leak', 'building on fire', 'trapped in fire'],
     subcategories: ['Residential / Commercial Structure Fire', 'LPG Cylinder Leak / Blast Hazard', 'Transformer / Cable Trench Fire', 'Factory / Chemical Smoke Incident', 'Water Rescue Emergency'],
     causes: ['Short circuit in overloaded wiring', 'LPG regulator valve seal failure', 'Combustible material stored without safety buffers'],
     actions: ['Dispatch priority fire tender engines (Call 101/112)', 'Evacuate adjacent buildings within 50m cordon', 'Cut off electrical grid feeder at substation']
   },
   'Disaster Management': {
-    keywords: ['flood', 'cyclone', 'storm', 'earthquake', 'wall collapsed', 'tree fallen', 'embankment breach', 'submerged houses', 'relief', 'ঘূর্ণিঝড়', 'বন্যা', 'দেয়াল ধস'],
+    keywords: ['flood', 'cyclone', 'storm', 'earthquake', 'wall collapsed', 'tree fallen', 'embankment breach', 'submerged houses', 'relief'],
     subcategories: ['Severe Flood / Inundation', 'Cyclone / Storm Wind Damage', 'Structural Wall / Roof Collapse', 'River / Canal Embankment Breach', 'Uprooted Trees Blocking Arterial Highway'],
     causes: ['Cyclonic wind gusts exceeding 90 km/h', 'Extreme tidal surge or river overbank flow', 'Weak foundation in un-reinforced masonry'],
     actions: ['Deploy SDRF / Civil Defence rescue boats', 'Clear blocked arterial roads using chainsaw teams', 'Open designated cyclone relief shelter with dry rations']
   },
   'Environment & Pollution': {
-    keywords: ['pollution', 'smoke', 'dust', 'noise', 'loudspeaker', 'factory discharge', 'effluent', 'air quality', 'tree cutting', 'illegal felling', 'শব্দ দূষণ', 'বায়ু দূষণ'],
+    keywords: ['pollution', 'smoke', 'dust', 'noise', 'loudspeaker', 'factory discharge', 'effluent', 'air quality', 'tree cutting', 'illegal felling'],
     subcategories: ['Industrial Air / Chemical Smoke Pollution', 'Excessive Noise Pollution (Loudspeaker/DJ)', 'Chemical Effluent in Water Bodies', 'Illegal Tree Felling', 'Construction Dust Violation'],
     causes: ['Non-compliant factory emissions without wet scrubber', 'Commercial disregard of decibel limits after 10 PM', 'Uncovered construction material transit'],
     actions: ['Deploy pollution control inspector with sound level meter', 'Issue immediate stop-work or compliance notice', 'Collect effluent samples for laboratory testing']
   },
   'Parks & Public Spaces': {
-    keywords: ['park', 'garden', 'playground', 'bench', 'swing', 'grass', 'fountain', 'gym equipment', 'park lights', 'পাবলিক পার্ক', 'খেলার মাঠ', 'पार्क'],
+    keywords: ['park', 'garden', 'playground', 'bench', 'swing', 'grass', 'fountain', 'gym equipment', 'park lights'],
     subcategories: ['Damaged Children Swings / Play Equipment', 'Overgrown Wild Grass & Thorny Bushes', 'Broken Benches / Walkways', 'Park Lighting Outage', 'Defunct Fountain / Water Body'],
     causes: ['Continuous mechanical wear on play installations', 'Infrequent mowing cycle during monsoon', 'Vandalism or deferred preventive maintenance'],
     actions: ['Deploy horticulture team for lawn mowing & trimming', 'Weld and repair broken swings and outdoor gym units', 'Restore walkway pavers and illumination']
   },
   'Building & Municipal Engineering': {
-    keywords: ['building', 'illegal construction', 'unauthorized floor', 'crack in building', 'dangerous building', 'demolition', 'plan sanction', 'অবৈধ নির্মাণ', 'বিপজ্জনক বাড়ি'],
+    keywords: ['building', 'illegal construction', 'unauthorized floor', 'crack in building', 'dangerous building', 'demolition', 'plan sanction'],
     subcategories: ['Illegal / Unauthorized Construction', 'Dangerous Dilapidated Structure at Risk of Collapse', 'Encroachment on Municipal Land', 'Deviation from Sanctioned Building Plan', 'Unsafe Excavation Adjacent to Neighbor'],
     causes: ['Construction without municipal structural sanction', 'Severe masonry aging with water seepage in beams', 'Lack of retaining wall in deep foundation trench'],
     actions: ['Issue Stop-Work notice under Municipal Act', 'Erect cautionary perimeter fencing for hazardous building', 'Conduct structural stability audit with civic engineer']
   },
   'Land & Land Records': {
-    keywords: ['land', 'mutation', 'parcha', 'record of rights', 'encroachment', 'land grabbing', 'demarcation', 'khatian', 'জমির রেকর্ড', 'মিউটেশন', 'জমি দখল'],
+    keywords: ['land', 'mutation', 'parcha', 'record of rights', 'encroachment', 'land grabbing', 'demarcation', 'khatian'],
     subcategories: ['Mutation / Parcha Delay or Discrepancy', 'Illegal Government Land Encroachment', 'Boundary Demarcation Dispute', 'Unauthorized Land Filling of Pond', 'Record of Rights (RoR) Correction'],
     causes: ['Pending legacy digitization of land khatian', 'Physical boundary markers removed by miscreants', 'Illegal waterbody conversion without BL&LRO NOC'],
     actions: ['Schedule field inspection by Revenue Inspector & Amin', 'Cross-verify GIS satellite footprint against Mouza map', 'Issue notice to halt unapproved land conversion']
   },
   'Housing & Urban Development': {
-    keywords: ['housing', 'slum', 'flat', 'housing complex', 'bengal awas', 'housing scheme', 'tenement', 'পাকা বাড়ি', 'হাউজিং স্কিম', 'आवास'],
+    keywords: ['housing', 'slum', 'flat', 'housing complex', 'bengal awas', 'housing scheme', 'tenement'],
     subcategories: ['Affordable Housing Scheme Disbursement', 'Slum Infrastructure Rehabilitation', 'Structural Maintenance of Civic Housing', 'Rainwater Harvesting Compliance', 'Common Area Civic Dispute'],
     causes: ['Verification backlog in housing welfare scheme', 'Inadequate civic drainage in informal settlements', 'Aging exterior plaster and plumbing in civic flats'],
     actions: ['Expedite verification with block housing officer', 'Inspect common sanitation and structural plumbing', 'Prioritize roof waterproofing works']
   },
   'Electricity & Power': {
-    keywords: ['power', 'electricity', 'wire', 'voltage', 'sparking', 'transformer', 'shock', 'cable', 'current', 'power cut', 'load shedding', 'মিটার', 'বিদ্যুৎ সংযোগ', 'बिजली गुल'],
+    keywords: ['power', 'electricity', 'wire', 'voltage', 'sparking', 'transformer', 'shock', 'cable', 'current', 'power cut', 'load shedding'],
     subcategories: ['Open Live Wire / Electrical Hazard', 'Transformer Sparking / Overheating', 'Frequent Voltage Fluctuation', 'Prolonged Unannounced Power Blackout', 'Defective Electric Meter Billing'],
     causes: ['Feeder phase overloading during high ambient heat', 'Mechanical abrasion of aerial bundled cables by trees', 'Moisture ingress inside distribution box'],
     actions: ['Deploy WBSEDCL emergency quick-response team', 'Isolate local transformer circuit', 'Trim tree branches touching 11kV / 440V overhead lines']
   },
   'Public Transport': {
-    keywords: ['bus', 'auto', 'fare', 'overcharging', 'route', 'depot', 'reckless driving', 'permit', 'বাস', 'অটো ভাড়া', 'বাস স্টপ', 'सार्वजनिक परिवहन'],
+    keywords: ['bus', 'auto', 'fare', 'overcharging', 'route', 'depot', 'reckless driving', 'permit'],
     subcategories: ['Bus Route Absence / Severe Irregularity', 'Auto / Taxi Passenger Overcharging & Refusal', 'Reckless Public Transit Driving', 'Unsafe / Dilapidated Bus Stand', 'Unauthorized Commercial Vehicle Plying'],
     causes: ['Fleet shortage on peri-urban feeder routes', 'Lack of regulated fare card display at auto stands', 'Poor terminal maintenance by concessionaire'],
     actions: ['Deploy Motor Vehicles Inspector for fare compliance', 'Issue show-cause notice to route transport operator', 'Restore shelter roof and seating at civic bus stop']
   },
   'Railway-related Public Complaints': {
-    keywords: ['railway', 'station', 'platform', 'train', 'level crossing', 'railway gate', 'overbridge', 'রেলওয়ে স্টেশন', 'লেভেল ক্রসিং', 'रेलवे स्टेशन'],
+    keywords: ['railway', 'station', 'platform', 'train', 'level crossing', 'railway gate', 'overbridge'],
     subcategories: ['Hazardous Level Crossing Gate Delays', 'Foot-over-Bridge Structural Defect', 'Platform Cleanliness & Sanitation Issue', 'Station Approach Road Waterlogging', 'Inadequate Lighting on Railway Perimeter'],
     causes: ['Heavy rail line congestion slowing automated gate cycles', 'Inadequate passenger drainage at station forecourt', 'Defunct high-mast lighting outside station gate'],
     actions: ['Coordinate with Divisional Railway Manager (DRM) liaison', 'Deploy municipal sweeper team to clear station approach', 'Inspect foot-over-bridge stair treads and railing']
   },
   'Health & Hospitals': {
-    keywords: ['hospital', 'swasthya sathi', 'doctor', 'clinic', 'medicine', 'emergency ward', 'bed', 'medical negligence', 'হাসপাতাল', 'স্বাস্থ্য সাথী', 'अस्पताल'],
+    keywords: ['hospital', 'swasthya sathi', 'doctor', 'clinic', 'medicine', 'emergency ward', 'bed', 'medical negligence'],
     subcategories: ['Swasthya Sathi Card Denial / Harassment', 'Emergency Ward Admission Obstacle', 'Shortage of Essential Lifesaving Medicines', 'Unhygienic Ward Conditions', 'Absenteeism of Medical Personnel'],
     causes: ['Billing desk dispute regarding government card package', 'Peak bed occupancy exceeding primary hospital capacity', 'Supply chain lag in generic pharmacy inventory'],
     actions: ['Notify District Chief Medical Officer of Health (CMOH)', 'Dispatch Swasthya Sathi nodal mediator to hospital', 'Restock essential drugs from central medical store']
   },
   'Food & Public Distribution': {
-    keywords: ['ration', 'ration card', 'dealer', 'pds', 'rice', 'wheat', 'kerosene', 'ration shop', 'bpl', 'রেশন কার্ড', 'রেশন ডিলার', 'राशन दुकान'],
+    keywords: ['ration', 'ration card', 'dealer', 'pds', 'rice', 'wheat', 'kerosene', 'ration shop', 'bpl'],
     subcategories: ['Ration Dealer Underweighing / Surcharge', 'Substandard Food Grain Quality', 'Ration Card Linkage / Biometric Failure', 'Unannounced Ration Shop Closure', 'Denial of Entitled National Food Security Quota'],
     causes: ['Point-of-Sale (ePoS) biometric sensor network fault', 'Grain moisture during transit in godowns', 'Dealer non-compliance with distribution calendar'],
     actions: ['Dispatch Food & Supplies Inspector for physical stock audit', 'Calibrate electronic weighing scale at fair price shop', 'Provide manual iris / OTP bypass for biometric failures']
   },
   'Consumer Affairs': {
-    keywords: ['consumer', 'mrp', 'overcharging', 'expiry', 'weighing scale', 'adulteration', 'fraudulent seller', 'বিল দিচ্ছে না', 'ওজনে কম', 'उपभोक्ता संरक्षण'],
+    keywords: ['consumer', 'mrp', 'overcharging', 'expiry', 'weighing scale', 'adulteration', 'fraudulent seller'],
     subcategories: ['Sale Above Maximum Retail Price (MRP)', 'Tampered / Uncalibrated Weighing Scales', 'Food Adulteration / Expired Product Sale', 'False & Misleading Commercial Advertisement', 'Warranty / Service Denial by Vendor'],
     causes: ['Retailer taking advantage of festive demand surge', 'Uninspected mechanical weights in local haat/bazaar', 'Counterfeit stock distributed without verification'],
     actions: ['Conduct surprise raid with Legal Metrology Inspector', 'Seize uncalibrated weights and stamp certified equipment', 'File notice under Consumer Protection Act']
   },
   'Education - Schools': {
-    keywords: ['school', 'midday meal', 'teacher', 'classroom', 'toilet in school', 'school uniform', 'books', 'স্কুল', 'মিড ডে মিল', 'বিদ্যালय'],
+    keywords: ['school', 'midday meal', 'teacher', 'classroom', 'toilet in school', 'school uniform', 'books'],
     subcategories: ['Mid-Day Meal Quality & Hygiene Issue', 'Unsafe School Infrastructure (Roof/Balcony)', 'Lack of Separate Functional Girls Toilet', 'Teacher Absenteeism / Vacancy', 'Delayed Free Textbook / Uniform Distribution'],
     causes: ['Inadequate kitchen storage for mid-day meal provisions', 'Delayed annual infrastructure grant release', 'Plumbing pipeline disruption in school restroom'],
     actions: ['Send Sub-Inspector of Schools for surprise meal inspection', 'Sanction urgent repair for school water and sanitation block', 'Direct school managing committee to resolve safety hazard']
   },
   'Higher Education': {
-    keywords: ['college', 'university', 'ragging', 'hostel', 'marksheet', 'admission', 'degree', 'fees', 'কলেজ', 'র‌্যাগিং', 'विश्वविद्यालय'],
+    keywords: ['college', 'university', 'ragging', 'hostel', 'marksheet', 'admission', 'degree', 'fees'],
     subcategories: ['Anti-Ragging / Student Safety Incident', 'College Infrastructure & Laboratory Defect', 'Hostel Sanitation & Food Quality', 'Irregular Admission Fees / Demand', 'Marksheet & Degree Verification Backlog'],
     causes: ['Weak monitoring by anti-ragging squad in dormitories', 'Aging laboratory equipment and chemicals stockout', 'High volume certificate verification processing queue'],
     actions: ['Convene urgent Anti-Ragging Committee meeting', 'Inspect student hostel dining and living quarters', 'Review university online degree dispatch portal']
   },
   'Labour & Employment': {
-    keywords: ['labour', 'wages', 'minimum wage', 'factory worker', 'construction worker', 'provident fund', 'safety equipment', 'শ্রমিক', 'মজুরি', 'श्रम'],
+    keywords: ['labour', 'wages', 'minimum wage', 'factory worker', 'construction worker', 'provident fund', 'safety equipment'],
     subcategories: ['Non-Payment of Statutory Minimum Wages', 'Hazardous Worksite Without PPE / Safety Gear', 'Illegal Termination / Retrenchment', 'Delay in Construction Workers Welfare Benefit', 'Child Labour Prohibition Violation'],
     causes: ['Contractor exploitation of unorganized daily wagers', 'Lack of employer investment in mandatory harnesses/helmets', 'Processing delays in social security board'],
     actions: ['Deploy Labour Inspector for on-site wage ledger audit', 'Issue immediate stop-work order for unsafe construction sites', 'Register affected workers under State Social Security Scheme']
   },
   'Agriculture': {
-    keywords: ['farmer', 'crop', 'fertilizer', 'paddy', 'seeds', 'irrigation', 'pesticides', 'kisan mandi', 'কৃষি', 'সার', 'ফসলের ক্ষতি', 'किसान'],
+    keywords: ['farmer', 'crop', 'fertilizer', 'paddy', 'seeds', 'irrigation', 'pesticides', 'kisan mandi'],
     subcategories: ['Substandard / Black Marketing of Fertilizers & Seeds', 'Defunct Agricultural Shallow Tube Well / Canal', 'Crop Damage Assessment for Relief', 'Mandi Distress Selling / MSP Non-Compliance', 'Pest Attack / Locust Threat'],
     causes: ['Canal siltation preventing water delivery to tail-end farms', 'Hoarding of DAP/Urea fertilizers by private stockists', 'Sudden unseasonal hail or pest infestation'],
     actions: ['Deploy Assistant Director of Agriculture (ADA) to fields', 'Inspect fertilizer retail outlets to enforce MRP ceiling', 'Expedite canal clearing and shallow pump repair']
   },
   'Animal Resources': {
-    keywords: ['stray dog', 'rabies', 'veterinary', 'cattle', 'livestock', 'dog bite', 'vaccination', 'পশু চিকিৎসা', 'বেওয়ারিশ কুকুর', 'पशु पालन'],
+    keywords: ['stray dog', 'rabies', 'veterinary', 'cattle', 'livestock', 'dog bite', 'vaccination'],
     subcategories: ['Aggressive Stray Dog Pack & Rabies Hazard', 'Dead Animal Carcass Removal from Public Way', 'Need for Veterinary Health Care / Vaccination', 'Illegal Cattle Trespass & Hazard on Roads', 'Animal Cruelty Incident'],
     causes: ['High stray dog density near meat market dumping zones', 'Lack of routine canine sterilization in municipal wards', 'Absence of fenced community grazing zones'],
     actions: ['Dispatch animal birth control / rabies vaccination van', 'Deploy dedicated animal carcass disposal vehicle', 'Treat injured livestock at nearest state veterinary clinic']
   },
   'Forest & Wildlife': {
-    keywords: ['wildlife', 'elephant', 'monkey', 'snake', 'forest', 'poaching', 'wild animal', 'সাপ', 'হাতি', 'বন্যপ্রাণী', 'वन विभाग'],
+    keywords: ['wildlife', 'elephant', 'monkey', 'snake', 'forest', 'poaching', 'wild animal'],
     subcategories: ['Wild Animal (Elephant/Leopard) Human Settlement Incursion', 'Venomous Snake in Residential Area', 'Monkey Troop Nuisance & Aggression', 'Illegal Tree Felling in Protected Forest', 'Poaching or Wildlife Smuggling Report'],
     causes: ['Habitat fragmentation driving wildlife towards harvest crops', 'Summer dry water holes in forest reserves', 'Open food leftovers attracting primate troops'],
     actions: ['Alert Range Forest Officer (RFO) & Hoolock squad', 'Deploy certified snake rescuers to residential sector', 'Establish physical solar-powered fence along village border']
   },
   'Public Grievance / General Administration': {
-    keywords: ['corruption', 'bribe', 'delay', 'certificate', 'caste certificate', 'income certificate', 'panchayat', 'bdo', 'সার্টিফিকেট', 'ঘুষ', 'প্রশাসনিক অভিযোগ'],
+    keywords: ['corruption', 'bribe', 'delay', 'certificate', 'caste certificate', 'income certificate', 'panchayat', 'bdo'],
     subcategories: ['Unjustified Delay in Public Service Delivery', 'Demand of Unofficial Fee / Bribery Allegation', 'Caste / Domicile / Income Certificate Issuance Glitch', 'Misbehavior by Public Dealing Official', 'Grievance Redressal Portal Tracking Failure'],
     causes: ['Legacy manual document verification workflow', 'Lack of public grievance supervisory review', 'Technical glitch in online portal integration'],
     actions: ['Escalate case to Sub-Divisional Officer (SDO / BDO)', 'Summon department nodal officer for status explanation', 'Process citizen certificate within 48-hour monitored timeline']
@@ -269,80 +268,160 @@ function calculateImpactScore(affectedCount = 50, locationType = 'Residential', 
  */
 function localPredictAll(data) {
   const rawText = data.text || '';
-  const { normalizedText, detectedLanguage, detectedKeywords } = multilingualService.normalizeToEnglish(rawText);
-  const text = normalizedText.toLowerCase();
+  const text = rawText.toLowerCase().trim();
+  const rawTextLower = text;
 
   const locationType = data.location_type || 'Residential';
   const severity = data.severity || 'Medium';
   const affectedCount = Number(data.affected_count) || 50;
   const ward = data.ward || 'Ward 1';
 
-  // 1. Emergency Detection across EN, BN, HI
-  const emergencyRes = multilingualService.detectEmergency(rawText);
-  const isEmergency = Boolean(data.is_emergency || emergencyRes.isEmergency);
+  // 1. Emergency Detection (English-only)
+  const isEmergencyTrigger = Boolean(
+    text.match(/\b(live wire|sparking wire|high voltage wire|active fire|building on fire|cylinder blast|armed robbery|severe flooding|embankment breach|uncovered manhole)\b/i)
+  );
+  const isEmergency = Boolean(data.is_emergency || isEmergencyTrigger);
+  const emergencyRes = {
+    isEmergency,
+    helpline: '112',
+    guidance: isEmergency ? 'Critical situation flagged for immediate administrative dispatch.' : null
+  };
 
-  // 2. 30-Category Classification
-  let bestCat = 'Roads & Public Works';
+  // -------------------------------------------------------------
+  // STAGE 1: SEMANTIC INCIDENT UNDERSTANDING (JS ENGINE)
+  // -------------------------------------------------------------
+  const isFatal = Boolean(
+    text.match(/\b(killed|killing|fatal|fatality|death|died|dead body|dead person|corpse|loss of a? ?life|murder|homicide|found dead)\b/i)
+  );
+
+  const isCollision = Boolean(text.match(/\b(vehicle collision|car crash|truck collision|hit and run|road accident|bike accident|run over)\b/i));
+  const isHospitalNegligence = Boolean(text.match(/\b(hospital negligence|medical negligence|doctor negligence|wrong treatment|oxygen shortage)\b/i));
+  const isWorkplaceAccident = Boolean(text.match(/\b(workplace fatality|factory accident|industrial accident|construction site death|worker died)\b/i));
+  const isBuildingCollapse = Boolean(text.match(/\b(building collapse|wall collapse|structural collapse|roof fell)\b/i));
+  const isFireFatal = Boolean(text.match(/\b(burnt in fire|fire outbreak|smoke asphyxiation|cylinder explosion death)\b/i));
+
+  let bestCat = null;
   let bestSubcat = 'General Issue';
-  let maxMatches = 0;
+  let secondaryDepartments = [];
+  let requiresHumanReview = false;
+  let incidentType = 'Standard Civic Complaint';
+  let causeKnown = false;
+  let reason = '';
+  let confidence = 0.85;
 
-  if (emergencyRes.isEmergency && emergencyRes.category) {
+  if (isFatal) {
+    incidentType = 'Fatal Incident / Death';
+    requiresHumanReview = true;
+
+    if (isCollision) {
+      bestCat = 'Traffic & Road Safety';
+      bestSubcat = 'Fatal Vehicle Collision';
+      secondaryDepartments = ['Police & Law Enforcement'];
+      causeKnown = true;
+      reason = 'Fatal incident caused by a road vehicle collision. Primary responsibility rests with Traffic & Road Safety, with Police & Law Enforcement inquiry assistance.';
+    } else if (isHospitalNegligence) {
+      bestCat = 'Health & Hospitals';
+      bestSubcat = 'Hospital Medical Negligence Inquiry';
+      secondaryDepartments = ['Police & Law Enforcement'];
+      causeKnown = true;
+      reason = 'Fatal incident allegedly caused by hospital/medical negligence. Primary jurisdiction is Health & Hospitals, with Police inquiry involvement.';
+    } else if (isWorkplaceAccident) {
+      bestCat = 'Labour & Employment';
+      bestSubcat = 'Workplace Fatality / Industrial Injury Compensation';
+      secondaryDepartments = ['Police & Law Enforcement'];
+      causeKnown = true;
+      reason = 'Fatal industrial/workplace accident reported. Primary responsibility is Labour & Employment, with Police incident registration.';
+    } else if (isBuildingCollapse) {
+      bestCat = 'Building & Municipal Engineering';
+      bestSubcat = 'Structural Crack & Collapse Hazard';
+      secondaryDepartments = ['Fire & Emergency Services', 'Police & Law Enforcement'];
+      causeKnown = true;
+      reason = 'Fatal structural or building collapse reported. Building & Municipal Engineering handles structural liability with Emergency and Police support.';
+    } else if (isFireFatal) {
+      bestCat = 'Fire & Emergency Services';
+      bestSubcat = 'Residential Structure Fire';
+      secondaryDepartments = ['Police & Law Enforcement'];
+      causeKnown = true;
+      reason = 'Fatal incident caused by fire hazard. Fire & Emergency Services has primary rescue jurisdiction, with Police legal registration.';
+    } else {
+      // Unspecified, unexplained, or suspicious death requesting official inquiry
+      bestCat = 'Police & Law Enforcement';
+      bestSubcat = 'Death Investigation / Suspicious or Unexplained Death (pending verification)';
+      secondaryDepartments = [];
+      causeKnown = false;
+      reason = 'The complaint reports a fatal incident resulting in the loss of life and explicitly requests an official law-enforcement inquiry and report. The cause of death is unspecified; therefore, law-enforcement investigation takes primary jurisdiction.';
+    }
+    confidence = 0.95;
+  } else if (emergencyRes.isEmergency && emergencyRes.category) {
     bestCat = emergencyRes.category;
-    maxMatches = 5;
+    confidence = 0.96;
+    reason = `Critical emergency triggers detected for ${bestCat}.`;
   } else {
+    // 2. 30-Category Classification Keyword Scoring
+    let maxMatches = 0;
     for (const [cat, details] of Object.entries(CATEGORY_TAXONOMY)) {
       let matches = 0;
       for (const kw of details.keywords) {
-        if (text.includes(kw.toLowerCase())) matches++;
+        const kwLower = kw.toLowerCase();
+        if (text.includes(kwLower) || rawTextLower.includes(kwLower)) matches++;
       }
       if (matches > maxMatches) {
         maxMatches = matches;
         bestCat = cat;
       }
     }
+
+    if (maxMatches > 0 && bestCat) {
+      confidence = Math.min(0.97, 0.74 + maxMatches * 0.06);
+      reason = `Identified as ${bestCat} from civic problem domain patterns.`;
+    } else {
+      // Never silently fall back to Roads & Public Works
+      bestCat = 'CLASSIFICATION_UNCERTAIN';
+      bestSubcat = 'General Grievance';
+      requiresHumanReview = true;
+      confidence = 0.0;
+      reason = 'Complaint does not match specific department keywords with high confidence. Routed for manual administrative review.';
+    }
   }
 
-  // Infer best subcategory from taxonomy
-  const activeTax = CATEGORY_TAXONOMY[bestCat] || CATEGORY_TAXONOMY['Roads & Public Works'];
-  if (activeTax.subcategories && activeTax.subcategories.length > 0) {
-    for (const sub of activeTax.subcategories) {
-      const subWords = sub.toLowerCase().split(/[\s/]+/);
-      if (subWords.some(w => w.length > 3 && text.includes(w))) {
-        bestSubcat = sub;
-        break;
+  // Infer best subcategory from taxonomy if not yet set
+  if (bestCat !== 'CLASSIFICATION_UNCERTAIN' && (!bestSubcat || bestSubcat === 'General Issue')) {
+    const activeTax = CATEGORY_TAXONOMY[bestCat];
+    if (activeTax && activeTax.subcategories && activeTax.subcategories.length > 0) {
+      for (const sub of activeTax.subcategories) {
+        const subWords = sub.toLowerCase().split(/[\s/]+/);
+        if (subWords.some(w => w.length > 3 && text.includes(w))) {
+          bestSubcat = sub;
+          break;
+        }
+      }
+      if (bestSubcat === 'General Issue') {
+        bestSubcat = activeTax.subcategories[0];
       }
     }
-    if (bestSubcat === 'General Issue') {
-      bestSubcat = activeTax.subcategories[0];
-    }
   }
 
-  const confidence = maxMatches > 0 ? Math.min(0.97, 0.74 + maxMatches * 0.06) : 0.70;
   const department = bestCat;
 
   // 3. Real ML-Aligned Priority Prediction & Risk Factor Extraction
   const hasNegation = Boolean(
     text.match(/\bno\s+(?:immediate\s+)?(?:danger|threat|risk|emergency|hazard)\b/i) ||
-    text.includes('কোনও জরুরি বিপদ নেই') ||
-    text.includes('কোনো জরুরি বিপদ নেই') ||
-    text.includes('বিপদ নেই') ||
-    text.includes('कोई तत्काल खतरा नहीं') ||
-    text.includes('कोई खतरा नहीं')
+    text.match(/\b(no danger|not dangerous|no immediate threat)\b/i)
   );
 
   const riskFactors = [];
   let priority = 'MEDIUM';
   let prioConfidence = 0.88;
 
-  const hasElec = Boolean(text.match(/\b(live.*wire|sparking|electric shock|high voltage|electrocuted|11kv)\b/i) || text.includes('বিদ্যুতের তার') || text.includes('বিদ্যুৎস্পৃষ্ট') || text.includes('बिजली का तार'));
-  const hasViolence = Boolean(text.match(/\b(attack|assault|attacking|attacked|beating|clash|bomb|firing)\b/i) || text.includes('আক্রমণ') || text.includes('হামলা') || text.includes('मारपीट'));
-  const hasChild = Boolean(text.match(/\b(child|children|minor|baby|school entrance)\b/i) || text.includes('শিশু') || text.includes('বাচ্চা') || text.includes('बच्चा'));
-  const hasWoman = Boolean(text.match(/\b(woman|female|girl|stalking|followed|harassed|eve teasing)\b/i) || text.includes('নারী') || text.includes('মহিলা') || text.includes('महिला'));
+  const hasElec = Boolean(text.match(/\b(live.*wire|sparking|electric shock|high voltage|electrocuted|11kv)\b/i));
+  const hasViolence = Boolean(text.match(/\b(attack|assault|attacking|attacked|beating|clash|bomb|firing)\b/i));
+  const hasChild = Boolean(text.match(/\b(child|children|minor|baby|school entrance)\b/i));
+  const hasWoman = Boolean(text.match(/\b(woman|female|girl|stalking|followed|harassed|eve teasing)\b/i));
   const hasCyberLoss = Boolean(text.match(/\b(charged|debited|fraudulently|transferred|₹25,000|₹|siphoned|bank fraud)\b/i) && text.match(/\b(fraud|otp|upi|bank account|hacked)\b/i));
-  const hasAccident = Boolean(text.match(/\b(pothole|suddenly brake|accidents are becoming likely|accidents occurring|skid|crash)\b/i) || text.includes('গর্ত') || text.includes('দুর্ঘটনা') || text.includes('गड्ढा') || text.includes('हादसा'));
-  const hasHealthRisk = Boolean(text.match(/\b(large pile of waste|health risk|severe health|stench|carcass|epidemic)\b/i) || text.includes('স্বাস্থ্যঝুঁকি') || text.includes('বিমারি') || text.includes('बीमारी'));
-  const hasManhole = Boolean(text.match(/\b(uncovered manhole|open manhole|manhole)\b/i) || text.includes('ম্যানহোল') || text.includes('मैनहोल'));
-  const isActiveNow = Boolean(text.match(/\b(right now|currently|happening now|at this moment)\b/i) || text.includes('এই মুহূর্তে') || text.includes('इस समय'));
+  const hasAccident = Boolean(text.match(/\b(pothole|suddenly brake|accidents are becoming likely|accidents occurring|skid|crash)\b/i));
+  const hasHealthRisk = Boolean(text.match(/\b(large pile of waste|health risk|severe health|stench|carcass|epidemic)\b/i));
+  const hasManhole = Boolean(text.match(/\b(uncovered manhole|open manhole|manhole)\b/i));
+  const isActiveNow = Boolean(text.match(/\b(right now|currently|happening now|at this moment)\b/i));
 
   // Risk Factors Extraction
   if (!hasNegation && (isEmergency || (isActiveNow && (hasViolence || hasChild || hasElec)))) {
@@ -372,7 +451,7 @@ function localPredictAll(data) {
   } else if (hasAccident || hasWoman || hasCyberLoss || hasHealthRisk || (severity === 'High' && !hasNegation)) {
     priority = 'HIGH';
     prioConfidence = 0.96;
-  } else if (hasNegation || text.match(/\b(one streetlight|missed once|minor|small leak)\b/i) || text.includes('একটি স্ট্রিট লাইট') || text.includes('একবার') || severity === 'Low') {
+  } else if (hasNegation || text.match(/\b(one streetlight|missed once|minor|small leak)\b/i) || severity === 'Low') {
     priority = 'LOW';
     prioConfidence = 0.98;
   } else {
@@ -456,8 +535,9 @@ function localPredictAll(data) {
   const impactScoreObj = calculateImpactScore(affectedCount, locationType, priority === 'CRITICAL' ? 'Critical' : severity, isEmergency);
 
   // 7. AI Root-Cause Suggestions & Recommended Actions
-  const rootCauses = activeTax.causes || ['Environmental wear & tear', 'High seasonal civic load'];
-  const recommendedActions = activeTax.actions || ['Inspect site location', 'Deploy field work team', 'Verify resolution evidence'];
+  const activeTaxObj = CATEGORY_TAXONOMY[bestCat] || {};
+  const rootCauses = activeTaxObj.causes || ['Environmental wear & tear', 'High seasonal civic load'];
+  const recommendedActions = activeTaxObj.actions || ['Inspect site location', 'Deploy field work team', 'Verify resolution evidence'];
 
   return {
     category_prediction: {
@@ -465,8 +545,6 @@ function localPredictAll(data) {
       subcategory: bestSubcat,
       department: department,
       confidence: Number(confidence.toFixed(2)),
-      detected_language: detectedLanguage,
-      multilingual_keywords: detectedKeywords
     },
     priority_prediction: {
       priority: priority,
@@ -498,10 +576,23 @@ function localPredictAll(data) {
       guidance: emergencyRes.guidance || (isEmergency ? 'Critical situation flagged for immediate administrative dispatch.' : null)
     },
     summary: {
+      primaryDepartment: bestCat,
       category: bestCat,
       subcategory: bestSubcat,
       department: department,
+      secondaryDepartments: secondaryDepartments,
+      secondary_departments: secondaryDepartments,
+      departmentConfidence: Number(confidence.toFixed(2)),
+      confidence: Number(confidence.toFixed(2)),
       priority: priority,
+      priority_confidence: Number(prioConfidence.toFixed(2)),
+      requiresHumanReview: requiresHumanReview,
+      requires_human_review: requiresHumanReview,
+      incidentType: incidentType,
+      incident_type: incidentType,
+      causeKnown: causeKnown,
+      cause_known: causeKnown,
+      reason: reason,
       sla_hours: slaHours,
       estimated_days: estimatedDays,
       impact_score: impactScoreObj.score,
@@ -509,7 +600,7 @@ function localPredictAll(data) {
       is_duplicate: isDuplicate,
       duplicate_match_id: matchedId,
       is_emergency: isEmergency,
-      detected_language: detectedLanguage
+      modelVersion: 'civicpulse-ml-v2.0-30dept'
     }
   };
 }
@@ -518,7 +609,7 @@ class MLClient {
   async predictAll(data) {
     try {
       const response = await axios.post(`${ML_SERVICE_URL}/predict/all`, data, { timeout: 3500 });
-      // Enrich response with impact score, root causes, and multilingual emergency
+      // Enrich response with impact score, root causes, and emergency analysis
       const localEnrichment = localPredictAll(data);
       return {
         ...response.data,
@@ -527,9 +618,15 @@ class MLClient {
         emergency_analysis: localEnrichment.emergency_analysis,
         summary: {
           ...response.data.summary,
+          primaryDepartment: response.data.summary.primaryDepartment || response.data.summary.department,
+          secondaryDepartments: response.data.summary.secondaryDepartments || [],
+          requiresHumanReview: response.data.summary.requiresHumanReview !== undefined ? response.data.summary.requiresHumanReview : localEnrichment.summary.requiresHumanReview,
+          incidentType: response.data.summary.incidentType || localEnrichment.summary.incidentType,
+          causeKnown: response.data.summary.causeKnown !== undefined ? response.data.summary.causeKnown : localEnrichment.summary.causeKnown,
+          reason: response.data.summary.reason || localEnrichment.summary.reason,
           impact_score: localEnrichment.impact_assessment.score,
           impact_label: localEnrichment.impact_assessment.label,
-          detected_language: localEnrichment.category_prediction.detected_language
+          modelVersion: 'civicpulse-ml-v2.0-30dept'
         }
       };
     } catch (err) {

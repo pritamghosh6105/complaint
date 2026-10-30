@@ -181,7 +181,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             </div>
           </div>
 
-          <h1 style={{ fontSize: 'clamp(1.25rem, 3.5vw, 1.65rem)', color: '#fff', marginBottom: '10px' }}>
+          <h1 style={{ fontSize: 'clamp(1.25rem, 3.5vw, 1.65rem)', color: 'var(--text-primary)', marginBottom: '10px' }}>
             {complaint.title}
           </h1>
 
@@ -209,7 +209,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
                   Citizen Impact Score
                 </div>
                 <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {complaint.impact_score || 50} <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>/ 100</span>
+                  {complaint.impact_score || 50}%
                   <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent-cyan)', marginLeft: '8px' }}>
                     ({complaint.impact_label || 'Moderate Public Impact'})
                   </span>
@@ -226,14 +226,15 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))',
             gap: '14px',
-            background: 'rgba(255, 255, 255, 0.03)',
+            background: 'var(--bg-surface-elevated)',
+            border: '1px solid var(--border-subtle)',
             padding: '16px',
             borderRadius: 'var(--radius-sm)',
             fontSize: '0.85rem'
           }}>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Category:</span>
-              <div style={{ fontWeight: 700, color: '#fff' }}>{complaint.category}</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.category}</div>
             </div>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Subcategory:</span>
@@ -241,7 +242,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             </div>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Assigned Department:</span>
-              <div style={{ fontWeight: 700, color: '#fff' }}>{complaint.department_name || complaint.category}</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.department_name || complaint.category}</div>
             </div>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Field Officer:</span>
@@ -249,7 +250,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             </div>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Location / Ward:</span>
-              <div style={{ fontWeight: 700, color: '#fff' }}>{complaint.address || complaint.ward || 'West Bengal'}</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.address || complaint.ward || 'West Bengal'}</div>
             </div>
           </div>
         </div>
@@ -259,7 +260,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
           <div className="glass-card" style={{ padding: '22px', marginBottom: '24px', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
               <BrainCircuit size={20} color="var(--accent-purple)" />
-              <h3 style={{ fontSize: '1.15rem', color: '#fff', margin: 0 }}>
+              <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', margin: 0 }}>
                 AI Root-Cause & Recommended Actions
               </h3>
             </div>
@@ -296,7 +297,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
 
         {/* Visual Timeline Stepper */}
         <div className="glass-card" style={{ padding: 'clamp(16px, 3vw, 28px)', marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '20px' }}>
             Resolution Progress Stepper
           </h3>
           <Timeline history={timeline} currentStatus={complaint.status} />
@@ -326,7 +327,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
           <div className="glass-card" style={{ padding: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
               <div>
-                <h3 style={{ fontSize: '1.15rem', color: '#fff', marginBottom: '4px' }}>
+                <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '4px' }}>
                   Citizen Quality Review
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
@@ -401,7 +402,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
                   <RotateCcw size={20} />
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#fff' }}>Reopen Complaint</h3>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-primary)' }}>Reopen Complaint</h3>
                   <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Ticket #{complaint.tracking_id}</span>
                 </div>
               </div>
@@ -427,7 +428,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
                       border: '1px solid var(--border-subtle)',
                       borderRadius: 'var(--radius-sm)',
                       padding: '10px 12px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '0.88rem'
                     }}
                   />

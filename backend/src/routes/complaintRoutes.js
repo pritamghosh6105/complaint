@@ -6,7 +6,14 @@ const upload = require('../middleware/uploadMiddleware');
 
 // Public endpoints
 router.get('/public', (req, res) => complaintController.getPublicComplaints(req, res));
+router.get('/track/:id', (req, res) => complaintController.getComplaintById(req, res));
+router.post('/check-duplicate', (req, res) => complaintController.previewML(req, res));
 router.post('/preview-ml', (req, res) => complaintController.previewML(req, res));
+
+// Geospatial GIS & Heatmap Endpoints
+router.get('/map', (req, res) => complaintController.getComplaintMap(req, res));
+router.get('/heatmap', (req, res) => complaintController.getComplaintHeatmap(req, res));
+router.get('/nearby', (req, res) => complaintController.getNearbyComplaints(req, res));
 
 // Authenticated citizen endpoints
 router.post(

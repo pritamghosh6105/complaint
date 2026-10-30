@@ -37,10 +37,23 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/analytics', analyticsRoutes);
 const locationRoutes = require('./routes/locationRoutes');
 app.use('/api/location', locationRoutes);
+app.use('/api/locations', locationRoutes);
 const evidenceRoutes = require('./routes/evidenceRoutes');
 app.use('/api/evidence', evidenceRoutes);
 
 const mlClient = require('./services/mlClient');
+const aiAssistantService = require('./services/aiAssistantService');
+
+// Real AI Complaint Drafting Assistant (Groq / OpenRouter)
+app.post('/api/ai/draft-complaint', async (req, res) => {
+  try {
+    const draft = await aiAssistantService.draftComplaint(req.body);
+    res.json(draft);
+  } catch (err) {
+    console.error('AI draft error:', err);
+    res.status(500).json({ error: 'AI drafting failed', details: err.message });
+  }
+});
 
 // Public departments list
 app.get('/api/departments', (req, res) => {
@@ -107,6 +120,8 @@ app.post('/api/ml/resolution-time', async (req, res) => {
   }
 });
 
+const cloudinaryConfig = require('./config/cloudinary');
+
 app.get('/api/health', (req, res) => {
   const mongo = getMongoStatus();
   res.json({
@@ -114,18 +129,88 @@ app.get('/api/health', (req, res) => {
     service: 'Smart Citizen Complaint Backend API',
     database: mongo.connected ? 'MongoDB Atlas' : 'Embedded Relational JSON Storage',
     mongoStatus: mongo,
+    mediaStorage: {
+      engine: cloudinaryConfig.isConfigured ? 'Cloudinary Media Engine (CDN)' : 'Local Disk Fallback (/uploads)',
+      cloudinaryConfigured: cloudinaryConfig.isConfigured,
+      cloudName: cloudinaryConfig.cloudName || null
+    },
     time: new Date().toISOString()
   });
 });
 
-app.get('/api/database/status', (req, res) => {
+app.get('/api/evidence/cloudinary-status', async (req, res) => {
+  try {
+    const status = await cloudinaryConfig.verifyConnection();
+    res.json(status);
+  } catch (err) {
+    res.status(500).json({ connected: false, error: err.message });
+  }
+});
+
+
+app.get('/api/database/status', async (req, res) => {
   const mongo = getMongoStatus();
+  const collectionNames = [
+    'users',
+    'complaints',
+    'departments',
+    'locations',
+    'postal_locations',
+    'police_stations',
+    'location_boundaries',
+    'evidence',
+    'ai_predictions',
+    'complaint_history',
+    'notifications',
+    'feedback'
+  ];
+
+  let collectionCounts = {};
+  if (mongo.connected) {
+    try {
+      const mongoModels = require('./models/mongo');
+      const [u, c, d, l, p, ps, lb, e, a, ch, n, f] = await Promise.all([
+        mongoModels.User.countDocuments(),
+        mongoModels.Complaint.countDocuments(),
+        mongoModels.Department.countDocuments(),
+        mongoModels.Location.countDocuments(),
+        mongoModels.PostalLocation.countDocuments(),
+        mongoModels.PoliceStation.countDocuments(),
+        mongoModels.LocationBoundary.countDocuments(),
+        mongoModels.Evidence.countDocuments(),
+        mongoModels.AiPrediction.countDocuments(),
+        mongoModels.ComplaintHistory.countDocuments(),
+        mongoModels.Notification.countDocuments(),
+        mongoModels.Feedback.countDocuments()
+      ]);
+      collectionCounts = {
+        users: u,
+        complaints: c,
+        departments: d,
+        locations: l,
+        postal_locations: p,
+        police_stations: ps,
+        location_boundaries: lb,
+        evidence: e,
+        ai_predictions: a,
+        complaint_history: ch,
+        notifications: n,
+        feedback: f
+      };
+    } catch (err) {
+      console.warn('Failed counting mongo collections:', err.message);
+    }
+  }
+
   res.json({
+    databaseName: 'CIVICPULSE DB',
     activeEngine: mongo.connected ? 'MongoDB Atlas (Cloud)' : 'Local JSON Relational Storage',
     connected: mongo.connected,
     host: mongo.host,
     database: mongo.dbName,
-    collections: ['departments', 'users', 'complaints', 'complaint_timeline', 'feedback', 'notifications']
+    totalCollections: collectionNames.length,
+    collections: collectionNames,
+    counts: collectionCounts
   });
 });
 

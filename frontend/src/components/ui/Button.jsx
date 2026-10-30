@@ -1,4 +1,5 @@
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 
 export function Button({ 
   children, 
@@ -6,6 +7,7 @@ export function Button({
   size = 'md', 
   className = '', 
   disabled = false, 
+  loading = false,
   icon = null, 
   onClick, 
   type = 'button',
@@ -17,7 +19,9 @@ export function Button({
     secondary: 'btn-secondary',
     outline: 'btn-outline',
     danger: 'btn-danger',
-    success: 'btn-success'
+    success: 'btn-success',
+    ghost: 'btn-ghost',
+    icon: 'btn-icon btn-ghost'
   }[variant] || 'btn-primary';
 
   const sizeClass = {
@@ -26,23 +30,50 @@ export function Button({
     lg: 'btn-lg'
   }[size] || '';
 
+  const isDisabled = disabled || loading;
+
   return (
     <button
       type={type}
-      disabled={disabled}
+      disabled={isDisabled}
       onClick={onClick}
       className={`btn ${variantClass} ${sizeClass} ${className}`}
       style={{
-        opacity: disabled ? 0.6 : 1,
-        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: isDisabled ? 0.65 : 1,
+        cursor: isDisabled ? 'not-allowed' : 'pointer',
         ...style
       }}
+      aria-busy={loading}
       {...props}
     >
-      {icon && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+      {loading ? (
+        <Loader2 size={size === 'sm' ? 14 : 16} className="animate-spin" aria-hidden="true" />
+      ) : icon ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>
+      ) : null}
       {children}
     </button>
   );
+}
+
+export function PrimaryButton(props) {
+  return <Button variant="primary" {...props} />;
+}
+
+export function SecondaryButton(props) {
+  return <Button variant="secondary" {...props} />;
+}
+
+export function DangerButton(props) {
+  return <Button variant="danger" {...props} />;
+}
+
+export function GhostButton(props) {
+  return <Button variant="ghost" {...props} />;
+}
+
+export function IconButton({ icon, size = 'md', ...props }) {
+  return <Button variant="icon" icon={icon} size={size} {...props} />;
 }
 
 export default Button;

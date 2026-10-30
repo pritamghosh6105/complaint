@@ -69,7 +69,7 @@ export default function MLInspector({ setCurrentRoute }) {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <BrainCircuit size={26} color="var(--accent-cyan)" />
-              <h1 style={{ fontSize: '2.2rem', color: '#fff' }}>ML Microservice Inspector</h1>
+              <h1 style={{ fontSize: '2.2rem', color: 'var(--text-primary)' }}>ML Microservice Inspector</h1>
             </div>
             <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
               Real-time model evaluation metrics, inference pipelines, and academic viva benchmarks.
@@ -90,7 +90,7 @@ export default function MLInspector({ setCurrentRoute }) {
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-cyan)', textTransform: 'uppercase' }}>
               Model 1 • Category NLP
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', margin: '6px 0' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-primary)', margin: '6px 0' }}>
               {metrics?.category_model?.accuracy || 96.4}%
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
@@ -105,7 +105,7 @@ export default function MLInspector({ setCurrentRoute }) {
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f87171', textTransform: 'uppercase' }}>
               Model 2 • Priority Risk
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', margin: '6px 0' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-primary)', margin: '6px 0' }}>
               {metrics?.priority_model?.accuracy || 94.2}%
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
@@ -120,7 +120,7 @@ export default function MLInspector({ setCurrentRoute }) {
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fbbf24', textTransform: 'uppercase' }}>
               Model 3 • Duplicate Engine
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', margin: '6px 0' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-primary)', margin: '6px 0' }}>
               Cosine + Geo
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
@@ -135,7 +135,7 @@ export default function MLInspector({ setCurrentRoute }) {
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#34d399', textTransform: 'uppercase' }}>
               Model 4 • Resolution Time
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', margin: '6px 0' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-primary)', margin: '6px 0' }}>
               0.33 <span style={{ fontSize: '1rem', fontWeight: 600 }}>Days</span>
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
@@ -151,7 +151,7 @@ export default function MLInspector({ setCurrentRoute }) {
         <div className="glass-panel" style={{ padding: '28px', marginBottom: '35px', border: '1px solid rgba(59, 130, 246, 0.35)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
             <Sliders size={22} color="var(--accent-cyan)" />
-            <h2 style={{ fontSize: '1.35rem', color: '#fff' }}>Live Interactive Inference Testbench</h2>
+            <h2 style={{ fontSize: '1.35rem', color: 'var(--text-primary)' }}>Live Interactive Inference Testbench</h2>
           </div>
 
           <div className="grid-cols-2" style={{ gap: '24px', alignItems: 'flex-start' }}>
@@ -213,16 +213,16 @@ export default function MLInspector({ setCurrentRoute }) {
             </div>
 
             {/* Pipeline Output Inspection */}
-            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '20px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ background: 'var(--bg-surface-elevated)', padding: '20px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
               <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '14px', textTransform: 'uppercase' }}>
                 Pipeline Vector Execution Results:
               </div>
 
               {testResult ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid var(--border-subtle)' }}>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>1. Category Output:</span>
-                    <strong style={{ color: '#fff' }}>
+                    <strong style={{ color: 'var(--text-primary)' }}>
                       {testResult.category_prediction?.category} ({Math.round((testResult.category_prediction?.confidence || 0.9) * 100)}% Confidence)
                     </strong>
                   </div>
@@ -268,7 +268,7 @@ export default function MLInspector({ setCurrentRoute }) {
 
         {/* Mathematical Formulations Reference for Viva Voce */}
         <div className="glass-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '1.15rem', color: '#fff', marginBottom: '12px' }}>
+          <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '12px' }}>
             Academic Methodology & Formulations Reference
           </h3>
 

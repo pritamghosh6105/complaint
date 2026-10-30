@@ -1,29 +1,50 @@
 import React from 'react';
 
-export default function StatCard({ title, value, subtitle, icon: Icon, color = 'blue', badge }) {
+export default function StatCard({ 
+  title, 
+  value, 
+  subtitle, 
+  icon: Icon, 
+  color = 'blue', 
+  badge,
+  trend,
+  className = '',
+  style = {} 
+}) {
   const colorMap = {
-    blue: { bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.3)', text: '#60a5fa' },
-    red: { bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.3)', text: '#f87171' },
-    emerald: { bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.3)', text: '#34d399' },
-    amber: { bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.3)', text: '#fbbf24' },
-    purple: { bg: 'rgba(139, 92, 246, 0.12)', border: 'rgba(139, 92, 246, 0.3)', text: '#a78bfa' },
-    cyan: { bg: 'rgba(6, 182, 212, 0.12)', border: 'rgba(6, 182, 212, 0.3)', text: '#22d3ee' }
+    blue: { bg: 'var(--color-accent-subtle)', border: 'rgba(37, 99, 235, 0.25)', text: 'var(--color-accent)' },
+    red: { bg: 'var(--color-danger-subtle)', border: 'rgba(220, 38, 38, 0.25)', text: 'var(--color-danger)' },
+    emerald: { bg: 'var(--color-success-subtle)', border: 'rgba(22, 163, 74, 0.25)', text: 'var(--color-success)' },
+    amber: { bg: 'var(--color-warning-subtle)', border: 'rgba(217, 119, 6, 0.25)', text: 'var(--color-warning)' },
+    purple: { bg: 'rgba(124, 58, 237, 0.12)', border: 'rgba(124, 58, 237, 0.25)', text: '#a855f7' },
+    cyan: { bg: 'var(--color-info-subtle)', border: 'rgba(2, 132, 199, 0.25)', text: 'var(--color-info)' }
   };
 
   const theme = colorMap[color] || colorMap.blue;
 
   return (
-    <div className="glass-card" style={{ padding: '20px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+    <div 
+      className={`gov-card ${className}`} 
+      style={{ 
+        padding: '20px', 
+        position: 'relative', 
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        ...style 
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
             {title}
           </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-            {value}
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+            {value != null ? value : '—'}
           </div>
           {subtitle && (
-            <div style={{ fontSize: '0.775rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+            <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '6px' }}>
               {subtitle}
             </div>
           )}
@@ -31,24 +52,30 @@ export default function StatCard({ title, value, subtitle, icon: Icon, color = '
 
         {Icon && (
           <div style={{
-            width: '46px',
-            height: '46px',
-            borderRadius: '12px',
+            width: '44px',
+            height: '44px',
+            borderRadius: 'var(--radius-sm)',
             background: theme.bg,
             border: `1px solid ${theme.border}`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: theme.text
+            color: theme.text,
+            flexShrink: 0
           }}>
-            <Icon size={24} />
+            <Icon size={22} strokeWidth={2} />
           </div>
         )}
       </div>
 
-      {badge && (
-        <div style={{ marginTop: '12px' }}>
+      {(badge || trend) && (
+        <div style={{ marginTop: '14px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           {badge}
+          {trend && (
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              {trend}
+            </span>
+          )}
         </div>
       )}
     </div>

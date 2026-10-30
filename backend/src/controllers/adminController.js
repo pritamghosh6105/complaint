@@ -207,12 +207,15 @@ class AdminController {
       db.prepare(`
         UPDATE complaints
         SET category = ?,
+            final_department = ?,
             subcategory = ?,
             admin_override = 1,
             admin_override_reason = ?,
+            reviewed_by = ?,
+            reviewed_at = CURRENT_TIMESTAMP,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
-      `).run(category, subcategory || null, reason || 'Manual administrative category adjustment', complaint.id);
+      `).run(category, category, subcategory || null, reason || 'Manual administrative category adjustment', req.user?.name || 'Admin', complaint.id);
 
       db.prepare(`
         INSERT INTO complaint_timeline (complaint_id, status, notes, updated_by_name, updated_by_user_id)

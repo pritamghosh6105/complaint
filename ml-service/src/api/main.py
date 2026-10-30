@@ -160,9 +160,14 @@ def predict_all(req: AllInOneRequest):
     """
     # 1. Category & Subcategory Prediction
     cat_res = category_predictor.predict(req.text)
-    category = cat_res.get("category", "Roads & Public Works")
-    subcategory = cat_res.get("subcategory", "General Issue")
-    department = cat_res.get("department", "Roads & Public Works")
+    primary_dept = cat_res.get("primaryDepartment") or cat_res.get("department") or "CLASSIFICATION_UNCERTAIN"
+    subcategory = cat_res.get("subcategory", "General Grievance")
+    secondary_depts = cat_res.get("secondaryDepartments", [])
+    dept_conf = cat_res.get("departmentConfidence")
+    req_human_review = cat_res.get("requiresHumanReview", False)
+    reason = cat_res.get("reason", "")
+    incident_type = cat_res.get("incidentType", "Standard Civic Complaint")
+    cause_known = cat_res.get("causeKnown", False)
     is_crime = cat_res.get("is_crime", False)
     is_emergency = cat_res.get("is_emergency", False)
     emergency_guidance = cat_res.get("emergency_guidance")
@@ -170,7 +175,7 @@ def predict_all(req: AllInOneRequest):
     # 2. Priority Prediction
     prio_res = priority_predictor.predict(
         text=req.text,
-        category=category,
+        category=primary_dept if primary_dept != "CLASSIFICATION_UNCERTAIN" else "Public Grievance / General Administration",
         severity=req.severity or "Medium",
         location_type=req.location_type or "Residential",
         affected_count=req.affected_count or 50
@@ -188,7 +193,7 @@ def predict_all(req: AllInOneRequest):
     
     # 4. Resolution Time Estimation
     res_time_res = resolution_predictor.predict(
-        category=category,
+        category=primary_dept if primary_dept != "CLASSIFICATION_UNCERTAIN" else "Public Grievance / General Administration",
         priority=priority,
         location_type=req.location_type or "Residential",
         ward=req.ward or "Ward 1",
@@ -196,7 +201,6 @@ def predict_all(req: AllInOneRequest):
         text=req.text
     )
     
-    priority = prio_res.get("priority", "MEDIUM")
     prio_conf = prio_res.get("confidence", 0.95)
     est_hours = int(round(res_time_res.get("estimated_days", 3.0) * 24))
     
@@ -206,12 +210,23 @@ def predict_all(req: AllInOneRequest):
         "duplicate_detection": dup_res,
         "resolution_prediction": res_time_res,
         "summary": {
-            "category": category,
+            "primaryDepartment": primary_dept,
+            "category": primary_dept,
+            "department": primary_dept,
             "subcategory": subcategory,
-            "department": department,
+            "secondaryDepartments": secondary_depts,
+            "secondary_departments": secondary_depts,
+            "departmentConfidence": dept_conf,
+            "confidence": dept_conf,
             "priority": priority,
             "priority_confidence": prio_conf,
-            "confidence": prio_conf,
+            "incidentType": incident_type,
+            "incident_type": incident_type,
+            "causeKnown": cause_known,
+            "cause_known": cause_known,
+            "requiresHumanReview": req_human_review,
+            "requires_human_review": req_human_review,
+            "reason": reason,
             "probabilities": prio_res.get("probabilities", {}),
             "risk_factors": prio_res.get("risk_factors", []),
             "sla_hours": prio_res.get("sla_hours", 72),
@@ -223,7 +238,8 @@ def predict_all(req: AllInOneRequest):
             "is_emergency": prio_res.get("is_emergency", is_emergency),
             "emergency_detected": prio_res.get("is_emergency", is_emergency),
             "emergency_guidance": emergency_guidance,
-            "override_reason": prio_res.get("override_reason")
+            "override_reason": prio_res.get("override_reason"),
+            "modelVersion": "civicpulse-ml-v2.0-30dept"
         }
     }
 

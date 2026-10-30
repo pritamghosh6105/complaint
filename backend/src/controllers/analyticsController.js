@@ -151,6 +151,11 @@ class AnalyticsController {
         category,
         priority,
         status,
+        pincode,
+        startDate,
+        endDate,
+        date_from,
+        date_to,
         view_type, // 'all', 'crime', 'civic'
         timeframe // '7d', '30d', '6m', 'all'
       } = req.query;
@@ -214,6 +219,9 @@ class AnalyticsController {
       if (police_station && police_station !== 'All') {
         complaints = complaints.filter(c => (c.police_station || '').toLowerCase().includes(police_station.toLowerCase()));
       }
+      if (pincode && pincode !== 'All') {
+        complaints = complaints.filter(c => String(c.postal_code || '').trim() === String(pincode).trim());
+      }
       if (department_id && department_id !== 'All') {
         complaints = complaints.filter(c => c.department_id === Number(department_id));
       }
@@ -227,6 +235,18 @@ class AnalyticsController {
         complaints = complaints.filter(c => c.status === status);
       }
 
+      // Date range filters
+      const dFrom = startDate || date_from;
+      const dTo = endDate || date_to;
+      if (dFrom) {
+        const fromDate = new Date(dFrom);
+        complaints = complaints.filter(c => new Date(c.created_at) >= fromDate);
+      }
+      if (dTo) {
+        const toDate = new Date(dTo);
+        complaints = complaints.filter(c => new Date(c.created_at) <= toDate);
+      }
+
       // View type filter: Crime only vs Civic only
       if (view_type === 'crime') {
         complaints = complaints.filter(c => c.is_crime === 1 || ['Police & Law Enforcement', 'Cyber Crime', 'Women & Child Safety'].includes(c.category));
@@ -235,7 +255,7 @@ class AnalyticsController {
       }
 
       // Timeframe filter
-      if (timeframe && timeframe !== 'all') {
+      if (timeframe && timeframe !== 'all' && !dFrom && !dTo) {
         const now = Date.now();
         let days = 30;
         if (timeframe === '7d') days = 7;
@@ -248,54 +268,83 @@ class AnalyticsController {
         });
       }
 
-      const heatPoints = complaints
-        .filter(c => c.latitude && c.longitude && Math.abs(c.latitude) > 0.1)
-        .map(c => {
-          let intensity = 0.5;
-          if (c.priority === 'CRITICAL') intensity = 1.0;
-          else if (c.priority === 'HIGH') intensity = 0.8;
-          else if (c.priority === 'MEDIUM') intensity = 0.6;
-          else intensity = 0.4;
+      const validComplaints = complaints.filter(c => c.latitude && c.longitude && Math.abs(c.latitude) > 0.1);
 
-          const isCrime = c.is_crime === 1 || ['Police & Law Enforcement', 'Cyber Crime', 'Women & Child Safety'].includes(c.category);
+      const heatPoints = validComplaints.map(c => {
+        let intensity = 0.5;
+        if (c.priority === 'CRITICAL') intensity = 1.0;
+        else if (c.priority === 'HIGH') intensity = 0.8;
+        else if (c.priority === 'MEDIUM') intensity = 0.6;
+        else intensity = 0.4;
 
-          // Crime Shielding: If public/unauthorized, mask sensitive title and blur GPS slightly
-          let displayTitle = c.title;
-          let displayLat = c.latitude;
-          let displayLng = c.longitude;
-          let isProtected = false;
+        const isCrime = c.is_crime === 1 || ['Police & Law Enforcement', 'Cyber Crime', 'Women & Child Safety'].includes(c.category);
 
-          if (isCrime && !isAuthorizedLawEnforcement) {
-            displayTitle = `[Protected Case: ${c.category}] - Police Jurisdiction`;
-            displayLat = Number(c.latitude.toFixed(2));
-            displayLng = Number(c.longitude.toFixed(2));
-            isProtected = true;
-          }
+        // Density calculation: count nearby points within ~1.5km (0.015 lat/lng)
+        const densityCount = validComplaints.filter(other => {
+          const dLat = Math.abs(other.latitude - c.latitude);
+          const dLng = Math.abs(other.longitude - c.longitude);
+          return dLat < 0.015 && dLng < 0.015;
+        }).length;
 
-          return {
-            id: c.id,
-            tracking_id: c.tracking_id,
-            title: displayTitle,
-            category: c.category,
-            priority: c.priority,
-            status: c.status,
-            lat: displayLat,
-            lng: displayLng,
-            intensity,
-            district: c.district || 'West Bengal',
-            subdivision: c.subdivision || '',
-            administrative_type: c.administrative_type || 'Urban',
-            municipality: c.municipality || '',
-            ward: c.ward || '',
-            block: c.block || '',
-            gram_panchayat: c.gram_panchayat || '',
-            village: c.village || '',
-            police_station: c.police_station || '',
-            is_crime: isCrime,
-            is_protected: isProtected,
-            is_escalated: c.is_escalated === 1
-          };
-        });
+        // Density color:
+        // - Low density (1-2) -> Blue (#3b82f6)
+        // - Medium density (3-5) -> Yellow (#eab308)
+        // - High density (6-10) -> Red (#ef4444)
+        // - Critical/Crime hotspots -> Purple (#8b5cf6)
+        let densityColor = '#3b82f6';
+        let densityLevel = 'low';
+        if (isCrime || c.priority === 'CRITICAL') {
+          densityColor = '#8b5cf6';
+          densityLevel = 'critical';
+        } else if (densityCount >= 6) {
+          densityColor = '#ef4444';
+          densityLevel = 'high';
+        } else if (densityCount >= 3) {
+          densityColor = '#eab308';
+          densityLevel = 'medium';
+        }
+
+        // Crime Shielding: If public/unauthorized, mask sensitive title and blur GPS slightly
+        let displayTitle = c.title;
+        let displayLat = c.latitude;
+        let displayLng = c.longitude;
+        let isProtected = false;
+
+        if (isCrime && !isAuthorizedLawEnforcement) {
+          displayTitle = `[Protected Case: ${c.category}] - Police Jurisdiction`;
+          displayLat = Number(c.latitude.toFixed(2));
+          displayLng = Number(c.longitude.toFixed(2));
+          isProtected = true;
+        }
+
+        return {
+          id: c.id,
+          tracking_id: c.tracking_id,
+          title: displayTitle,
+          category: c.category,
+          priority: c.priority,
+          status: c.status,
+          lat: displayLat,
+          lng: displayLng,
+          intensity,
+          density_count: densityCount,
+          density_color: densityColor,
+          density_level: densityLevel,
+          district: c.district || 'West Bengal',
+          subdivision: c.subdivision || '',
+          administrative_type: c.administrative_type || 'Urban',
+          municipality: c.municipality || '',
+          ward: c.ward || '',
+          block: c.block || '',
+          gram_panchayat: c.gram_panchayat || '',
+          village: c.village || '',
+          police_station: c.police_station || '',
+          pincode: c.postal_code || '',
+          is_crime: isCrime,
+          is_protected: isProtected,
+          is_escalated: c.is_escalated === 1
+        };
+      });
 
       res.json({ points: heatPoints, count: heatPoints.length });
     } catch (err) {

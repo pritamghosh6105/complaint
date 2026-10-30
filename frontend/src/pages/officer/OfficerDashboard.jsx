@@ -182,7 +182,7 @@ export default function OfficerDashboard({ setCurrentRoute, setSelectedComplaint
                     </div>
                   </div>
 
-                  <h3 style={{ fontSize: '1.2rem', color: '#fff' }}>
+                  <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)' }}>
                     {task.title}
                   </h3>
 

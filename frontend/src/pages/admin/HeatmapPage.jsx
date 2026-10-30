@@ -22,6 +22,7 @@ import api from '../../services/api';
 import Badge from '../../components/ui/Badge';
 import Card from '../../components/ui/Card';
 import SearchableSelect from '../../components/common/SearchableSelect';
+import { MapAutoInvalidate, FastTileLayer, MapLayerSwitcher, getSavedProviderId } from '../../components/maps/MapConfig';
 
 // Helper component to smoothly re-center Leaflet map
 function MapRecenter({ center, zoom }) {
@@ -35,6 +36,7 @@ function MapRecenter({ center, zoom }) {
 }
 
 export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId }) {
+  const [currentProvider, setCurrentProvider] = useState(getSavedProviderId());
   const [points, setPoints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeInspectorPoint, setActiveInspectorPoint] = useState(null);
@@ -69,6 +71,10 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
   const [selectedPS, setSelectedPS] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedPriority, setSelectedPriority] = useState('All');
+  const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedPincode, setSelectedPincode] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [viewType, setViewType] = useState('all'); // 'all' | 'civic' | 'crime'
   const [timeframe, setTimeframe] = useState('all'); // 'all' | '7d' | '30d' | '6m'
   const [showHotspots, setShowHotspots] = useState(true);
@@ -207,8 +213,12 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
         if (selectedGP) params.append('gram_panchayat', selectedGP);
       }
       if (selectedPS) params.append('police_station', selectedPS);
+      if (selectedPincode) params.append('pincode', selectedPincode.trim());
       if (selectedCategory !== 'All') params.append('category', selectedCategory);
       if (selectedPriority !== 'All') params.append('priority', selectedPriority);
+      if (selectedStatus !== 'All') params.append('status', selectedStatus);
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
       if (viewType !== 'all') params.append('view_type', viewType);
       if (timeframe !== 'all') params.append('timeframe', timeframe);
 
@@ -249,8 +259,12 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
     selectedBlockId,
     selectedGP,
     selectedPS,
+    selectedPincode,
     selectedCategory,
     selectedPriority,
+    selectedStatus,
+    startDate,
+    endDate,
     viewType,
     timeframe
   ]);
@@ -273,9 +287,14 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
     setSelectedGP('');
     setSelectedGPId('');
     setSelectedPS('');
+    setSelectedPincode('');
     setSelectedCategory('All');
     setSelectedPriority('All');
+    setSelectedStatus('All');
+    setStartDate('');
+    setEndDate('');
     setViewType('all');
+    setTimeframe('all');
     setMapCenter([22.5726, 88.3639]);
     setMapZoom(10);
   };
@@ -285,11 +304,12 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
   const resolvedCount = points.filter(p => p.status === 'Resolved').length;
 
   const getHeatColor = (p) => {
-    if (p.is_crime) return '#8b5cf6'; // Purple for law enforcement/crime
-    if (p.priority === 'CRITICAL') return '#ef4444';
-    if (p.priority === 'HIGH') return '#f97316';
-    if (p.priority === 'MEDIUM') return '#eab308';
-    return '#10b981';
+    if (p.density_color) return p.density_color;
+    if (p.is_crime || p.priority === 'CRITICAL') return '#8b5cf6'; // Purple for law enforcement/critical hotspot
+    const count = p.density_count || 1;
+    if (count >= 6) return '#ef4444'; // High density (6-10) -> Red
+    if (count >= 3) return '#eab308'; // Medium density (3-5) -> Yellow
+    return '#3b82f6'; // Low density (1-2) -> Blue
   };
 
   return (
@@ -425,17 +445,20 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
             boxShadow: 'var(--shadow-md)',
             position: 'relative'
           }}>
+            <MapLayerSwitcher 
+              currentProvider={currentProvider} 
+              onProviderChange={setCurrentProvider} 
+            />
+
             <MapContainer 
               center={mapCenter} 
               zoom={mapZoom} 
               scrollWheelZoom={true}
               style={{ width: '100%', height: '100%' }}
             >
+              <MapAutoInvalidate extraDep={points.length} />
               <MapRecenter center={mapCenter} zoom={mapZoom} />
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+              <FastTileLayer providerId={currentProvider} />
 
               {points.map(pt => (
                 <React.Fragment key={pt.id}>
@@ -552,7 +575,7 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
                           {h.municipality} • {h.district}
                         </div>
-                        <div style={{ fontSize: '0.8rem', background: 'var(--bg-surface)', padding: '6px 8px', borderRadius: '4px', marginBottom: '8px' }}>
+                        <div style={{ fontSize: '0.8rem', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', padding: '6px 8px', borderRadius: '4px', marginBottom: '8px' }}>
                           Top Category: <strong style={{ color: 'var(--accent-cyan)' }}>{h.top_category}</strong>
                         </div>
                         <div style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>
@@ -582,22 +605,22 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
               flexDirection: 'column',
               gap: '6px'
             }}>
-              <span style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>SPATIAL VECTOR LEGEND</span>
+              <span style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>DENSITY INTENSITY LEGEND</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }} />
-                <span>Critical Priority Vector</span>
+                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#3b82f6' }} />
+                <span>Low Density (1-2 Incidents)</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f97316' }} />
-                <span>High Priority Vector</span>
+                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#eab308' }} />
+                <span>Medium Density (3-5 Incidents)</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }} />
+                <span>High Density (6-10 Incidents)</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#8b5cf6' }} />
-                <span>Crime / Law Enforcement Beat</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
-                <span>Medium / Low / Resolved</span>
+                <span>Critical / Crime Hotspot</span>
               </div>
               {showHotspots && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', marginTop: '2px' }}>
@@ -884,7 +907,73 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
                 />
               </div>
 
-              {/* 6. Priority Filter */}
+              {/* 6. Pincode Filter */}
+              <div style={{ marginBottom: '12px' }}>
+                <label className="form-label" style={{ fontSize: '0.78rem' }}>Pincode:</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. 743221, 700001..."
+                  value={selectedPincode}
+                  onChange={(e) => setSelectedPincode(e.target.value)}
+                  style={{ fontSize: '0.8rem', padding: '6px 10px', width: '100%' }}
+                />
+              </div>
+
+              {/* 7. Status Filter */}
+              <div style={{ marginBottom: '12px' }}>
+                <label className="form-label" style={{ fontSize: '0.78rem' }}>Status:</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px' }}>
+                  {['All', 'Pending', 'In Progress', 'Resolved'].map(s => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setSelectedStatus(s)}
+                      className="btn btn-sm"
+                      style={{
+                        padding: '4px 2px',
+                        fontSize: '0.68rem',
+                        fontWeight: selectedStatus === s ? 700 : 500,
+                        background: selectedStatus === s ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+                        color: selectedStatus === s ? '#fff' : 'var(--text-secondary)',
+                        border: selectedStatus === s ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                        borderRadius: '4px'
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 8. Date Range Filter */}
+              <div style={{ marginBottom: '12px' }}>
+                <label className="form-label" style={{ fontSize: '0.78rem' }}>Date Range:</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                  <div>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>From:</span>
+                    <input
+                      type="date"
+                      className="form-input"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      style={{ fontSize: '0.74rem', padding: '4px 6px', width: '100%' }}
+                    />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>To:</span>
+                    <input
+                      type="date"
+                      className="form-input"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      style={{ fontSize: '0.74rem', padding: '4px 6px', width: '100%' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 9. Priority Filter */}
               <div style={{ marginBottom: '12px' }}>
                 <label className="form-label" style={{ fontSize: '0.78rem' }}>Priority:</label>
                 <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
@@ -907,7 +996,7 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
                 </div>
               </div>
 
-              {/* 7. Category Filter */}
+              {/* 10. Category Filter */}
               <div style={{ marginBottom: '6px' }}>
                 <label className="form-label" style={{ fontSize: '0.78rem' }}>Category:</label>
                 <select 
