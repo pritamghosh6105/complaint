@@ -22,9 +22,27 @@ class OfficerController {
 
       tasks = tasks.map(t => {
         const evidence = db.getEvidenceByComplaintId(t.id);
+        const visualAnalyses = db.getVisualAnalysisByComplaintId(t.id);
+        const primaryAnalysis = visualAnalyses[0] || null;
+
+        const enrichedEvidence = evidence.map(item => {
+          const analysis = visualAnalyses.find(v => v.complaint_evidence_id === item.id || v.id === item.ai_analysis_id);
+          return {
+            ...item,
+            visual_analysis: analysis || null,
+            scene_description: analysis?.scene_description || analysis?.scene?.description || item.scene_description || t.scene_description || null,
+            scene_type: analysis?.scene_type || analysis?.scene?.scene_type || item.scene_type || t.scene_type || null,
+            direct_observations: (analysis?.direct_observations && analysis.direct_observations.length > 0) ? analysis.direct_observations : (Array.isArray(analysis?.visual_findings) ? analysis.visual_findings.map(f => typeof f === 'object' ? f.observation : f) : (item.direct_observations || t.direct_observations || []))
+          };
+        });
+
         return {
           ...t,
-          evidence
+          evidence: enrichedEvidence,
+          visual_analyses: visualAnalyses,
+          scene_description: t.scene_description || primaryAnalysis?.scene_description || primaryAnalysis?.scene?.description || (enrichedEvidence[0]?.scene_description || null),
+          scene_type: t.scene_type || primaryAnalysis?.scene_type || primaryAnalysis?.scene?.scene_type || (enrichedEvidence[0]?.scene_type || null),
+          direct_observations: (t.direct_observations && t.direct_observations.length > 0) ? t.direct_observations : (primaryAnalysis?.direct_observations || (enrichedEvidence[0]?.direct_observations || []))
         };
       });
 

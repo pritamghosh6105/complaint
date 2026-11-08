@@ -17,6 +17,9 @@ const complaintEvidenceSchema = new mongoose.Schema({
   thumbnail_url: { type: String, default: null },
   blurred_url: { type: String, default: null },
   ai_analysis_id: { type: Number, default: null, index: true },
+  scene_description: { type: String, default: null },
+  scene_type: { type: String, default: null },
+  direct_observations: { type: [String], default: [] },
   evidence_type: { type: String, enum: ['initial', 'resolution'], default: 'initial' },
   is_sensitive: { type: Boolean, default: false }
 }, {

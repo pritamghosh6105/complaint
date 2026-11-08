@@ -21,6 +21,11 @@ const visualAnalysisSchema = new mongoose.Schema({
   confidence: { type: Number, default: null },
   match_confidence: { type: Number, default: null },
   evidence_description: { type: String, default: '' },
+  scene_description: { type: String, default: null },
+  scene_type: { type: String, default: null },
+  direct_observations: { type: [String], default: [] },
+  scene: { type: mongoose.Schema.Types.Mixed, default: null },
+  evidence: { type: mongoose.Schema.Types.Mixed, default: null },
   recommended_human_review: { type: Boolean, default: false },
   limitations: { type: String, default: '' },
   quality_metrics: {

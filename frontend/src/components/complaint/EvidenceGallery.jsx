@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import AIImageAnalysisCard from './AIImageAnalysisCard';
+import SceneDescriptionCard from './SceneDescriptionCard';
 
 export default function EvidenceGallery({ 
   evidence = [], 
@@ -442,12 +443,22 @@ export default function EvidenceGallery({
                 )}
               </div>
 
-              {/* AI Visual Evidence Analysis Card */}
-              {activeItem.visual_analysis && (
+              {/* AI Visual Evidence Analysis Card or Scene Description Directive */}
+              {activeItem.visual_analysis ? (
                 <div style={{ marginTop: '16px' }}>
                   <AIImageAnalysisCard 
                     analysis={activeItem.visual_analysis} 
                     previewUrl={activeItem.secure_url || activeItem.optimized_url || activeItem.url}
+                  />
+                </div>
+              ) : (
+                <div style={{ marginTop: '16px' }}>
+                  <SceneDescriptionCard 
+                    sceneDescription={activeItem.scene_description}
+                    sceneType={activeItem.scene_type}
+                    directObservations={activeItem.direct_observations}
+                    isOfficer={userRole === 'officer' || userRole === 'admin'}
+                    compact={false}
                   />
                 </div>
               )}

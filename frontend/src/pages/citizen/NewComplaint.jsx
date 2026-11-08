@@ -36,6 +36,7 @@ import VoiceInputModal from '../../components/complaint/VoiceInputModal';
 import AIComplaintAssistant from '../../components/complaint/AIComplaintAssistant';
 import EvidenceUploader from '../../components/complaint/EvidenceUploader';
 import AIImageAnalysisCard from '../../components/complaint/AIImageAnalysisCard';
+import SceneDescriptionCard from '../../components/complaint/SceneDescriptionCard';
 import { ALL_30_DEPARTMENTS_DATA } from '../../components/home/DepartmentDirectory';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -79,6 +80,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
   const [locationConfirmed, setLocationConfirmed] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('AI Auto Detect');
   const [selectedSubcategory, setSelectedSubcategory] = useState('Auto-Infer with AI');
+  const [userOverrodeCategory, setUserOverrodeCategory] = useState(false);
   const [locationType, setLocationType] = useState('Residential');
   const [affectedCount, setAffectedCount] = useState(50);
   const [severity, setSeverity] = useState('Medium');
@@ -122,9 +124,9 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
 
   // 0. Detect whether the current issue pertains to Police or Cyber Crime
   const isPoliceOrCyberCrime = useMemo(() => {
-    const activeCategory = (selectedCategory && selectedCategory !== 'AI Auto Detect')
+    const activeCategory = (userOverrodeCategory && selectedCategory && selectedCategory !== 'AI Auto Detect')
       ? selectedCategory
-      : (mlPreview?.category_prediction?.category || mlPreview?.summary?.predicted_department || '');
+      : (mlPreview?.category_prediction?.category || mlPreview?.summary?.primaryDepartment || (selectedCategory !== 'AI Auto Detect' ? selectedCategory : ''));
 
     const lowerCat = (activeCategory || '').toLowerCase();
     const isCrimeFlag = Boolean(mlPreview?.summary?.is_crime || mlPreview?.category_prediction?.is_crime);
@@ -308,12 +310,12 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
         const anl = res.data.analysis;
         setVisualAnalysis(anl);
 
-        // Auto-select category if on AI Auto Detect
+        // Auto-select category only if citizen has not entered an incident description yet
         const detectedDept = anl.incident?.visual_category || anl.category_prediction?.department;
         const detectedSubcat = anl.incident?.visual_subcategory || anl.category_prediction?.subcategory;
 
         if (detectedDept && detectedDept !== 'UNKNOWN' && detectedDept !== 'INSUFFICIENT_VISUAL_EVIDENCE') {
-          if (selectedCategory === 'AI Auto Detect' || !selectedCategory) {
+          if ((!description || description.trim().length < 6) && (selectedCategory === 'AI Auto Detect' || !selectedCategory)) {
             setSelectedCategory(detectedDept);
             if (detectedSubcat && detectedSubcat !== 'General' && detectedSubcat !== 'General Issue') {
               setSelectedSubcategory(detectedSubcat);
@@ -442,15 +444,10 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
       formData.append('title', title || 'Civic Issue Report');
       formData.append('description', description);
 
-      const resolvedCategory = (mlPreview?.category_prediction?.category && mlPreview?.category_prediction?.category !== 'AI Auto Detect')
-        ? mlPreview.category_prediction.category
-        : (selectedCategory && selectedCategory !== 'AI Auto Detect' ? selectedCategory : 'Roads & Public Works');
-      const resolvedSubcategory = (mlPreview?.category_prediction?.subcategory && mlPreview?.category_prediction?.subcategory !== 'Auto-Infer with AI')
-        ? mlPreview.category_prediction.subcategory
-        : (selectedSubcategory && selectedSubcategory !== 'Auto-Infer with AI' ? selectedSubcategory : 'General Issue');
-
       formData.append('category', resolvedCategory);
       formData.append('subcategory', resolvedSubcategory);
+      formData.append('department_name', resolvedCategory);
+      formData.append('target_department', resolvedCategory);
       formData.append('location_type', locationType);
       formData.append('ward', locationData.ward || locationData.gram_panchayat || 'Ward 1');
       formData.append('address', locationData.address_formatted || locationData.address || 'West Bengal');
@@ -460,6 +457,18 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
       formData.append('is_emergency', isEmergency ? '1' : '0');
       formData.append('latitude', locationData.latitude || 22.7230);
       formData.append('longitude', locationData.longitude || 88.4800);
+
+      // Pass Vision AI analysis data, scene description and direct observations if available
+      if (visualAnalysis) {
+        const sceneDesc = visualAnalysis.scene?.description || visualAnalysis.scene_description || visualAnalysis.scene_analysis?.scene_description || visualAnalysis.image_overview?.description || '';
+        const sceneType = visualAnalysis.scene?.scene_type || visualAnalysis.scene_type || visualAnalysis.scene_analysis?.scene_type || '';
+        const directObs = visualAnalysis.evidence?.direct_observations || visualAnalysis.direct_observations || (Array.isArray(visualAnalysis.visual_findings) ? visualAnalysis.visual_findings.map(f => typeof f === 'object' ? f.observation : f) : []);
+
+        if (sceneDesc) formData.append('scene_description', sceneDesc);
+        if (sceneType) formData.append('scene_type', sceneType);
+        if (directObs && directObs.length > 0) formData.append('direct_observations', JSON.stringify(directObs));
+        formData.append('visual_analysis_data', JSON.stringify(visualAnalysis));
+      }
 
       // Normalized location attributes
       formData.append('state', locationData.state || 'West Bengal');
@@ -516,17 +525,18 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
     }
   };
 
-  const resolvedCategory = (selectedCategory && selectedCategory !== 'AI Auto Detect')
-    ? selectedCategory
-    : (mlPreview?.category_prediction?.category || mlPreview?.summary?.primaryDepartment || 'Roads & Public Works');
+  const aiTriageCategory = mlPreview?.category_prediction?.category || mlPreview?.summary?.primaryDepartment;
+  const aiTriageSubcategory = mlPreview?.category_prediction?.subcategory || mlPreview?.summary?.subcategory;
 
-  const resolvedSubcategory = (selectedSubcategory && selectedSubcategory !== 'Auto-Infer with AI')
+  const resolvedCategory = (userOverrodeCategory && selectedCategory && selectedCategory !== 'AI Auto Detect')
+    ? selectedCategory
+    : (aiTriageCategory || (selectedCategory && selectedCategory !== 'AI Auto Detect' ? selectedCategory : 'Roads & Public Works'));
+
+  const resolvedSubcategory = (userOverrodeCategory && selectedSubcategory && selectedSubcategory !== 'Auto-Infer with AI')
     ? selectedSubcategory
-    : (mlPreview?.category_prediction?.subcategory || mlPreview?.summary?.subcategory || 'General Issue');
+    : (aiTriageSubcategory || (selectedSubcategory && selectedSubcategory !== 'Auto-Infer with AI' ? selectedSubcategory : 'General Issue'));
 
-  const activeCategory = (selectedCategory !== 'AI Auto Detect')
-    ? selectedCategory
-    : (mlPreview?.category_prediction?.category || resolvedCategory);
+  const activeCategory = resolvedCategory;
 
   const isCrimeCategory = ['Police & Law Enforcement', 'Cyber Crime', 'Women & Child Safety'].includes(activeCategory);
   const emergencyGuidance = mlPreview?.category_prediction?.emergency_guidance;
@@ -1237,6 +1247,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                                     if (visualAnalysis.predicted_subcategory) {
                                       setSelectedSubcategory(visualAnalysis.predicted_subcategory);
                                     }
+                                    setUserOverrodeCategory(true);
                                   }}
                                   className="btn btn-sm"
                                   style={{
@@ -1377,6 +1388,22 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                           📎 {attachedFiles.length > 0 ? `${attachedFiles.length} file(s) attached` : selectedFile ? '1 image attached' : 'No attachments'}
                         </div>
                       </div>
+
+                      {/* Vision AI Scene Description in Review Summary */}
+                      {(visualAnalysis || attachedFiles.length > 0 || selectedFile) && (
+                        <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '12px', marginTop: '12px' }}>
+                          <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>
+                            Photographic Evidence & Vision AI Case Documentation
+                          </span>
+                          <SceneDescriptionCard 
+                            sceneDescription={visualAnalysis?.scene?.description || visualAnalysis?.scene_description || visualAnalysis?.scene_analysis?.scene_description || visualAnalysis?.image_overview?.description}
+                            sceneType={visualAnalysis?.scene?.scene_type || visualAnalysis?.scene_type || visualAnalysis?.scene_analysis?.scene_type}
+                            directObservations={visualAnalysis?.evidence?.direct_observations || visualAnalysis?.direct_observations || (Array.isArray(visualAnalysis?.visual_findings) ? visualAnalysis.visual_findings.map(f => typeof f === 'object' ? f.observation : f) : [])}
+                            isOfficer={false}
+                            compact={false}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     {/* Privacy Badge for Crime Reports */}

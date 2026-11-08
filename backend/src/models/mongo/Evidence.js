@@ -33,6 +33,9 @@ const evidenceSchema = new mongoose.Schema({
     default: 'pending' 
   },
   ai_analysis_id: { type: Number, default: null, index: true },
+  scene_description: { type: String, default: null },
+  scene_type: { type: String, default: null },
+  direct_observations: { type: [String], default: [] },
   is_sensitive: { type: Boolean, default: false },
   processing_status: {
     type: String,

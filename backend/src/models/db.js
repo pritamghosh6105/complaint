@@ -471,6 +471,9 @@ class RelationalStorage {
       root_causes: cData.root_causes || [],
       recommended_actions: cData.recommended_actions || [],
       image_verification_report: cData.image_verification_report || null,
+      scene_description: cData.scene_description || null,
+      scene_type: cData.scene_type || null,
+      direct_observations: Array.isArray(cData.direct_observations) ? cData.direct_observations : [],
       upvote_count: Number(cData.upvote_count || 0),
       upvoter_ids: cData.upvoter_ids || [],
       reopen_count: Number(cData.reopen_count || 0),
@@ -1081,6 +1084,9 @@ class RelationalStorage {
       thumbnail_url: evidenceData.thumbnail_url || null,
       blurred_url: evidenceData.blurred_url || null,
       ai_analysis_id: evidenceData.ai_analysis_id || null,
+      scene_description: evidenceData.scene_description || null,
+      scene_type: evidenceData.scene_type || null,
+      direct_observations: Array.isArray(evidenceData.direct_observations) ? evidenceData.direct_observations : [],
       evidence_type: evidenceData.evidence_type || 'initial',
       is_sensitive: Boolean(evidenceData.is_sensitive),
       created_at: now,
@@ -1140,6 +1146,17 @@ class RelationalStorage {
       visible_object: analysisData.visible_object || '',
       predicted_category: analysisData.predicted_category || '',
       predicted_subcategory: analysisData.predicted_subcategory || '',
+      scene_description: analysisData.scene_description || analysisData.scene?.description || analysisData.scene_analysis?.scene_description || analysisData.image_overview?.description || analysisData.visible_object || null,
+      scene_type: analysisData.scene_type || analysisData.scene?.scene_type || analysisData.scene_analysis?.scene_type || 'Civic Infrastructure',
+      direct_observations: Array.isArray(analysisData.direct_observations) ? analysisData.direct_observations : (Array.isArray(analysisData.evidence?.direct_observations) ? analysisData.evidence.direct_observations : (Array.isArray(analysisData.visual_findings) ? analysisData.visual_findings.map(f => typeof f === 'object' ? f.observation : f) : [])),
+      scene: analysisData.scene || {
+        description: analysisData.scene_description || analysisData.scene_analysis?.scene_description || analysisData.image_overview?.description || analysisData.visible_object || '',
+        scene_type: analysisData.scene_type || analysisData.scene_analysis?.scene_type || 'Civic Infrastructure',
+        visible_objects: analysisData.detected_objects || []
+      },
+      evidence: analysisData.evidence || {
+        direct_observations: Array.isArray(analysisData.direct_observations) ? analysisData.direct_observations : (Array.isArray(analysisData.visual_findings) ? analysisData.visual_findings.map(f => typeof f === 'object' ? f.observation : f) : [])
+      },
       image_quality: analysisData.image_quality || 'GOOD',
       quality_metrics: analysisData.quality_metrics || {
         blur_score: 0,
@@ -1187,6 +1204,17 @@ class RelationalStorage {
     const evidence = this.getEvidenceById(record.complaint_evidence_id);
     if (evidence) {
       evidence.ai_analysis_id = id;
+      if (!evidence.scene_description) evidence.scene_description = record.scene_description;
+      if (!evidence.scene_type) evidence.scene_type = record.scene_type;
+      if (!evidence.direct_observations || evidence.direct_observations.length === 0) evidence.direct_observations = record.direct_observations;
+    }
+
+    // Link back to complaint record if exists
+    const complaint = this.getComplaintById(record.complaint_id);
+    if (complaint) {
+      if (!complaint.scene_description) complaint.scene_description = record.scene_description;
+      if (!complaint.scene_type) complaint.scene_type = record.scene_type;
+      if (!complaint.direct_observations || complaint.direct_observations.length === 0) complaint.direct_observations = record.direct_observations;
     }
 
     this.save();

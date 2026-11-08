@@ -26,6 +26,7 @@ import { useAuth } from '../../context/AuthContext';
 import Timeline from '../../components/complaint/Timeline';
 import FeedbackModal from '../../components/complaint/FeedbackModal';
 import EvidenceGallery from '../../components/complaint/EvidenceGallery';
+import SceneDescriptionCard from '../../components/complaint/SceneDescriptionCard';
 import { useToast } from '../../components/ui/Toast';
 
 export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
@@ -585,6 +586,15 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
                   </span>
                 </div>
               )}
+
+              {/* Official Vision AI Scene Description in Case Report */}
+              <SceneDescriptionCard 
+                sceneDescription={complaint.scene_description || complaint.evidence?.[0]?.scene_description || complaint.evidence?.[0]?.visual_analysis?.scene?.description || complaint.evidence?.[0]?.visual_analysis?.scene_description}
+                sceneType={complaint.scene_type || complaint.evidence?.[0]?.scene_type || complaint.evidence?.[0]?.visual_analysis?.scene?.scene_type || complaint.evidence?.[0]?.visual_analysis?.scene_type}
+                directObservations={complaint.direct_observations || complaint.evidence?.[0]?.direct_observations || complaint.evidence?.[0]?.visual_analysis?.evidence?.direct_observations || complaint.evidence?.[0]?.visual_analysis?.direct_observations}
+                isOfficer={isAuthority}
+                compact={false}
+              />
 
               <EvidenceGallery 
                 evidence={complaint.evidence || []}

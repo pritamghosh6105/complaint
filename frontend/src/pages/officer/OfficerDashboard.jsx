@@ -32,6 +32,7 @@ import {
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../../components/common/Modal';
+import SceneDescriptionCard from '../../components/complaint/SceneDescriptionCard';
 
 export default function OfficerDashboard({ 
   setCurrentRoute, 
@@ -811,25 +812,30 @@ export default function OfficerDashboard({
                   {((task.evidence && task.evidence.length > 0) || task.image_url) && (
                     <div style={{
                       display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
+                      flexDirection: 'column',
+                      gap: '8px',
                       padding: '10px 14px',
                       background: 'rgba(0,0,0,0.18)',
                       borderRadius: '8px',
                       border: '1px solid var(--border-subtle)',
-                      flexWrap: 'wrap'
+                      marginBottom: '8px'
                     }}>
-                      <span style={{ fontSize: '0.74rem', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>
-                        Citizen Evidence ({task.evidence?.length || 1}):
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                        <span style={{ fontSize: '0.74rem', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>
+                          Citizen Evidence ({task.evidence?.length || 1}):
+                        </span>
+                        <span style={{ fontSize: '0.70rem', color: 'var(--text-muted)' }}>
+                          Click thumbnail for full analysis
+                        </span>
+                      </div>
                       <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '2px' }}>
                         {(task.evidence && task.evidence.length > 0 ? task.evidence : [{ secure_url: task.image_url, resource_type: 'image' }]).map((ev, i) => (
                           <div 
                             key={i} 
-                            onClick={() => setPreviewMedia(ev)}
+                            onClick={() => setPreviewMedia({ ...ev, task })}
                             style={{ 
-                              width: '52px', 
-                              height: '52px', 
+                              width: '56px', 
+                              height: '56px', 
                               borderRadius: '6px', 
                               overflow: 'hidden', 
                               border: '1px solid var(--border-subtle)',
@@ -849,6 +855,15 @@ export default function OfficerDashboard({
                           </div>
                         ))}
                       </div>
+
+                      {/* Vision AI Scene Description or Officer Inspection Notice in Case Card */}
+                      <SceneDescriptionCard 
+                        sceneDescription={task.scene_description || task.evidence?.[0]?.scene_description || task.evidence?.[0]?.visual_analysis?.scene?.description || task.evidence?.[0]?.visual_analysis?.scene_description}
+                        sceneType={task.scene_type || task.evidence?.[0]?.scene_type || task.evidence?.[0]?.visual_analysis?.scene?.scene_type || task.evidence?.[0]?.visual_analysis?.scene_type}
+                        directObservations={task.direct_observations || task.evidence?.[0]?.direct_observations || task.evidence?.[0]?.visual_analysis?.evidence?.direct_observations || task.evidence?.[0]?.visual_analysis?.direct_observations}
+                        isOfficer={true}
+                        compact={true}
+                      />
                     </div>
                   )}
 
@@ -1059,20 +1074,31 @@ export default function OfficerDashboard({
             onClose={() => setPreviewMedia(null)}
             title="Citizen Evidence Full Preview"
           >
-            <div style={{ textAlign: 'center' }}>
-              {previewMedia.resource_type === 'video' ? (
-                <video 
-                  controls 
-                  src={previewMedia.secure_url || previewMedia.url} 
-                  style={{ maxWidth: '100%', maxHeight: '420px', borderRadius: '8px' }} 
-                />
-              ) : (
-                <img 
-                  src={previewMedia.secure_url || previewMedia.url} 
-                  alt="Full Evidence" 
-                  style={{ maxWidth: '100%', maxHeight: '420px', borderRadius: '8px', objectFit: 'contain' }} 
-                />
-              )}
+            <div>
+              <div style={{ textAlign: 'center', marginBottom: '14px' }}>
+                {previewMedia.resource_type === 'video' ? (
+                  <video 
+                    controls 
+                    src={previewMedia.secure_url || previewMedia.url} 
+                    style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }} 
+                  />
+                ) : (
+                  <img 
+                    src={previewMedia.secure_url || previewMedia.url} 
+                    alt="Full Evidence" 
+                    style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px', objectFit: 'contain' }} 
+                  />
+                )}
+              </div>
+
+              {/* Official Vision AI Scene Description or Officer Visual Inspection Directive */}
+              <SceneDescriptionCard 
+                sceneDescription={previewMedia.scene_description || previewMedia.task?.scene_description || previewMedia.visual_analysis?.scene?.description || previewMedia.visual_analysis?.scene_description}
+                sceneType={previewMedia.scene_type || previewMedia.task?.scene_type || previewMedia.visual_analysis?.scene?.scene_type || previewMedia.visual_analysis?.scene_type}
+                directObservations={previewMedia.direct_observations || previewMedia.task?.direct_observations || previewMedia.visual_analysis?.evidence?.direct_observations || previewMedia.visual_analysis?.direct_observations}
+                isOfficer={true}
+                compact={false}
+              />
             </div>
           </Modal>
         )}
