@@ -11,7 +11,9 @@ import {
   Activity,
   ArrowRight,
   Map,
-  Filter
+  Filter,
+  ShieldAlert,
+  ShieldCheck
 } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -44,8 +46,12 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
   };
 
   useEffect(() => {
+    if (user && user.role === 'officer') {
+      setCurrentRoute('officer-dashboard');
+      return;
+    }
     fetchMyComplaints();
-  }, []);
+  }, [user]);
 
   const totalCount = complaints.length;
   const underReviewCount = complaints.filter(c => c.status === 'Submitted' || c.status === 'Under Review' || c.status === 'AI Analyzed').length;
@@ -75,6 +81,25 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
       );
     }
     return true;
+  });
+
+  // Sort complaints so Critical / Emergency life hazards always appear FIRST on citizen dashboard
+  const priorityWeights = { 'CRITICAL': 400, 'HIGH': 300, 'MEDIUM': 200, 'LOW': 100 };
+  const sortedComplaints = [...filtered].sort((a, b) => {
+    const aResolved = (a.status === 'Resolved' || a.status === 'Closed') ? 1 : 0;
+    const bResolved = (b.status === 'Resolved' || b.status === 'Closed') ? 1 : 0;
+    if (aResolved !== bResolved) return aResolved - bResolved;
+
+    const aWeight = priorityWeights[a.priority] || 100;
+    const bWeight = priorityWeights[b.priority] || 100;
+    const aEmergency = (a.is_emergency || a.priority === 'CRITICAL') ? 50 : 0;
+    const bEmergency = (b.is_emergency || b.priority === 'CRITICAL') ? 50 : 0;
+
+    const aTotal = aWeight + aEmergency;
+    const bTotal = bWeight + bEmergency;
+    if (aTotal !== bTotal) return bTotal - aTotal;
+
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
   });
 
   const getGreeting = () => {
@@ -151,58 +176,53 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
         </div>
 
         {/* Quick Actions Strip */}
-        <div style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--radius-md)',
-          padding: '14px 18px',
-          marginBottom: '28px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            <strong style={{ color: 'var(--text-primary)' }}>Quick Actions:</strong>
-            <span>Direct citizen shortcuts</span>
+        <div className="citizen-quick-actions">
+          <div className="citizen-quick-actions-label">
+            <strong className="quick-actions-title">Quick Actions:</strong>
+            <span className="quick-actions-subtitle">Direct citizen shortcuts</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="citizen-quick-actions-btns">
             <Button 
               variant="secondary" 
               size="sm" 
-              icon={<FilePlus2 size={14} />}
+              className="quick-action-btn"
+              icon={<FilePlus2 size={13} />}
               onClick={() => setCurrentRoute('new-complaint')}
             >
-              Report Issue
+              <span className="btn-text-full">Report Issue</span>
+              <span className="btn-text-short">Report</span>
             </Button>
             <Button 
               variant="secondary" 
               size="sm" 
-              icon={<Map size={14} />}
+              className="quick-action-btn"
+              icon={<Map size={13} />}
               onClick={() => setCurrentRoute('home')}
             >
-              View Public Map
+              <span className="btn-text-full">View Public Map</span>
+              <span className="btn-text-short">Map</span>
             </Button>
             <Button 
               variant="secondary" 
               size="sm" 
-              icon={<Eye size={14} />}
+              className="quick-action-btn"
+              icon={<Eye size={13} />}
               onClick={() => setCurrentRoute('departments')}
             >
-              30 Departments
+              <span className="btn-text-full">30 Departments</span>
+              <span className="btn-text-short">30 Depts</span>
             </Button>
           </div>
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="gov-card" style={{ padding: '14px 18px', marginBottom: '24px', display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 'min(100%, 280px)' }}>
-            <Search size={16} color="var(--text-muted)" />
+        <div className="gov-card citizen-filter-card" style={{ padding: '14px 18px', marginBottom: '24px', display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="citizen-search-box" style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 'min(100%, 280px)' }}>
+            <Search size={16} color="var(--text-muted)" className="citizen-search-icon" />
             <input 
               type="text" 
-              className="form-input" 
+              className="form-input citizen-search-input" 
               placeholder="Search by ticket ID, category, keyword, or district..."
               style={{ padding: '8px 12px', fontSize: '0.84rem' }}
               value={searchQuery}
@@ -210,14 +230,20 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
             />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-            {['All', 'Under Review', 'In Progress', 'Resolved'].map(status => (
+          <div className="citizen-filter-pills" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+            {[
+              { id: 'All', label: 'All', short: 'All' },
+              { id: 'Under Review', label: 'Under Review', short: 'Review' },
+              { id: 'In Progress', label: 'In Progress', short: 'Progress' },
+              { id: 'Resolved', label: 'Resolved', short: 'Resolved' }
+            ].map(tab => (
               <button 
-                key={status}
-                onClick={() => setFilterStatus(status)}
-                className={`btn btn-sm ${filterStatus === status ? 'btn-primary' : 'btn-secondary'}`}
+                key={tab.id}
+                onClick={() => setFilterStatus(tab.id)}
+                className={`btn btn-sm citizen-filter-btn ${filterStatus === tab.id ? 'btn-primary' : 'btn-secondary'}`}
               >
-                {status}
+                <span className="citizen-pill-full">{tab.label}</span>
+                <span className="citizen-pill-short">{tab.short}</span>
               </button>
             ))}
           </div>
@@ -237,7 +263,7 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
           />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {filtered.map(comp => {
+            {sortedComplaints.map(comp => {
               const trackingCode = comp.tracking_id || `CP-${comp.id}`;
               const isResolved = comp.status === 'Resolved';
 
@@ -274,6 +300,35 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
                       </span>
                       <PriorityBadge priority={comp.priority} />
                       <StatusBadge status={comp.status} />
+                      {comp.triage_status === 'CONFIRMED_CRITICAL' && (
+                        <span style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          background: 'rgba(239, 68, 68, 0.15)',
+                          color: '#f87171',
+                          border: '1px solid rgba(239, 68, 68, 0.3)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          <ShieldAlert size={12} /> Emergency Verified (24h Rapid SLA)
+                        </span>
+                      )}
+                      {comp.triage_status === 'RECALIBRATED_NORMAL' && (
+                        <span style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          background: 'rgba(59, 130, 246, 0.15)',
+                          color: '#60a5fa',
+                          border: '1px solid rgba(59, 130, 246, 0.3)'
+                        }}>
+                          Priority Recalibrated ({comp.priority === 'HIGH' ? '48h' : '72h'} SLA)
+                        </span>
+                      )}
                     </div>
 
                     <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>

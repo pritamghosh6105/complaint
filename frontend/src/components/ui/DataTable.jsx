@@ -130,8 +130,9 @@ export function DataTable({
       {paginatedData.length === 0 ? (
         <EmptyState title={emptyTitle} description={emptyDescription} style={{ border: 'none', boxShadow: 'none' }} />
       ) : (
-        <div className="table-responsive" style={{ overflowX: 'auto' }}>
+        <div className="table-responsive" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <table style={{
+            minWidth: '760px',
             width: '100%',
             borderCollapse: 'collapse',
             textAlign: 'left',

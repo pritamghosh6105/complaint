@@ -11,6 +11,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(current_dir, "../..")))
 
 from src.prediction.category_predictor import CategoryPredictor, CATEGORY_DEPARTMENT_MAP
+from src.prediction.incident_understanding import incident_engine
 from src.prediction.priority_predictor import PriorityPredictor
 from src.prediction.duplicate_engine import DuplicateEngine
 from src.prediction.resolution_predictor import ResolutionPredictor
@@ -116,6 +117,22 @@ def get_metrics():
             return json.load(f)
     return {"message": "Metrics will be available after running training."}
 
+class UnderstandIncidentRequest(BaseModel):
+    text: str = Field(..., example="The road is damaged.")
+    title: Optional[str] = None
+
+@app.post("/understand-incident")
+def understand_incident_endpoint(req: UnderstandIncidentRequest):
+    structured = incident_engine.extract_structured_incident(req.text, req.title)
+    cat_res = category_predictor.predict(req.text, req.title)
+    return {
+        "structured_incident": structured,
+        "is_vague": structured.get("is_vague", False),
+        "clarification_questions": structured.get("clarification_questions", []),
+        "preliminary_category": cat_res.get("category"),
+        "confidence": cat_res.get("confidence")
+    }
+
 @app.post("/predict/category")
 def predict_category(req: CategoryRequest):
     return category_predictor.predict(req.text)
@@ -173,13 +190,19 @@ def predict_all(req: AllInOneRequest):
     emergency_guidance = cat_res.get("emergency_guidance")
     
     # 2. Priority Prediction
+    active_emergency = bool(getattr(req, 'is_emergency', False) or is_emergency or ('live wire' in req.text.lower()))
     prio_res = priority_predictor.predict(
         text=req.text,
         category=primary_dept if primary_dept != "CLASSIFICATION_UNCERTAIN" else "Public Grievance / General Administration",
         severity=req.severity or "Medium",
         location_type=req.location_type or "Residential",
-        affected_count=req.affected_count or 50
+        affected_count=req.affected_count or 50,
+        is_emergency=active_emergency
     )
+    if active_emergency:
+        prio_res['priority'] = 'CRITICAL'
+        prio_res['sla_hours'] = 24
+        prio_res['is_emergency'] = True
     priority = prio_res.get("priority", "MEDIUM")
     
     # 3. Duplicate Detection
@@ -239,6 +262,9 @@ def predict_all(req: AllInOneRequest):
             "emergency_detected": prio_res.get("is_emergency", is_emergency),
             "emergency_guidance": emergency_guidance,
             "override_reason": prio_res.get("override_reason"),
+            "structured_incident": cat_res.get("structured_incident"),
+            "alternative_categories": cat_res.get("alternative_categories", []),
+            "classification_status": cat_res.get("classification_status", "CONFIDENT"),
             "modelVersion": "civicpulse-ml-v2.0-30dept"
         }
     }
@@ -246,6 +272,9 @@ def predict_all(req: AllInOneRequest):
 # ----------------- Vision AI & Multimodal Endpoints -----------------
 class VisionAnalysisRequest(BaseModel):
     image_url: Optional[str] = None
+    image_base64: Optional[str] = None
+    image_id: Optional[str] = None
+    title: Optional[str] = ""
     text_category: Optional[str] = ""
     text_subcategory: Optional[str] = ""
     description: Optional[str] = ""
@@ -257,19 +286,29 @@ class MultimodalFusionRequest(BaseModel):
     text_subcategory: Optional[str] = ""
     visual_severity: Optional[str] = None
     visual_label: Optional[str] = None
+    visual_category: Optional[str] = None
     location_type: Optional[str] = "Residential"
     affected_count: Optional[int] = 50
     is_emergency: Optional[bool] = False
     evidence_consistency: Optional[str] = "MATCH"
+    district: Optional[str] = None
+    description: Optional[str] = ""
+    spam_score: Optional[float] = None
+    fraud_risk_level: Optional[str] = None
+    fraud_indicators: Optional[List[str]] = None
+    clearance_tier: Optional[str] = None
     model_config = {"extra": "allow"}
 
 @app.post("/vision/analyze")
 def analyze_vision(req: VisionAnalysisRequest):
     return vision_engine.process_evidence(
         image_url=req.image_url,
+        image_base64=req.image_base64,
+        image_id=req.image_id,
         text_category=req.text_category or "",
         text_subcategory=req.text_subcategory or "",
-        description=req.description or ""
+        description=req.description or "",
+        title=req.title or ""
     )
 
 @app.post("/multimodal/evaluate")
@@ -280,11 +319,24 @@ def evaluate_multimodal(req: MultimodalFusionRequest):
         text_subcategory=req.text_subcategory or "",
         visual_severity=req.visual_severity,
         visual_label=req.visual_label,
+        visual_category=req.visual_category,
         location_type=req.location_type or "Residential",
         affected_count=req.affected_count or 50,
         is_emergency=bool(req.is_emergency),
-        evidence_consistency=req.evidence_consistency or "MATCH"
+        evidence_consistency=req.evidence_consistency or "MATCH",
+        district=req.district,
+        description=req.description or "",
+        spam_score=req.spam_score,
+        fraud_risk_level=req.fraud_risk_level,
+        fraud_indicators=req.fraud_indicators,
+        clearance_tier=req.clearance_tier
     )
+
+@app.get("/authorities")
+def get_authorities():
+    """Returns verified West Bengal public authorities for all 30 departments."""
+    from src.prediction.authority_mapping import VERIFIED_WEST_BENGAL_AUTHORITIES
+    return {"authorities": VERIFIED_WEST_BENGAL_AUTHORITIES}
 
 if __name__ == "__main__":
     import uvicorn

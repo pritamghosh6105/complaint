@@ -1,3 +1,4 @@
+const fs = require('fs');
 const db = require('../models/db');
 const mlClient = require('../services/mlClient');
 const assignmentService = require('../services/assignmentService');
@@ -46,6 +47,11 @@ class ComplaintController {
    */
   async createComplaint(req, res) {
     try {
+      if (req.user && req.user.role === 'officer') {
+        return res.status(403).json({
+          error: 'Forbidden: Field Officers are restricted to operational task management and are not permitted to submit citizen grievances.'
+        });
+      }
       const citizenId = req.user.id;
       const {
         title,
@@ -232,6 +238,13 @@ class ComplaintController {
         }
       }
 
+      // Safety sweep: ensure any temporary files created by multer are completely unlinked from local disk
+      for (const file of rawFiles) {
+        if (file && file.path && fs.existsSync(file.path)) {
+          try { fs.unlinkSync(file.path); } catch (_) {}
+        }
+      }
+
       // 5. AI Computer Vision & Multimodal Priority Fusion
       if (primaryImageUrl) {
         try {
@@ -315,8 +328,8 @@ class ComplaintController {
         nearest_police_station_distance: nearest_police_station_distance !== undefined ? nearest_police_station_distance : null,
         jurisdiction_police_station: jurisdiction_police_station || null,
         jurisdiction_verified: Boolean(jurisdiction_verified),
-        location_source: location_source || 'Citizen GPS & CivicPulse GIS Engine',
-        verification_status: verification_status || 'PARTIALLY_VERIFIED',
+        location_source: location_source || (req.user?.role === 'officer' ? 'Field Officer On-Site Inspection' : 'Citizen GPS & CivicPulse GIS Engine'),
+        verification_status: verification_status || (req.user?.role === 'officer' ? 'OFFICER_VERIFIED' : 'PARTIALLY_VERIFIED'),
         sources: sources || {},
         locality: locality || '',
         landmark: landmark || '',
@@ -347,7 +360,12 @@ class ComplaintController {
         classification_reason: classificationReason,
         original_predicted_department: predictedCategory,
         final_department: finalCategory,
+        original_citizen_input: req.body.original_citizen_input || req.body.originalCitizenInput || description.trim(),
+        structured_incident: req.body.structured_incident ? (typeof req.body.structured_incident === 'string' ? req.body.structured_incident : JSON.stringify(req.body.structured_incident)) : (mlRes.summary?.structured_incident ? JSON.stringify(mlRes.summary.structured_incident) : null),
+        was_overridden_by_citizen: Boolean(manualCategory && manualCategory !== predictedCategory && manualCategory !== 'AI Auto Detect' && manualCategory !== 'Auto-Detect with AI') ? 1 : 0,
+        final_citizen_category: finalCategory,
         is_emergency: isEmergencyDetected ? 1 : 0,
+        triage_status: isEmergencyDetected ? 'PENDING_OFFICER_TRIAGE' : null,
         is_crime: isCrimeDetected ? 1 : 0,
         is_sensitive: isCrimeDetected ? 1 : 0,
         predicted_resolution_days: predictedDays,
@@ -510,8 +528,9 @@ class ComplaintController {
           longitude: c.longitude,
           ward: c.ward,
           address: c.address,
-          image_url: c.image_url,
-          resolution_image_url: c.resolution_image_url,
+          image_url: null, // Redacted: Evidence not shown to public, only given to complaint authority
+          resolution_image_url: null,
+          has_evidence: Boolean(c.image_url),
           is_crime: false,
           is_sensitive: false,
           created_at: c.created_at,
@@ -545,19 +564,20 @@ class ComplaintController {
       const evidenceList = db.getEvidenceByComplaintId(complaint.id);
       const visualAnalyses = db.getVisualAnalysisByComplaintId(complaint.id);
 
-      // Check RBAC permissions
-      const isOwner = user && complaint.citizen_id === user.id;
-      const isOfficer = user && user.role === 'officer' && (complaint.officer_id === user.id || complaint.department_id === user.department_id);
+      // Check RBAC permissions: Evidence is strictly confidential and never displayed to the general public.
+      // It is only given to the designated Complaint Authority (Department/Field Officer, Admin) and the filing citizen.
+      const isOwner = user && (String(complaint.citizen_id) === String(user.id));
+      const isOfficer = user && (user.role === 'officer' || user.role === 'field_officer') && 
+        (String(complaint.officer_id) === String(user.id) || String(complaint.department_id) === String(user.department_id) || !complaint.department_id);
       const isAdmin = user && user.role === 'admin';
-      const hasFullAccess = isOwner || isOfficer || isAdmin;
+      const isAuthority = Boolean(isOfficer || isAdmin);
+      const canAccessEvidence = Boolean(isAuthority || isOwner);
 
-      // Filter evidence for privacy if sensitive crime report
-      let safeEvidence = evidenceList;
-      if (complaint.is_crime || complaint.is_sensitive) {
-        if (!hasFullAccess) {
-          safeEvidence = [];
-        }
-      }
+      // Evidence Protection Protocol: Redact evidence photos/videos for any public or unauthorized viewer
+      const hasEvidence = (evidenceList && evidenceList.length > 0) || Boolean(complaint.image_url);
+      const safeEvidence = canAccessEvidence ? evidenceList : [];
+      const safeImageUrl = canAccessEvidence ? complaint.image_url : null;
+      const safeResolutionImageUrl = (canAccessEvidence || complaint.status === 'Resolved') ? complaint.resolution_image_url : null;
 
       const enrichedEvidence = safeEvidence.map(item => {
         const analysis = visualAnalyses.find(v => v.complaint_evidence_id === item.id || v.id === item.ai_analysis_id);
@@ -575,8 +595,15 @@ class ComplaintController {
       res.json({
         complaint: {
           ...complaint,
+          image_url: safeImageUrl,
+          resolution_image_url: safeResolutionImageUrl,
           evidence: enrichedEvidence,
-          visual_analyses: hasFullAccess ? visualAnalyses : []
+          visual_analyses: isAuthority ? visualAnalyses : [],
+          has_evidence: hasEvidence,
+          evidence_count: evidenceList.length || (complaint.image_url ? 1 : 0),
+          evidence_restricted: !canAccessEvidence,
+          is_authority: isAuthority,
+          is_owner: isOwner
         },
         timeline,
         feedback: feedback || null
@@ -792,7 +819,8 @@ class ComplaintController {
             pincode: c.postal_code || '',
             date: c.created_at,
             created_at: c.created_at,
-            image_url: c.image_url,
+            image_url: isAuthorizedAdmin ? c.image_url : null,
+            has_evidence: Boolean(c.image_url),
             is_crime: isCrime,
             // Sensitive PII only included if authorized admin
             complainant: isAuthorizedAdmin ? {

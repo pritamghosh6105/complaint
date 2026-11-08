@@ -1,0 +1,258 @@
+{
+  "total_curated_problems": 250,
+  "passed": 244,
+  "failed": 6,
+  "accuracy_pct": 97.6,
+  "department_stats": {
+    "Police & Law Enforcement": {
+      "total": 9,
+      "passed": 8
+    },
+    "Cyber Crime": {
+      "total": 9,
+      "passed": 9
+    },
+    "Women & Child Safety": {
+      "total": 9,
+      "passed": 8
+    },
+    "Traffic & Road Safety": {
+      "total": 9,
+      "passed": 9
+    },
+    "Roads & Public Works": {
+      "total": 9,
+      "passed": 9
+    },
+    "Drainage & Sewerage": {
+      "total": 9,
+      "passed": 9
+    },
+    "Water Supply": {
+      "total": 9,
+      "passed": 9
+    },
+    "Solid Waste Management": {
+      "total": 9,
+      "passed": 9
+    },
+    "Street Lighting & Electrical": {
+      "total": 9,
+      "passed": 9
+    },
+    "Public Health & Sanitation": {
+      "total": 9,
+      "passed": 8
+    },
+    "Fire & Emergency Services": {
+      "total": 8,
+      "passed": 8
+    },
+    "Disaster Management": {
+      "total": 8,
+      "passed": 7
+    },
+    "Environment & Pollution": {
+      "total": 8,
+      "passed": 7
+    },
+    "Parks & Public Spaces": {
+      "total": 8,
+      "passed": 8
+    },
+    "Building & Municipal Engineering": {
+      "total": 8,
+      "passed": 8
+    },
+    "Land & Land Records": {
+      "total": 8,
+      "passed": 8
+    },
+    "Housing & Urban Development": {
+      "total": 8,
+      "passed": 8
+    },
+    "Electricity & Power": {
+      "total": 8,
+      "passed": 8
+    },
+    "Public Transport": {
+      "total": 8,
+      "passed": 8
+    },
+    "Railway-related Public Complaints": {
+      "total": 8,
+      "passed": 8
+    },
+    "Health & Hospitals": {
+      "total": 8,
+      "passed": 7
+    },
+    "Food & Public Distribution": {
+      "total": 8,
+      "passed": 8
+    },
+    "Consumer Affairs": {
+      "total": 8,
+      "passed": 8
+    },
+    "Education \u2013 Schools": {
+      "total": 8,
+      "passed": 8
+    },
+    "Higher Education": {
+      "total": 8,
+      "passed": 8
+    },
+    "Labour & Employment": {
+      "total": 8,
+      "passed": 8
+    },
+    "Agriculture": {
+      "total": 8,
+      "passed": 8
+    },
+    "Animal Resources": {
+      "total": 8,
+      "passed": 8
+    },
+    "Forest & Wildlife": {
+      "total": 8,
+      "passed": 8
+    },
+    "Public Grievance / General Administration": {
+      "total": 8,
+      "passed": 8
+    }
+  },
+  "failures": [
+    {
+      "id": 1,
+      "text": "A resident reports that their house was broken into while the family was away.",
+      "expected": "Police & Law Enforcement",
+      "predicted": "CLASSIFICATION_UNCERTAIN",
+      "confidence": 0.229,
+      "top_predictions": [
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.229
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.1355
+        },
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.081
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "text": "A school bus driver is behaving inappropriately toward students.",
+      "expected": "Women & Child Safety",
+      "predicted": "CLASSIFICATION_UNCERTAIN",
+      "confidence": 0.2873,
+      "top_predictions": [
+        {
+          "category": "Public Transport",
+          "confidence": 0.2873
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.2867
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.2158
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "text": "A roadside food stall is dumping wastewater into a public drain.",
+      "expected": "Public Health & Sanitation",
+      "predicted": "CLASSIFICATION_UNCERTAIN",
+      "confidence": 0.3051,
+      "top_predictions": [
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.3051
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.2538
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.1884
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "text": "Heavy rainfall has flooded a residential street.",
+      "expected": "Disaster Management",
+      "predicted": "CLASSIFICATION_UNCERTAIN",
+      "confidence": 0.3158,
+      "top_predictions": [
+        {
+          "category": "Agriculture",
+          "confidence": 0.3158
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.1828
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.1311
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "text": "Smoke from a factory is affecting nearby residents.",
+      "expected": "Environment & Pollution",
+      "predicted": "Fire & Emergency Services",
+      "confidence": 0.3857,
+      "top_predictions": [
+        {
+          "category": "Fire & Emergency Services",
+          "confidence": 0.3857
+        },
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.2352
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.1962
+        }
+      ]
+    },
+    {
+      "id": 174,
+      "text": "A health center has no functioning public toilet.",
+      "expected": "Health & Hospitals",
+      "predicted": "Public Health & Sanitation",
+      "confidence": 0.6987,
+      "top_predictions": [
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.6987
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0981
+        },
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.0548
+        }
+      ]
+    }
+  ],
+  "edge_cases_passed": 8,
+  "edge_cases_total": 8
+}

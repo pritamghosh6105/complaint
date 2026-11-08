@@ -112,15 +112,18 @@ export default function VoiceInputModal({ isOpen, onClose, onApplyTranscript, de
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px'
+      padding: 'clamp(8px, 2.5vw, 20px)'
     }}>
       <div className="glass-card" style={{
         width: '100%',
         maxWidth: '540px',
+        maxHeight: 'min(92vh, 92dvh)',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
         borderRadius: 'var(--radius-lg)',
         border: '1px solid rgba(59, 130, 246, 0.35)',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-        padding: '26px',
+        padding: 'clamp(14px, 4vw, 24px)',
         position: 'relative'
       }}>
         {/* Header */}

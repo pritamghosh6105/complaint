@@ -231,7 +231,7 @@ class LocationController {
       if (!address || !address.trim()) {
         return res.status(400).json({ success: false, error: 'Address is required for geocoding.' });
       }
-      const geocoded = await geocodingService.forwardGeocode(address);
+      const geocoded = await geocodingService.forwardGeocode(address, { skipThrottle: true });
       const resolution = await locationResolutionService.resolveLocation({ latitude: geocoded.latitude, longitude: geocoded.longitude });
       res.json({
         success: true,

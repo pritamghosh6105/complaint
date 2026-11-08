@@ -1,3 +1,6 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+require('dotenv').config();
 const cloudinary = require('cloudinary').v2;
 
 let cloudName = (process.env.CLOUDINARY_CLOUD_NAME || '').trim();

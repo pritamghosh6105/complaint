@@ -1,16 +1,9 @@
-import React, { useState } from 'react';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import Footer from '../common/Footer';
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { 
-  Home, 
-  FilePlus2, 
-  LayoutDashboard, 
-  Building2, 
-  Briefcase, 
-  Flame 
-} from 'lucide-react';
+import CitizenLayout from './CitizenLayout';
+import FieldOfficerLayout from './FieldOfficerLayout';
+import AdministratorLayout from './AdministratorLayout';
+import { ShieldCheck } from 'lucide-react';
 
 export default function AppShell({ 
   currentRoute, 
@@ -18,152 +11,90 @@ export default function AppShell({
   children,
   onGlobalSearch
 }) {
-  const { user } = useAuth();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const { user, loading } = useAuth();
 
-  // Define mobile bottom navigation items based on role
-  const getBottomNavItems = () => {
-    if (!user || user.role === 'citizen') {
-      return [
-        { id: 'home', label: 'Home', icon: Home },
-        { id: 'new-complaint', label: 'Report', icon: FilePlus2, highlight: true },
-        { id: 'citizen-dashboard', label: 'My Issues', icon: LayoutDashboard },
-        { id: 'departments', label: 'Depts', icon: Building2 }
-      ];
-    }
-    if (user.role === 'officer') {
-      return [
-        { id: 'home', label: 'Home', icon: Home },
-        { id: 'officer-dashboard', label: 'Queue', icon: Briefcase, highlight: true },
-        { id: 'departments', label: 'Depts', icon: Building2 }
-      ];
-    }
-    // Admin
-    return [
-      { id: 'home', label: 'Home', icon: Home },
-      { id: 'admin-dashboard', label: 'Admin', icon: LayoutDashboard, highlight: true },
-      { id: 'gis-heatmap', label: 'Heatmap', icon: Flame },
-      { id: 'departments', label: 'Depts', icon: Building2 }
-    ];
-  };
-
-  const bottomNavItems = getBottomNavItems();
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-main)' }}>
-      {/* Top Application Header */}
-      <Header
-        currentRoute={currentRoute}
-        setCurrentRoute={setCurrentRoute}
-        sidebarCollapsed={sidebarCollapsed}
-        setSidebarCollapsed={setSidebarCollapsed}
-        mobileSidebarOpen={mobileSidebarOpen}
-        setMobileSidebarOpen={setMobileSidebarOpen}
-        onGlobalSearch={onGlobalSearch}
-      />
-
-      {/* Main Workspace with Sticky Sidebar */}
-      <div style={{ display: 'flex', flex: 1, position: 'relative' }}>
-        {/* Collapsible Sidebar */}
-        <Sidebar
-          currentRoute={currentRoute}
-          setCurrentRoute={setCurrentRoute}
-          collapsed={sidebarCollapsed}
-          setCollapsed={setSidebarCollapsed}
-          mobileOpen={mobileSidebarOpen}
-          setMobileOpen={setMobileSidebarOpen}
-        />
-
-        {/* Content Area */}
-        <main 
-          className="app-main-content"
-          style={{ 
-            flex: 1, 
-            minWidth: 0,
-            display: 'flex', 
-            flexDirection: 'column'
-          }}
-        >
-          <div style={{ flex: 1 }}>
-            {children}
-          </div>
-          <Footer />
-        </main>
-      </div>
-
-      {/* Mobile Sticky Bottom Navigation Bar */}
-      <nav 
-        className="mobile-only mobile-bottom-nav"
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '60px',
-          background: 'var(--bg-surface)',
-          borderTop: '1px solid var(--border-subtle)',
+  // Show official role-verification loading state during JWT session recovery
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--bg-main)',
+        padding: '20px'
+      }}>
+        <div style={{
+          width: '56px',
+          height: '56px',
+          borderRadius: '14px',
+          background: 'linear-gradient(135deg, #0284c7, #2563eb)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-around',
-          zIndex: 990,
-          boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
-        }}
-        aria-label="Mobile Navigation Bar"
-      >
-        {bottomNavItems.map(item => {
-          const Icon = item.icon;
-          const isActive = currentRoute === item.id;
+          justifyContent: 'center',
+          boxShadow: '0 0 25px rgba(2, 132, 199, 0.45)',
+          marginBottom: '20px'
+        }}>
+          <ShieldCheck size={32} color="#ffffff" className="animate-pulse" />
+        </div>
+        <div style={{
+          fontSize: '1.1rem',
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          marginBottom: '8px',
+          letterSpacing: '-0.3px'
+        }}>
+          CivicPulse AI • West Bengal
+        </div>
+        <div style={{
+          fontSize: '0.84rem',
+          color: 'var(--text-secondary)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <span className="spinner-border spinner-border-sm" role="status" style={{ width: '14px', height: '14px' }} />
+          Verifying security credentials & department role...
+        </div>
+      </div>
+    );
+  }
 
-          return (
-            <button
-              key={item.id}
-              onClick={() => setCurrentRoute(item.id)}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '3px',
-                flex: 1,
-                height: '100%',
-                background: 'transparent',
-                border: 'none',
-                color: isActive ? 'var(--color-accent)' : 'var(--text-muted)',
-                cursor: 'pointer',
-                padding: '4px 0'
-              }}
-            >
-              <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <Icon size={item.highlight ? 22 : 19} strokeWidth={isActive ? 2.4 : 1.8} />
-                {item.highlight && (
-                  <span style={{
-                    position: 'absolute',
-                    top: '-2px',
-                    right: '-2px',
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--color-accent)'
-                  }} />
-                )}
-              </div>
-              <span style={{
-                fontSize: '0.6875rem',
-                fontWeight: isActive ? 700 : 500,
-                lineHeight: 1
-              }}>
-                {item.label}
-              </span>
-            </button>
-          );
-        })}
-      </nav>
-    </div>
+  // 1. Dedicated Field Officer Workspace
+  if (user && user.role === 'officer') {
+    return (
+      <FieldOfficerLayout
+        currentRoute={currentRoute}
+        setCurrentRoute={setCurrentRoute}
+        onGlobalSearch={onGlobalSearch}
+      >
+        {children}
+      </FieldOfficerLayout>
+    );
+  }
+
+  // 2. Dedicated Administrator Command Center
+  if (user && user.role === 'admin') {
+    return (
+      <AdministratorLayout
+        currentRoute={currentRoute}
+        setCurrentRoute={setCurrentRoute}
+        onGlobalSearch={onGlobalSearch}
+      >
+        {children}
+      </AdministratorLayout>
+    );
+  }
+
+  // 3. Citizen Portal & Public Guest Experience
+  return (
+    <CitizenLayout
+      currentRoute={currentRoute}
+      setCurrentRoute={setCurrentRoute}
+      onGlobalSearch={onGlobalSearch}
+    >
+      {children}
+    </CitizenLayout>
   );
 }

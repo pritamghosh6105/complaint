@@ -218,15 +218,19 @@ export function MapLayerSwitcher({ style = {} }) {
   }, []);
 
   return (
-    <div style={{
-      position: 'absolute',
-      top: '12px',
-      left: '52px',
-      zIndex: 1000,
-      pointerEvents: 'none',
-      ...style
-    }}>
+    <div 
+      className="map-layer-switcher-container"
+      style={{
+        position: 'absolute',
+        top: '12px',
+        left: '52px',
+        zIndex: 1000,
+        pointerEvents: 'none',
+        ...style
+      }}
+    >
       <div
+        className="map-layer-switcher-badge"
         style={{
           background: 'var(--bg-surface)',
           backdropFilter: 'blur(10px)',
@@ -246,15 +250,19 @@ export function MapLayerSwitcher({ style = {} }) {
         {isLoading ? (
           <>
             <Loader2 size={13} color="var(--accent-primary)" className="spin-animation" style={{ animation: 'spin 1s linear infinite' }} />
-            <span style={{ color: 'var(--accent-primary)' }}>
+            <span className="map-badge-text-full" style={{ color: 'var(--accent-primary)' }}>
               {slowNet ? 'Slow Connection • Loading tiles...' : 'Loading OpenStreetMap...'}
+            </span>
+            <span className="map-badge-text-short" style={{ color: 'var(--accent-primary)', display: 'none' }}>
+              {slowNet ? 'Loading tiles...' : 'Loading...'}
             </span>
           </>
         ) : (
           <>
             <Layers size={13} color="#10b981" />
-            <span style={{ color: 'var(--text-primary)' }}>OpenStreetMap</span>
-            <span style={{ 
+            <span className="map-badge-text-full" style={{ color: 'var(--text-primary)' }}>OpenStreetMap</span>
+            <span className="map-badge-text-short" style={{ color: 'var(--text-primary)', display: 'none' }}>OSM</span>
+            <span className="map-badge-fast-tag" style={{ 
               fontSize: '0.65rem', 
               color: '#10b981', 
               background: 'rgba(16, 185, 129, 0.15)',

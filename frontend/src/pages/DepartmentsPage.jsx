@@ -7,11 +7,16 @@ export default function DepartmentsPage({ setCurrentRoute }) {
   const { user } = useAuth();
 
   const handleSelectDepartment = (dept) => {
-    if (user) {
-      setCurrentRoute('new-complaint');
-    } else {
+    if (!user) {
       setCurrentRoute('login');
+      return;
     }
+    if (user.role === 'officer') {
+      window.__OFFICER_FILTER__ = dept.name;
+      setCurrentRoute('officer-dashboard');
+      return;
+    }
+    setCurrentRoute('new-complaint');
   };
 
   return (

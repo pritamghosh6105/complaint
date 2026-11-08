@@ -91,6 +91,7 @@ DEPARTMENT_SUBCATEGORIES = {
         "Extortion / Intimidation"
     ],
     "Cyber Crime": [
+        "UPI / Digital Payment Fraud",
         "UPI / Payment Gateway Fraud",
         "Net Banking Fraud",
         "Phishing / Scam Calls",
@@ -273,4 +274,40 @@ DEPARTMENT_SUBCATEGORIES = {
         "Citizen Charter Timeline Non-Compliance",
         "Public Officer Unresponsiveness / Harassment"
     ]
+}
+
+
+DEPARTMENT_ID_MAP = {
+    "Police & Law Enforcement": 1,
+    "Cyber Crime": 2,
+    "Women & Child Safety": 3,
+    "Traffic & Road Safety": 4,
+    "Roads & Public Works": 5,
+    "Drainage & Sewerage": 6,
+    "Water Supply": 7,
+    "Solid Waste Management": 8,
+    "Street Lighting & Electrical": 9,
+    "Public Health & Sanitation": 10,
+    "Fire & Emergency Services": 11,
+    "Disaster Management": 12,
+    "Environment & Pollution": 13,
+    "Parks & Public Spaces": 14,
+    "Building & Municipal Engineering": 15,
+    "Land & Land Records": 16,
+    "Housing & Urban Development": 17,
+    "Electricity & Power": 18,
+    "Public Transport": 19,
+    "Railway-related Public Complaints": 20,
+    "Health & Hospitals": 21,
+    "Food & Public Distribution": 22,
+    "Consumer Affairs": 23,
+    "Education - Schools": 24,
+    "Education – Schools": 24,
+    "Higher Education": 25,
+    "Labour & Employment": 26,
+    "Agriculture": 27,
+    "Animal Resources": 28,
+    "Forest & Wildlife": 29,
+    "Public Grievance / General Admin": 30,
+    "Public Grievance / General Administration": 30
 }

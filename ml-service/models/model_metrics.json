@@ -1,13 +1,13 @@
 {
   "dataset_summary": {
-    "total_samples": 6000,
+    "total_samples": 18000,
     "num_categories": 30,
-    "num_subcategories": 128,
+    "num_subcategories": 79,
     "priority_distribution": {
-      "LOW": 826,
-      "MEDIUM": 2044,
-      "HIGH": 2619,
-      "CRITICAL": 511
+      "LOW": 446,
+      "MEDIUM": 4997,
+      "HIGH": 7739,
+      "CRITICAL": 4818
     }
   },
   "category_model": {
@@ -54,236 +54,236 @@
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Animal Resources": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Building & Municipal Engineering": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Consumer Affairs": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Cyber Crime": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Disaster Management": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Drainage & Sewerage": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Education \u2013 Schools": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Electricity & Power": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Environment & Pollution": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Fire & Emergency Services": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Food & Public Distribution": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Forest & Wildlife": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Health & Hospitals": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Higher Education": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Housing & Urban Development": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Labour & Employment": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Land & Land Records": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Parks & Public Spaces": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Police & Law Enforcement": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Public Grievance / General Administration": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Public Health & Sanitation": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Public Transport": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Railway-related Public Complaints": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Roads & Public Works": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Solid Waste Management": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Street Lighting & Electrical": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Traffic & Road Safety": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Water Supply": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       },
       "Women & Child Safety": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 40.0
+        "support": 120.0
       }
     },
     "pairwise_inspection": {
       "Police & Law Enforcement vs Roads & Public Works": {
         "Police & Law Enforcement predicted as Roads & Public Works": 0,
         "Roads & Public Works predicted as Police & Law Enforcement": 0,
-        "Police & Law Enforcement total test samples": 40,
-        "Roads & Public Works total test samples": 40
+        "Police & Law Enforcement total test samples": 120,
+        "Roads & Public Works total test samples": 120
       },
       "Police & Law Enforcement vs Traffic & Road Safety": {
         "Police & Law Enforcement predicted as Traffic & Road Safety": 0,
         "Traffic & Road Safety predicted as Police & Law Enforcement": 0,
-        "Police & Law Enforcement total test samples": 40,
-        "Traffic & Road Safety total test samples": 40
+        "Police & Law Enforcement total test samples": 120,
+        "Traffic & Road Safety total test samples": 120
       },
       "Police & Law Enforcement vs Health & Hospitals": {
         "Police & Law Enforcement predicted as Health & Hospitals": 0,
         "Health & Hospitals predicted as Police & Law Enforcement": 0,
-        "Police & Law Enforcement total test samples": 40,
-        "Health & Hospitals total test samples": 40
+        "Police & Law Enforcement total test samples": 120,
+        "Health & Hospitals total test samples": 120
       },
       "Cyber Crime vs Consumer Affairs": {
         "Cyber Crime predicted as Consumer Affairs": 0,
         "Consumer Affairs predicted as Cyber Crime": 0,
-        "Cyber Crime total test samples": 40,
-        "Consumer Affairs total test samples": 40
+        "Cyber Crime total test samples": 120,
+        "Consumer Affairs total test samples": 120
       },
       "Women & Child Safety vs Police & Law Enforcement": {
         "Women & Child Safety predicted as Police & Law Enforcement": 0,
         "Police & Law Enforcement predicted as Women & Child Safety": 0,
-        "Women & Child Safety total test samples": 40,
-        "Police & Law Enforcement total test samples": 40
+        "Women & Child Safety total test samples": 120,
+        "Police & Law Enforcement total test samples": 120
       },
       "Drainage & Sewerage vs Water Supply": {
         "Drainage & Sewerage predicted as Water Supply": 0,
         "Water Supply predicted as Drainage & Sewerage": 0,
-        "Drainage & Sewerage total test samples": 40,
-        "Water Supply total test samples": 40
+        "Drainage & Sewerage total test samples": 120,
+        "Water Supply total test samples": 120
       },
       "Street Lighting & Electrical vs Electricity & Power": {
         "Street Lighting & Electrical predicted as Electricity & Power": 0,
         "Electricity & Power predicted as Street Lighting & Electrical": 0,
-        "Street Lighting & Electrical total test samples": 40,
-        "Electricity & Power total test samples": 40
+        "Street Lighting & Electrical total test samples": 120,
+        "Electricity & Power total test samples": 120
       },
       "Building & Municipal Engineering vs Roads & Public Works": {
         "Building & Municipal Engineering predicted as Roads & Public Works": 0,
         "Roads & Public Works predicted as Building & Municipal Engineering": 0,
-        "Building & Municipal Engineering total test samples": 40,
-        "Roads & Public Works total test samples": 40
+        "Building & Municipal Engineering total test samples": 120,
+        "Roads & Public Works total test samples": 120
       }
     },
     "confusion_matrix": [
       [
-        40,
+        120,
         0,
         0,
         0,
@@ -316,7 +316,7 @@
       ],
       [
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -349,7 +349,7 @@
       [
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -382,7 +382,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -415,7 +415,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -448,7 +448,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -481,7 +481,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -514,7 +514,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -547,7 +547,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -580,7 +580,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -613,7 +613,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -646,7 +646,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -679,7 +679,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -712,7 +712,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -745,7 +745,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -778,7 +778,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -811,7 +811,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -844,7 +844,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -877,7 +877,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -910,7 +910,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -943,7 +943,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -976,7 +976,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -1009,7 +1009,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -1042,7 +1042,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -1075,7 +1075,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -1108,7 +1108,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0,
@@ -1141,7 +1141,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0,
         0
@@ -1174,7 +1174,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0,
         0
       ],
@@ -1207,7 +1207,7 @@
         0,
         0,
         0,
-        40,
+        120,
         0
       ],
       [
@@ -1240,14 +1240,14 @@
         0,
         0,
         0,
-        40
+        120
       ]
     ]
   },
   "subcategory_model": {
     "accuracy": 100.0,
     "macro_f1": 100.0,
-    "classes_count": 128
+    "classes_count": 79
   },
   "priority_model": {
     "accuracy": 100.0,
@@ -1263,28 +1263,28 @@
     ],
     "confusion_matrix": [
       [
-        165,
+        89,
         0,
         0,
         0
       ],
       [
         0,
-        409,
+        999,
         0,
         0
       ],
       [
         0,
         0,
-        524,
+        1548,
         0
       ],
       [
         0,
         0,
         0,
-        102
+        964
       ]
     ],
     "per_class_metrics": {
@@ -1292,35 +1292,35 @@
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 165.0
+        "support": 89.0
       },
       "MEDIUM": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 409.0
+        "support": 999.0
       },
       "HIGH": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 524.0
+        "support": 1548.0
       },
       "CRITICAL": {
         "precision": 100.0,
         "recall": 100.0,
         "f1_score": 100.0,
-        "support": 102.0
+        "support": 964.0
       }
     }
   },
   "duplicate_engine": {
-    "vocabulary_size": 7309,
+    "vocabulary_size": 7666,
     "similarity_algorithm": "Cosine Similarity + Haversine Geospatial Fusion"
   },
   "resolution_model": {
-    "mean_absolute_error_days": 0.46,
-    "r2_score": 0.649,
+    "mean_absolute_error_days": 0.12,
+    "r2_score": 0.958,
     "algorithm": "RandomForestRegressor"
   }
 }

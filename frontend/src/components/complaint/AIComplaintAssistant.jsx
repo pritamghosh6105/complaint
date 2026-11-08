@@ -10,25 +10,14 @@ import {
   ShieldAlert, 
   Zap, 
   Check, 
-  Globe, 
-  Cpu, 
-  Key, 
-  Loader2, 
-  Copy,
-  Sliders,
-  Flame,
-  FileText
+  RotateCcw,
+  Edit3,
+  HelpCircle,
+  FileText,
+  Loader2
 } from 'lucide-react';
 import api from '../../services/api';
-
-const QUICK_SUGGESTIONS = [
-  { icon: '⚡', label: 'Power Cut / Outage', text: 'Power cut for over 12 hours. Local transformer was sparking, entire residential block in complete blackout without electricity.' },
-  { icon: '🕳️', label: 'Hazardous Potholes', text: 'Deep crater and broken asphalt on main carriageway, causing severe accident risks for two-wheelers and school transport.' },
-  { icon: '💧', label: 'Road Waterlogging', text: 'Heavy waterlogging on main road due to clogged drainage, dirty stagnant water entering residential gates.' },
-  { icon: '🗑️', label: 'Garbage Accumulation', text: 'Overflowing municipal garbage vat unattended for days, foul odor and severe hygiene hazard on public walkway.' },
-  { icon: '💡', label: 'Streetlights Dark', text: 'Streetlights completely non-functional for past week, creating an unsafe dark corridor with anti-social concerns at night.' },
-  { icon: '🚨', label: 'Cyber / Online Fraud', text: 'Unauthorized financial deduction via fake banking link and OTP scam. Urgent formal police cyber cell intervention requested.' }
-];
+import { useTheme } from '../../context/ThemeContext';
 
 export default function AIComplaintAssistant({ 
   isOpen, 
@@ -37,25 +26,35 @@ export default function AIComplaintAssistant({
   initialIssue = '',
   initialLocation = ''
 }) {
-  const [view, setView] = useState('compose'); // 'compose' | 'generating' | 'review'
+  const { theme, isDark } = useTheme();
+  const [view, setView] = useState('compose'); // 'compose' | 'clarify' | 'generating' | 'review'
   const [issueText, setIssueText] = useState(initialIssue || '');
   const [isHazardous, setIsHazardous] = useState(false);
   const [hazardDetails, setHazardDetails] = useState('');
   const [inputError, setInputError] = useState('');
-  const [generatedDraft, setGeneratedDraft] = useState(null);
-  const [showSettings, setShowSettings] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // Settings
-  const [aiProvider, setAiProvider] = useState(() => localStorage.getItem('civicpulse_ai_provider') || 'groq');
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('civicpulse_ai_key') || '');
-  const [apiKeySaved, setApiKeySaved] = useState(false);
+  // Clarification state (Stage 1)
+  const [clarificationQuestions, setClarificationQuestions] = useState([]);
+  const [clarificationAnswers, setClarificationAnswers] = useState({});
+  const [structuredIncident, setStructuredIncident] = useState(null);
+
+  // Review & Edit state
+  const [generatedDraft, setGeneratedDraft] = useState(null);
+  const [editableTitle, setEditableTitle] = useState('');
+  const [editableDescription, setEditableDescription] = useState('');
+
+  // AI Provider & Key
+  const aiProvider = localStorage.getItem('civicpulse_ai_provider') || 'groq';
+  const apiKey = localStorage.getItem('civicpulse_ai_key') || '';
 
   useEffect(() => {
     if (isOpen) {
       if (initialIssue && !issueText) setIssueText(initialIssue);
       setView('compose');
       setInputError('');
+      setClarificationQuestions([]);
+      setClarificationAnswers({});
     }
   }, [isOpen, initialIssue]);
 
@@ -65,256 +64,193 @@ export default function AIComplaintAssistant({
     onClose();
   };
 
-  const handleGenerate = async () => {
+  // Step 1: Analyze incident & formulate clarification if vague
+  const handleAnalyzeAndProceed = async () => {
     if (!issueText.trim()) {
-      setInputError('Please describe the problem in a few words or click a quick suggestion below.');
+      setInputError('Please describe the civic problem in a few words.');
       return;
     }
 
     setInputError('');
+    setIsAnalyzing(true);
+
+    try {
+      const res = await api.post('/ai/understand-incident', {
+        issue: issueText.trim(),
+        location: initialLocation || '',
+        clientApiKey: apiKey.trim() || undefined,
+        clientProvider: aiProvider
+      });
+
+      if (res.data && res.data.is_vague && Array.isArray(res.data.clarification_questions) && res.data.clarification_questions.length > 0) {
+        setStructuredIncident(res.data.structured_incident);
+        setClarificationQuestions(res.data.clarification_questions);
+        const initialAns = {};
+        res.data.clarification_questions.forEach(q => { initialAns[q] = ''; });
+        setClarificationAnswers(initialAns);
+        setView('clarify');
+      } else {
+        // Detailed enough -> proceed directly to draft synthesis
+        if (res.data?.structured_incident) {
+          setStructuredIncident(res.data.structured_incident);
+        }
+        await handleGenerate({});
+      }
+    } catch (err) {
+      console.warn('Incident analysis fallback:', err);
+      // If endpoint fails, check simple word count locally
+      const words = issueText.trim().split(/\s+/);
+      if (words.length < 6) {
+        const fallbackQs = [
+          'Where exactly is the damaged site located (street, landmark, or ward)?',
+          'What specific damage or issue is visible (e.g. potholes, cracks, or collapsed section)?',
+          'Is there an immediate safety danger to vehicles or pedestrians?'
+        ];
+        setClarificationQuestions(fallbackQs);
+        const initialAns = {};
+        fallbackQs.forEach(q => { initialAns[q] = ''; });
+        setClarificationAnswers(initialAns);
+        setView('clarify');
+      } else {
+        await handleGenerate({});
+      }
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  // Step 2: Generate draft description with clarifications
+  const handleGenerate = async (answersToUse = clarificationAnswers) => {
     setView('generating');
 
     try {
       const res = await api.post('/ai/draft-complaint', {
         issue: issueText.trim(),
-        location: '',
+        location: initialLocation || '',
         isHazardous: isHazardous ? 'Yes' : 'No',
         hazardDetails: hazardDetails.trim(),
-        language: 'en',
+        clarificationAnswers: answersToUse,
         clientApiKey: apiKey.trim() || undefined,
         clientProvider: aiProvider
       });
 
       if (res.data && res.data.title && res.data.description) {
         setGeneratedDraft(res.data);
+        setEditableTitle(res.data.title);
+        setEditableDescription(res.data.description);
         setView('review');
       } else {
         throw new Error('Invalid AI response structure');
       }
     } catch (err) {
-      console.warn('Real AI generation failed, creating structured administrative fallback:', err);
-      // Smart administrative fallback in English
+      console.warn('Real AI generation failed, using intelligent grounded fallback:', err);
       const cleanIssue = issueText.trim();
-      const isCrit = isHazardous || /fire|shock|spark|blackout|danger|urgent|12 hours|voltage/i.test(cleanIssue + ' ' + hazardDetails);
+      const isCrit = isHazardous || /fire|shock|spark|blackout|danger|urgent|12 hours|voltage|collapse/i.test(cleanIssue + ' ' + hazardDetails);
 
       const draftTitle = isCrit
-        ? `CRITICAL GRIEVANCE: Urgent Municipal Intervention Required for ${cleanIssue.slice(0, 50)}`
-        : `Formal Grievance: Civic Infrastructure Rectification for ${cleanIssue.slice(0, 50)}`;
-      
-      const draftDesc = `To the Competent Municipal Authority & Department Nodal Officer,
+        ? `Urgent Safety Intervention Required: ${cleanIssue.slice(0, 50)}`
+        : `Civic Grievance: ${cleanIssue.slice(0, 50)}`;
 
-I am formally registering this civic grievance regarding a pressing public issue requiring prompt departmental mobilization.
+      const detailLines = [];
+      detailLines.push(`A civic problem has been reported regarding: ${cleanIssue}.`);
+      if (initialLocation) {
+        detailLines.push(`Reported Location: ${initialLocation}.`);
+      }
+      Object.entries(answersToUse).forEach(([q, ans]) => {
+        if (ans && ans.trim()) detailLines.push(`${q}: ${ans.trim()}`);
+      });
+      if (isHazardous && hazardDetails) {
+        detailLines.push(`Safety Consideration: ${hazardDetails}.`);
+      }
+      detailLines.push(`The concerned authority is requested to inspect the location and arrange necessary remedial repairs.`);
 
-1. Incident Overview:
-${cleanIssue}
-
-2. Safety & Public Impact:
-${isHazardous ? `CRITICAL LIFE-SAFETY RISK: ${hazardDetails || 'Immediate hazard present requiring emergency dispatch'}.` : 'Substantial disruption to regular civic routine and community well-being.'}
-
-3. Departmental Appeal:
-We urgently request immediate on-site inspection, deployment of technical personnel, and permanent rectification of this issue.`;
-
-      setGeneratedDraft({
+      const fallbackDesc = detailLines.join(' ');
+      const fallbackObj = {
         success: true,
         source: 'CivicPulse Neural Synthesis Engine',
         title: draftTitle,
-        description: draftDesc,
-        department: /power|electric|light|wire/i.test(cleanIssue) ? 'Power & Energy (WBSEDCL)' : 'Municipal Public Works',
+        description: fallbackDesc,
+        department: /power|electric|light|wire|outage/i.test(cleanIssue) ? 'Electricity & Power' : 'Roads & Public Works',
         priority: isCrit ? 'CRITICAL' : 'HIGH',
-        is_emergency: isCrit,
-        language: 'en'
-      });
+        is_emergency: isCrit
+      };
+
+      setGeneratedDraft(fallbackObj);
+      setEditableTitle(draftTitle);
+      setEditableDescription(fallbackDesc);
       setView('review');
     }
   };
 
-  const handleCopyText = () => {
-    if (!generatedDraft) return;
-    const full = `SUBJECT: ${generatedDraft.title}\n\nDEPARTMENT: ${generatedDraft.department || 'Municipal Administration'}\nPRIORITY: ${generatedDraft.priority || 'HIGH'}\n\n${generatedDraft.description}`;
-    navigator.clipboard.writeText(full);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleApply = () => {
+    if (onApplyGeneratedComplaint) {
+      onApplyGeneratedComplaint({
+        ...generatedDraft,
+        title: editableTitle.trim() || generatedDraft.title,
+        description: editableDescription.trim() || generatedDraft.description,
+        original_citizen_input: issueText.trim(),
+        structured_incident: structuredIncident
+      });
+    }
+    handleClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 9999,
-      background: 'rgba(5, 10, 20, 0.82)',
-      backdropFilter: 'blur(12px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '16px'
-    }}>
+    <div 
+      className="ai-modal-overlay" 
+      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+    >
       <div 
-        className="glass-card" 
-        style={{
-          width: '100%',
-          maxWidth: '680px',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          background: 'linear-gradient(180deg, #131b2e 0%, #0d1322 100%)',
-          boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.85), 0 0 35px rgba(59, 130, 246, 0.15)',
-          padding: '24px 28px',
-          position: 'relative',
-          maxHeight: '94vh',
-          overflowY: 'auto'
-        }}
+        className="ai-modal-card" 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ai-assistant-modal-title"
+        style={{ maxWidth: '640px', width: '92%' }}
       >
         {/* Top Header Bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-              boxShadow: '0 4px 16px rgba(59, 130, 246, 0.45)',
-              flexShrink: 0
-            }}>
-              <Sparkles size={22} />
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.01em' }}>
-                  AI Complaint Assistant
-                </h3>
-                <span style={{
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  background: 'rgba(59, 130, 246, 0.18)',
-                  color: '#60a5fa',
-                  border: '1px solid rgba(59, 130, 246, 0.35)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
-                  Groq LLaMA
-                </span>
+        <div className="ai-modal-header">
+          <div className="ai-modal-header-top">
+            <div className="ai-modal-branding">
+              <div className="ai-modal-icon-badge">
+                <Sparkles size={18} />
               </div>
-              <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: '#94a3b8' }}>
-                Turn brief notes into a structured, official municipal grievance
-              </p>
+              <div className="ai-modal-titles-col">
+                <div className="ai-modal-title-row">
+                  <h3 id="ai-assistant-modal-title" className="ai-modal-title">
+                    CivicPulse AI Complaint Assistant
+                  </h3>
+                  <span className="ai-modal-model-badge desktop-only">
+                    <span className="ai-modal-model-dot" />
+                    Two-Stage Intelligence
+                  </span>
+                </div>
+                <div className="ai-modal-subtitle-row">
+                  <p className="ai-modal-subtitle">
+                    {view === 'clarify' 
+                      ? 'Stage 1: Incident Clarification (Missing Details)'
+                      : view === 'review'
+                        ? 'Citizen Review & Approval (Editable Description)'
+                        : 'Understand problem & formulate factual complaint petition'}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{
-              fontSize: '0.74rem',
-              fontWeight: 600,
-              color: '#38bdf8',
-              background: 'rgba(56, 189, 248, 0.1)',
-              padding: '4px 10px',
-              borderRadius: '8px',
-              border: '1px solid rgba(56, 189, 248, 0.25)'
-            }}>
-              English Petition
-            </span>
-
-            {/* Discreet Settings Toggle */}
-            <button
-              type="button"
-              onClick={() => setShowSettings(!showSettings)}
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '9px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                background: showSettings ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                color: showSettings ? '#60a5fa' : '#94a3b8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer'
-              }}
-              title="Groq API Key Settings"
-            >
-              <Sliders size={15} />
-            </button>
-
-            {/* Close Button */}
-            <button 
-              type="button"
-              onClick={handleClose} 
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '9px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                background: 'rgba(255, 255, 255, 0.04)',
-                color: '#94a3b8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer'
-              }}
-              title="Close"
-            >
-              <X size={16} />
-            </button>
-          </div>
-        </div>
-
-        {/* Collapsible API Key Drawer */}
-        {showSettings && (
-          <div style={{
-            background: 'rgba(15, 23, 42, 0.95)',
-            border: '1px solid rgba(59, 130, 246, 0.35)',
-            borderRadius: '12px',
-            padding: '14px 16px',
-            marginBottom: '18px',
-            animation: 'fadeIn 0.2s ease-in-out'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Key size={14} color="#60a5fa" /> Real AI Key Override (Optional)
-              </span>
-              <span style={{ fontSize: '0.7rem', color: '#10b981', background: 'rgba(16, 185, 129, 0.12)', padding: '2px 8px', borderRadius: '6px' }}>
-                ✓ Backend Groq Key Active
-              </span>
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input
-                type="password"
-                value={apiKey}
-                onChange={(e) => { setApiKey(e.target.value); setApiKeySaved(false); }}
-                placeholder="Leave blank to use global backend Groq key (gsk_...)"
-                style={{
-                  flex: 1,
-                  fontSize: '0.8rem',
-                  padding: '7px 12px',
-                  borderRadius: '8px',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#ffffff'
-                }}
-              />
-              <button
+            <div className="ai-modal-header-actions">
+              <button 
                 type="button"
-                onClick={() => {
-                  localStorage.setItem('civicpulse_ai_key', apiKey.trim());
-                  setApiKeySaved(true);
-                  setTimeout(() => setApiKeySaved(false), 2000);
-                }}
-                className="btn btn-primary btn-sm"
-                style={{ padding: '7px 14px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700 }}
+                onClick={handleClose}
+                className="ai-modal-btn-icon"
+                title="Close"
+                aria-label="Close dialog"
               >
-                {apiKeySaved ? <Check size={14} /> : 'Save Key'}
+                <X size={15} />
               </button>
             </div>
           </div>
-        )}
+        </div>
 
         {/* ========================================================= */}
         {/* VIEW 1: COMPOSE                                           */}
@@ -322,32 +258,24 @@ We urgently request immediate on-site inspection, deployment of technical person
         {view === 'compose' && (
           <div>
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <label style={{ fontSize: '0.92rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-                  Describe the civic problem in your own words:
+              <div className="ai-modal-label-row">
+                <label className="ai-modal-label">
+                  <span>Describe the civic problem in your own words:</span>
                 </label>
                 <button
                   type="button"
                   onClick={() => {
-                    setIssueText('Power cut for over 12 hours. Local transformer was sparking, entire residential block is without electricity in extreme heat.');
+                    setIssueText('There is a big hole on the road near our school. Bikes are falling.');
                     setInputError('');
                   }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#60a5fa',
-                    fontSize: '0.74rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    textDecoration: 'underline'
-                  }}
+                  className="ai-modal-link-example"
                 >
                   Use Example
                 </button>
               </div>
 
               <textarea
-                rows={4}
+                rows={3}
                 value={issueText}
                 onChange={(e) => {
                   setIssueText(e.target.value);
@@ -356,24 +284,11 @@ We urgently request immediate on-site inspection, deployment of technical person
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                     e.preventDefault();
-                    handleGenerate();
+                    handleAnalyzeAndProceed();
                   }
                 }}
-                placeholder="e.g. Power cut for 12 hours, transformer was sparking, no response from substation..."
-                style={{
-                  width: '100%',
-                  background: 'rgba(15, 23, 42, 0.75)',
-                  border: inputError ? '1.5px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.12)',
-                  borderRadius: '12px',
-                  padding: '14px 16px',
-                  color: '#f8fafc',
-                  fontSize: '0.94rem',
-                  lineHeight: 1.55,
-                  resize: 'none',
-                  outline: 'none',
-                  boxShadow: inputError ? '0 0 12px rgba(239, 68, 68, 0.25)' : 'none',
-                  transition: 'all 0.15s ease'
-                }}
+                placeholder="e.g. Power cut for 12 hours, or There is a big hole on the road near school, bikes are falling..."
+                className={`ai-modal-textarea ${inputError ? 'has-error' : ''}`}
                 autoFocus
               />
 
@@ -382,9 +297,10 @@ We urgently request immediate on-site inspection, deployment of technical person
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  color: '#f87171',
+                  color: '#ef4444',
                   fontSize: '0.78rem',
-                  marginTop: '6px'
+                  marginTop: '6px',
+                  fontWeight: 600
                 }}>
                   <AlertTriangle size={14} />
                   <span>{inputError}</span>
@@ -392,119 +308,155 @@ We urgently request immediate on-site inspection, deployment of technical person
               )}
             </div>
 
-            {/* Quick Suggestions Pills */}
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontSize: '0.76rem', color: '#94a3b8', marginBottom: '8px', fontWeight: 600 }}>
-                ⚡ Click a quick civic category to auto-fill:
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '8px' }}>
-                {QUICK_SUGGESTIONS.map((s, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      setIssueText(s.text);
-                      setInputError('');
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '8px 12px',
-                      borderRadius: '10px',
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      color: '#cbd5e1',
-                      fontSize: '0.78rem',
-                      fontWeight: 500,
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease'
-                    }}
-                  >
-                    <span>{s.icon}</span>
-                    <span>{s.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Safety Hazard Checkbox */}
-            <div style={{
-              background: isHazardous ? 'rgba(239, 68, 68, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-              border: isHazardous ? '1px solid rgba(239, 68, 68, 0.35)' : '1px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: '12px',
-              padding: '12px 14px',
-              marginBottom: '22px',
-              transition: 'all 0.2s ease'
-            }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', margin: 0 }}>
+            <div className={`ai-modal-hazard-box ${isHazardous ? 'hazardous' : ''}`}>
+              <label className="ai-modal-hazard-label">
                 <input
                   type="checkbox"
                   checked={isHazardous}
                   onChange={(e) => setIsHazardous(e.target.checked)}
-                  style={{ width: '17px', height: '17px', accentColor: '#ef4444', cursor: 'pointer' }}
+                  style={{ width: '18px', height: '18px', accentColor: '#ef4444', cursor: 'pointer', flexShrink: 0 }}
                 />
-                <span style={{ fontSize: '0.84rem', fontWeight: 700, color: isHazardous ? '#fca5a5' : '#e2e8f0', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <ShieldAlert size={15} color={isHazardous ? '#ef4444' : '#94a3b8'} />
-                  Active Life-Safety Hazard Present? (Live wire, open manhole, gas leak, etc.)
+                <span className="ai-modal-hazard-text">
+                  <ShieldAlert size={16} color={isHazardous ? '#ef4444' : (isDark ? '#94a3b8' : '#64748b')} style={{ flexShrink: 0 }} />
+                  <span>Active Life-Safety Hazard Present? <small style={{ fontWeight: 400, opacity: 0.9 }}>(Live wire, open manhole, gas leak, etc.)</small></span>
                 </span>
               </label>
 
               {isHazardous && (
-                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: isDark ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(239, 68, 68, 0.25)' }}>
                   <input
                     type="text"
                     value={hazardDetails}
                     onChange={(e) => setHazardDetails(e.target.value)}
-                    placeholder="Specific safety danger (e.g. fallen 11kV live cable near school gate)"
-                    style={{
-                      width: '100%',
-                      background: 'rgba(0, 0, 0, 0.35)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      color: '#ffffff',
-                      fontSize: '0.82rem'
-                    }}
+                    placeholder="Specific safety danger (e.g. open high-voltage cable, vehicles skidding)"
+                    className="ai-modal-hazard-input"
                   />
                 </div>
               )}
             </div>
 
             {/* Bottom Controls */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <div className="ai-modal-footer ai-modal-compose-actions">
               <button
                 type="button"
                 onClick={handleClose}
-                className="btn btn-secondary btn-sm"
-                style={{ padding: '8px 18px', borderRadius: '10px', fontSize: '0.84rem' }}
+                className="ai-modal-btn-cancel"
               >
                 Cancel
               </button>
 
               <button
                 type="button"
-                onClick={() => handleGenerate()}
-                className="btn btn-primary"
-                style={{
-                  fontWeight: 700,
-                  padding: '9px 24px',
-                  borderRadius: '10px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                  boxShadow: '0 4px 16px rgba(37, 99, 235, 0.4)',
-                  border: 'none',
-                  color: '#ffffff',
-                  cursor: 'pointer'
-                }}
+                onClick={handleAnalyzeAndProceed}
+                disabled={isAnalyzing || !issueText.trim()}
+                className="ai-modal-btn-draft"
+                style={{ opacity: isAnalyzing ? 0.8 : 1, cursor: isAnalyzing ? 'wait' : 'pointer' }}
               >
-                <Sparkles size={16} />
-                <span>Draft Grievance with AI</span>
-                <ArrowRight size={15} />
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 size={16} className="spin-animation" />
+                    <span>Analyzing Incident...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={16} />
+                    <span>Understand & Draft with AI</span>
+                    <ArrowRight size={15} />
+                  </>
+                )}
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* VIEW 1.5: CLARIFY (Stage 1 Vague Complaint Questions)     */}
+        {/* ========================================================= */}
+        {view === 'clarify' && (
+          <div>
+            <div style={{
+              background: isDark ? 'rgba(59, 130, 246, 0.1)' : '#eff6ff',
+              border: isDark ? '1px solid rgba(59, 130, 246, 0.25)' : '1px solid #bfdbfe',
+              borderRadius: '10px',
+              padding: '12px 14px',
+              marginBottom: '16px',
+              display: 'flex',
+              gap: '10px'
+            }}>
+              <HelpCircle size={20} color={isDark ? '#60a5fa' : '#2563eb'} style={{ flexShrink: 0, marginTop: '2px' }} />
+              <div>
+                <h4 style={{ margin: '0 0 4px', fontSize: '0.9rem', fontWeight: 700, color: isDark ? '#93c5fd' : '#1d4ed8' }}>
+                  A few details will help file a more actionable petition
+                </h4>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: isDark ? '#cbd5e1' : '#475569', lineHeight: 1.4 }}>
+                  Your complaint was brief. Answering these targeted questions helps ensure the correct department inspects the site promptly:
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '18px' }}>
+              {clarificationQuestions.map((q, idx) => (
+                <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 600, color: isDark ? '#e2e8f0' : '#334155' }}>
+                    {idx + 1}. {q}
+                  </label>
+                  <input
+                    type="text"
+                    value={clarificationAnswers[q] || ''}
+                    onChange={(e) => setClarificationAnswers({ ...clarificationAnswers, [q]: e.target.value })}
+                    placeholder="Enter details (or leave blank if unknown)..."
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      fontSize: '0.85rem',
+                      background: isDark ? '#0f172a' : '#ffffff',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid #cbd5e1',
+                      color: isDark ? '#f8fafc' : '#0f172a',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="ai-modal-footer ai-modal-compose-actions">
+              <button
+                type="button"
+                onClick={() => setView('compose')}
+                className="ai-modal-btn-cancel"
+              >
+                <ArrowLeft size={15} />
+                <span>Back</span>
+              </button>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleGenerate({})}
+                  style={{
+                    padding: '8px 14px',
+                    fontSize: '0.82rem',
+                    background: 'transparent',
+                    border: 'none',
+                    color: isDark ? '#94a3b8' : '#64748b',
+                    cursor: 'pointer',
+                    fontWeight: 600
+                  }}
+                >
+                  Skip Questions
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleGenerate(clarificationAnswers)}
+                  className="ai-modal-btn-draft"
+                >
+                  <Sparkles size={16} />
+                  <span>Synthesize Description</span>
+                  <ArrowRight size={15} />
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -513,175 +465,174 @@ We urgently request immediate on-site inspection, deployment of technical person
         {/* VIEW 2: GENERATING                                        */}
         {/* ========================================================= */}
         {view === 'generating' && (
-          <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+          <div style={{ textAlign: 'center', padding: 'clamp(28px, 6vw, 44px) 16px' }}>
             <div style={{
               width: '64px',
               height: '64px',
               borderRadius: '20px',
-              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
-              border: '1px solid rgba(59, 130, 246, 0.4)',
+              background: isDark 
+                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))'
+                : 'linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1))',
+              border: isDark ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(37, 99, 235, 0.3)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 20px',
               animation: 'pulse 1.8s infinite ease-in-out'
             }}>
-              <Loader2 size={32} color="#60a5fa" style={{ animation: 'spin 1.2s linear infinite' }} />
+              <Loader2 size={32} color={isDark ? '#60a5fa' : '#2563eb'} style={{ animation: 'spin 1.2s linear infinite' }} />
             </div>
 
-            <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
-              Groq LLaMA is Synthesizing Your Grievance...
+            <h4 style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.28rem)', fontWeight: 800, color: isDark ? '#ffffff' : '#0f172a', marginBottom: '8px' }}>
+              Synthesizing Factual Grievance Description...
             </h4>
-            <p style={{ fontSize: '0.86rem', color: '#94a3b8', maxWidth: '440px', margin: '0 auto 20px', lineHeight: 1.55 }}>
-              Converting brief notes into an authoritative, structured petition in English with administrative etiquette.
+            <p style={{ fontSize: '0.86rem', color: isDark ? '#94a3b8' : '#64748b', maxWidth: '440px', margin: '0 auto 20px', lineHeight: 1.55 }}>
+              Grounding details in reported facts without hallucinating unverified places, dates, or causes.
             </p>
-
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.1)', padding: '6px 16px', borderRadius: '20px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
-              <Zap size={14} /> <span>Ultra-fast Groq LLaMA-3.3 neural inference</span>
-            </div>
           </div>
         )}
 
         {/* ========================================================= */}
-        {/* VIEW 3: REVIEW                                            */}
+        {/* VIEW 3: REVIEW & EDIT (Citizen Approval Workflow)         */}
         {/* ========================================================= */}
         {view === 'review' && generatedDraft && (
           <div>
-            {/* Review Status Banner */}
+            {/* Status Banner */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: '16px',
-              paddingBottom: '12px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              marginBottom: '14px',
+              paddingBottom: '10px',
+              borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e2e8f0',
               flexWrap: 'wrap',
-              gap: '10px'
+              gap: '8px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CheckCircle2 size={18} color="#10b981" />
-                <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#f8fafc' }}>
-                  Official Grievance Petition Ready
+                <CheckCircle2 size={18} color={isDark ? '#10b981' : '#16a34a'} />
+                <span style={{ fontSize: '0.92rem', fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a' }}>
+                  Review & Approve Description
                 </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{
-                  fontSize: '0.74rem',
-                  fontWeight: 800,
-                  padding: '3px 10px',
-                  borderRadius: '12px',
-                  background: generatedDraft.priority === 'CRITICAL' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(59, 130, 246, 0.2)',
-                  color: generatedDraft.priority === 'CRITICAL' ? '#f87171' : '#60a5fa',
-                  border: generatedDraft.priority === 'CRITICAL' ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(59, 130, 246, 0.4)'
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  background: isDark ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff',
+                  color: isDark ? '#60a5fa' : '#1d4ed8',
+                  border: isDark ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid #bfdbfe'
                 }}>
-                  {generatedDraft.priority || 'HIGH'} PRIORITY
+                  Editable Field
                 </span>
-
-                {generatedDraft.department && (
-                  <span style={{
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    padding: '3px 10px',
-                    borderRadius: '12px',
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    color: '#e2e8f0',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    🏛️ {generatedDraft.department}
-                  </span>
-                )}
               </div>
             </div>
 
-            {/* Synthesized Subject Line */}
-            <div style={{ marginBottom: '14px' }}>
-              <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginBottom: '5px', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
-                Official Grievance Subject:
-              </div>
-              <div style={{ 
-                fontSize: '0.96rem', 
+            {/* Editable Subject Line */}
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ 
+                fontSize: '0.74rem', 
+                color: isDark ? '#94a3b8' : '#64748b', 
+                marginBottom: '4px', 
+                display: 'block',
+                textTransform: 'uppercase', 
                 fontWeight: 700, 
-                color: '#ffffff', 
-                background: 'rgba(15, 23, 42, 0.9)', 
-                padding: '12px 16px', 
-                borderRadius: '10px', 
-                border: '1px solid rgba(59, 130, 246, 0.25)',
-                lineHeight: 1.45
+                letterSpacing: '0.04em' 
               }}>
-                {generatedDraft.title}
-              </div>
+                Grievance Title / Subject:
+              </label>
+              <input
+                type="text"
+                value={editableTitle}
+                onChange={(e) => setEditableTitle(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  background: isDark ? '#0f172a' : '#f8fafc',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid #cbd5e1',
+                  color: isDark ? '#f8fafc' : '#0f172a',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
             </div>
 
-            {/* Synthesized Formal Description */}
-            <div style={{ marginBottom: '18px' }}>
-              <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginBottom: '5px', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
-                Structured Formal Petition:
+            {/* Editable Formal Description */}
+            <div style={{ marginBottom: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                <label style={{ 
+                  fontSize: '0.74rem', 
+                  color: isDark ? '#94a3b8' : '#64748b', 
+                  textTransform: 'uppercase', 
+                  fontWeight: 700, 
+                  letterSpacing: '0.04em' 
+                }}>
+                  Official Complaint Description (Editable):
+                </label>
+                <span style={{ fontSize: '0.72rem', color: isDark ? '#64748b' : '#94a3b8' }}>
+                  {editableDescription.length} characters
+                </span>
               </div>
-              <div style={{ 
-                fontSize: '0.88rem', 
-                color: '#e2e8f0', 
-                background: 'rgba(15, 23, 42, 0.85)', 
-                padding: '16px', 
-                borderRadius: '12px', 
-                border: '1px solid rgba(255, 255, 255, 0.08)', 
-                whiteSpace: 'pre-line', 
-                lineHeight: 1.6, 
-                maxHeight: '220px', 
-                overflowY: 'auto' 
-              }}>
-                {generatedDraft.description}
-              </div>
+              <textarea
+                rows={6}
+                value={editableDescription}
+                onChange={(e) => setEditableDescription(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  borderRadius: '8px',
+                  fontSize: '0.86rem',
+                  lineHeight: 1.5,
+                  background: isDark ? '#0f172a' : '#f8fafc',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid #cbd5e1',
+                  color: isDark ? '#f1f5f9' : '#0f172a',
+                  outline: 'none',
+                  fontFamily: 'inherit',
+                  resize: 'vertical',
+                  boxSizing: 'border-box'
+                }}
+              />
+              <p style={{ margin: '4px 0 0', fontSize: '0.72rem', color: isDark ? '#64748b' : '#94a3b8' }}>
+                ✏️ You can edit, add missing facts, or refine before accepting. Your approved text becomes the official description.
+              </p>
             </div>
 
             {/* Action Bar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', flexWrap: 'wrap', gap: '10px' }}>
-              <button 
-                type="button" 
-                onClick={() => setView('compose')} 
-                className="btn btn-secondary btn-sm"
-                style={{ padding: '8px 16px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem' }}
-              >
-                <ArrowLeft size={16} /> 
-                <span>Edit Prompt</span>
-              </button>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <button
-                  type="button"
-                  onClick={handleCopyText}
-                  className="btn btn-secondary btn-sm"
-                  style={{ padding: '8px 14px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem' }}
+            <div className="ai-modal-footer ai-modal-review-actions" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setView('compose')} 
+                  className="ai-modal-btn-cancel"
                 >
-                  {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
-                  <span>{copied ? 'Copied!' : 'Copy'}</span>
+                  <ArrowLeft size={15} /> 
+                  <span>Edit Raw Input</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    onApplyGeneratedComplaint(generatedDraft);
-                    handleClose();
-                  }}
-                  className="btn btn-primary"
-                  style={{ 
-                    fontWeight: 700,
-                    padding: '9px 24px',
-                    borderRadius: '10px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
-                    border: 'none',
-                    color: '#ffffff',
-                    cursor: 'pointer'
-                  }}
+                <button 
+                  type="button" 
+                  onClick={() => handleGenerate(clarificationAnswers)} 
+                  className="ai-modal-btn-cancel"
+                  title="Regenerate description"
                 >
-                  <CheckCircle2 size={17} />
-                  <span>Apply to Complaint Form</span>
+                  <RotateCcw size={15} /> 
+                  <span>Regenerate</span>
                 </button>
               </div>
+
+              <button
+                type="button"
+                onClick={handleApply}
+                className="ai-modal-btn-draft btn-apply-main"
+              >
+                <CheckCircle2 size={16} />
+                <span>Accept & Apply Official Petition</span>
+              </button>
             </div>
           </div>
         )}

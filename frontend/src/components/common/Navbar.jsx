@@ -59,6 +59,7 @@ export default function Navbar({ currentRoute, setCurrentRoute }) {
   if (user && user.role === 'admin') {
     navItems.push(
       { id: 'admin-dashboard', label: 'Admin Portal', icon: <LayoutDashboard size={15} /> },
+      { id: 'new-complaint', label: 'Report Issue', icon: <FilePlus2 size={15} /> },
       { id: 'gis-heatmap', label: 'GIS Heatmap', icon: <Flame size={15} /> },
       { id: 'ml-inspector', label: 'ML Inspector', icon: <BrainCircuit size={15} /> }
     );

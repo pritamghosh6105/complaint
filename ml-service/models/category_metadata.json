@@ -1,0 +1,234 @@
+{
+  "model_version": "civicpulse-text-v2",
+  "training_timestamp": "2026-11-06T19:18:53.724544Z",
+  "dataset_version": "civicpulse_v2_curated250_augmented",
+  "dataset_stats": {
+    "train_samples": 11520,
+    "val_samples": 121,
+    "total_samples": 11641,
+    "num_departments": 30
+  },
+  "model_comparison": {
+    "Candidate_A_LinearSVC": {
+      "accuracy": 0.9835,
+      "macro_f1": 0.9841,
+      "weighted_f1": 0.9833,
+      "top2_accuracy": 0.9917,
+      "top3_accuracy": 1.0,
+      "log_loss": 0.3554
+    },
+    "Candidate_B_LogisticRegression": {
+      "accuracy": 0.9587,
+      "macro_f1": 0.9585,
+      "weighted_f1": 0.9595,
+      "top2_accuracy": 0.9835,
+      "top3_accuracy": 0.9917,
+      "log_loss": 0.6895
+    }
+  },
+  "winning_architecture": "Calibrated LinearSVC",
+  "validation_metrics": {
+    "top1_accuracy": 0.9835,
+    "top2_accuracy": 0.9917,
+    "top3_accuracy": 1.0,
+    "macro_f1": 0.9841,
+    "weighted_f1": 0.9833,
+    "log_loss": 0.3554,
+    "subcategory_val_acc": 0.9504
+  },
+  "per_category_validation": {
+    "Agriculture": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Animal Resources": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Building & Municipal Engineering": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Consumer Affairs": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Cyber Crime": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Disaster Management": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Drainage & Sewerage": {
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1-score": 0.8888888888888888,
+      "support": 4.0
+    },
+    "Education \u2013 Schools": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Electricity & Power": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Environment & Pollution": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Fire & Emergency Services": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Food & Public Distribution": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Forest & Wildlife": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Health & Hospitals": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Higher Education": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Housing & Urban Development": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Labour & Employment": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Land & Land Records": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Parks & Public Spaces": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Police & Law Enforcement": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Public Grievance / General Administration": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Public Health & Sanitation": {
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1-score": 0.8571428571428571,
+      "support": 4.0
+    },
+    "Public Transport": {
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1-score": 0.8888888888888888,
+      "support": 4.0
+    },
+    "Railway-related Public Complaints": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Roads & Public Works": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Solid Waste Management": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Street Lighting & Electrical": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Traffic & Road Safety": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Water Supply": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Women & Child Safety": {
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1-score": 0.8888888888888888,
+      "support": 5.0
+    },
+    "accuracy": 0.9834710743801653,
+    "macro avg": {
+      "precision": 0.9866666666666667,
+      "recall": 0.985,
+      "f1-score": 0.9841269841269842,
+      "support": 121.0
+    },
+    "weighted avg": {
+      "precision": 0.9867768595041323,
+      "recall": 0.9834710743801653,
+      "f1-score": 0.9833398924308016,
+      "support": 121.0
+    }
+  }
+}

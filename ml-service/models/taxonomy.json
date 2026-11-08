@@ -1,190 +1,141 @@
 {
   "Agriculture": [
-    "Defective Agricultural Tube-well",
-    "Flood Crop Damage Compensation Claim",
-    "Irrigation Canal Water Siltation",
-    "Substandard Crop Seeds / Fertilizer"
+    "Agricultural Irrigation Canal Dry During Sowing Season",
+    "Artificial Shortage and Black Marketing of Urea Fertilizer"
   ],
   "Animal Resources": [
-    "Injured Animal Emergency Care",
-    "Stray Cattle & Livestock Road Obstruction",
-    "Stray Dog Bite Menace & Rabies Drive",
-    "Veterinary Clinic Doctor Absence"
+    "Rabid Stray Dog Menace Endangering Pedestrians",
+    "Stray Cattle Blocking Arterial Roadway"
   ],
   "Building & Municipal Engineering": [
-    "Dangerous Dilapidated Building",
-    "Structural Crack & Collapse Hazard",
-    "Unauthorized / Illegal Construction",
-    "Unsafe Scaffold / Site Hazard"
+    "Deep Excavation Endangering Adjacent Residential Homes",
+    "Dilapidated Dangerous Building at Risk of Collapse",
+    "Unauthorized & Illegal Multi-Story Construction"
   ],
   "Consumer Affairs": [
-    "Counterfeit Goods & False Advertising",
-    "Faulty Commercial Weighing Scales",
-    "Retailer Charging Above MRP",
-    "Warranty Refusal / Unfair Trade Practice"
+    "Defective Appliance Warranty Refusal",
+    "MRP Violation & Overcharging"
   ],
   "Cyber Crime": [
     "Account Hacking / Unauthorized Access",
+    "Cyber Harassment / Stalking",
     "Identity Theft / Loan Impersonation",
     "Net Banking Fraud",
-    "Phishing / Scam Calls",
     "UPI / Payment Gateway Fraud"
   ],
   "Disaster Management": [
-    "Cyclone Damage & Uprooted Trees",
-    "Emergency Relief & Shelter",
-    "Flood Inundation & Rescue",
-    "River Embankment Breach"
+    "Cyclone / Storm Devastation & Uprooted Trees",
+    "River Embankment Breach & Flood Inundation"
   ],
   "Drainage & Sewerage": [
-    "Blocked / Clogged Drain",
-    "Monsoon Waterlogging",
-    "Open / Missing Manhole Cover",
-    "Sewage Water Overflow"
+    "Blocked Sewer & Foul Sludge Overflow",
+    "Monsoon Waterlogging & Choked Drains",
+    "Open & Broken Manhole Cover"
   ],
   "Education \u2013 Schools": [
-    "Broken School Toilets & Drinking Water",
-    "Classroom Furniture & Blackboard Damage",
-    "Mid-day Meal Quality Concern",
-    "School Building Urgent Repair / Roof Seepage"
+    "Mid-Day Meal Quality & Unhygienic Kitchen",
+    "School Infrastructure Structural Cracks"
   ],
   "Electricity & Power": [
-    "Defective Electricity Meter",
-    "Frequent High Voltage Fluctuation",
-    "Open Live Wire / Electrical Shock Risk",
-    "Prolonged Power Blackout",
-    "Transformer Sparking / Overheating"
+    "Damaged Transformer & Sparking",
+    "Faulty Electricity Meter & Billing Discrepancy",
+    "Frequent Power Outages & Low Voltage",
+    "Snapped Overhead Electric Cable"
   ],
   "Environment & Pollution": [
-    "Chemical Effluent Discharge",
-    "Industrial Smoke & Air Emissions",
-    "Noise Pollution & Illegal Loudspeakers",
-    "Water Body Plastic Pollution"
+    "Industrial Chemical Smoke & Toxic Fumes",
+    "Severe Noise Pollution Beyond Permissible Limits",
+    "Toxic Effluent Discharge into Public Water Body"
   ],
   "Fire & Emergency Services": [
-    "Commercial / Factory Fire Hazard",
-    "Fire Hydrant Damage",
-    "LPG Cylinder Leak / Blast",
+    "Commercial Chemical / Cylinder Explosion Hazard",
     "Residential Structure Fire"
   ],
   "Food & Public Distribution": [
-    "Adulterated / Rotten Food Grains",
-    "Denial of Allocated Ration Card Grains",
-    "Fair Price Shop Overcharging",
-    "Ration Shop PDS Irregularity"
+    "Overcharging and Siphoning PDS Sugar and Kerosene",
+    "Ration Dealer Distributing Substandard Grains"
   ],
   "Forest & Wildlife": [
-    "Forest Boundary Encroachment",
-    "Illegal Tree Cutting & Timber Smuggling",
-    "Poaching / Wildlife Protection Violation",
-    "Wild Animal Intrusion in Village"
+    "Illegal Timber Felling in Reserved Forest",
+    "Wild Elephant Herd Incursion into Village"
   ],
   "Health & Hospitals": [
-    "Hospital Emergency Services Unavailable",
-    "Hospital Medical Negligence Inquiry",
-    "Primary Health Center Doctor Absence",
-    "Shortage of Critical Medicine / Oxygen"
+    "Essential Medicines Out of Stock",
+    "Hospital Medical Negligence Inquiry"
   ],
   "Higher Education": [
-    "College Anti-Ragging Grievance",
-    "College Campus Infrastructure Defect",
-    "Degree Certificate Issuance Delay",
-    "University Examination Result Discrepancy"
+    "College Marks Sheet and Degree Certificate Delay",
+    "Higher Education Scholarship Disbursement Delay"
   ],
   "Housing & Urban Development": [
-    "Affordable Housing Structural Defect",
-    "Housing Scheme Disbursement Delay",
-    "Slum Civic Infrastructure",
-    "Urban Colony Basic Amenities"
+    "Housing Scheme Subsidy Disbursement Delay",
+    "Substandard Construction in Government Urban Housing Project"
   ],
   "Labour & Employment": [
-    "Hazardous Workplace Without Safety Gear",
-    "Unpaid Worker Wages / Salary Withheld",
-    "Violation of Minimum Wage Compliance",
+    "Unpaid Minimum Wages & Contractor Exploitation",
     "Workplace Fatality / Industrial Injury Compensation"
   ],
   "Land & Land Records": [
-    "Encroachment on Govt Land",
-    "Forged Land Deed / Fraudulent Sale",
-    "Land Boundary Dispute",
-    "Mutation Record Discrepancy"
+    "Delay in Land Mutation and Record of Rights (Porcha)",
+    "Illegal Encroachment on Government Vested Land / Public Pond"
   ],
   "Parks & Public Spaces": [
-    "Broken Benches & Boundary Wall",
-    "Damaged Swings & Playground",
-    "Park Lighting Outage",
-    "Unmaintained Green Space"
+    "Damaged Children's Playground Equipment",
+    "Public Park Neglect & Wild Overgrowth"
   ],
   "Police & Law Enforcement": [
     "Death Investigation / Suspicious or Unexplained Death (pending verification)",
+    "Extortion / Intimidation",
     "Missing Person Report",
     "Physical Assault",
-    "Public Violence / Rioting",
-    "Robbery / Armed Snatching",
     "Theft / Burglary"
   ],
   "Public Grievance / General Administration": [
-    "Citizen Charter Timeline Non-Compliance",
-    "Delay in Government Service Application",
-    "Official Corruption / Bribe Solicitation",
-    "Public Officer Unresponsiveness / Harassment"
+    "Bribery Demand and Harassment by Municipal Dealing Assistant",
+    "Delay in Government Service Delivery (Trade License / Caste)"
   ],
   "Public Health & Sanitation": [
-    "Food Market Sanitation",
-    "Mosquito Breeding & Dengue Risk",
-    "Public Toilet & Urinal Hygiene",
-    "Stagnant Water Vector Control"
+    "Animal Carcass Removal & Disinfection",
+    "Mosquito Breeding & Dengue Outbreak"
   ],
   "Public Transport": [
-    "Bus Route Cancellation / Absence",
-    "Dilapidated Municipal Bus Condition",
-    "Missing Bus Shelter",
-    "Passenger Overcharging / Conductor Conduct"
+    "Bus Route Non-Operation & Irregularity",
+    "Overcharging and Auto-Rickshaw Fare Gouging"
   ],
   "Railway-related Public Complaints": [
-    "Dangerous Level Crossing Gate Delay",
-    "Passenger Overhead Bridge Damage",
-    "Railway Station Approach Sanitation",
-    "Station Approach Sanitation",
-    "Station Platform Amenities Defect"
+    "Level Crossing Gate Delay & Safety",
+    "Station Platform Amenities & Sanitation"
   ],
   "Roads & Public Works": [
-    "Broken / Eroded Road",
-    "Broken Divider / Railing",
-    "Damaged Bridge / Flyover",
-    "Pothole / Surface Crater",
-    "Road Cave-in / Sinkhole"
+    "Broken Bridge / Culvert Railing",
+    "Damaged Footpath & Broken Pavers",
+    "Potholes & Cratered Road Surface",
+    "Road Cave-In & Sinkhole"
   ],
   "Solid Waste Management": [
-    "Dead Animal Carcass Removal",
-    "Hazardous Biomedical Waste",
-    "Illegal Open Waste Dumping",
-    "Missed Door-to-Door Collection",
-    "Overflowing Garbage Vat / Bin"
+    "Door-to-Door Waste Collection Halted",
+    "Illegal Roadside Waste Dumping",
+    "Overflowing Garbage Vat & Foul Stench"
   ],
   "Street Lighting & Electrical": [
-    "Damaged / Leaning Light Pole",
-    "Exposed High-Mast Junction Box",
-    "Flickering / Damaged LED",
-    "Streetlight Completely Off"
+    "Dark Street & Defective LED Streetlights",
+    "Tilted & Rusted Streetlight Pole"
   ],
   "Traffic & Road Safety": [
-    "Dangerous / Rash Driving",
+    "Dangerous Rash Driving & Drag Racing",
     "Fatal Vehicle Collision",
-    "Illegal / Obstructive Parking",
-    "Missing Road Signage / Zebra Crossing",
-    "Traffic Signal Failure"
+    "Illegal Obstruction & Parking",
+    "Traffic Signal Malfunction & Chaos"
   ],
   "Water Supply": [
-    "Broken Public Tap / Standpost",
-    "Contaminated / Muddy Drinking Water",
-    "Low Water Pressure / No Supply",
-    "Pipeline Burst / Leakage"
+    "Contaminated & Muddy Drinking Water",
+    "Major Pipeline Burst & Water Wastage",
+    "Total Water Supply Disruption"
   ],
   "Women & Child Safety": [
     "Child Abuse / Child Labour",
-    "Stalking & Threat",
-    "Street Harassment / Eve Teasing",
-    "Unsafe Corridor / Transit Hazard"
+    "Domestic Violence",
+    "Eve Teasing / Public Street Harassment",
+    "Stalking / Cyber Harassment"
   ]
 }

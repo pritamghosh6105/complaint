@@ -4,7 +4,15 @@ import api from '../services/api';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // Synchronously hydrate user from localStorage to eliminate role-loading race conditions
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('civic_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
   const [token, setToken] = useState(localStorage.getItem('civic_token') || null);
   const [loading, setLoading] = useState(true);
 
@@ -15,10 +23,13 @@ export const AuthProvider = ({ children }) => {
         try {
           const res = await api.get('/auth/me');
           setUser(res.data.user);
+          localStorage.setItem('civic_user', JSON.stringify(res.data.user));
         } catch (err) {
           console.error('Session validation error:', err);
           logout();
         }
+      } else {
+        setUser(null);
       }
       setLoading(false);
     };
@@ -26,8 +37,8 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+  const login = async (email, password, portalRole = null) => {
+    const res = await api.post('/auth/login', { email, password, portalRole });
     const { token: jwtToken, user: userData } = res.data;
     localStorage.setItem('civic_token', jwtToken);
     localStorage.setItem('civic_user', JSON.stringify(userData));

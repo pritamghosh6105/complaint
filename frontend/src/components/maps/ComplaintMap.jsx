@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Eye, AlertTriangle, Clock, Search, Navigation, Layers, Flame, MapPin, Maximize2, Minimize2, Filter } from 'lucide-react';
+import { Eye, AlertTriangle, Clock, Search, Navigation, Layers, Flame, MapPin, Maximize2, Minimize2, Filter, Shield } from 'lucide-react';
 import { MapAutoInvalidate, FastTileLayer, MapLayerSwitcher, getSavedProviderId } from './MapConfig';
 import UserGpsMarker from './UserGpsMarker';
 
@@ -87,7 +87,7 @@ function LocationCenterButton() {
       <button
         type="button"
         onClick={handleGPS}
-        className="btn btn-sm btn-secondary"
+        className="complaint-map-gps-btn btn btn-sm btn-secondary"
         title="Show dot of my exact location in blue"
         disabled={locating}
         style={{
@@ -167,26 +167,61 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
   const activeFilterCount = (selectedCategory !== 'All' ? 1 : 0) + (selectedPriority !== 'All' ? 1 : 0) + (selectedWard !== 'All' ? 1 : 0);
 
   return (
-    <div style={{
-      position: isExpanded ? 'fixed' : 'relative',
-      top: isExpanded ? 0 : 'auto',
-      left: isExpanded ? 0 : 'auto',
-      right: isExpanded ? 0 : 'auto',
-      bottom: isExpanded ? 0 : 'auto',
-      width: isExpanded ? '100vw' : '100%',
-      height: isExpanded ? '100vh' : height,
-      zIndex: isExpanded ? 9999 : 1,
-      borderRadius: isExpanded ? 0 : 'var(--radius-md)',
-      overflow: 'hidden',
-      border: isExpanded ? 'none' : '1px solid var(--border-subtle)',
-      boxShadow: isExpanded ? '0 25px 50px -12px rgba(0, 0, 0, 0.85)' : 'var(--shadow-md)',
-      transition: 'height 0.3s ease, border-radius 0.3s ease'
-    }}>
+    <div 
+      className={`complaint-map-wrapper ${isExpanded ? 'is-expanded' : ''}`}
+      style={{
+        position: isExpanded ? 'fixed' : 'relative',
+        top: isExpanded ? 0 : 'auto',
+        left: isExpanded ? 0 : 'auto',
+        right: isExpanded ? 0 : 'auto',
+        bottom: isExpanded ? 0 : 'auto',
+        width: isExpanded ? '100vw' : '100%',
+        height: isExpanded ? '100vh' : height,
+        zIndex: isExpanded ? 99999 : 1,
+        borderRadius: isExpanded ? 0 : 'var(--radius-md)',
+        overflow: 'hidden',
+        border: isExpanded ? 'none' : '1px solid var(--border-subtle)',
+        boxShadow: isExpanded ? '0 25px 50px -12px rgba(0, 0, 0, 0.85)' : 'var(--shadow-md)',
+        transition: 'height 0.3s ease, border-radius 0.3s ease'
+      }}
+    >
       
       <MapLayerSwitcher 
         currentProvider={currentProvider} 
         onProviderChange={setCurrentProvider} 
       />
+
+      {/* Expand / Fullscreen Map Toggle */}
+      <button
+        type="button"
+        onClick={() => setIsExpanded(prev => !prev)}
+        className="complaint-map-expand-btn btn btn-sm btn-secondary"
+        title={isExpanded ? 'Collapse Map' : 'Expand Fullscreen'}
+        style={{
+          position: 'absolute',
+          top: '12px',
+          right: '12px',
+          zIndex: 1000,
+          boxShadow: 'var(--shadow-md)',
+          padding: '6px 11px',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-subtle)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          fontSize: '0.74rem',
+          fontWeight: 600,
+          color: 'var(--text-primary)',
+          cursor: 'pointer',
+          borderRadius: '8px',
+          transition: 'all 0.25s ease'
+        }}
+      >
+        {isExpanded ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+        <span className="map-expand-text-full">{isExpanded ? 'Collapse' : 'Expand'}</span>
+        <span className="map-expand-text-short" style={{ display: 'none' }}>{isExpanded ? 'Exit' : 'Full'}</span>
+      </button>
 
       <MapContainer 
         center={center} 
@@ -195,6 +230,7 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
         style={{ width: '100%', height: '100%' }}
       >
         <MapAutoInvalidate extraDep={isExpanded} />
+        <MapResizeHandler isExpanded={isExpanded} />
         <FastTileLayer providerId={currentProvider} />
 
         <LocationCenterButton />
@@ -318,12 +354,22 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
                       </p>
                     )}
 
-                    {comp.image_url && (
-                      <img 
-                        src={comp.image_url} 
-                        alt="Evidence" 
-                        style={{ width: '100%', height: '85px', objectFit: 'cover', borderRadius: '6px', marginBottom: '8px' }} 
-                      />
+                    {(comp.has_evidence || comp.image_url) && (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        border: '1px solid rgba(59, 130, 246, 0.25)',
+                        padding: '5px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.72rem',
+                        color: 'var(--accent-primary)',
+                        marginBottom: '8px'
+                      }}>
+                        <Shield size={12} />
+                        <span>Evidence Protected (Authority Only)</span>
+                      </div>
                     )}
 
                     {onSelectComplaint && (

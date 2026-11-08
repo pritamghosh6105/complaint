@@ -37,7 +37,7 @@ export default function Sidebar({
 
     if (!user || user.role === 'citizen') {
       items.push(
-        { id: 'new-complaint', label: 'Report Issue', icon: FilePlus2, badge: 'AI Assumed' },
+        { id: 'new-complaint', label: 'Report Issue', icon: FilePlus2, badge: user ? 'AI Assumed' : 'Sign In' },
         { id: 'citizen-dashboard', label: 'My Complaints', icon: LayoutDashboard }
       );
     }
@@ -51,6 +51,7 @@ export default function Sidebar({
     if (user && user.role === 'admin') {
       items.push(
         { id: 'admin-dashboard', label: 'Admin Command', icon: LayoutDashboard },
+        { id: 'new-complaint', label: 'Report Issue', icon: FilePlus2 },
         { id: 'gis-heatmap', label: 'GIS Heatmap', icon: Flame },
         { id: 'ml-inspector', label: 'ML Microservice', icon: BrainCircuit, badge: '4 Models' }
       );
@@ -67,6 +68,11 @@ export default function Sidebar({
   const navItems = getNavItems();
 
   const handleNavClick = (id) => {
+    if (!user && (id === 'new-complaint' || id === 'citizen-dashboard')) {
+      setCurrentRoute('login');
+      if (setMobileOpen) setMobileOpen(false);
+      return;
+    }
     setCurrentRoute(id);
     if (setMobileOpen) setMobileOpen(false);
   };

@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, default: '' },
   department_id: { type: Number, default: null },
   ward: { type: String, default: '' },
+  officer_id: { type: String, default: null, index: true },
+  isDemoAccount: { type: Boolean, default: false },
+  accountType: { type: String, default: 'STANDARD' },
+  accountStatus: { type: String, default: 'Active' },
+  category: { type: String, default: '' },
   created_at: { type: Date, default: Date.now }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

@@ -37,82 +37,91 @@ export default function Timeline({ history = [], currentStatus = 'Submitted' }) 
 
   return (
     <div style={{ padding: '8px 0' }}>
-      {/* Visual Stepper */}
+      {/* Visual Stepper Container */}
       <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        position: 'relative', 
-        marginBottom: '36px',
-        padding: '0 8px'
+        width: '100%', 
+        overflowX: 'auto', 
+        WebkitOverflowScrolling: 'touch', 
+        paddingBottom: '12px',
+        marginBottom: '28px'
       }}>
-        {/* Connecting Progress Track Line */}
-        <div style={{
-          position: 'absolute',
-          top: '18px',
-          left: '32px',
-          right: '32px',
-          height: '3px',
-          background: 'var(--border-subtle)',
-          zIndex: 1
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          position: 'relative', 
+          minWidth: '460px',
+          width: '100%',
+          padding: '0 12px'
         }}>
+          {/* Connecting Progress Track Line */}
           <div style={{
-            height: '100%',
-            background: 'var(--color-accent)',
-            width: `${(activeIndex / (FULL_LIFECYCLE_STEPS.length - 1)) * 100}%`,
-            transition: 'width 0.4s ease'
-          }} />
+            position: 'absolute',
+            top: '18px',
+            left: '32px',
+            right: '32px',
+            height: '3px',
+            background: 'var(--border-subtle)',
+            zIndex: 1
+          }}>
+            <div style={{
+              height: '100%',
+              background: 'var(--color-accent)',
+              width: `${(activeIndex / (FULL_LIFECYCLE_STEPS.length - 1)) * 100}%`,
+              transition: 'width 0.4s ease'
+            }} />
+          </div>
+
+          {FULL_LIFECYCLE_STEPS.map((step, idx) => {
+            const isPassed = idx <= activeIndex;
+            const isCurrent = idx === activeIndex;
+            const StepIcon = step.icon;
+
+            return (
+              <div key={step.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2 }}>
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  background: isPassed 
+                    ? isCurrent 
+                      ? 'var(--color-accent)' 
+                      : 'var(--color-success)'
+                    : 'var(--bg-surface-elevated)',
+                  border: isCurrent 
+                    ? '3px solid #93c5fd' 
+                    : isPassed
+                      ? '2px solid var(--color-success)'
+                      : '2px solid var(--border-subtle)',
+                  boxShadow: isCurrent ? '0 0 12px rgba(37, 99, 235, 0.4)' : 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: isPassed ? '#ffffff' : 'var(--text-muted)',
+                  transition: 'var(--transition)'
+                }}>
+                  {isPassed && !isCurrent ? (
+                    <CheckCircle2 size={16} strokeWidth={2.6} />
+                  ) : (
+                    <StepIcon size={16} strokeWidth={isCurrent ? 2.4 : 1.8} />
+                  )}
+                </div>
+
+                <div style={{
+                  fontSize: '0.75rem',
+                  fontWeight: isCurrent ? 700 : 500,
+                  color: isPassed ? 'var(--text-primary)' : 'var(--text-muted)',
+                  marginTop: '8px',
+                  textAlign: 'center',
+                  maxWidth: '70px',
+                  lineHeight: 1.25
+                }}>
+                  {step.label}
+                </div>
+              </div>
+            );
+          })}
         </div>
-
-        {FULL_LIFECYCLE_STEPS.map((step, idx) => {
-          const isPassed = idx <= activeIndex;
-          const isCurrent = idx === activeIndex;
-          const StepIcon = step.icon;
-
-          return (
-            <div key={step.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2 }}>
-              <div style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                background: isPassed 
-                  ? isCurrent 
-                    ? 'var(--color-accent)' 
-                    : 'var(--color-success)'
-                  : 'var(--bg-surface-elevated)',
-                border: isCurrent 
-                  ? '3px solid #93c5fd' 
-                  : isPassed
-                    ? '2px solid var(--color-success)'
-                    : '2px solid var(--border-subtle)',
-                boxShadow: isCurrent ? '0 0 12px rgba(37, 99, 235, 0.4)' : 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: isPassed ? '#ffffff' : 'var(--text-muted)',
-                transition: 'var(--transition)'
-              }}>
-                {isPassed && !isCurrent ? (
-                  <CheckCircle2 size={16} strokeWidth={2.6} />
-                ) : (
-                  <StepIcon size={16} strokeWidth={isCurrent ? 2.4 : 1.8} />
-                )}
-              </div>
-
-              <div style={{
-                fontSize: '0.75rem',
-                fontWeight: isCurrent ? 700 : 500,
-                color: isPassed ? 'var(--text-primary)' : 'var(--text-muted)',
-                marginTop: '8px',
-                textAlign: 'center',
-                maxWidth: '65px',
-                lineHeight: 1.25
-              }}>
-                {step.label}
-              </div>
-            </div>
-          );
-        })}
       </div>
 
       {/* Detailed Action History & Audit Log */}
@@ -128,7 +137,11 @@ export default function Timeline({ history = [], currentStatus = 'Submitted' }) 
             </div>
           ) : (
             history.map((item, index) => {
-              const isEscalation = (item.notes || '').includes('SLA Violation') || (item.notes || '').includes('Escalated');
+              const notesStr = typeof item.notes === 'string' 
+                ? item.notes 
+                : (item.notes !== null && item.notes !== undefined ? String(item.notes) : '');
+              const statusStr = typeof item.status === 'string' ? item.status : (item.status ? String(item.status) : 'Status Updated');
+              const isEscalation = notesStr.includes('SLA Violation') || notesStr.includes('Escalated') || statusStr.includes('Escalated');
 
               return (
                 <div 
@@ -157,7 +170,7 @@ export default function Timeline({ history = [], currentStatus = 'Submitted' }) 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
                       <span style={{ fontSize: '0.84rem', fontWeight: 700, color: isEscalation ? 'var(--color-danger)' : 'var(--text-primary)' }}>
-                        {item.status}
+                        {statusStr}
                       </span>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                         {new Date(item.timestamp).toLocaleString()}
@@ -165,7 +178,7 @@ export default function Timeline({ history = [], currentStatus = 'Submitted' }) 
                     </div>
 
                     <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '4px', marginBottom: 0, lineHeight: 1.4 }}>
-                      {item.notes}
+                      {notesStr || statusStr}
                     </p>
 
                     <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>

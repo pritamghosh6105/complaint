@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const evidenceController = require('../controllers/evidenceController');
-const { authMiddleware } = require('../middleware/authMiddleware');
+const { authMiddleware, optionalAuthMiddleware } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
 // Upload evidence files (single or multiple, up to 5)
@@ -12,11 +12,19 @@ router.post(
   (req, res) => evidenceController.uploadEvidence(req, res)
 );
 
-// Preview AI Visual Analysis on a draft file before complaint submission
+// Preview AI Visual Analysis on a draft file before complaint submission (Graceful Auth & Multer Handling)
 router.post(
   '/preview-analysis',
-  authMiddleware,
-  upload.single('evidence'),
+  optionalAuthMiddleware,
+  (req, res, next) => {
+    upload.single('evidence')(req, res, (err) => {
+      if (err) {
+        console.warn('Multer upload preview error:', err.message);
+        return res.status(400).json({ error: err.message || 'File upload failed' });
+      }
+      next();
+    });
+  },
   (req, res) => evidenceController.previewAnalysis(req, res)
 );
 
@@ -46,6 +54,13 @@ router.get(
   '/complaint/:complaint_id/audit',
   authMiddleware,
   (req, res) => evidenceController.getAuditLogs(req, res)
+);
+
+// Officer review & human verification of AI visual evidence analysis (Phase 13)
+router.post(
+  '/:id/verify',
+  authMiddleware,
+  (req, res) => evidenceController.officerReviewEvidence(req, res)
 );
 
 module.exports = router;

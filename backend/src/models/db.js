@@ -171,8 +171,11 @@ class RelationalStorage {
       });
 
       if (qLower.includes('where email = ?') || qLower.includes('where u.email = ?')) {
-        const email = String(params[0]).toLowerCase().trim();
-        list = list.filter(u => u.email.toLowerCase() === email);
+        const identifier = String(params[0]).toLowerCase().trim();
+        list = list.filter(u => 
+          (u.email && u.email.toLowerCase() === identifier) ||
+          (u.officer_id && u.officer_id.toLowerCase() === identifier)
+        );
       } else if (qLower.includes('where id = ?') || qLower.includes('where u.id = ?')) {
         const idVal = Number(params[0]);
         list = list.filter(u => u.id === idVal);
@@ -453,6 +456,10 @@ class RelationalStorage {
       admin_override: Boolean(cData.admin_override || cData.adminOverride),
       admin_override_reason: cData.admin_override_reason || cData.adminOverrideReason || null,
       is_emergency: Number(cData.is_emergency || 0),
+      triage_status: cData.triage_status || (Number(cData.is_emergency || 0) === 1 ? 'PENDING_OFFICER_TRIAGE' : null),
+      triage_reason: cData.triage_reason || null,
+      triaged_by: cData.triaged_by || null,
+      triaged_at: cData.triaged_at || null,
       is_crime: Number(cData.is_crime || 0),
       is_sensitive: Number(cData.is_sensitive || 0),
       predicted_resolution_days: Number(cData.predicted_resolution_days || 3.0),
@@ -544,6 +551,10 @@ class RelationalStorage {
         locationConfidence: cData.locationConfidence || 0.95,
         jurisdictionSource: cData.jurisdictionSource || 'Official West Bengal LGD & GIS Boundaries'
       },
+      original_citizen_input: cData.original_citizen_input || cData.description || '',
+      structured_incident: cData.structured_incident || null,
+      was_overridden_by_citizen: cData.was_overridden_by_citizen ? 1 : 0,
+      final_citizen_category: cData.final_citizen_category || cData.category,
       created_at: now,
       updated_at: now,
       resolved_at: null
@@ -693,12 +704,53 @@ class RelationalStorage {
     // 4. INSERT complaint_timeline
     if (qLower.startsWith('insert into complaint_timeline')) {
       const id = this.data._counters.complaint_timeline++;
-      const [cid, status, notes, updated_by_name, uid] = params;
+      
+      let cid = null;
+      let status = 'Update';
+      let notes = '';
+      let updated_by_name = 'System';
+      let uid = null;
+
+      // Extract columns and values parts
+      const colsMatch = query.match(/\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/i);
+      if (colsMatch) {
+        const cols = colsMatch[1].split(',').map(c => c.trim().toLowerCase());
+        const rawVals = colsMatch[2].split(',').map(v => v.trim());
+        let paramIdx = 0;
+
+        cols.forEach((col, i) => {
+          const valExpr = rawVals[i];
+          let val;
+          if (valExpr === '?') {
+            val = params[paramIdx++];
+          } else if (valExpr && (valExpr.startsWith("'") || valExpr.startsWith('"'))) {
+            val = valExpr.slice(1, -1);
+          } else if (valExpr && valExpr.toUpperCase() === 'NULL') {
+            val = null;
+          } else {
+            val = valExpr;
+          }
+
+          if (col === 'complaint_id') cid = val;
+          else if (col === 'status') status = val;
+          else if (col === 'notes') notes = typeof val === 'string' ? val : (val !== null && val !== undefined ? String(val) : '');
+          else if (col === 'updated_by_name') updated_by_name = val;
+          else if (col === 'updated_by_user_id') uid = val;
+        });
+      } else {
+        const [p0, p1, p2, p3, p4] = params;
+        cid = p0;
+        status = p1;
+        notes = typeof p2 === 'string' ? p2 : (p2 !== null && p2 !== undefined ? String(p2) : '');
+        updated_by_name = p3 || 'System';
+        uid = p4;
+      }
+
       const item = {
         id,
         complaint_id: Number(cid),
-        status,
-        notes: notes || '',
+        status: status || 'Updated',
+        notes: typeof notes === 'string' ? notes : String(notes || ''),
         updated_by_name: updated_by_name || 'System',
         updated_by_user_id: uid ? Number(uid) : null,
         timestamp: now
@@ -795,6 +847,16 @@ class RelationalStorage {
                   c.reviewed_at = now;
                 } else if (col === 'sla_deadline') {
                   c.sla_deadline = val || null;
+                } else if (col === 'is_emergency') {
+                  c.is_emergency = Number(val);
+                } else if (col === 'triage_status') {
+                  c.triage_status = val ? String(val) : null;
+                } else if (col === 'triage_reason') {
+                  c.triage_reason = val || null;
+                } else if (col === 'triaged_by') {
+                  c.triaged_by = val || null;
+                } else if (col === 'triaged_at') {
+                  c.triaged_at = now;
                 } else if (col === 'resolution_image_url') {
                   c.resolution_image_url = val || null;
                 } else if (col === 'resolution_evidence_id') {
@@ -846,6 +908,36 @@ class RelationalStorage {
     }
 
     return { changes: 0 };
+  }
+
+  triageComplaint(id, triageData = {}) {
+    const c = this.data.complaints.find(comp => comp.id === Number(id));
+    if (!c) return null;
+    const now = new Date().toISOString();
+    if (triageData.priority) {
+      c.priority = String(triageData.priority);
+      c.final_priority = String(triageData.priority);
+    }
+    if (triageData.is_emergency !== undefined) {
+      c.is_emergency = Number(triageData.is_emergency);
+    }
+    if (triageData.triage_status !== undefined) {
+      c.triage_status = triageData.triage_status;
+    }
+    if (triageData.triage_reason !== undefined) {
+      c.triage_reason = triageData.triage_reason;
+    }
+    if (triageData.triaged_by !== undefined) {
+      c.triaged_by = triageData.triaged_by;
+    }
+    if (triageData.sla_deadline !== undefined) {
+      c.sla_deadline = triageData.sla_deadline;
+    }
+    c.triaged_at = now;
+    c.updated_at = now;
+    this.save();
+    this.pushToMongo('Complaint', { id: c.id }, c);
+    return c;
   }
 
   // Synchronize memory with MongoDB Atlas when connected
@@ -1042,8 +1134,12 @@ class RelationalStorage {
       id,
       complaint_id: Number(analysisData.complaint_id),
       complaint_evidence_id: Number(analysisData.complaint_evidence_id),
-      model_name: analysisData.model_name || 'CivicPulse-Vision-Engine-v2',
-      model_version: analysisData.model_version || '2.0.0',
+      model_name: analysisData.model_name || 'CivicPulse-Multimodal-Vision-v2.6',
+      model_version: analysisData.model_version || '2.6.0',
+      detected_incident: analysisData.detected_incident || 'Unidentified Scene',
+      visible_object: analysisData.visible_object || '',
+      predicted_category: analysisData.predicted_category || '',
+      predicted_subcategory: analysisData.predicted_subcategory || '',
       image_quality: analysisData.image_quality || 'GOOD',
       quality_metrics: analysisData.quality_metrics || {
         blur_score: 0,
@@ -1054,14 +1150,33 @@ class RelationalStorage {
         resolution_label: 'Standard'
       },
       detected_objects: analysisData.detected_objects || [],
-      visual_severity: analysisData.visual_severity || 'MEDIUM',
-      visual_risk: analysisData.visual_risk || 'Moderate',
-      evidence_consistency: analysisData.evidence_consistency || 'MATCH',
-      consistency_details: analysisData.consistency_details || '',
-      confidence: Number(analysisData.confidence || 0.9),
+      visual_severity: analysisData.visual_severity || analysisData.visible_damage_level || 'UNKNOWN',
+      visible_damage_level: analysisData.visible_damage_level || analysisData.visual_severity || 'UNKNOWN',
+      visual_risk: analysisData.visual_risk || 'Standard municipal inspection scheduled',
+      evidence_consistency: analysisData.evidence_consistency || analysisData.evidence_match || 'INSUFFICIENT_EVIDENCE',
+      evidence_match: analysisData.evidence_match || analysisData.evidence_consistency || 'INSUFFICIENT_EVIDENCE',
+      consistency_badge: analysisData.consistency_badge || '',
+      consistency_details: analysisData.consistency_details || analysisData.explanation || '',
+      explanation: analysisData.explanation || analysisData.consistency_details || '',
+      mismatch_warning: Boolean(analysisData.mismatch_warning),
+      confidence: analysisData.confidence !== undefined ? analysisData.confidence : (analysisData.model_confidence !== undefined ? analysisData.model_confidence : null),
+      model_confidence: analysisData.model_confidence !== undefined ? analysisData.model_confidence : (analysisData.confidence !== undefined ? analysisData.confidence : null),
+      match_confidence: analysisData.match_confidence !== undefined ? analysisData.match_confidence : null,
       analysis_status: analysisData.analysis_status || 'COMPLETED',
       recommended_action: analysisData.recommended_action || '',
+      limitations: analysisData.limitations || '',
+      image_findings: analysisData.image_findings || null,
+      complaint_matching: analysisData.complaint_matching || null,
       raw_response: analysisData.raw_response || null,
+      damage_severity_score: analysisData.damage_severity_score !== undefined ? analysisData.damage_severity_score : null,
+      semantic_similarity: analysisData.semantic_similarity !== undefined ? analysisData.semantic_similarity : null,
+      spam_score: analysisData.spam_score !== undefined ? analysisData.spam_score : null,
+      fraud_risk_level: analysisData.fraud_risk_level || 'LOW',
+      fraud_indicators: analysisData.fraud_indicators || [],
+      clearance_tier: analysisData.clearance_tier || 'STANDARD_REVIEW',
+      image_hash: analysisData.image_hash || null,
+      is_recycled_duplicate: Boolean(analysisData.is_recycled_duplicate),
+      spam_fraud_analysis: analysisData.spam_fraud_analysis || null,
       created_at: now,
       updated_at: now
     };
@@ -1089,6 +1204,18 @@ class RelationalStorage {
     this.load();
     const list = this.data.visual_analyses || [];
     return list.find(v => Number(v.id) === Number(id));
+  }
+
+  updateVisualAnalysis(id, updateData) {
+    this.load();
+    if (!this.data.visual_analyses) this.data.visual_analyses = [];
+    const record = this.data.visual_analyses.find(v => Number(v.id) === Number(id) || Number(v.complaint_evidence_id) === Number(id));
+    if (!record) return null;
+    
+    Object.assign(record, updateData, { updated_at: new Date().toISOString() });
+    this.save();
+    this.pushToMongo('VisualAnalysis', { id: record.id }, record);
+    return record;
   }
 
   logEvidenceAudit(auditData) {

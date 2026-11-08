@@ -39,8 +39,17 @@ def train_all_models():
         from data.generate_dataset import generate_complaints
         df = generate_complaints(5000)
         df.to_csv(data_path, index=False, encoding='utf-8')
-    else:
-        df = pd.read_csv(data_path, encoding='utf-8')
+    df = pd.read_csv(data_path, encoding='utf-8')
+
+    # Normalize column names for backward compatibility
+    if 'ward' not in df.columns and 'ward_or_gp' in df.columns:
+        df['ward'] = df['ward_or_gp']
+    if 'affected_citizens' not in df.columns and 'affected_population' in df.columns:
+        df['affected_citizens'] = df['affected_population']
+    elif 'affected_citizens' not in df.columns:
+        df['affected_citizens'] = 50
+    if 'ward' not in df.columns:
+        df['ward'] = 'Ward 1'
         
     print(f"Loaded dataset with {len(df)} samples across {df['category'].nunique()} categories.")
     

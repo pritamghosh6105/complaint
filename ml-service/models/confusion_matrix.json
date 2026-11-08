@@ -1,0 +1,4199 @@
+{
+  "evaluation_dataset": "evaluation_test_set.csv",
+  "total_test_samples": 118,
+  "metrics": {
+    "top1_accuracy": 0.9746,
+    "top2_accuracy": 0.9831,
+    "top3_accuracy": 1.0,
+    "macro_f1": 0.9478,
+    "weighted_f1": 0.9781
+  },
+  "confusion_pairs": [
+    {
+      "pair": "Traffic & Road Safety vs Roads & Public Works",
+      "dept_a": "Traffic & Road Safety",
+      "dept_b": "Roads & Public Works",
+      "dept_a_samples": 5,
+      "dept_a_correct": 5,
+      "dept_a_misclassified_as_b": 0,
+      "dept_b_samples": 3,
+      "dept_b_correct": 3,
+      "dept_b_misclassified_as_a": 0,
+      "confusion_rate": 0.0,
+      "status": "SEPARATED_CLEANLY"
+    },
+    {
+      "pair": "Drainage & Sewerage vs Water Supply",
+      "dept_a": "Drainage & Sewerage",
+      "dept_b": "Water Supply",
+      "dept_a_samples": 4,
+      "dept_a_correct": 4,
+      "dept_a_misclassified_as_b": 0,
+      "dept_b_samples": 4,
+      "dept_b_correct": 4,
+      "dept_b_misclassified_as_a": 0,
+      "confusion_rate": 0.0,
+      "status": "SEPARATED_CLEANLY"
+    },
+    {
+      "pair": "Cyber Crime vs Police & Law Enforcement",
+      "dept_a": "Cyber Crime",
+      "dept_b": "Police & Law Enforcement",
+      "dept_a_samples": 4,
+      "dept_a_correct": 4,
+      "dept_a_misclassified_as_b": 0,
+      "dept_b_samples": 5,
+      "dept_b_correct": 5,
+      "dept_b_misclassified_as_a": 0,
+      "confusion_rate": 0.0,
+      "status": "SEPARATED_CLEANLY"
+    },
+    {
+      "pair": "Public Health & Sanitation vs Environment & Pollution",
+      "dept_a": "Public Health & Sanitation",
+      "dept_b": "Environment & Pollution",
+      "dept_a_samples": 4,
+      "dept_a_correct": 4,
+      "dept_a_misclassified_as_b": 0,
+      "dept_b_samples": 5,
+      "dept_b_correct": 4,
+      "dept_b_misclassified_as_a": 0,
+      "confusion_rate": 0.0,
+      "status": "SEPARATED_CLEANLY"
+    },
+    {
+      "pair": "Electricity & Power vs Street Lighting & Electrical",
+      "dept_a": "Electricity & Power",
+      "dept_b": "Street Lighting & Electrical",
+      "dept_a_samples": 4,
+      "dept_a_correct": 4,
+      "dept_a_misclassified_as_b": 0,
+      "dept_b_samples": 5,
+      "dept_b_correct": 5,
+      "dept_b_misclassified_as_a": 0,
+      "confusion_rate": 0.0,
+      "status": "SEPARATED_CLEANLY"
+    },
+    {
+      "pair": "Fire & Emergency Services vs Disaster Management",
+      "dept_a": "Fire & Emergency Services",
+      "dept_b": "Disaster Management",
+      "dept_a_samples": 4,
+      "dept_a_correct": 4,
+      "dept_a_misclassified_as_b": 0,
+      "dept_b_samples": 4,
+      "dept_b_correct": 3,
+      "dept_b_misclassified_as_a": 0,
+      "confusion_rate": 0.0,
+      "status": "SEPARATED_CLEANLY"
+    },
+    {
+      "pair": "Health & Hospitals vs Public Grievance / General Administration",
+      "dept_a": "Health & Hospitals",
+      "dept_b": "Public Grievance / General Administration",
+      "dept_a_samples": 4,
+      "dept_a_correct": 3,
+      "dept_a_misclassified_as_b": 0,
+      "dept_b_samples": 3,
+      "dept_b_correct": 3,
+      "dept_b_misclassified_as_a": 0,
+      "confusion_rate": 0.0,
+      "status": "SEPARATED_CLEANLY"
+    }
+  ],
+  "per_category_metrics": {
+    "Agriculture": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Animal Resources": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Building & Municipal Engineering": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "CLASSIFICATION_UNCERTAIN": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "Consumer Affairs": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Cyber Crime": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Disaster Management": {
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1-score": 0.8571428571428571,
+      "support": 4.0
+    },
+    "Drainage & Sewerage": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Education \u2013 Schools": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Electricity & Power": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Environment & Pollution": {
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1-score": 0.8888888888888888,
+      "support": 5.0
+    },
+    "Fire & Emergency Services": {
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1-score": 0.8888888888888888,
+      "support": 4.0
+    },
+    "Food & Public Distribution": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Forest & Wildlife": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Health & Hospitals": {
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1-score": 0.8571428571428571,
+      "support": 4.0
+    },
+    "Higher Education": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Housing & Urban Development": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Labour & Employment": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Land & Land Records": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Parks & Public Spaces": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Police & Law Enforcement": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Public Grievance / General Administration": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Public Health & Sanitation": {
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1-score": 0.8888888888888888,
+      "support": 4.0
+    },
+    "Public Transport": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Railway-related Public Complaints": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Roads & Public Works": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "Solid Waste Management": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Street Lighting & Electrical": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Traffic & Road Safety": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 5.0
+    },
+    "Water Supply": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "Women & Child Safety": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "accuracy": 0.9745762711864406,
+    "macro avg": {
+      "precision": 0.9548387096774194,
+      "recall": 0.9451612903225807,
+      "f1-score": 0.9477726574500768,
+      "support": 118.0
+    },
+    "weighted avg": {
+      "precision": 0.9864406779661018,
+      "recall": 0.9745762711864406,
+      "f1-score": 0.9780737153618508,
+      "support": 118.0
+    }
+  },
+  "confusion_matrix": {
+    "labels": [
+      "Agriculture",
+      "Animal Resources",
+      "Building & Municipal Engineering",
+      "CLASSIFICATION_UNCERTAIN",
+      "Consumer Affairs",
+      "Cyber Crime",
+      "Disaster Management",
+      "Drainage & Sewerage",
+      "Education \u2013 Schools",
+      "Electricity & Power",
+      "Environment & Pollution",
+      "Fire & Emergency Services",
+      "Food & Public Distribution",
+      "Forest & Wildlife",
+      "Health & Hospitals",
+      "Higher Education",
+      "Housing & Urban Development",
+      "Labour & Employment",
+      "Land & Land Records",
+      "Parks & Public Spaces",
+      "Police & Law Enforcement",
+      "Public Grievance / General Administration",
+      "Public Health & Sanitation",
+      "Public Transport",
+      "Railway-related Public Complaints",
+      "Roads & Public Works",
+      "Solid Waste Management",
+      "Street Lighting & Electrical",
+      "Traffic & Road Safety",
+      "Water Supply",
+      "Women & Child Safety"
+    ],
+    "matrix": [
+      [
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4
+      ]
+    ]
+  },
+  "detailed_predictions": [
+    {
+      "complaint_id": "CP-SYN-0124",
+      "text": "Kindly register a complaint about inadequate colony drainage in a village area.",
+      "expected": "Housing & Urban Development",
+      "predicted": "Housing & Urban Development",
+      "confidence": 0.6086,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.6086
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.1179
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0641
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0160",
+      "text": "Kindly register a complaint about unbarricaded construction site beside a local market.",
+      "expected": "Building & Municipal Engineering",
+      "predicted": "Building & Municipal Engineering",
+      "confidence": 0.6665,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.6665
+        },
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.1275
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0302
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0164",
+      "text": "There is a problem with stalking near a school; please inspect it.",
+      "expected": "Women & Child Safety",
+      "predicted": "Women & Child Safety",
+      "confidence": 0.6524,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.6524
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0488
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0233
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0197",
+      "text": "Please arrange appropriate action for incorrect plot number along a main road.",
+      "expected": "Land & Land Records",
+      "predicted": "Land & Land Records",
+      "confidence": 0.6826,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.6826
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0417
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0195
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0211",
+      "text": "Please investigate oil in drain in a village area.",
+      "expected": "Environment & Pollution",
+      "predicted": "Environment & Pollution",
+      "confidence": 0.6819,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.6819
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0538
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0359
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0213",
+      "text": "Can the responsible team address multiple failed streetlights in a village area?",
+      "expected": "Street Lighting & Electrical",
+      "predicted": "Street Lighting & Electrical",
+      "confidence": 0.8379,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Street Lighting & Electrical",
+          "confidence": 0.8379
+        },
+        {
+          "category": "Fire & Emergency Services",
+          "confidence": 0.0785
+        },
+        {
+          "category": "Forest & Wildlife",
+          "confidence": 0.0105
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0221",
+      "text": "I want to report factory PPE missing in a West Bengal neighborhood.",
+      "expected": "Labour & Employment",
+      "predicted": "Labour & Employment",
+      "confidence": 0.8147,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.8147
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0205
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0119
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0223",
+      "text": "Can the responsible team address library access failure in a village area?",
+      "expected": "Higher Education",
+      "predicted": "Higher Education",
+      "confidence": 0.621,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Higher Education",
+          "confidence": 0.621
+        },
+        {
+          "category": "Forest & Wildlife",
+          "confidence": 0.0364
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0282
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0229",
+      "text": "Please investigate physical assault beside a public park.",
+      "expected": "Police & Law Enforcement",
+      "predicted": "Police & Law Enforcement",
+      "confidence": 0.7926,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.7926
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.113
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0188
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0243",
+      "text": "Can the responsible team address fake bill payment link near a residential lane?",
+      "expected": "Cyber Crime",
+      "predicted": "Cyber Crime",
+      "confidence": 0.7471,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.7471
+        },
+        {
+          "category": "Fire & Emergency Services",
+          "confidence": 0.0392
+        },
+        {
+          "category": "Public Grievance / General Administration",
+          "confidence": 0.0174
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0251",
+      "text": "Please investigate eroded road shoulder near a school.",
+      "expected": "Roads & Public Works",
+      "predicted": "Roads & Public Works",
+      "confidence": 0.67,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.67
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0697
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0344
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0253",
+      "text": "Please arrange appropriate action for nonworking fire alarm near a government office.",
+      "expected": "Fire & Emergency Services",
+      "predicted": "Fire & Emergency Services",
+      "confidence": 0.7476,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Fire & Emergency Services",
+          "confidence": 0.7476
+        },
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.0261
+        },
+        {
+          "category": "Agriculture",
+          "confidence": 0.0256
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0268",
+      "text": "Kindly register a complaint about construction waste in lane in a West Bengal neighborhood.",
+      "expected": "Solid Waste Management",
+      "predicted": "Solid Waste Management",
+      "confidence": 0.7823,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.7823
+        },
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.0461
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0382
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0269",
+      "text": "Please investigate overcrowded waiting area near a government office.",
+      "expected": "Health & Hospitals",
+      "predicted": "Health & Hospitals",
+      "confidence": 0.6791,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.6791
+        },
+        {
+          "category": "Agriculture",
+          "confidence": 0.0561
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.03
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0274",
+      "text": "Residents are affected by missing office service hours near a bus stop.",
+      "expected": "Public Grievance / General Administration",
+      "predicted": "Public Grievance / General Administration",
+      "confidence": 0.6286,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Grievance / General Administration",
+          "confidence": 0.6286
+        },
+        {
+          "category": "Public Transport",
+          "confidence": 0.1398
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.0649
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0287",
+      "text": "A local resident reports dead animal on road beside a public park.",
+      "expected": "Public Health & Sanitation",
+      "predicted": "Public Health & Sanitation",
+      "confidence": 0.8425,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.8425
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0224
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0195
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0289",
+      "text": "Please investigate school entrance blocked by parking in a village area.",
+      "expected": "Education \u2013 Schools",
+      "predicted": "Education \u2013 Schools",
+      "confidence": 0.6387,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.6387
+        },
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.1508
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0417
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0294",
+      "text": "Residents are affected by public transport harassment in a West Bengal neighborhood.",
+      "expected": "Women & Child Safety",
+      "predicted": "Women & Child Safety",
+      "confidence": 0.7102,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.7102
+        },
+        {
+          "category": "Public Transport",
+          "confidence": 0.1097
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.0254
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0304",
+      "text": "Kindly register a complaint about illegal parking in a village area.",
+      "expected": "Traffic & Road Safety",
+      "predicted": "Traffic & Road Safety",
+      "confidence": 0.6629,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.6629
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0969
+        },
+        {
+          "category": "Forest & Wildlife",
+          "confidence": 0.0595
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0308",
+      "text": "A local resident reports overcrowded bus beside a public park.",
+      "expected": "Public Transport",
+      "predicted": "Public Transport",
+      "confidence": 0.6748,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Transport",
+          "confidence": 0.6748
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.066
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0558
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0314",
+      "text": "Can the responsible team address unsafe playground equipment beside a local market?",
+      "expected": "Parks & Public Spaces",
+      "predicted": "Parks & Public Spaces",
+      "confidence": 0.6878,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.6878
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.0486
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0406
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0322",
+      "text": "There is a problem with agricultural market waste along a main road; please inspect it.",
+      "expected": "Agriculture",
+      "predicted": "Agriculture",
+      "confidence": 0.8343,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Agriculture",
+          "confidence": 0.8343
+        },
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.0398
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.03
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0323",
+      "text": "There is a problem with leaking sewer pipe along a main road; please inspect it.",
+      "expected": "Drainage & Sewerage",
+      "predicted": "Drainage & Sewerage",
+      "confidence": 0.8045,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.8045
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0785
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0115
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0345",
+      "text": "Residents are affected by broken waiting-room seat near a school.",
+      "expected": "Railway-related Public Complaints",
+      "predicted": "Railway-related Public Complaints",
+      "confidence": 0.6647,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.6647
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0499
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0322
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0352",
+      "text": "Residents are affected by repeated power cuts beside a public park.",
+      "expected": "Electricity & Power",
+      "predicted": "Electricity & Power",
+      "confidence": 0.8579,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.8579
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0419
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.0227
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0373",
+      "text": "Please investigate wind-damaged house near a residential lane.",
+      "expected": "Disaster Management",
+      "predicted": "Disaster Management",
+      "confidence": 0.6623,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Disaster Management",
+          "confidence": 0.6623
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0648
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.0562
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0416",
+      "text": "There is a problem with bill refused in a West Bengal neighborhood; please inspect it.",
+      "expected": "Consumer Affairs",
+      "predicted": "Consumer Affairs",
+      "confidence": 0.6895,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Consumer Affairs",
+          "confidence": 0.6895
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0423
+        },
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.0253
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0417",
+      "text": "There is a problem with structural building crack near a school; please inspect it.",
+      "expected": "Building & Municipal Engineering",
+      "predicted": "Building & Municipal Engineering",
+      "confidence": 0.8519,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.8519
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0349
+        },
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.0218
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0423",
+      "text": "A local resident reports injured wild animal near road in a village area.",
+      "expected": "Forest & Wildlife",
+      "predicted": "Forest & Wildlife",
+      "confidence": 0.7468,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Forest & Wildlife",
+          "confidence": 0.7468
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0349
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0344
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0426",
+      "text": "Please investigate missing housing project facilities near a bus stop.",
+      "expected": "Housing & Urban Development",
+      "predicted": "Housing & Urban Development",
+      "confidence": 0.7358,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.7358
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0553
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.0336
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0430",
+      "text": "Kindly register a complaint about vehicle collision blocking traffic in a West Bengal neighborhood.",
+      "expected": "Traffic & Road Safety",
+      "predicted": "Traffic & Road Safety",
+      "confidence": 0.8694,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.8694
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0162
+        },
+        {
+          "category": "Animal Resources",
+          "confidence": 0.0154
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0434",
+      "text": "Please arrange appropriate action for wastewater into canal beside a local market.",
+      "expected": "Environment & Pollution",
+      "predicted": "Environment & Pollution",
+      "confidence": 0.835,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.835
+        },
+        {
+          "category": "Agriculture",
+          "confidence": 0.0229
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.02
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0453",
+      "text": "Kindly register a complaint about emergency treatment refusal near a residential lane.",
+      "expected": "Health & Hospitals",
+      "predicted": "Health & Hospitals",
+      "confidence": 0.8956,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.8956
+        },
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.0111
+        },
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.0091
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0457",
+      "text": "Residents are affected by pipeline damaged by roadwork in a West Bengal neighborhood.",
+      "expected": "Water Supply",
+      "predicted": "Water Supply",
+      "confidence": 0.4554,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Water Supply",
+          "confidence": 0.4554
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0474
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0467
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0461",
+      "text": "Residents are affected by broken light cover exposing wires in a village area.",
+      "expected": "Street Lighting & Electrical",
+      "predicted": "Street Lighting & Electrical",
+      "confidence": 0.6843,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Street Lighting & Electrical",
+          "confidence": 0.6843
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.042
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0349
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0466",
+      "text": "Please arrange appropriate action for ration shop closed on hours near a government office.",
+      "expected": "Food & Public Distribution",
+      "predicted": "Food & Public Distribution",
+      "confidence": 0.7351,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Food & Public Distribution",
+          "confidence": 0.7351
+        },
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.0458
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0342
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0473",
+      "text": "Kindly register a complaint about incorrect land area in a West Bengal neighborhood.",
+      "expected": "Land & Land Records",
+      "predicted": "Land & Land Records",
+      "confidence": 0.7021,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.7021
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0327
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0185
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0491",
+      "text": "A local resident reports hacked email near a residential lane.",
+      "expected": "Cyber Crime",
+      "predicted": "Cyber Crime",
+      "confidence": 0.7677,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.7677
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0254
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0232
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0500",
+      "text": "Kindly register a complaint about shop theft along a main road.",
+      "expected": "Police & Law Enforcement",
+      "predicted": "Police & Law Enforcement",
+      "confidence": 0.6804,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.6804
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0339
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0314
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0507",
+      "text": "Please investigate delayed veterinary request along a main road.",
+      "expected": "Animal Resources",
+      "predicted": "Animal Resources",
+      "confidence": 0.6396,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Animal Resources",
+          "confidence": 0.6396
+        },
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.0798
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0591
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0516",
+      "text": "Please investigate excessive hours without breaks in a ward.",
+      "expected": "Labour & Employment",
+      "predicted": "Labour & Employment",
+      "confidence": 0.2253,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.2253
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.1146
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0809
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0522",
+      "text": "Can the responsible team address stagnant mosquito water beside a public park?",
+      "expected": "Public Health & Sanitation",
+      "predicted": "Public Health & Sanitation",
+      "confidence": 0.8594,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.8594
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0197
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0113
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0543",
+      "text": "A local resident reports leaking gas cylinder beside a local market.",
+      "expected": "Fire & Emergency Services",
+      "predicted": "Fire & Emergency Services",
+      "confidence": 0.8799,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Fire & Emergency Services",
+          "confidence": 0.8799
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0182
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0174
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0544",
+      "text": "Please arrange appropriate action for broken drain cover near a school.",
+      "expected": "Drainage & Sewerage",
+      "predicted": "Drainage & Sewerage",
+      "confidence": 0.7244,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.7244
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0342
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0182
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0550",
+      "text": "Can the responsible team address broken terminal seating beside a local market?",
+      "expected": "Public Transport",
+      "predicted": "Public Transport",
+      "confidence": 0.6651,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Transport",
+          "confidence": 0.6651
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0688
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0289
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0580",
+      "text": "Kindly register a complaint about incorrect semester registration near a school.",
+      "expected": "Higher Education",
+      "predicted": "Higher Education",
+      "confidence": 0.6653,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Higher Education",
+          "confidence": 0.6653
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0359
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0273
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0607",
+      "text": "A local resident reports blocked station ramp near a residential lane.",
+      "expected": "Railway-related Public Complaints",
+      "predicted": "Railway-related Public Complaints",
+      "confidence": 0.674,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.674
+        },
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.0375
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0356
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0615",
+      "text": "A local resident reports unauthorized waste dumping beside a public park.",
+      "expected": "Solid Waste Management",
+      "predicted": "Solid Waste Management",
+      "confidence": 0.8396,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.8396
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0226
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.0188
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0627",
+      "text": "Kindly register a complaint about leaking irrigation pipe along a main road.",
+      "expected": "Agriculture",
+      "predicted": "Agriculture",
+      "confidence": 0.8022,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Agriculture",
+          "confidence": 0.8022
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0413
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.014
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0629",
+      "text": "Can the responsible team address damaged public ceiling in a ward?",
+      "expected": "Building & Municipal Engineering",
+      "predicted": "Building & Municipal Engineering",
+      "confidence": 0.6454,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.6454
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.03
+        },
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.0264
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0646",
+      "text": "I want to report bench with sharp edges along a main road.",
+      "expected": "Parks & Public Spaces",
+      "predicted": "Parks & Public Spaces",
+      "confidence": 0.8051,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.8051
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0218
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0217
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0649",
+      "text": "A local resident reports wastewater into canal in a West Bengal neighborhood.",
+      "expected": "Environment & Pollution",
+      "predicted": "Environment & Pollution",
+      "confidence": 0.845,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.845
+        },
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.0215
+        },
+        {
+          "category": "Water Supply",
+          "confidence": 0.0206
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0668",
+      "text": "A local resident reports speeding near school near a bus stop.",
+      "expected": "Traffic & Road Safety",
+      "predicted": "Traffic & Road Safety",
+      "confidence": 0.8475,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.8475
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.039
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.0277
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0703",
+      "text": "Residents are affected by streetlight outage near a bus stop.",
+      "expected": "Street Lighting & Electrical",
+      "predicted": "Street Lighting & Electrical",
+      "confidence": 0.8944,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Street Lighting & Electrical",
+          "confidence": 0.8944
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.0205
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0136
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0707",
+      "text": "A local resident reports severe waterlogging beside a public park.",
+      "expected": "Disaster Management",
+      "predicted": "Disaster Management",
+      "confidence": 0.6579,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Disaster Management",
+          "confidence": 0.6579
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.1222
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0351
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0717",
+      "text": "I want to report leaking gas cylinder beside a local market.",
+      "expected": "Fire & Emergency Services",
+      "predicted": "Fire & Emergency Services",
+      "confidence": 0.8773,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Fire & Emergency Services",
+          "confidence": 0.8773
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0322
+        },
+        {
+          "category": "Consumer Affairs",
+          "confidence": 0.011
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0719",
+      "text": "I want to report water outage for days in a ward.",
+      "expected": "Water Supply",
+      "predicted": "Water Supply",
+      "confidence": 0.6902,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Water Supply",
+          "confidence": 0.6902
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.0757
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0414
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0723",
+      "text": "A local resident reports stolen documents near a bus stop.",
+      "expected": "Police & Law Enforcement",
+      "predicted": "Police & Law Enforcement",
+      "confidence": 0.8263,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.8263
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.0291
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0143
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0738",
+      "text": "Kindly register a complaint about unauthorized service deduction along a main road.",
+      "expected": "Consumer Affairs",
+      "predicted": "Consumer Affairs",
+      "confidence": 0.709,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Consumer Affairs",
+          "confidence": 0.709
+        },
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.0447
+        },
+        {
+          "category": "Public Transport",
+          "confidence": 0.0257
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0741",
+      "text": "A local resident reports damaged common staircase in a village area.",
+      "expected": "Housing & Urban Development",
+      "predicted": "Housing & Urban Development",
+      "confidence": 0.6704,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.6704
+        },
+        {
+          "category": "Forest & Wildlife",
+          "confidence": 0.0324
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0323
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0745",
+      "text": "Please investigate incorrect meter reading in a village area.",
+      "expected": "Electricity & Power",
+      "predicted": "Electricity & Power",
+      "confidence": 0.6831,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.6831
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0354
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0257
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0750",
+      "text": "Residents are affected by damaged bridge surface in a ward.",
+      "expected": "Roads & Public Works",
+      "predicted": "Roads & Public Works",
+      "confidence": 0.7049,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.7049
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0992
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0305
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0760",
+      "text": "Residents are affected by inaccessible bus stop in a ward.",
+      "expected": "Public Transport",
+      "predicted": "Public Transport",
+      "confidence": 0.6757,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Transport",
+          "confidence": 0.6757
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.0789
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0564
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0763",
+      "text": "Can the responsible team address unusable school toilet beside a local market?",
+      "expected": "Education \u2013 Schools",
+      "predicted": "Education \u2013 Schools",
+      "confidence": 0.6733,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.6733
+        },
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.0534
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0198
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0766",
+      "text": "I want to report unavailable ambulance in a village area.",
+      "expected": "Health & Hospitals",
+      "predicted": "Health & Hospitals",
+      "confidence": 0.6947,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.6947
+        },
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.0392
+        },
+        {
+          "category": "Forest & Wildlife",
+          "confidence": 0.0313
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0769",
+      "text": "I want to report sewage entering pond near a school.",
+      "expected": "Drainage & Sewerage",
+      "predicted": "Drainage & Sewerage",
+      "confidence": 0.7132,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.7132
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0479
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0273
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0803",
+      "text": "Can the responsible team address dead animal near water beside a local market?",
+      "expected": "Animal Resources",
+      "predicted": "Animal Resources",
+      "confidence": 0.5535,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Animal Resources",
+          "confidence": 0.5535
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.0879
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0563
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0827",
+      "text": "A local resident reports school bullying along a main road.",
+      "expected": "Women & Child Safety",
+      "predicted": "Women & Child Safety",
+      "confidence": 0.6718,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.6718
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0395
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0361
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0852",
+      "text": "I want to report public counter closed along a main road.",
+      "expected": "Public Grievance / General Administration",
+      "predicted": "Public Grievance / General Administration",
+      "confidence": 0.6633,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Grievance / General Administration",
+          "confidence": 0.6633
+        },
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.0918
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0397
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0872",
+      "text": "Please arrange appropriate action for fake bill payment link along a main road.",
+      "expected": "Cyber Crime",
+      "predicted": "Cyber Crime",
+      "confidence": 0.7025,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.7025
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.038
+        },
+        {
+          "category": "Public Grievance / General Administration",
+          "confidence": 0.0276
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0877",
+      "text": "Please investigate plastic waste in park near a government office.",
+      "expected": "Solid Waste Management",
+      "predicted": "Solid Waste Management",
+      "confidence": 0.7914,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.7914
+        },
+        {
+          "category": "Agriculture",
+          "confidence": 0.0327
+        },
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.0268
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0882",
+      "text": "Residents are affected by plastic in pond near a residential lane.",
+      "expected": "Environment & Pollution",
+      "predicted": "Environment & Pollution",
+      "confidence": 0.6772,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.6772
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0974
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0325
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0887",
+      "text": "Please arrange appropriate action for unbarricaded construction site in a village area.",
+      "expected": "Building & Municipal Engineering",
+      "predicted": "Building & Municipal Engineering",
+      "confidence": 0.6633,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.6633
+        },
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.1197
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0381
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0895",
+      "text": "There is a problem with exam portal rejecting form in a ward; please inspect it.",
+      "expected": "Higher Education",
+      "predicted": "Higher Education",
+      "confidence": 0.6832,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Higher Education",
+          "confidence": 0.6832
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.1048
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0194
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0896",
+      "text": "Residents are affected by dumping near forest in a village area.",
+      "expected": "Forest & Wildlife",
+      "predicted": "Forest & Wildlife",
+      "confidence": 0.8725,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Forest & Wildlife",
+          "confidence": 0.8725
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0428
+        },
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.0114
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0899",
+      "text": "Please arrange appropriate action for difficulty obtaining land copy near a school.",
+      "expected": "Land & Land Records",
+      "predicted": "Land & Land Records",
+      "confidence": 0.6763,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.6763
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0407
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0288
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0906",
+      "text": "A local resident reports illegal parking near a government office.",
+      "expected": "Traffic & Road Safety",
+      "predicted": "Traffic & Road Safety",
+      "confidence": 0.6861,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.6861
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0655
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0293
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0921",
+      "text": "Please investigate streetlight outage near a bus stop.",
+      "expected": "Street Lighting & Electrical",
+      "predicted": "Street Lighting & Electrical",
+      "confidence": 0.8959,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Street Lighting & Electrical",
+          "confidence": 0.8959
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0185
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.0111
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0929",
+      "text": "A local resident reports damaged irrigation canal near a residential lane.",
+      "expected": "Agriculture",
+      "predicted": "Agriculture",
+      "confidence": 0.881,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Agriculture",
+          "confidence": 0.881
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0188
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0147
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0931",
+      "text": "Please investigate power line touching branches near a government office.",
+      "expected": "Electricity & Power",
+      "predicted": "Electricity & Power",
+      "confidence": 0.8581,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.8581
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0182
+        },
+        {
+          "category": "Agriculture",
+          "confidence": 0.0181
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0943",
+      "text": "A local resident reports storm-damaged infrastructure beside a local market.",
+      "expected": "Disaster Management",
+      "predicted": "Disaster Management",
+      "confidence": 0.6685,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Disaster Management",
+          "confidence": 0.6685
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0479
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0355
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0947",
+      "text": "Can the responsible team address animal waste in public area beside a local market?",
+      "expected": "Public Health & Sanitation",
+      "predicted": "Public Health & Sanitation",
+      "confidence": 0.7244,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.7244
+        },
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.0699
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0202
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0951",
+      "text": "There is a problem with delayed housing application beside a public park; please inspect it.",
+      "expected": "Housing & Urban Development",
+      "predicted": "Housing & Urban Development",
+      "confidence": 0.7041,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.7041
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.1043
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0283
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0952",
+      "text": "Please investigate stolen mobile phone in a village area.",
+      "expected": "Police & Law Enforcement",
+      "predicted": "Police & Law Enforcement",
+      "confidence": 0.7479,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.7479
+        },
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.0763
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0142
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0982",
+      "text": "A local resident reports ration shop closed on hours in a West Bengal neighborhood.",
+      "expected": "Food & Public Distribution",
+      "predicted": "Food & Public Distribution",
+      "confidence": 0.7239,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Food & Public Distribution",
+          "confidence": 0.7239
+        },
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.0472
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.04
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0988",
+      "text": "Please arrange appropriate action for defective appliance near a bus stop.",
+      "expected": "Consumer Affairs",
+      "predicted": "Consumer Affairs",
+      "confidence": 0.626,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Consumer Affairs",
+          "confidence": 0.626
+        },
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.0457
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.039
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0989",
+      "text": "Please investigate overflowing water tank in a West Bengal neighborhood.",
+      "expected": "Water Supply",
+      "predicted": "Water Supply",
+      "confidence": 0.7217,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Water Supply",
+          "confidence": 0.7217
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0243
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0218
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CP-SYN-0991",
+      "text": "There is a problem with unsafe playground equipment near a residential lane; please inspect it.",
+      "expected": "Parks & Public Spaces",
+      "predicted": "Parks & Public Spaces",
+      "confidence": 0.6801,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.6801
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0394
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0304
+        }
+      ],
+      "needs_human_review": false,
+      "source": "synthetic"
+    },
+    {
+      "complaint_id": "CURATED-TEST-8",
+      "text": "A resident reports an unidentified suspicious package in a public place.",
+      "expected": "Police & Law Enforcement",
+      "predicted": "Police & Law Enforcement",
+      "confidence": 0.4356,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.4356
+        },
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.1198
+        },
+        {
+          "category": "Consumer Affairs",
+          "confidence": 0.0595
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-10",
+      "text": "A citizen receives a fake UPI message claiming \u20b925,000 was debited.",
+      "expected": "Cyber Crime",
+      "predicted": "Cyber Crime",
+      "confidence": 0.8916,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.8916
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0153
+        },
+        {
+          "category": "Agriculture",
+          "confidence": 0.012
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-19",
+      "text": "A woman reports repeated harassment while walking home.",
+      "expected": "Women & Child Safety",
+      "predicted": "Women & Child Safety",
+      "confidence": 0.8547,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Women & Child Safety",
+          "confidence": 0.8547
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.0201
+        },
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.0127
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-33",
+      "text": "A damaged traffic sign is difficult to read.",
+      "expected": "Traffic & Road Safety",
+      "predicted": "Traffic & Road Safety",
+      "confidence": 0.8936,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Traffic & Road Safety",
+          "confidence": 0.8936
+        },
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.0096
+        },
+        {
+          "category": "Consumer Affairs",
+          "confidence": 0.0067
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-37",
+      "text": "A large pothole filled with rainwater is present near a school.",
+      "expected": "Roads & Public Works",
+      "predicted": "Roads & Public Works",
+      "confidence": 0.7472,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.7472
+        },
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.0671
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0513
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-49",
+      "text": "A drain emits a strong foul smell near a market.",
+      "expected": "Drainage & Sewerage",
+      "predicted": "Drainage & Sewerage",
+      "confidence": 0.7885,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.7885
+        },
+        {
+          "category": "Street Lighting & Electrical",
+          "confidence": 0.0656
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.0324
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-60",
+      "text": "Water from a community supply has an unusual smell.",
+      "expected": "Water Supply",
+      "predicted": "Water Supply",
+      "confidence": 0.7391,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Water Supply",
+          "confidence": 0.7391
+        },
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.0282
+        },
+        {
+          "category": "Public Transport",
+          "confidence": 0.0168
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-66",
+      "text": "Residents are dumping household waste in an unauthorized location.",
+      "expected": "Solid Waste Management",
+      "predicted": "Solid Waste Management",
+      "confidence": 0.8808,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.8808
+        },
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.0276
+        },
+        {
+          "category": "Food & Public Distribution",
+          "confidence": 0.0181
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-75",
+      "text": "An exposed electrical junction box is accessible to pedestrians.",
+      "expected": "Street Lighting & Electrical",
+      "predicted": "Street Lighting & Electrical",
+      "confidence": 0.6519,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Street Lighting & Electrical",
+          "confidence": 0.6519
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.1273
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.1029
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-82",
+      "text": "Stagnant water near houses is creating mosquito breeding conditions.",
+      "expected": "Public Health & Sanitation",
+      "predicted": "Public Health & Sanitation",
+      "confidence": 0.8769,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.8769
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0287
+        },
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.0242
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-97",
+      "text": "A small fire has started in a garbage dumping area.",
+      "expected": "Fire & Emergency Services",
+      "predicted": "Fire & Emergency Services",
+      "confidence": 0.6748,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Fire & Emergency Services",
+          "confidence": 0.6748
+        },
+        {
+          "category": "Solid Waste Management",
+          "confidence": 0.2293
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0408
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-99",
+      "text": "Heavy rainfall has flooded a residential street.",
+      "expected": "Disaster Management",
+      "predicted": "CLASSIFICATION_UNCERTAIN",
+      "confidence": 0.3158,
+      "is_correct": false,
+      "top_predictions": [
+        {
+          "category": "Agriculture",
+          "confidence": 0.3158
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.1828
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.1311
+        }
+      ],
+      "needs_human_review": true,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-107",
+      "text": "Smoke from a factory is affecting nearby residents.",
+      "expected": "Environment & Pollution",
+      "predicted": "Fire & Emergency Services",
+      "confidence": 0.3857,
+      "is_correct": false,
+      "top_predictions": [
+        {
+          "category": "Fire & Emergency Services",
+          "confidence": 0.3857
+        },
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.2352
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.1962
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-116",
+      "text": "A park boundary wall has collapsed.",
+      "expected": "Parks & Public Spaces",
+      "predicted": "Parks & Public Spaces",
+      "confidence": 0.5972,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.5972
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.2275
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0288
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-127",
+      "text": "An unauthorized structure is obstructing a public passage.",
+      "expected": "Building & Municipal Engineering",
+      "predicted": "Building & Municipal Engineering",
+      "confidence": 0.6726,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.6726
+        },
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.1458
+        },
+        {
+          "category": "Food & Public Distribution",
+          "confidence": 0.0454
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-131",
+      "text": "A citizen reports an incorrect name on a land record.",
+      "expected": "Land & Land Records",
+      "predicted": "Land & Land Records",
+      "confidence": 0.7053,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.7053
+        },
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.0537
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0367
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-143",
+      "text": "A residential colony has inadequate drainage infrastructure.",
+      "expected": "Housing & Urban Development",
+      "predicted": "Housing & Urban Development",
+      "confidence": 0.6624,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.6624
+        },
+        {
+          "category": "Environment & Pollution",
+          "confidence": 0.1997
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0598
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-147",
+      "text": "A locality has experienced repeated power cuts.",
+      "expected": "Electricity & Power",
+      "predicted": "Electricity & Power",
+      "confidence": 0.9068,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.9068
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0135
+        },
+        {
+          "category": "Higher Education",
+          "confidence": 0.0108
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-157",
+      "text": "A bus route has been discontinued without clear information.",
+      "expected": "Public Transport",
+      "predicted": "Public Transport",
+      "confidence": 0.5433,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Transport",
+          "confidence": 0.5433
+        },
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.1774
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.0684
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-169",
+      "text": "A railway station lacks adequate lighting in a passenger area.",
+      "expected": "Railway-related Public Complaints",
+      "predicted": "Railway-related Public Complaints",
+      "confidence": 0.9012,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.9012
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0123
+        },
+        {
+          "category": "Parks & Public Spaces",
+          "confidence": 0.01
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-174",
+      "text": "A health center has no functioning public toilet.",
+      "expected": "Health & Hospitals",
+      "predicted": "Public Health & Sanitation",
+      "confidence": 0.6987,
+      "is_correct": false,
+      "top_predictions": [
+        {
+          "category": "Public Health & Sanitation",
+          "confidence": 0.6987
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.0981
+        },
+        {
+          "category": "Railway-related Public Complaints",
+          "confidence": 0.0548
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-180",
+      "text": "A ration shop is distributing less food grain than the stated quantity.",
+      "expected": "Food & Public Distribution",
+      "predicted": "Food & Public Distribution",
+      "confidence": 0.9173,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Food & Public Distribution",
+          "confidence": 0.9173
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0063
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.0061
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-189",
+      "text": "A customer reports a defective household appliance.",
+      "expected": "Consumer Affairs",
+      "predicted": "Consumer Affairs",
+      "confidence": 0.6596,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Consumer Affairs",
+          "confidence": 0.6596
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.1957
+        },
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.0251
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-195",
+      "text": "A school classroom roof leaks during rainfall.",
+      "expected": "Education \u2013 Schools",
+      "predicted": "Education \u2013 Schools",
+      "confidence": 0.879,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Education \u2013 Schools",
+          "confidence": 0.879
+        },
+        {
+          "category": "Disaster Management",
+          "confidence": 0.0219
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.0205
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-205",
+      "text": "A college laboratory has damaged electrical equipment.",
+      "expected": "Higher Education",
+      "predicted": "Higher Education",
+      "confidence": 0.6266,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Higher Education",
+          "confidence": 0.6266
+        },
+        {
+          "category": "Electricity & Power",
+          "confidence": 0.1508
+        },
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.0642
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-211",
+      "text": "A contractor has not paid workers their wages for two months.",
+      "expected": "Labour & Employment",
+      "predicted": "Labour & Employment",
+      "confidence": 0.9274,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Labour & Employment",
+          "confidence": 0.9274
+        },
+        {
+          "category": "Higher Education",
+          "confidence": 0.0088
+        },
+        {
+          "category": "Housing & Urban Development",
+          "confidence": 0.0085
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-219",
+      "text": "A farmer reports a damaged irrigation canal.",
+      "expected": "Agriculture",
+      "predicted": "Agriculture",
+      "confidence": 0.8974,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Agriculture",
+          "confidence": 0.8974
+        },
+        {
+          "category": "Roads & Public Works",
+          "confidence": 0.0107
+        },
+        {
+          "category": "Consumer Affairs",
+          "confidence": 0.0092
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-229",
+      "text": "A livestock vaccination camp has not visited the locality.",
+      "expected": "Animal Resources",
+      "predicted": "Animal Resources",
+      "confidence": 0.6628,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Animal Resources",
+          "confidence": 0.6628
+        },
+        {
+          "category": "Health & Hospitals",
+          "confidence": 0.1235
+        },
+        {
+          "category": "Drainage & Sewerage",
+          "confidence": 0.025
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-237",
+      "text": "A forest boundary fence is damaged.",
+      "expected": "Forest & Wildlife",
+      "predicted": "Forest & Wildlife",
+      "confidence": 0.889,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Forest & Wildlife",
+          "confidence": 0.889
+        },
+        {
+          "category": "Land & Land Records",
+          "confidence": 0.0134
+        },
+        {
+          "category": "Building & Municipal Engineering",
+          "confidence": 0.0128
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    },
+    {
+      "complaint_id": "CURATED-TEST-245",
+      "text": "A citizen reports an incorrect entry in a government document.",
+      "expected": "Public Grievance / General Administration",
+      "predicted": "Public Grievance / General Administration",
+      "confidence": 0.6747,
+      "is_correct": true,
+      "top_predictions": [
+        {
+          "category": "Public Grievance / General Administration",
+          "confidence": 0.6747
+        },
+        {
+          "category": "Police & Law Enforcement",
+          "confidence": 0.0685
+        },
+        {
+          "category": "Cyber Crime",
+          "confidence": 0.0414
+        }
+      ],
+      "needs_human_review": false,
+      "source": "curated_250"
+    }
+  ]
+}

@@ -5,6 +5,8 @@
   ],
   "extraPaths": [
     "ml-service",
+    "ml-service/src",
+    "ml-service/vision",
     "."
   ],
   "pythonVersion": "3.14",

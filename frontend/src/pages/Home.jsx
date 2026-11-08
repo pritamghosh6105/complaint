@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   Building2,
   FilePlus2,
+  Briefcase,
   Activity,
   Search,
   ShieldCheck,
@@ -35,6 +36,13 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
   const [loading, setLoading] = useState(true);
   const [trackingSearch, setTrackingSearch] = useState('');
   const [trackingError, setTrackingError] = useState('');
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 640 : false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,7 +111,7 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-lg)',
-          padding: 'clamp(28px, 4vw, 44px)',
+          padding: 'clamp(16px, 4vw, 44px)',
           marginBottom: '32px',
           boxShadow: 'var(--shadow-sm)',
           position: 'relative',
@@ -131,7 +139,7 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
 
           <div style={{ maxWidth: '820px' }}>
             <h1 style={{ 
-              fontSize: 'clamp(2rem, 4.5vw, 3rem)', 
+              fontSize: 'clamp(1.75rem, 4.5vw, 3rem)', 
               fontWeight: 800, 
               color: 'var(--text-primary)', 
               lineHeight: 1.15,
@@ -152,56 +160,91 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
             </p>
 
             {/* Primary Action Buttons */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '28px' }}>
-              <PrimaryButton
-                size="lg"
-                icon={<FilePlus2 size={18} />}
-                onClick={() => {
-                  if (user) setCurrentRoute('new-complaint');
-                  else setCurrentRoute('login');
-                }}
-              >
-                Report an Issue
-              </PrimaryButton>
+            <div className="home-hero-actions">
+              {user?.role === 'officer' ? (
+                <PrimaryButton
+                  size="lg"
+                  className="home-hero-btn"
+                  icon={<Briefcase size={16} />}
+                  onClick={() => setCurrentRoute('officer-dashboard')}
+                >
+                  <span className="btn-text-full">Open Field Queue</span>
+                  <span className="btn-text-short">Field Queue</span>
+                </PrimaryButton>
+              ) : (
+                <PrimaryButton
+                  size="lg"
+                  className="home-hero-btn"
+                  icon={<FilePlus2 size={16} />}
+                  onClick={() => {
+                    if (user) setCurrentRoute('new-complaint');
+                    else setCurrentRoute('login');
+                  }}
+                >
+                  <span className="btn-text-full">Report an Issue</span>
+                  <span className="btn-text-short">Report Issue</span>
+                </PrimaryButton>
+              )}
 
               <SecondaryButton
                 size="lg"
-                icon={<Building2 size={18} />}
+                className="home-hero-btn"
+                icon={<Building2 size={16} />}
                 onClick={() => setCurrentRoute('departments')}
               >
-                Explore 30 Departments
+                <span className="btn-text-full">Explore 30 Departments</span>
+                <span className="btn-text-short">30 Departments</span>
               </SecondaryButton>
             </div>
 
             {/* Quick Complaint Tracking Input */}
-            <form onSubmit={handleQuickTrack} style={{ maxWidth: '480px' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                background: 'var(--bg-input)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '4px 6px',
-                boxShadow: 'var(--shadow-xs)'
-              }}>
-                <Search size={16} color="var(--text-muted)" style={{ margin: '0 8px 0 10px', flexShrink: 0 }} />
+            <form onSubmit={handleQuickTrack} style={{ maxWidth: '480px', width: '100%' }}>
+              <div 
+                className="quick-track-bar"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: 'var(--bg-input)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '4px 6px',
+                  boxShadow: 'var(--shadow-xs)',
+                  width: '100%',
+                  maxWidth: '100%',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <Search size={16} color="var(--text-muted)" style={{ margin: '0 6px 0 8px', flexShrink: 0 }} />
                 <input
                   type="text"
                   value={trackingSearch}
                   onChange={(e) => setTrackingSearch(e.target.value)}
-                  placeholder="Enter Tracking ID (e.g. CP-2026-001284)..."
+                  placeholder={isMobile ? "Enter Tracking ID" : "Enter Tracking ID (e.g. CP-2026-001284)..."}
                   style={{
-                    flex: 1,
+                    flex: '1 1 0%',
+                    minWidth: 0,
+                    width: '100%',
                     border: 'none',
                     background: 'transparent',
                     color: 'var(--text-primary)',
-                    fontSize: '0.875rem',
+                    fontSize: '0.84rem',
                     outline: 'none',
-                    padding: '6px 0'
+                    padding: '6px 4px'
                   }}
                 />
-                <Button type="submit" variant="secondary" size="sm">
-                  Track Status
+                <Button 
+                  type="submit" 
+                  variant="secondary" 
+                  size="sm"
+                  className="quick-track-btn"
+                  style={{
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap',
+                    padding: '6px 12px'
+                  }}
+                >
+                  <span className="btn-text-full">Track Status</span>
+                  <span className="btn-text-short">Track</span>
                 </Button>
               </div>
               {trackingError && (
@@ -273,29 +316,27 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
               </p>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '0.8125rem', fontWeight: 600 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--color-danger)' }} /> Critical
+            <div className="map-legend-bar" style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '0.8125rem', fontWeight: 600, flexWrap: 'wrap' }}>
+              <span className="map-legend-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span className="map-legend-dot" style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--color-danger)' }} /> Critical
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ea580c' }} /> High
+              <span className="map-legend-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span className="map-legend-dot" style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ea580c' }} /> High
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--color-warning)' }} /> Medium
+              <span className="map-legend-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span className="map-legend-dot" style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--color-warning)' }} /> Medium
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--color-success)' }} /> Resolved
+              <span className="map-legend-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span className="map-legend-dot" style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--color-success)' }} /> Resolved
               </span>
             </div>
           </div>
 
-          <div style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}>
-            <ComplaintMap 
-              complaints={complaints}
-              onSelectComplaint={handleSelectComplaint}
-              height="min(560px, 65vh)"
-            />
-          </div>
+          <ComplaintMap 
+            complaints={complaints}
+            onSelectComplaint={handleSelectComplaint}
+            height="min(560px, 65vh)"
+          />
         </div>
 
         {/* =========================================================================
@@ -351,18 +392,30 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
                 All Municipal Queues Clear
               </h3>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto 16px' }}>
-                There are currently no open unresolved issues in this jurisdiction. Report an issue to test real-time AI classification and SLA dispatch!
+                {user?.role === 'officer' 
+                  ? 'All on-ground complaints assigned to your jurisdiction are synchronized. Check your operational queue for new assignments.'
+                  : 'There are currently no open unresolved issues in this jurisdiction. Report an issue to test real-time AI classification and SLA dispatch!'}
               </p>
-              <PrimaryButton
-                size="sm"
-                icon={<FilePlus2 size={15} />}
-                onClick={() => {
-                  if (user) setCurrentRoute('new-complaint');
-                  else setCurrentRoute('login');
-                }}
-              >
-                Report an Issue
-              </PrimaryButton>
+              {user?.role === 'officer' ? (
+                <PrimaryButton
+                  size="sm"
+                  icon={<Briefcase size={15} />}
+                  onClick={() => setCurrentRoute('officer-dashboard')}
+                >
+                  View Field Queue
+                </PrimaryButton>
+              ) : (
+                <PrimaryButton
+                  size="sm"
+                  icon={<FilePlus2 size={15} />}
+                  onClick={() => {
+                    if (user) setCurrentRoute('new-complaint');
+                    else setCurrentRoute('login');
+                  }}
+                >
+                  Report an Issue
+                </PrimaryButton>
+              )}
             </div>
           )}
         </div>

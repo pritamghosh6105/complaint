@@ -162,11 +162,22 @@ def build_structured_features(df: pd.DataFrame) -> pd.DataFrame:
     ]:
         res[k] = [f.get(k, 0) for f in all_feats]
         
-    affected = df['affected_citizens'].fillna(df.get('affected_count', 20)).astype(float)
+    if 'affected_citizens' in df.columns:
+        affected = df['affected_citizens'].fillna(50).astype(float)
+    elif 'affected_population' in df.columns:
+        affected = df['affected_population'].fillna(50).astype(float)
+    elif 'affected_count' in df.columns:
+        affected = df['affected_count'].fillna(50).astype(float)
+    else:
+        affected = pd.Series(50.0, index=df.index)
+
     res['large_population_affected'] = (affected >= 200).astype(int)
     res['log_affected'] = np.log1p(affected.clip(lower=1))
     
-    duration = df['duration_days'].fillna(3).astype(float) if 'duration_days' in df.columns else pd.Series(3.0, index=df.index)
+    if 'duration_days' in df.columns:
+        duration = df['duration_days'].fillna(3.0).astype(float)
+    else:
+        duration = pd.Series(3.0, index=df.index)
     res['duration_days'] = duration.clip(lower=1, upper=60)
     
     res['safety_score'] = [

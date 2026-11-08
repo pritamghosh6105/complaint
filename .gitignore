@@ -40,6 +40,9 @@ data/boundaries/
 *.shp
 *.dbf
 
-# Backups
+# Backups & Scratch
 *.bak*
 *.bak
+backups/
+scratch/
+

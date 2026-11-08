@@ -13,8 +13,13 @@ import {
   ArrowRight,
   Shield,
   Star,
-  RotateCcw
+  RotateCcw,
+  Edit3,
+  Check,
+  Flag
 } from 'lucide-react';
+import api from '../../services/api';
+import AIImageAnalysisCard from './AIImageAnalysisCard';
 
 export default function EvidenceGallery({ 
   evidence = [], 
@@ -27,11 +32,21 @@ export default function EvidenceGallery({
   status = 'Submitted',
   onConfirmResolution,
   onReopenComplaint,
-  userRole = 'citizen'
+  userRole = 'citizen',
+  isAuthority = false,
+  isOwner = false
 }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [fullscreenMedia, setFullscreenMedia] = useState(null);
   const [sliderPosition, setSliderPosition] = useState(50);
+  const [verifying, setVerifying] = useState(false);
+  const [showCorrectionForm, setShowCorrectionForm] = useState(false);
+  const [correctedCategory, setCorrectedCategory] = useState('');
+  const [correctedSubcategory, setCorrectedSubcategory] = useState('');
+  const [correctedAuthority, setCorrectedAuthority] = useState('');
+  const [correctedDamage, setCorrectedDamage] = useState('MODERATE');
+  const [verificationNotes, setVerificationNotes] = useState('');
+  const [verificationSuccess, setVerificationSuccess] = useState(null);
 
   // Group into initial evidence and resolution evidence, supporting legacy single image fallback
   const rawEvidence = (evidence && evidence.length > 0)
@@ -60,27 +75,48 @@ export default function EvidenceGallery({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
+  const handleOfficerVerify = async (action) => {
+    if (!activeItem || !activeItem.id) return;
+    try {
+      setVerifying(true);
+      await api.post(`/evidence/${activeItem.id}/verify`, {
+        action,
+        corrected_category: correctedCategory || null,
+        corrected_subcategory: correctedSubcategory || null,
+        corrected_authority: correctedAuthority || null,
+        corrected_damage_level: correctedDamage || null,
+        notes: verificationNotes || ''
+      });
+      setVerificationSuccess(`Successfully recorded decision: ${action}`);
+      setShowCorrectionForm(false);
+      setTimeout(() => setVerificationSuccess(null), 4000);
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to submit officer verification');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       {/* 1. Sensitive Evidence Warning Banner (If applicable) */}
-      {isCrime && (
-        <div style={{
-          background: 'rgba(14, 165, 233, 0.12)',
-          border: '1px solid rgba(14, 165, 233, 0.35)',
-          borderRadius: 'var(--radius-sm)',
-          padding: '12px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          fontSize: '0.82rem',
-          color: '#bae6fd'
-        }}>
-          <Lock size={18} color="var(--accent-cyan)" style={{ flexShrink: 0 }} />
-          <span>
-            <strong>Protected Evidence Protocol:</strong> Sensitive law enforcement attachments are encrypted and strictly restricted to authorized municipal officers and the registered citizen.
-          </span>
-        </div>
-      )}
+      <div style={{
+        background: 'var(--bg-surface-elevated)',
+        border: '1.5px solid rgba(14, 165, 233, 0.4)',
+        borderRadius: 'var(--radius-sm)',
+        padding: '12px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+        fontSize: '0.82rem',
+        color: 'var(--text-primary)',
+        boxShadow: 'var(--shadow-sm)'
+      }}>
+        <Lock size={18} color="var(--accent-cyan)" style={{ flexShrink: 0 }} />
+        <span>
+          <strong style={{ color: 'var(--accent-cyan)' }}>Protected Evidence Protocol:</strong> Sensitive grievance attachments are encrypted and strictly restricted to authorized municipal officers and the registered complainant. Not published to the public.
+        </span>
+      </div>
 
       {/* 2. Before & After Resolution Evidence Chain (For Resolved Tickets) */}
       {status === 'Resolved' && primaryBeforeImage && primaryAfterImage && (
@@ -405,6 +441,187 @@ export default function EvidenceGallery({
                   />
                 )}
               </div>
+
+              {/* AI Visual Evidence Analysis Card */}
+              {activeItem.visual_analysis && (
+                <div style={{ marginTop: '16px' }}>
+                  <AIImageAnalysisCard 
+                    analysis={activeItem.visual_analysis} 
+                    previewUrl={activeItem.secure_url || activeItem.optimized_url || activeItem.url}
+                  />
+                </div>
+              )}
+
+              {/* Phase 13: Officer Human Verification & Feedback Controls */}
+              {(userRole === 'officer' || userRole === 'admin') && (
+                <div style={{
+                  marginTop: '16px',
+                  padding: '16px',
+                  background: 'rgba(15, 23, 42, 0.75)',
+                  border: '1px solid rgba(59, 130, 246, 0.35)',
+                  borderRadius: '8px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Shield size={18} color="var(--accent-cyan)" />
+                      <strong style={{ fontSize: '0.9rem', color: '#fff' }}>
+                        Officer Human Verification & Correction (Phase 13)
+                      </strong>
+                    </div>
+                    {verificationSuccess && (
+                      <span style={{ fontSize: '0.8rem', color: '#6ee7b7', fontWeight: 600 }}>
+                        ✓ {verificationSuccess}
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleOfficerVerify('CONFIRMED')}
+                      disabled={verifying}
+                      className="btn btn-sm"
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        border: '1px solid #10b981',
+                        color: '#6ee7b7',
+                        padding: '6px 14px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Check size={14} /> Confirm AI Classification
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowCorrectionForm(!showCorrectionForm)}
+                      className="btn btn-sm"
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        border: '1px solid #3b82f6',
+                        color: '#93c5fd',
+                        padding: '6px 14px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Edit3 size={14} /> {showCorrectionForm ? 'Hide Correction Form' : 'Correct Finding / Category'}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOfficerVerify('REJECTED_MISLEADING')}
+                      disabled={verifying}
+                      className="btn btn-sm"
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.2)',
+                        border: '1px solid #ef4444',
+                        color: '#fca5a5',
+                        padding: '6px 14px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Flag size={14} /> Flag Misleading / Unrelated
+                    </button>
+                  </div>
+
+                  {showCorrectionForm && (
+                    <div style={{
+                      marginTop: '12px',
+                      padding: '12px',
+                      background: 'rgba(0,0,0,0.4)',
+                      borderRadius: '6px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '10px'
+                    }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+                            Corrected Category:
+                          </label>
+                          <input
+                            type="text"
+                            value={correctedCategory}
+                            onChange={(e) => setCorrectedCategory(e.target.value)}
+                            placeholder="e.g. Roads & Public Works"
+                            className="form-control"
+                            style={{ width: '100%', fontSize: '0.8rem', padding: '6px 10px' }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+                            Corrected Subcategory:
+                          </label>
+                          <input
+                            type="text"
+                            value={correctedSubcategory}
+                            onChange={(e) => setCorrectedSubcategory(e.target.value)}
+                            placeholder="e.g. Pothole / Surface Crater"
+                            className="form-control"
+                            style={{ width: '100%', fontSize: '0.8rem', padding: '6px 10px' }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+                            Visual Damage Severity:
+                          </label>
+                          <select
+                            value={correctedDamage}
+                            onChange={(e) => setCorrectedDamage(e.target.value)}
+                            className="form-control"
+                            style={{ width: '100%', fontSize: '0.8rem', padding: '6px 10px' }}
+                          >
+                            <option value="LOW">LOW</option>
+                            <option value="MODERATE">MODERATE</option>
+                            <option value="SEVERE">SEVERE</option>
+                            <option value="CRITICAL">CRITICAL</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+                          Officer Review Notes / Evidence Justification:
+                        </label>
+                        <textarea
+                          value={verificationNotes}
+                          onChange={(e) => setVerificationNotes(e.target.value)}
+                          placeholder="Add administrative review notes and ground verification justification..."
+                          rows={2}
+                          className="form-control"
+                          style={{ width: '100%', fontSize: '0.8rem', padding: '6px 10px' }}
+                        />
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleOfficerVerify('CORRECTED')}
+                          disabled={verifying}
+                          className="btn btn-primary btn-sm"
+                          style={{ padding: '6px 16px' }}
+                        >
+                          {verifying ? 'Submitting Review...' : 'Submit Corrected Classification'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

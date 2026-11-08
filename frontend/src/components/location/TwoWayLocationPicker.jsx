@@ -21,7 +21,9 @@ import {
   Mail,
   Plus,
   Minus,
-  Crosshair
+  Crosshair,
+  ChevronDown,
+  Smartphone
 } from 'lucide-react';
 import api from '../../services/api';
 import { FastTileLayer, MapAutoInvalidate, MapLayerSwitcher, getSavedProviderId } from '../maps/MapConfig';
@@ -104,6 +106,7 @@ function CustomMapControls({ lat, lng, gpsDotLocation }) {
 
   return (
     <div 
+      className="custom-map-controls-group"
       style={{
         position: 'absolute',
         top: '12px',
@@ -119,6 +122,7 @@ function CustomMapControls({ lat, lng, gpsDotLocation }) {
       {/* Zoom In (+ Button) */}
       <button
         type="button"
+        className="custom-map-btn"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -158,6 +162,7 @@ function CustomMapControls({ lat, lng, gpsDotLocation }) {
       {/* Zoom Out (- Button) */}
       <button
         type="button"
+        className="custom-map-btn"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -194,51 +199,11 @@ function CustomMapControls({ lat, lng, gpsDotLocation }) {
         <Minus size={20} strokeWidth={2.5} />
       </button>
 
-      {/* Recenter on Incident Pin */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
-            map.flyTo([lat, lng], Math.max(map.getZoom(), 15), { duration: 0.8 });
-          }
-        }}
-        title="Center on Incident Pin"
-        aria-label="Center on incident pin"
-        style={{
-          width: '38px',
-          height: '38px',
-          borderRadius: '10px',
-          background: 'var(--bg-surface)',
-          border: '1.5px solid var(--border-subtle)',
-          color: '#10b981',
-          boxShadow: '0 4px 14px rgba(0, 0, 0, 0.22)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          backdropFilter: 'blur(12px)'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'scale(1.08)';
-          e.currentTarget.style.borderColor = '#10b981';
-          e.currentTarget.style.boxShadow = '0 0 14px rgba(16, 185, 129, 0.4)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.borderColor = 'var(--border-subtle)';
-          e.currentTarget.style.boxShadow = '0 4px 14px rgba(0, 0, 0, 0.22)';
-        }}
-      >
-        <Crosshair size={18} strokeWidth={2.2} />
-      </button>
-
       {/* Recenter on Exact GPS Blue Dot */}
       {gpsDotLocation && (
         <button
           type="button"
+          className="custom-map-btn"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -299,6 +264,7 @@ export default function TwoWayLocationPicker({
   const [detectedAddress, setDetectedAddress] = useState(initialAddress || '');
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [customAddressInput, setCustomAddressInput] = useState(initialAddress || '');
+  const [showGpsNotice, setShowGpsNotice] = useState(false);
 
   // Administrative Hierarchy State
   const [district, setDistrict] = useState(initialDistrict || 'North 24 Parganas');
@@ -322,7 +288,7 @@ export default function TwoWayLocationPicker({
   const [selectedPoliceStation, setSelectedPoliceStation] = useState(selectedPoliceStationProp || '');
   const [policeStationDetails, setPoliceStationDetails] = useState(null);
   const [districtPoliceStations, setDistrictPoliceStations] = useState([]);
-  const [showManualStationSelector, setShowManualStationSelector] = useState(Boolean(isPoliceOrCyberCrime));
+  const [showManualStationSelector, setShowManualStationSelector] = useState(true);
 
   // Verification & Sources State
   const [verification, setVerification] = useState({
@@ -712,6 +678,13 @@ export default function TwoWayLocationPicker({
           setLat(newLat);
           setLng(newLng);
           setZoom(15);
+          const fastAddr = r.formattedAddress || r.address?.displayName || r.rawAddress;
+          if (fastAddr) {
+            setDetectedAddress(fastAddr);
+            setCustomAddressInput(fastAddr);
+          }
+          if (r.district) setDistrict(r.district);
+          if (r.pincode) setPincode(r.pincode);
           handleReverseGeocode(newLat, newLng);
         }
       } else {
@@ -758,16 +731,20 @@ export default function TwoWayLocationPicker({
     setErrorMessage('');
     setSuccessMessage('');
 
+    // Simple compact warning on GPS click
+    setShowGpsNotice(true);
+
     const onLocationSuccess = (position) => {
       setLoadingGPS(false);
       const newLat = parseFloat(position.coords.latitude.toFixed(6));
       const newLng = parseFloat(position.coords.longitude.toFixed(6));
       const accuracy = position.coords.accuracy || 20;
       setGpsDotLocation({ lat: newLat, lng: newLng, accuracy });
+
       setLat(newLat);
       setLng(newLng);
       setZoom(16);
-      setSuccessMessage('✓ Exact GPS coordinates detected. Showing your exact location as a blue dot on the map.');
+      setSuccessMessage('✓ GPS coordinates received. Please verify your pin on the map.');
       handleReverseGeocode(newLat, newLng);
     };
 
@@ -777,13 +754,13 @@ export default function TwoWayLocationPicker({
           onLocationSuccess,
           (fallbackErr) => {
             setLoadingGPS(false);
-            setErrorMessage('Could not retrieve GPS coordinates. Please click on the map.');
+            setErrorMessage('Could not retrieve GPS coordinates. Please click directly on the map to pinpoint.');
           },
           { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
         );
       } else {
         setLoadingGPS(false);
-        setErrorMessage('Location permission denied or unavailable. Please click on the map.');
+        setErrorMessage('Location permission was denied or unavailable. Please click directly on the map to place your pin.');
       }
     };
 
@@ -805,64 +782,84 @@ export default function TwoWayLocationPicker({
   };
 
   return (
-    <div style={{
-      background: 'var(--bg-surface)',
-      border: '1px solid var(--border-subtle)',
-      borderRadius: '16px',
-      padding: '22px',
-      marginBottom: '24px',
-      boxShadow: 'var(--shadow-md)',
-      transition: 'all 0.3s ease'
-    }}>
+    <div 
+      className="location-picker-card"
+      style={{
+        background: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: '16px',
+        padding: 'clamp(14px, 3vw, 22px)',
+        marginBottom: '24px',
+        boxShadow: 'var(--shadow-md)',
+        transition: 'all 0.3s ease',
+        boxSizing: 'border-box',
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: 0
+      }}
+    >
       {/* 1. Header Bar */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '12px',
-        marginBottom: '16px',
-        borderBottom: '1px solid var(--border-subtle)',
-        paddingBottom: '14px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.3))',
-            border: '1px solid rgba(16, 185, 129, 0.4)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#10b981',
-            boxShadow: '0 0 14px rgba(16, 185, 129, 0.2)',
-            flexShrink: 0
-          }}>
+      <div 
+        className="location-picker-header"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px',
+          marginBottom: '16px',
+          borderBottom: '1px solid var(--border-subtle)',
+          paddingBottom: '14px'
+        }}
+      >
+        <div className="location-picker-header-left" style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+          <div 
+            className="location-picker-pin-icon"
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.3))',
+              border: '1px solid rgba(16, 185, 129, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#10b981',
+              boxShadow: '0 0 14px rgba(16, 185, 129, 0.2)',
+              flexShrink: 0
+            }}
+          >
             <MapPin size={22} />
           </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <h3 style={{ fontSize: '1.12rem', margin: 0, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div className="location-picker-title-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <h3 
+                className="location-picker-title"
+                style={{ fontSize: '1.12rem', margin: 0, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, wordBreak: 'break-word' }}
+              >
                 Incident Location & Decoded Address
               </h3>
-              <span style={{
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                padding: '2px 8px',
-                borderRadius: '12px',
-                background: 'rgba(16, 185, 129, 0.15)',
-                color: '#10b981',
-                border: '1px solid rgba(16, 185, 129, 0.35)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}>
+              <span 
+                className="location-picker-badge"
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  color: '#10b981',
+                  border: '1px solid rgba(16, 185, 129, 0.35)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  flexShrink: 0
+                }}
+              >
                 <Sparkles size={11} />
                 <span>Live GIS Auto-Decode</span>
               </span>
             </div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '3px 0 0 0' }}>
+            <p className="location-picker-desc" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '3px 0 0 0' }}>
               Click or drag anywhere on the map — CivicPulse AI decodes the address, district, PIN code, and nearest police station instantly.
             </p>
           </div>
@@ -873,7 +870,7 @@ export default function TwoWayLocationPicker({
           type="button"
           onClick={handleUseCurrentLocation}
           disabled={loadingGPS}
-          className="btn btn-secondary btn-sm"
+          className="btn btn-secondary btn-sm location-picker-gps-btn"
           style={{
             fontSize: '0.82rem',
             padding: '8px 16px',
@@ -898,18 +895,19 @@ export default function TwoWayLocationPicker({
       {/* 2. Address Search Bar */}
       <div 
         role="search"
+        className="location-picker-search-bar"
         style={{ marginBottom: '14px' }}
       >
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ position: 'relative', flex: 1 }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
             <Search 
-              size={16} 
+              size={14} 
               color="#94a3b8" 
-              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} 
+              style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} 
             />
             <input
               type="text"
-              className="form-input"
+              className="form-input location-search-input"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => {
@@ -918,13 +916,18 @@ export default function TwoWayLocationPicker({
                   handleAddressSearch(e);
                 }
               }}
-              placeholder="Search landmark, street, or address (or simply click on the map)..."
+              placeholder="Search landmark, street, or address (or tap map)..."
               style={{
-                paddingLeft: '36px',
-                paddingRight: '36px',
-                height: '42px',
-                fontSize: '0.88rem',
-                borderRadius: '10px'
+                paddingLeft: '30px',
+                paddingRight: '28px',
+                height: '36px',
+                minHeight: '36px',
+                maxHeight: '36px',
+                fontSize: '0.82rem',
+                borderRadius: '8px',
+                width: '100%',
+                minWidth: 0,
+                boxSizing: 'border-box'
               }}
             />
             {searchInput && (
@@ -933,16 +936,20 @@ export default function TwoWayLocationPicker({
                 onClick={() => setSearchInput('')}
                 style={{
                   position: 'absolute',
-                  right: '12px',
+                  right: '8px',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   background: 'none',
                   border: 'none',
                   color: '#94a3b8',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  padding: '2px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
-                <X size={14} />
+                <X size={13} />
               </button>
             )}
           </div>
@@ -954,34 +961,80 @@ export default function TwoWayLocationPicker({
               handleAddressSearch(e);
             }}
             disabled={loadingGeocode || !searchInput.trim()}
-            className="btn btn-primary"
+            className="btn btn-primary location-search-btn"
             style={{
-              height: '42px',
-              padding: '0 18px',
-              borderRadius: '10px',
-              fontSize: '0.84rem',
+              height: '36px',
+              minHeight: '36px',
+              maxHeight: '36px',
+              padding: '0 10px',
+              borderRadius: '8px',
+              fontSize: '0.78rem',
+              fontWeight: 600,
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '4px',
               flexShrink: 0,
               cursor: loadingGeocode || !searchInput.trim() ? 'not-allowed' : 'pointer',
               opacity: loadingGeocode || !searchInput.trim() ? 0.6 : 1
             }}
+            title="Search address or area"
           >
             {loadingGeocode ? (
               <>
-                <RefreshCw size={14} className="animate-spin" />
-                <span>Searching...</span>
+                <RefreshCw size={12} className="animate-spin" />
+                <span className="location-btn-text" style={{ fontSize: '0.75rem' }}>...</span>
               </>
             ) : (
               <>
-                <Search size={14} />
-                <span>Search</span>
+                <Search size={13} />
+                <span className="location-btn-text" style={{ fontSize: '0.78rem' }}>Search</span>
               </>
             )}
           </button>
         </div>
+
       </div>
+
+      {/* Simple GPS Accuracy Notice (Compact 1-Liner in Red) */}
+      {showGpsNotice && (
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.12)',
+          border: '1px solid rgba(239, 68, 68, 0.38)',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          marginBottom: '10px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '8px',
+          fontSize: '0.78rem',
+          color: '#ef4444'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <AlertTriangle size={15} color="#ef4444" style={{ flexShrink: 0 }} />
+            <span style={{ fontWeight: 500, color: '#ef4444' }}>
+              GPS may not be accurate on PC. For exact street location, use mobile or tap directly on the map.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowGpsNotice(false)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#ef4444',
+              cursor: 'pointer',
+              padding: '0 4px',
+              fontSize: '0.9rem',
+              lineHeight: 1,
+              opacity: 0.85
+            }}
+            title="Dismiss"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Messages */}
       {errorMessage && (
@@ -1003,28 +1056,34 @@ export default function TwoWayLocationPicker({
       )}
 
       {/* 3. Interactive Leaflet Map */}
-      <div style={{
-        height: isExpanded ? '600px' : '440px',
-        width: '100%',
-        borderRadius: '14px',
-        overflow: 'hidden',
-        border: '1.5px solid var(--border-subtle)',
-        position: 'relative',
-        boxShadow: 'var(--shadow-md)',
-        transition: 'height 0.3s ease',
-        marginBottom: '18px'
-      }}>
+      <div 
+        className={`location-map-container ${isExpanded ? 'is-expanded' : ''}`}
+        style={{
+          height: isExpanded ? '540px' : 'clamp(260px, 42vh, 400px)',
+          width: '100%',
+          borderRadius: '14px',
+          overflow: 'hidden',
+          border: '1.5px solid var(--border-subtle)',
+          position: 'relative',
+          boxShadow: 'var(--shadow-md)',
+          transition: 'height 0.3s ease',
+          marginBottom: '18px'
+        }}
+      >
         {/* Top-Right Control Group */}
-        <div style={{
-          position: 'absolute',
-          top: '12px',
-          right: '12px',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          pointerEvents: 'auto'
-        }}>
+        <div 
+          className="location-map-top-right"
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            pointerEvents: 'auto'
+          }}
+        >
           <MapLayerSwitcher 
             currentProvider={currentProvider} 
             onProviderChange={setCurrentProvider} 
@@ -1033,6 +1092,7 @@ export default function TwoWayLocationPicker({
 
           <button
             type="button"
+            className="map-expand-btn"
             onClick={() => setIsExpanded(!isExpanded)}
             style={{
               background: 'var(--bg-surface)',
@@ -1053,7 +1113,8 @@ export default function TwoWayLocationPicker({
             title={isExpanded ? "Collapse map size" : "Expand map size"}
           >
             {isExpanded ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
-            <span>{isExpanded ? 'Collapse' : 'Expand Size'}</span>
+            <span className="map-expand-text-full">{isExpanded ? 'Collapse' : 'Expand Size'}</span>
+            <span className="map-expand-text-short" style={{ display: 'none' }}>{isExpanded ? 'Collapse' : 'Expand'}</span>
           </button>
         </div>
 
@@ -1090,36 +1151,40 @@ export default function TwoWayLocationPicker({
         </MapContainer>
 
         {/* Floating Instruction / Status Badge (Bottom-Left) */}
-        <div style={{
-          position: 'absolute',
-          bottom: '14px',
-          left: '14px',
-          zIndex: 999,
-          background: 'var(--bg-surface)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '10px',
-          padding: '7px 14px',
-          fontSize: '0.77rem',
-          color: 'var(--text-primary)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          boxShadow: 'var(--shadow-md)',
-          pointerEvents: 'none'
-        }}>
+        <div 
+          className="location-map-floating-badge"
+          style={{
+            position: 'absolute',
+            bottom: '12px',
+            left: '12px',
+            zIndex: 999,
+            background: 'var(--bg-surface)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: '10px',
+            padding: '7px 12px',
+            fontSize: '0.76rem',
+            color: 'var(--text-primary)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: 'var(--shadow-md)',
+            pointerEvents: 'none',
+            maxWidth: 'calc(100% - 24px)'
+          }}
+        >
           {loadingReverse ? (
             <>
-              <RefreshCw size={14} className="animate-spin" color="var(--accent-primary)" />
+              <RefreshCw size={13} className="animate-spin" color="var(--accent-primary)" style={{ flexShrink: 0 }} />
               <span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
-                Decoding address & identifying nearest police station...
+                Decoding address & nearest station...
               </span>
             </>
           ) : (
             <>
-              <Compass size={15} color="#10b981" />
+              <Compass size={14} color="#10b981" style={{ flexShrink: 0 }} />
               <span>
-                📍 <strong>Click map or drag marker</strong> to pinpoint incident address
+                📍 <strong>Tap map or drag marker</strong> to pinpoint address
               </span>
             </>
           )}
@@ -1132,18 +1197,21 @@ export default function TwoWayLocationPicker({
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '16px'
+        gap: '14px'
       }}>
         {/* A. Hero Decoded Address Display */}
         <div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '8px',
-            marginBottom: '10px'
-          }}>
+          <div 
+            className="location-decoded-header"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '8px',
+              marginBottom: '8px'
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{
                 width: '9px',
@@ -1238,18 +1306,22 @@ export default function TwoWayLocationPicker({
           </div>
 
           {!isEditingAddress ? (
-            <div style={{
-              fontSize: '1.05rem',
-              fontWeight: 600,
-              color: 'var(--text-primary)',
-              lineHeight: 1.5,
-              background: 'var(--bg-surface-elevated)',
-              border: '1px solid var(--border-subtle)',
-              borderLeft: '4px solid #10b981',
-              borderRadius: '12px',
-              padding: '14px 18px',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
+            <div 
+              className="location-decoded-address-box"
+              style={{
+                fontSize: '1rem',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                lineHeight: 1.5,
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-subtle)',
+                borderLeft: '4px solid #10b981',
+                borderRadius: '12px',
+                padding: '12px 16px',
+                boxShadow: 'var(--shadow-sm)',
+                wordBreak: 'break-word'
+              }}
+            >
               {detectedAddress || (loadingReverse ? 'Resolving address from map coordinates...' : 'Click on the map to pinpoint address')}
             </div>
           ) : (
@@ -1260,13 +1332,14 @@ export default function TwoWayLocationPicker({
               onChange={(e) => setCustomAddressInput(e.target.value)}
               placeholder="e.g. Near Clock Tower, Main Road, Raiganj..."
               style={{
-                fontSize: '0.96rem',
+                fontSize: '0.94rem',
                 borderRadius: '10px',
-                padding: '12px 16px',
+                padding: '10px 14px',
                 width: '100%',
                 background: 'var(--bg-surface-elevated)',
                 border: '1.5px solid var(--accent-primary)',
-                color: 'var(--text-primary)'
+                color: 'var(--text-primary)',
+                boxSizing: 'border-box'
               }}
               autoFocus
             />
@@ -1274,280 +1347,310 @@ export default function TwoWayLocationPicker({
         </div>
 
         {/* B. 4-Column Metadata Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-          gap: '12px'
-        }}>
+        <div 
+          className="location-meta-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
+            gap: '12px'
+          }}
+        >
           {/* GPS Coordinates */}
-          <div style={{
-            background: 'var(--bg-surface-elevated)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: '12px',
-            padding: '14px 16px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-sm)'
-          }}>
+          <div 
+            className="location-meta-card"
+            style={{
+              background: 'var(--bg-surface-elevated)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '9px',
+              padding: '9px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: 'var(--shadow-sm)',
+              boxSizing: 'border-box'
+            }}
+          >
             <div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Crosshair size={13} color="var(--accent-primary)" />
+              <span className="location-meta-title" style={{ fontSize: '0.66rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Crosshair size={12} color="var(--accent-primary)" />
                 <span>GPS Coordinates</span>
               </span>
-              <div style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.94rem', color: 'var(--accent-primary)', marginTop: '6px' }}>
-                {lat.toFixed(6)}, {lng.toFixed(6)}
+              <div className="location-meta-val" style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.84rem', color: 'var(--accent-primary)', marginTop: '3px' }}>
+                {lat.toFixed(4)}, {lng.toFixed(4)}
               </div>
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px' }}>
-              GeoJSON: [{lng.toFixed(6)}, {lat.toFixed(6)}]
+            <div className="location-meta-sub" style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+              GeoJSON: [{lng.toFixed(4)}, {lat.toFixed(4)}]
             </div>
           </div>
 
           {/* District */}
-          <div style={{
-            background: 'var(--bg-surface-elevated)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: '12px',
-            padding: '14px 16px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-sm)'
-          }}>
+          <div 
+            className="location-meta-card"
+            style={{
+              background: 'var(--bg-surface-elevated)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '9px',
+              padding: '9px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: 'var(--shadow-sm)',
+              boxSizing: 'border-box'
+            }}
+          >
             <div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Building2 size={13} color="#10b981" />
+              <span className="location-meta-title" style={{ fontSize: '0.66rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Building2 size={12} color="#10b981" />
                 <span>District</span>
               </span>
-              <div style={{ fontWeight: 700, fontSize: '0.98rem', color: district ? '#10b981' : '#ca8a04', marginTop: '6px' }}>
+              <div className="location-meta-val" style={{ fontWeight: 700, fontSize: '0.84rem', color: district ? '#10b981' : '#ca8a04', marginTop: '3px', wordBreak: 'break-word' }}>
                 {district || 'West Bengal'}
               </div>
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span>State: West Bengal</span>
+            <div className="location-meta-sub" style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span>West Bengal</span>
               <span style={{ color: '#10b981', fontWeight: 600 }}>• Auto-Indexed</span>
             </div>
           </div>
 
           {/* PIN Code */}
-          <div style={{
-            background: 'var(--bg-surface-elevated)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: '12px',
-            padding: '14px 16px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-sm)'
-          }}>
+          <div 
+            className="location-meta-card"
+            style={{
+              background: 'var(--bg-surface-elevated)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '9px',
+              padding: '9px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: 'var(--shadow-sm)',
+              boxSizing: 'border-box'
+            }}
+          >
             <div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Mail size={13} color="#8b5cf6" />
-                <span>Postal PIN Code</span>
+              <span className="location-meta-title" style={{ fontSize: '0.66rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Mail size={12} color="#8b5cf6" />
+                <span>Postal PIN</span>
               </span>
-              <div style={{ fontWeight: 800, fontSize: '1.05rem', color: pincode ? 'var(--text-primary)' : '#ca8a04', fontFamily: 'monospace', marginTop: '6px' }}>
-                {pincode || 'Determining PIN...'}
+              <div className="location-meta-val" style={{ fontWeight: 800, fontSize: '0.88rem', color: pincode ? 'var(--text-primary)' : '#ca8a04', fontFamily: 'monospace', marginTop: '3px' }}>
+                {pincode || 'Determining...'}
               </div>
             </div>
-            <div style={{ fontSize: '0.72rem', color: pincode ? '#10b981' : 'var(--text-muted)', marginTop: '8px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div className="location-meta-sub" style={{ fontSize: '0.65rem', color: pincode ? '#10b981' : 'var(--text-muted)', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
               {pincode ? (
                 <>
                   <Check size={11} color="#10b981" />
-                  <span>West Bengal Postal Database</span>
+                  <span>WB Postal DB</span>
                 </>
               ) : (
-                <span>PIN indexing in progress</span>
+                <span>PIN indexing</span>
               )}
             </div>
           </div>
 
           {/* Nearest / Assigned Police Station */}
-          <div style={{
-            background: isPoliceOrCyberCrime ? 'rgba(6, 182, 212, 0.08)' : 'var(--bg-surface-elevated)',
-            border: isPoliceOrCyberCrime ? '1.5px solid var(--accent-cyan)' : '1px solid var(--border-subtle)',
-            borderRadius: '12px',
-            padding: '14px 16px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-sm)'
-          }}>
+          <div 
+            className="location-meta-card"
+            style={{
+              background: isPoliceOrCyberCrime ? 'rgba(6, 182, 212, 0.08)' : 'var(--bg-surface-elevated)',
+              border: isPoliceOrCyberCrime ? '1.5px solid var(--accent-cyan)' : '1px solid var(--border-subtle)',
+              borderRadius: '9px',
+              padding: '9px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: 'var(--shadow-sm)',
+              boxSizing: 'border-box'
+            }}
+          >
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', marginBottom: '2px' }}>
-                <span style={{ fontSize: '0.72rem', color: isPoliceOrCyberCrime ? 'var(--accent-cyan)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <Shield size={13} color={isPoliceOrCyberCrime ? 'var(--accent-cyan)' : '#0284c7'} />
-                  <span>{selectedPoliceStation && selectedPoliceStation !== nearestStation?.name ? 'Assigned Thana' : 'Nearest Police Station'}</span>
+                <span className="location-meta-title" style={{ fontSize: '0.66rem', color: isPoliceOrCyberCrime ? 'var(--accent-cyan)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <Shield size={12} color={isPoliceOrCyberCrime ? 'var(--accent-cyan)' : '#0284c7'} />
+                  <span>{selectedPoliceStation && selectedPoliceStation !== nearestStation?.name ? 'Assigned Thana' : 'Nearest Thana'}</span>
                 </span>
                 {isPoliceOrCyberCrime && (
-                  <span style={{ fontSize: '0.62rem', background: 'rgba(6, 182, 212, 0.2)', color: 'var(--accent-cyan)', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>
-                    CRIME ACTIVE
+                  <span style={{ fontSize: '0.6rem', background: 'rgba(6, 182, 212, 0.2)', color: 'var(--accent-cyan)', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>
+                    ACTIVE
                   </span>
                 )}
               </div>
 
-              <div style={{ fontWeight: 700, fontSize: '0.98rem', color: 'var(--text-primary)', marginTop: '6px' }}>
-                {activeStation?.name || selectedPoliceStation || nearestStation?.name || 'Searching nearest station...'}
+              <div className="location-meta-val" style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--text-primary)', marginTop: '3px', wordBreak: 'break-word', lineHeight: 1.25 }}>
+                {activeStation?.name || selectedPoliceStation || nearestStation?.name || 'Searching...'}
               </div>
 
-              <div style={{ fontSize: '0.73rem', color: 'var(--accent-cyan)', marginTop: '4px', fontWeight: 600 }}>
+              <div className="location-meta-sub" style={{ fontSize: '0.65rem', color: 'var(--accent-cyan)', marginTop: '3px', fontWeight: 600 }}>
                 {activeStation?.distanceKm !== undefined && activeStation?.distanceKm !== null
                   ? `~${activeStation.distanceKm} km away`
                   : nearestStationDistance !== null ? `~${nearestStationDistance} km away` : ''}
-                {activeStation?.phone ? ` • Call: ${activeStation.phone}` : (nearestStation?.phone ? ` • Call: ${nearestStation.phone}` : '')}
+                {activeStation?.phone ? ` • ${activeStation.phone}` : (nearestStation?.phone ? ` • ${nearestStation.phone}` : '')}
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={() => setShowManualStationSelector(prev => !prev)}
-              style={{
-                marginTop: '10px',
-                background: 'rgba(6, 182, 212, 0.1)',
-                border: '1px solid rgba(6, 182, 212, 0.3)',
-                borderRadius: '8px',
-                padding: '6px 12px',
-                fontSize: '0.74rem',
-                color: 'var(--accent-cyan)',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                width: '100%',
-                transition: 'var(--transition)'
-              }}
-            >
-              <Edit3 size={11} />
-              <span>{showManualStationSelector ? 'Hide Thana List' : `Choose from ${districtPoliceStations.length || 'District'} Stations ▾`}</span>
-            </button>
           </div>
         </div>
 
         {/* Manual Police Station Jurisdiction Selection (District-Wide) */}
         {(showManualStationSelector || isPoliceOrCyberCrime) && (
-          <div style={{
-            background: isPoliceOrCyberCrime 
-              ? 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(59, 130, 246, 0.1) 100%)' 
-              : 'var(--bg-surface-elevated)',
-            border: isPoliceOrCyberCrime 
-              ? '1.5px solid var(--accent-cyan)' 
-              : '1px solid var(--border-subtle)',
-            borderRadius: '12px',
-            padding: '16px 18px',
-            boxShadow: 'var(--shadow-sm)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                <div style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
-                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.25))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--accent-cyan)',
-                  flexShrink: 0
-                }}>
-                  <Shield size={17} />
-                </div>
-                <div>
-                  <strong style={{ fontSize: '0.94rem', color: 'var(--text-primary)', display: 'block' }}>
-                    Choose Police Station / Thana in {district || 'West Bengal'}
+          <div 
+            className="location-thana-card"
+            style={{
+              background: isPoliceOrCyberCrime 
+                ? 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(59, 130, 246, 0.1) 100%)' 
+                : 'var(--bg-surface-elevated)',
+              border: isPoliceOrCyberCrime 
+                ? '1px solid var(--accent-cyan)' 
+                : '1px solid var(--border-subtle)',
+              borderRadius: '8px',
+              padding: '7px 10px',
+              boxShadow: 'var(--shadow-sm)',
+              boxSizing: 'border-box'
+            }}
+          >
+            <div className="location-thana-header" style={{ marginBottom: '4px' }}>
+              <div className="location-thana-header-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0, flex: 1 }}>
+                  <div style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '4px',
+                    background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.25))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--accent-cyan)',
+                    flexShrink: 0
+                  }}>
+                    <Shield size={11} />
+                  </div>
+                  <strong className="location-thana-title" style={{ fontSize: '0.78rem', color: 'var(--text-primary)', wordBreak: 'break-word', minWidth: 0, fontWeight: 600 }}>
+                    <span className="desktop-only">Choose Police Station / Thana in {district || 'West Bengal'}</span>
+                    <span className="mobile-only">Choose Police Station / Thana</span>
                   </strong>
-                  <span style={{ fontSize: '0.76rem', color: isPoliceOrCyberCrime ? 'var(--accent-cyan)' : 'var(--text-secondary)' }}>
-                    {isPoliceOrCyberCrime 
-                      ? '🚨 Crime / Law Enforcement Detected: Select your preferred designated police jurisdiction or cyber crime cell in this district.'
-                      : `Select any police station in ${district} or keep the automatically calculated nearest station.`}
-                  </span>
                 </div>
+
+                <span className="location-thana-count-tag" style={{
+                  fontSize: '0.64rem',
+                  background: 'rgba(6, 182, 212, 0.12)',
+                  color: 'var(--accent-cyan)',
+                  padding: '1px 6px',
+                  borderRadius: '4px',
+                  fontWeight: 700,
+                  border: '1px solid rgba(6, 182, 212, 0.25)',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap'
+                }}>
+                  <span className="desktop-only">{districtPoliceStations.length} Stations Available</span>
+                  <span className="mobile-only">{districtPoliceStations.length} Available</span>
+                </span>
               </div>
 
-              <span style={{
-                fontSize: '0.72rem',
-                background: 'rgba(6, 182, 212, 0.12)',
-                color: 'var(--accent-cyan)',
-                padding: '4px 10px',
-                borderRadius: '6px',
-                fontWeight: 700,
-                border: '1px solid rgba(6, 182, 212, 0.25)'
-              }}>
-                {districtPoliceStations.length} Stations Available in {district}
+              <span className="location-thana-desc" style={{ fontSize: '0.67rem', color: isPoliceOrCyberCrime ? 'var(--accent-cyan)' : 'var(--text-secondary)', display: 'block', marginTop: '2px', lineHeight: 1.25 }}>
+                {isPoliceOrCyberCrime 
+                  ? '🚨 Crime Detected: Select preferred designated thana or cyber cell.'
+                  : `Select thana in ${district} or keep calculated nearest station.`}
               </span>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginTop: '12px' }}>
-              <div style={{ flex: 1, minWidth: '260px' }}>
+            <div className="location-thana-controls" style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '5px' }}>
+              <div className="location-thana-select-wrap" style={{ position: 'relative', flex: 1, minWidth: 0 }}>
                 <select
                   className="form-select"
                   value={selectedPoliceStation || activeStation?.name || ''}
                   onChange={(e) => handleSelectStation(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    fontSize: '0.88rem',
+                    height: '32px',
+                    padding: '4px 24px 4px 8px',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
                     fontWeight: 600,
-                    background: 'var(--bg-surface)',
-                    border: '1.5px solid var(--accent-cyan)',
+                    backgroundColor: 'var(--bg-surface)',
+                    border: '1px solid var(--accent-cyan)',
                     color: 'var(--text-primary)',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    boxSizing: 'border-box',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    MozAppearance: 'none'
                   }}
                 >
-                  <option value="">-- Choose Police Station in {district} --</option>
+                  <option value="">-- Choose Police Station --</option>
                   {districtPoliceStations.map(ps => (
                     <option key={ps.id || ps._id || ps.name} value={ps.name}>
                       {ps.name === nearestStation?.name ? '📍 [Nearest] ' : ''}{ps.name} {ps.distanceKm !== null ? `(~${ps.distanceKm} km)` : ''} {ps.phone ? `• ${ps.phone}` : ''}
                     </option>
                   ))}
                 </select>
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: '7px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--accent-cyan)'
+                  }}
+                  aria-hidden="true"
+                >
+                  <ChevronDown size={13} strokeWidth={2.4} />
+                </div>
               </div>
 
               {nearestStation && (
                 <button
                   type="button"
+                  className="location-thana-reset-btn"
                   onClick={() => handleSelectStation(nearestStation.name)}
                   style={{
+                    height: '32px',
                     background: (!selectedPoliceStation || selectedPoliceStation === nearestStation.name) ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-surface)',
                     border: (!selectedPoliceStation || selectedPoliceStation === nearestStation.name) ? '1px solid #10b981' : '1px solid var(--border-subtle)',
                     color: (!selectedPoliceStation || selectedPoliceStation === nearestStation.name) ? '#10b981' : 'var(--text-primary)',
-                    borderRadius: '8px',
-                    padding: '10px 16px',
-                    fontSize: '0.82rem',
+                    borderRadius: '6px',
+                    padding: '0 8px',
+                    fontSize: '0.72rem',
                     fontWeight: 600,
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
+                    flexShrink: 0,
                     transition: 'var(--transition)'
                   }}
                 >
-                  {(!selectedPoliceStation || selectedPoliceStation === nearestStation.name) ? '✓ Using Nearest Thana' : `Reset to Nearest (${nearestStation.name})`}
+                  {(!selectedPoliceStation || selectedPoliceStation === nearestStation.name) ? '✓ Nearest' : `⟲ Reset`}
                 </button>
               )}
             </div>
 
-            {/* Selected Thana Summary Box */}
+            {/* Selected Thana Summary Box (Compact 1-Liner) */}
             {activeStation && (
-              <div style={{
-                marginTop: '12px',
-                background: 'var(--bg-surface)',
-                border: '1px dashed rgba(6, 182, 212, 0.4)',
-                borderRadius: '8px',
-                padding: '10px 14px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '8px',
-                fontSize: '0.8rem'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Assigned Jurisdiction:</span>
+              <div 
+                className="location-thana-summary-box"
+                style={{
+                  marginTop: '5px',
+                  background: 'var(--bg-surface)',
+                  border: '1px dashed rgba(6, 182, 212, 0.4)',
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '4px',
+                  fontSize: '0.72rem'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap', minWidth: 0 }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Assigned:</span>
                   <strong style={{ color: 'var(--accent-cyan)' }}>{activeStation.name}</strong>
                   {activeStation.distanceKm !== null && (
                     <span style={{ color: 'var(--text-muted)' }}>
-                      (~{activeStation.distanceKm} km away)
+                      (~{activeStation.distanceKm} km)
                     </span>
                   )}
                   {activeStation.address && (
@@ -1563,19 +1666,19 @@ export default function TwoWayLocationPicker({
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '5px',
+                      gap: '3px',
                       color: '#ffffff',
                       background: 'linear-gradient(135deg, #06b6d4, #0284c7)',
-                      padding: '5px 14px',
-                      borderRadius: '6px',
+                      padding: '2px 7px',
+                      borderRadius: '4px',
                       textDecoration: 'none',
                       fontWeight: 700,
-                      fontSize: '0.76rem',
-                      boxShadow: '0 2px 6px rgba(6, 182, 212, 0.3)'
+                      fontSize: '0.68rem',
+                      boxShadow: '0 1px 4px rgba(6, 182, 212, 0.3)'
                     }}
                   >
-                    <PhoneCall size={12} />
-                    <span>Direct Call: {activeStation.phone}</span>
+                    <PhoneCall size={10} />
+                    <span>Call: {activeStation.phone}</span>
                   </a>
                 )}
               </div>
@@ -1584,46 +1687,52 @@ export default function TwoWayLocationPicker({
         )}
 
         {/* Police Jurisdiction Disclaimer */}
-        <div style={{
-          fontSize: '0.76rem',
-          color: policeJurisdictionVerified ? '#10b981' : '#d97706',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '2px 4px'
-        }}>
-          <AlertTriangle size={14} style={{ flexShrink: 0 }} />
+        <div 
+          className="location-disclaimer"
+          style={{
+            fontSize: '0.74rem',
+            color: policeJurisdictionVerified ? '#10b981' : '#d97706',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '2px 4px'
+          }}
+        >
+          <AlertTriangle size={13} style={{ flexShrink: 0 }} />
           <span>
             {policeJurisdictionVerified 
               ? 'Jurisdiction verified via official boundary data.' 
-              : 'Official administrative thana boundary polygons are unavailable for this point. The grievance will be routed to your chosen/nearest police station.'}
+              : 'The grievance will be routed to your chosen/nearest police station.'}
           </span>
         </div>
 
         {/* D. Bottom Status Pill */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '8px',
-          paddingTop: '8px',
-          borderTop: '1px solid var(--border-subtle)'
-        }}>
+        <div 
+          className="location-footer-pill"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '6px',
+            paddingTop: '8px',
+            borderTop: '1px solid var(--border-subtle)'
+          }}
+        >
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
-            fontSize: '0.82rem',
+            fontSize: '0.8rem',
             color: '#10b981',
             fontWeight: 700
           }}>
-            <CheckCircle2 size={16} color="#10b981" />
-            <span>Location Active & Ready for Grievance Submission</span>
+            <CheckCircle2 size={15} color="#10b981" />
+            <span>Location Active & Resolved</span>
           </div>
 
-          <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-            Coordinates and decoded address will be submitted with your complaint.
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+            Coordinates and address will be submitted.
           </span>
         </div>
       </div>

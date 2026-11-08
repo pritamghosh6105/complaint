@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Send, 
-  BrainCircuit, 
-  Upload, 
-  Sparkles, 
-  AlertTriangle, 
-  Clock, 
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import {
+  Send,
+  BrainCircuit,
+  Upload,
+  Sparkles,
+  AlertTriangle,
+  Clock,
   Building,
   CheckCircle2,
   MapPin,
@@ -25,7 +25,8 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Eye
+  Eye,
+  Briefcase
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../services/api';
@@ -36,10 +37,44 @@ import AIComplaintAssistant from '../../components/complaint/AIComplaintAssistan
 import EvidenceUploader from '../../components/complaint/EvidenceUploader';
 import AIImageAnalysisCard from '../../components/complaint/AIImageAnalysisCard';
 import { ALL_30_DEPARTMENTS_DATA } from '../../components/home/DepartmentDirectory';
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }) {
-  const [activeStep, setActiveStep] = useState(1); // 1: Details, 2: AI Match, 3: Location, 4: Impact, 5: Evidence, 6: Review
+  const { user } = useAuth();
+  const { isDark } = useTheme();
+  const [activeStep, setActiveStep] = useState(1); // 1: Details, 2: AI Match, 3: Location, 4: Evidence, 5: Review
+
+  useEffect(() => {
+    if (user && user.role === 'officer') {
+      setCurrentRoute('officer-dashboard');
+    }
+  }, [user]);
+
+  if (user && user.role === 'officer') {
+    return (
+      <div className="page-wrapper" style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="glass-card" style={{ maxWidth: '500px', textAlign: 'center', padding: '36px 24px' }}>
+          <ShieldAlert size={44} color="#ef4444" style={{ margin: '0 auto 14px' }} />
+          <h2 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '8px' }}>
+            Officer Access Restriction
+          </h2>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '20px' }}>
+            Field Officers are restricted to operational task management and resolving assigned civic issues. Citizen complaint creation is strictly disabled for officer credentials.
+          </p>
+          <button 
+            className="btn btn-primary"
+            onClick={() => setCurrentRoute('officer-dashboard')}
+          >
+            Go to Officer Task Queue
+          </button>
+        </div>
+      </div>
+    );
+  }
   const [title, setTitle] = useState('');
+  const [originalCitizenInput, setOriginalCitizenInput] = useState('');
+  const [structuredIncident, setStructuredIncident] = useState(null);
   const [description, setDescription] = useState('');
   const [locationConfirmed, setLocationConfirmed] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('AI Auto Detect');
@@ -52,6 +87,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
   const [filePreview, setFilePreview] = useState(null);
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [primaryImageFile, setPrimaryImageFile] = useState(null);
+  const [primaryImagePreview, setPrimaryImagePreview] = useState(null);
   const [visualAnalysis, setVisualAnalysis] = useState(null);
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
@@ -92,7 +128,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
 
     const lowerCat = (activeCategory || '').toLowerCase();
     const isCrimeFlag = Boolean(mlPreview?.summary?.is_crime || mlPreview?.category_prediction?.is_crime);
-    
+
     const combinedText = `${title} ${description}`.toLowerCase();
     const textMatchesCrime = /\b(police|thana|fir|theft|stolen|robbery|assault|cyber|otp|scam|fraud|upi|phishing|hacked|blackmail|harassment|eve teasing)\b/i.test(combinedText) ||
       /চুরি|ছিনতাই|ডাকাতি|মারধর|হামলা|পুলিশ|থানা|সাইবার|প্রতারণা|জালিয়াতি|ওটিপি/i.test(combinedText) ||
@@ -208,6 +244,12 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
     if (!draft) return;
     setTitle(draft.title || '');
     setDescription(draft.description || '');
+    if (draft.original_citizen_input) {
+      setOriginalCitizenInput(draft.original_citizen_input);
+    }
+    if (draft.structured_incident) {
+      setStructuredIncident(draft.structured_incident);
+    }
     if (draft.priority === 'CRITICAL' || draft.is_emergency) {
       setIsEmergency(true);
       setSeverity('Critical');
@@ -226,33 +268,67 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
     }
   };
 
+  const analysisRequestIdRef = useRef(0);
+
   const handlePrimaryImageSelect = async (imgFile) => {
+    const currentReqId = ++analysisRequestIdRef.current;
     setPrimaryImageFile(imgFile);
+
     if (!imgFile) {
+      setPrimaryImagePreview(null);
       setVisualAnalysis(null);
+      setIsAnalyzingImage(false);
       return;
     }
 
+    try {
+      setPrimaryImagePreview(URL.createObjectURL(imgFile));
+    } catch (_) {
+      setPrimaryImagePreview(null);
+    }
+
+    // Immediately clear previous visual analysis to avoid showing stale content
+    setVisualAnalysis(null);
     setIsAnalyzingImage(true);
+
     try {
       const fd = new FormData();
       fd.append('evidence', imgFile);
-      const cat = selectedCategory !== 'AI Auto Detect' ? selectedCategory : (mlPreview?.category_prediction?.category || '');
-      const subcat = selectedSubcategory !== 'Auto-Infer with AI' ? selectedSubcategory : '';
-      if (cat) fd.append('category', cat);
-      if (subcat) fd.append('subcategory', subcat);
-      fd.append('description', description || title || '');
 
       const res = await api.post('/evidence/preview-analysis', fd, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+
+      // Ignore stale response if another image was uploaded while this was in flight
+      if (currentReqId !== analysisRequestIdRef.current) {
+        return;
+      }
+
       if (res.data?.analysis) {
-        setVisualAnalysis(res.data.analysis);
+        const anl = res.data.analysis;
+        setVisualAnalysis(anl);
+
+        // Auto-select category if on AI Auto Detect
+        const detectedDept = anl.incident?.visual_category || anl.category_prediction?.department;
+        const detectedSubcat = anl.incident?.visual_subcategory || anl.category_prediction?.subcategory;
+
+        if (detectedDept && detectedDept !== 'UNKNOWN' && detectedDept !== 'INSUFFICIENT_VISUAL_EVIDENCE') {
+          if (selectedCategory === 'AI Auto Detect' || !selectedCategory) {
+            setSelectedCategory(detectedDept);
+            if (detectedSubcat && detectedSubcat !== 'General' && detectedSubcat !== 'General Issue') {
+              setSelectedSubcategory(detectedSubcat);
+            }
+          }
+        }
       }
     } catch (err) {
-      console.warn('Live visual AI preview error:', err);
+      if (currentReqId === analysisRequestIdRef.current) {
+        console.warn('Live visual AI preview error:', err);
+      }
     } finally {
-      setIsAnalyzingImage(false);
+      if (currentReqId === analysisRequestIdRef.current) {
+        setIsAnalyzingImage(false);
+      }
     }
   };
 
@@ -298,8 +374,8 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
 
   // 2. Synchronize subcategories dropdown based on selected (or auto-detected) category
   useEffect(() => {
-    const activeCat = (selectedCategory !== 'AI Auto Detect') 
-      ? selectedCategory 
+    const activeCat = (selectedCategory !== 'AI Auto Detect')
+      ? selectedCategory
       : (mlPreview?.category_prediction?.category || '');
 
     if (activeCat && taxonomy[activeCat]) {
@@ -329,7 +405,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
           affected_count: affectedCount
         });
         setMlPreview(res.data.preview);
-        
+
         // Auto-detect emergency if ML engine flagged it
         if (res.data.preview?.summary?.is_emergency) {
           setIsEmergency(true);
@@ -365,7 +441,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
       const formData = new FormData();
       formData.append('title', title || 'Civic Issue Report');
       formData.append('description', description);
-      
+
       const resolvedCategory = (mlPreview?.category_prediction?.category && mlPreview?.category_prediction?.category !== 'AI Auto Detect')
         ? mlPreview.category_prediction.category
         : (selectedCategory && selectedCategory !== 'AI Auto Detect' ? selectedCategory : 'Roads & Public Works');
@@ -440,9 +516,17 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
     }
   };
 
-  const activeCategory = (selectedCategory !== 'AI Auto Detect') 
-    ? selectedCategory 
-    : (mlPreview?.category_prediction?.category);
+  const resolvedCategory = (selectedCategory && selectedCategory !== 'AI Auto Detect')
+    ? selectedCategory
+    : (mlPreview?.category_prediction?.category || mlPreview?.summary?.primaryDepartment || 'Roads & Public Works');
+
+  const resolvedSubcategory = (selectedSubcategory && selectedSubcategory !== 'Auto-Infer with AI')
+    ? selectedSubcategory
+    : (mlPreview?.category_prediction?.subcategory || mlPreview?.summary?.subcategory || 'General Issue');
+
+  const activeCategory = (selectedCategory !== 'AI Auto Detect')
+    ? selectedCategory
+    : (mlPreview?.category_prediction?.category || resolvedCategory);
 
   const isCrimeCategory = ['Police & Law Enforcement', 'Cyber Crime', 'Women & Child Safety'].includes(activeCategory);
   const emergencyGuidance = mlPreview?.category_prediction?.emergency_guidance;
@@ -455,30 +539,62 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
             <h1 style={{ fontSize: '2.2rem', color: 'var(--text-primary)', marginBottom: '6px' }}>
               Report a Civic Grievance or Incident
             </h1>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
+            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', marginBottom: user?.role === 'officer' ? '12px' : '0' }}>
               CivicPulse AI automatically classifies across <strong>all 30 government departments</strong>, pinpoints subcategories, computes SLA priorities, and guards citizen privacy.
             </p>
+
+            {user?.role === 'officer' && (
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 14px',
+                borderRadius: '8px',
+                background: 'rgba(37, 99, 235, 0.12)',
+                border: '1px solid rgba(37, 99, 235, 0.3)',
+                color: 'var(--color-accent)',
+                fontSize: '0.84rem',
+                fontWeight: 600,
+                marginTop: '10px'
+              }}>
+                <Briefcase size={15} />
+                <span>Field Officer Ground Log • Submitting as: <strong>{user.name}</strong> ({user.department_name || 'Municipal Field Operations'})</span>
+              </div>
+            )}
           </div>
 
           {/* Emergency Advisory Callout */}
           {(isEmergency || isCrimeCategory || emergencyGuidance) && (
             <div className="emergency-advisory-banner">
               <div className="emergency-advisory-icon">
-                <PhoneCall size={22} color="currentColor" />
+                <PhoneCall size={20} color="currentColor" />
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="emergency-advisory-title">
-                  <span>URGENT ASSISTANCE HELPLINE AVAILABLE</span>
-                  <span className="badge badge-critical" style={{ fontSize: '0.7rem' }}>24x7 EMERGENCY</span>
+                  <span className="emergency-title-full">URGENT ASSISTANCE HELPLINE AVAILABLE</span>
+                  <span className="emergency-title-short">Emergency Helpline</span>
+                  <span className="badge badge-critical" style={{ fontSize: '0.7rem' }}>24x7</span>
                 </div>
                 <p className="emergency-advisory-desc">
                   {emergencyGuidance ? emergencyGuidance.advisory : 'If you or someone else is in immediate personal danger, please contact state emergency services immediately.'}
                 </p>
                 <div className="emergency-helpline-grid">
-                  <span className="emergency-helpline-pill">🚨 Police / Emergency: <strong>100 / 112</strong></span>
-                  <span className="emergency-helpline-pill">💻 Cyber Crime Fraud: <strong>1930</strong></span>
-                  <span className="emergency-helpline-pill">🛡️ Women & Child Safety: <strong>1090 / 1098</strong></span>
-                  <span className="emergency-helpline-pill">🚒 Fire & Rescue: <strong>101</strong></span>
+                  <a href="tel:112" className="emergency-helpline-pill" title="Call Emergency / Police">
+                    <span className="emergency-pill-full">🚨 Police / Emergency: <strong>100 / 112</strong></span>
+                    <span className="emergency-pill-short">🚨 Police: <strong>100/112</strong></span>
+                  </a>
+                  <a href="tel:1930" className="emergency-helpline-pill" title="Call Cyber Crime Fraud Helpline">
+                    <span className="emergency-pill-full">💻 Cyber Crime Fraud: <strong>1930</strong></span>
+                    <span className="emergency-pill-short">💻 Cyber: <strong>1930</strong></span>
+                  </a>
+                  <a href="tel:1090" className="emergency-helpline-pill" title="Call Women & Child Safety">
+                    <span className="emergency-pill-full">🛡️ Women & Child Safety: <strong>1090 / 1098</strong></span>
+                    <span className="emergency-pill-short">🛡️ Women: <strong>1090</strong></span>
+                  </a>
+                  <a href="tel:101" className="emergency-helpline-pill" title="Call Fire & Rescue">
+                    <span className="emergency-pill-full">🚒 Fire & Rescue: <strong>101</strong></span>
+                    <span className="emergency-pill-short">🚒 Fire: <strong>101</strong></span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -493,7 +609,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
             marginBottom: '24px',
             boxShadow: 'var(--shadow-sm)'
           }}>
-            <div 
+            <div
               className="stepper-container-grid"
               style={{
                 display: 'grid',
@@ -505,9 +621,8 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                 { id: 1, label: 'Issue Details', desc: 'Title & details', icon: FileText },
                 { id: 2, label: 'AI Classification', desc: 'Routing & SLA', icon: BrainCircuit },
                 { id: 3, label: 'Location & Thana', desc: 'GIS jurisdiction', icon: MapPin },
-                { id: 4, label: 'Impact & Urgency', desc: 'Severity & scope', icon: Flame },
-                { id: 5, label: 'Evidence & Media', desc: 'Photos & proof', icon: Upload },
-                { id: 6, label: 'Review & Submit', desc: 'Final verification', icon: CheckCircle2 }
+                { id: 4, label: 'Evidence & Media', desc: 'Photos & proof', icon: Upload },
+                { id: 5, label: 'Review & Submit', desc: 'Final verification', icon: CheckCircle2 }
               ].map((step) => {
                 const isPassed = activeStep > step.id;
                 const isCurrent = activeStep === step.id;
@@ -520,6 +635,9 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                     onClick={() => {
                       if (step.id < activeStep || (title.trim() && description.trim())) {
                         setActiveStep(step.id);
+                        setSubmitError('');
+                      } else {
+                        setSubmitError(`Please provide an Issue Title and Description in Step 1 before proceeding to ${step.label}.`);
                       }
                     }}
                     style={{
@@ -528,15 +646,15 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                       gap: '10px',
                       padding: '10px 12px',
                       borderRadius: '10px',
-                      border: isCurrent 
-                        ? '1.5px solid var(--accent-primary)' 
-                        : isPassed 
-                          ? '1px solid rgba(16, 185, 129, 0.4)' 
+                      border: isCurrent
+                        ? '1.5px solid var(--accent-primary)'
+                        : isPassed
+                          ? '1px solid rgba(16, 185, 129, 0.4)'
                           : '1px solid var(--border-subtle)',
-                      background: isCurrent 
-                        ? 'rgba(37, 99, 235, 0.08)' 
-                        : isPassed 
-                          ? 'rgba(16, 185, 129, 0.05)' 
+                      background: isCurrent
+                        ? 'rgba(37, 99, 235, 0.08)'
+                        : isPassed
+                          ? 'rgba(16, 185, 129, 0.05)'
                           : 'var(--bg-surface-elevated)',
                       cursor: 'pointer',
                       textAlign: 'left',
@@ -554,10 +672,10 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                       fontSize: '0.8rem',
                       fontWeight: 700,
                       flexShrink: 0,
-                      background: isPassed 
-                        ? '#16a34a' 
-                        : isCurrent 
-                          ? 'var(--accent-primary)' 
+                      background: isPassed
+                        ? '#16a34a'
+                        : isCurrent
+                          ? 'var(--accent-primary)'
                           : 'var(--bg-surface-active)',
                       color: (isPassed || isCurrent) ? '#ffffff' : 'var(--text-muted)'
                     }}>
@@ -613,9 +731,9 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                         </label>
                         <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Clear & concise summary</span>
                       </div>
-                      <input 
-                        type="text" 
-                        className="form-input" 
+                      <input
+                        type="text"
+                        className="form-input"
                         placeholder="e.g. Broken water pipeline, power outage, or UPI payment fraud"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
@@ -630,13 +748,13 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
 
                     {/* Incident Description with Voice & AI Wizard */}
                     <div className="form-group" style={{ marginBottom: '22px' }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'space-between', 
-                        marginBottom: '10px', 
-                        flexWrap: 'wrap', 
-                        gap: '10px' 
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '10px',
+                        flexWrap: 'wrap',
+                        gap: '10px'
                       }}>
                         <label className="form-label" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                           <AlertTriangle size={15} color="#fbbf24" />
@@ -692,8 +810,8 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                         </div>
                       </div>
 
-                      <textarea 
-                        className="form-textarea" 
+                      <textarea
+                        className="form-textarea"
                         rows={5}
                         placeholder="Describe the incident in detail. Include what happened, location hazards, timing, impact, etc. AI will inspect and categorize in real time."
                         required
@@ -726,7 +844,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                     </div>
 
                     {/* Step 1 Footer Action */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
+                    <div className="step-nav-footer step-nav-footer-step1">
                       <button
                         type="button"
                         onClick={() => {
@@ -737,10 +855,10 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                           setSubmitError('');
                           setActiveStep(2);
                         }}
-                        className="btn btn-primary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        className="btn btn-primary step-nav-btn step-nav-btn-next"
                       >
-                        <span>Next: AI Classification</span>
+                        <span className="desktop-only">Next: AI Classification</span>
+                        <span className="mobile-only">Next: AI Routing</span>
                         <ChevronRight size={16} />
                       </button>
                     </div>
@@ -758,150 +876,106 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                         </h3>
                       </div>
                       <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>
-                        Review the automatic classification generated by our trained machine learning models across 30 state departments.
+                        Review automated departmental routing and citizen service level agreements (SLA) across municipal divisions.
                       </p>
                     </div>
 
                     {/* AI Real-Time Classification & Department Routing Card */}
                     <div style={{ marginBottom: '18px' }}>
                       {mlPreview?.category_prediction?.category || mlPreview?.summary?.primaryDepartment ? (
-                        <div
-                          style={{
-                            borderRadius: '14px',
-                            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(59, 130, 246, 0.12) 100%)',
-                            border: '1.5px solid rgba(99, 102, 241, 0.4)',
-                            boxShadow: '0 4px 20px rgba(99, 102, 241, 0.14)',
-                            padding: '18px 22px'
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <div style={{
-                                width: '36px',
-                                height: '36px',
-                                borderRadius: '10px',
-                                background: 'linear-gradient(135deg, #6366f1, #3b82f6)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: '#ffffff',
-                                boxShadow: '0 2px 10px rgba(99, 102, 241, 0.4)',
-                                flexShrink: 0
-                              }}>
+                        <div className="ai-classification-card">
+                          <div className="ai-classification-header">
+                            <div className="ai-classification-header-main">
+                              <div className="ai-classification-badge-icon">
                                 <Sparkles size={18} />
                               </div>
-                              <div>
-                                <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-primary)', fontWeight: 800, display: 'block' }}>
-                                  ⚡ AI CLASSIFICATION (STAGE 1 & 2 PIPELINE)
-                                </span>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                                  <strong style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>
-                                    {mlPreview.summary?.primaryDepartment || mlPreview.category_prediction?.category}
-                                  </strong>
-                                  {mlPreview.summary?.departmentConfidence !== null && mlPreview.summary?.departmentConfidence !== undefined && (
-                                    <span style={{
-                                      fontSize: '0.72rem',
-                                      padding: '2px 8px',
-                                      borderRadius: '6px',
-                                      background: 'rgba(16, 185, 129, 0.15)',
-                                      color: '#10b981',
-                                      fontWeight: 700,
-                                      border: '1px solid rgba(16, 185, 129, 0.3)'
-                                    }}>
-                                      ✓ {Math.round((mlPreview.summary?.departmentConfidence || mlPreview.category_prediction?.confidence || 0.85) * 100)}% Model Confidence
-                                    </span>
-                                  )}
+                              <div className="ai-classification-title-wrap">
+                                <div className="ai-classification-pretitle">
+                                  <span>Automated Department Routing</span>
+                                  <span className="ai-classification-pill-status">AI Verified</span>
                                 </div>
+                                <h4 className="ai-classification-dept-name">
+                                  {mlPreview.summary?.primaryDepartment || mlPreview.category_prediction?.category}
+                                </h4>
                               </div>
                             </div>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                              <span style={{
-                                fontSize: '0.72rem',
-                                padding: '4px 10px',
-                                borderRadius: '8px',
-                                background: (mlPreview.summary?.priority === 'CRITICAL' || isEmergency)
-                                  ? 'rgba(239, 68, 68, 0.2)'
-                                  : (mlPreview.summary?.priority === 'HIGH' ? 'rgba(249, 115, 22, 0.2)' : 'rgba(59, 130, 246, 0.15)'),
-                                color: (mlPreview.summary?.priority === 'CRITICAL' || isEmergency)
-                                  ? '#ef4444'
-                                  : (mlPreview.summary?.priority === 'HIGH' ? '#f97316' : 'var(--accent-primary)'),
-                                fontWeight: 800,
-                                border: (mlPreview.summary?.priority === 'CRITICAL' || isEmergency)
-                                  ? '1px solid rgba(239, 68, 68, 0.4)'
-                                  : '1px solid rgba(59, 130, 246, 0.3)'
-                              }}>
-                                🎯 Priority: {mlPreview.summary?.priority || 'MEDIUM'}
+                            <div className="ai-classification-badges-row">
+                              {mlPreview.summary?.departmentConfidence !== null && mlPreview.summary?.departmentConfidence !== undefined && (
+                                <span className="ai-classification-conf-badge">
+                                  <CheckCircle2 size={12} />
+                                  <span>{Math.round((mlPreview.summary?.departmentConfidence || mlPreview.category_prediction?.confidence || 0.85) * 100)}% Match Confidence</span>
+                                </span>
+                              )}
+
+                              <span className={`ai-classification-prio-badge ${mlPreview.summary?.priority || 'MEDIUM'}`}>
+                                <Activity size={12} />
+                                <span>Priority: {mlPreview.summary?.priority || 'MEDIUM'}</span>
                               </span>
 
                               {mlPreview.summary?.requiresHumanReview && (
-                                <span style={{
-                                  fontSize: '0.72rem',
-                                  padding: '4px 10px',
-                                  borderRadius: '8px',
-                                  background: 'rgba(234, 179, 8, 0.2)',
-                                  color: '#eab308',
-                                  fontWeight: 800,
-                                  border: '1px solid rgba(234, 179, 8, 0.4)'
-                                }}>
-                                  ⚠️ Human Review: Required
+                                <span className="ai-classification-review-badge">
+                                  <AlertTriangle size={12} />
+                                  <span>Discretionary Review</span>
                                 </span>
                               )}
                             </div>
                           </div>
 
                           {/* Subcategory & Secondary Departments */}
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px', marginBottom: '12px' }}>
-                            <div style={{ background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '10px 12px' }}>
-                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Subcategory:</span>
-                              <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                          <div className="ai-classification-specs-grid">
+                            <div className="ai-classification-spec-box">
+                              <div className="ai-classification-spec-label">
+                                <Layers size={13} />
+                                <span>Sub-Classification Domain</span>
+                              </div>
+                              <span className="ai-classification-spec-value">
                                 {mlPreview.summary?.subcategory || mlPreview.category_prediction?.subcategory || 'General Issue'}
                               </span>
                             </div>
 
-                            <div style={{ background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '10px 12px' }}>
-                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Secondary Department(s):</span>
+                            <div className="ai-classification-spec-box">
+                              <div className="ai-classification-spec-label">
+                                <Building size={13} />
+                                <span>Cross-Department Jurisdiction</span>
+                              </div>
                               {mlPreview.summary?.secondaryDepartments && mlPreview.summary.secondaryDepartments.length > 0 ? (
-                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                                <div className="ai-classification-dept-tags">
                                   {mlPreview.summary.secondaryDepartments.map((sDept, idx) => (
-                                    <span key={idx} style={{
-                                      fontSize: '0.76rem',
-                                      padding: '2px 8px',
-                                      borderRadius: '6px',
-                                      background: 'rgba(99, 102, 241, 0.15)',
-                                      color: 'var(--accent-primary)',
-                                      fontWeight: 600
-                                    }}>
+                                    <span key={idx} className="ai-classification-dept-tag">
                                       + {sDept}
                                     </span>
                                   ))}
                                 </div>
                               ) : (
-                                <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>None (Single Jurisdiction)</span>
+                                <span className="ai-classification-spec-none">
+                                  <Check size={12} />
+                                  <span>Primary Jurisdiction Only</span>
+                                </span>
                               )}
                             </div>
                           </div>
 
                           {/* Classification Explanation / Reason */}
                           {mlPreview.summary?.reason && (
-                            <div style={{
-                              background: 'rgba(255, 255, 255, 0.04)',
-                              borderLeft: '3px solid var(--accent-primary)',
-                              padding: '8px 12px',
-                              borderRadius: '4px',
-                              marginBottom: '10px',
-                              fontSize: '0.82rem',
-                              color: 'var(--text-secondary)',
-                              lineHeight: 1.5
-                            }}>
-                              <strong style={{ color: 'var(--text-primary)' }}>Reason: </strong>
-                              {mlPreview.summary.reason}
+                            <div className="ai-classification-reason-box">
+                              <Info size={15} className="ai-classification-reason-icon" />
+                              <div className="ai-classification-reason-content">
+                                <strong className="ai-classification-reason-title">Routing Rationale: </strong>
+                                <span className="ai-classification-reason-text">{mlPreview.summary.reason}</span>
+                              </div>
                             </div>
                           )}
 
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                            <span>Incident Type: <strong>{mlPreview.summary?.incidentType || 'Standard Civic Complaint'}</strong></span>
-                            <span>⚡ {mlPreview.summary?.sla_hours || 72}h SLA Commitment</span>
+                          <div className="ai-classification-footer">
+                            <div className="ai-classification-footer-item">
+                              <FileText size={13} />
+                              <span>Classification: <strong>{mlPreview.summary?.incidentType || 'Standard Civic Complaint'}</strong></span>
+                            </div>
+                            <div className="ai-classification-footer-item">
+                              <Clock size={13} />
+                              <span>Target Resolution: <strong>{mlPreview.summary?.sla_hours || 72}h SLA Benchmark</strong></span>
+                            </div>
                           </div>
                         </div>
                       ) : (
@@ -927,56 +1001,27 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                       )}
                     </div>
 
-                    {/* Department Manual Override Option if needed */}
-                    <div style={{
-                      background: 'var(--bg-surface-elevated)',
-                      border: '1px solid var(--border-subtle)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      marginBottom: '20px'
-                    }}>
-                      <label className="form-label" style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Building size={14} color="var(--accent-primary)" />
-                        <span>Confirm or Override Department:</span>
-                      </label>
-                      <select
-                        className="form-select"
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        style={{
-                          borderRadius: '10px',
-                          padding: '10px 14px',
-                          fontSize: '0.88rem'
-                        }}
-                      >
-                        <option value="AI Auto Detect">✨ AI Auto Detect (Recommended: let machine learning choose)</option>
-                        {departments.map((dept) => (
-                          <option key={dept.name || dept} value={dept.name || dept}>
-                            {dept.name || dept}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+
 
 
                     {/* Step 2 Footer Navigation */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px' }}>
+                    <div className="step-nav-footer">
                       <button
                         type="button"
                         onClick={() => setActiveStep(1)}
-                        className="btn btn-secondary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        className="btn btn-secondary step-nav-btn step-nav-btn-back"
                       >
                         <ChevronLeft size={16} />
-                        <span>Back: Details</span>
+                        <span className="desktop-only">Back: Details</span>
+                        <span className="mobile-only">Back</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => setActiveStep(3)}
-                        className="btn btn-primary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        className="btn btn-primary step-nav-btn step-nav-btn-next"
                       >
-                        <span>Next: Location & Thana</span>
+                        <span className="desktop-only">Next: Location & Thana</span>
+                        <span className="mobile-only">Next: Location</span>
                         <ChevronRight size={16} />
                       </button>
                     </div>
@@ -986,20 +1031,21 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                 {/* ================= STEP 3: LOCATION & JURISDICTION ================= */}
                 {activeStep === 3 && (
                   <div>
-                    <div style={{ marginBottom: '18px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <MapPin size={18} color="var(--accent-primary)" />
-                        <h3 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-primary)' }}>
-                          Step 3: Incident Location & Administrative Jurisdiction
+                    <div className="step-section-header" style={{ marginBottom: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', minWidth: 0 }}>
+                        <MapPin size={18} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
+                        <h3 className="step-section-title" style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-primary)', wordBreak: 'break-word', minWidth: 0 }}>
+                          <span className="step-title-full">Step 3: Incident Location & Administrative Jurisdiction</span>
+                          <span className="step-title-short" style={{ display: 'none' }}>Step 3: Location & Jurisdiction</span>
                         </h3>
                       </div>
-                      <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>
+                      <p className="step-section-desc" style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>
                         Pick on the interactive West Bengal GIS map or search by district, ward, or block. Coordinates are automatically resolved.
                       </p>
                     </div>
 
                     {/* Two-Way GIS Interactive Location Picker */}
-                    <div id="complaint-location-picker" style={{ scrollMarginTop: '100px', marginBottom: '20px' }}>
+                    <div id="complaint-location-picker" style={{ scrollMarginTop: '100px', marginBottom: '20px', width: '100%', minWidth: 0 }}>
                       <TwoWayLocationPicker
                         initialLat={locationData.latitude}
                         initialLng={locationData.longitude}
@@ -1099,194 +1145,37 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                     </div>
 
                     {/* Step 3 Footer Navigation */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px' }}>
+                    <div className="step-nav-footer">
                       <button
                         type="button"
                         onClick={() => setActiveStep(2)}
-                        className="btn btn-secondary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        className="btn btn-secondary step-nav-btn step-nav-btn-back"
                       >
                         <ChevronLeft size={16} />
-                        <span>Back: AI Routing</span>
+                        <span className="desktop-only">Back: AI Routing</span>
+                        <span className="mobile-only">Back</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => setActiveStep(4)}
-                        className="btn btn-primary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        className="btn btn-primary step-nav-btn step-nav-btn-next"
                       >
-                        <span>Next: Impact & Urgency</span>
+                        <span className="desktop-only">Next: Evidence & Media</span>
+                        <span className="mobile-only">Next: Evidence</span>
                         <ChevronRight size={16} />
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* ================= STEP 4: IMPACT & URGENCY ================= */}
+                {/* ================= STEP 4: EVIDENCE & MEDIA ================= */}
                 {activeStep === 4 && (
-                  <div>
-                    <div style={{ marginBottom: '18px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <Flame size={18} color="var(--accent-warning)" />
-                        <h3 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-primary)' }}>
-                          Step 4: Impact Assessment & Urgency Level
-                        </h3>
-                      </div>
-                      <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>
-                        Help emergency response teams prioritize resources by detailing the physical environment and estimated citizen impact.
-                      </p>
-                    </div>
-
-                    {/* Location Type & Perceived Severity */}
-                    <div className="grid-cols-2" style={{ gap: '16px', marginBottom: '22px' }}>
-                      <div className="form-group" style={{ marginBottom: 0 }}>
-                        <label className="form-label" style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                          <MapPin size={14} color="#10b981" />
-                          <span>Location Environment</span>
-                        </label>
-                        <select 
-                          className="form-select" 
-                          value={locationType} 
-                          onChange={(e) => setLocationType(e.target.value)}
-                          style={{
-                            borderRadius: '10px',
-                            padding: '11px 14px',
-                            fontSize: '0.88rem',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <option value="Residential">Residential Neighborhood</option>
-                          <option value="Market">Commercial / Market Area</option>
-                          <option value="School">School / College Zone</option>
-                          <option value="Hospital">Hospital / Clinic Vicinity</option>
-                          <option value="Highway">Main Road / Highway</option>
-                          <option value="Public Park">Public Park / Playground</option>
-                        </select>
-                      </div>
-
-                      <div className="form-group" style={{ marginBottom: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                          <label className="form-label" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                            <Flame 
-                              size={14} 
-                              color={severity === 'Critical' ? '#f43f5e' : severity === 'High' ? '#fb923c' : severity === 'Medium' ? '#eab308' : '#10b981'} 
-                            />
-                            <span>Perceived Severity</span>
-                          </label>
-                          <span style={{
-                            fontSize: '0.7rem',
-                            padding: '2px 8px',
-                            borderRadius: '6px',
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                            background: severity === 'Critical' 
-                              ? 'rgba(244, 63, 94, 0.15)' 
-                              : severity === 'High' 
-                                ? 'rgba(251, 146, 60, 0.15)' 
-                                : severity === 'Medium' 
-                                  ? 'rgba(250, 204, 21, 0.15)' 
-                                  : 'rgba(52, 211, 153, 0.15)',
-                            color: severity === 'Critical' 
-                              ? '#f43f5e' 
-                              : severity === 'High' 
-                                ? '#ea580c' 
-                                : severity === 'Medium' 
-                                  ? '#ca8a04' 
-                                  : '#059669',
-                            border: severity === 'Critical' 
-                              ? '1px solid rgba(244, 63, 94, 0.35)' 
-                              : severity === 'High' 
-                                ? '1px solid rgba(251, 146, 60, 0.35)' 
-                                : severity === 'Medium' 
-                                  ? '1px solid rgba(250, 204, 21, 0.35)' 
-                                  : '1px solid rgba(52, 211, 153, 0.35)'
-                          }}>
-                            {severity}
-                          </span>
-                        </div>
-                        <select 
-                          className="form-select" 
-                          value={severity} 
-                          onChange={(e) => setSeverity(e.target.value)}
-                          style={{
-                            borderRadius: '10px',
-                            padding: '11px 14px',
-                            fontSize: '0.88rem',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <option value="Low">Low (Minor inconvenience)</option>
-                          <option value="Medium">Medium (General issue)</option>
-                          <option value="High">High (Disruptive / Dangerous)</option>
-                          <option value="Critical">Critical (Immediate Hazard)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="form-group" style={{ marginBottom: '22px' }}>
-                      <label className="form-label" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                        Est. Citizens Directly Affected:
-                      </label>
-                      <input 
-                        type="number" 
-                        className="form-input" 
-                        min="1" 
-                        max="10000"
-                        value={affectedCount}
-                        onChange={(e) => setAffectedCount(Number(e.target.value))}
-                        style={{ borderRadius: '10px', padding: '11px 14px', fontSize: '0.9rem' }}
-                      />
-                      <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
-                        Approximate number of local residents or commuters impacted daily.
-                      </span>
-                    </div>
-
-                    {/* Emergency Flag Checkbox */}
-                    <div className={`emergency-toggle-box ${isEmergency ? 'active' : ''}`} style={{ marginBottom: '22px' }}>
-                      <input 
-                        type="checkbox" 
-                        id="emergency-toggle" 
-                        checked={isEmergency} 
-                        onChange={(e) => setIsEmergency(e.target.checked)}
-                        style={{ width: '18px', height: '18px', accentColor: 'var(--accent-rose)' }}
-                      />
-                      <label htmlFor="emergency-toggle" className="emergency-toggle-label">
-                        Flag as Critical Emergency / Immediate Danger (SLA 24 Hours)
-                      </label>
-                    </div>
-
-                    {/* Step 4 Footer Navigation */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px' }}>
-                      <button
-                        type="button"
-                        onClick={() => setActiveStep(3)}
-                        className="btn btn-secondary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-                      >
-                        <ChevronLeft size={16} />
-                        <span>Back: Location</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveStep(5)}
-                        className="btn btn-primary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-                      >
-                        <span>Next: Evidence & Media</span>
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* ================= STEP 5: EVIDENCE & MEDIA ================= */}
-                {activeStep === 5 && (
                   <div>
                     <div style={{ marginBottom: '18px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                         <Upload size={18} color="var(--accent-cyan)" />
                         <h3 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-primary)' }}>
-                          Step 5: Incident Evidence & Documentation
+                          Step 4: Incident Evidence & Documentation
                         </h3>
                       </div>
                       <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>
@@ -1302,45 +1191,123 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                           Cloudinary Secure Storage
                         </span>
                       </label>
-                      <EvidenceUploader 
+                      <EvidenceUploader
                         onFilesChange={(files) => setAttachedFiles(files)}
                         onPrimaryImageSelect={handlePrimaryImageSelect}
-                        maxFiles={5}
+                        maxFiles={1}
                       />
+
+                      {/* AI Visual Evidence Analysis Feedback & Citizen Correction Controls */}
+                      {(visualAnalysis || isAnalyzingImage) && (
+                        <div style={{ marginTop: '20px' }}>
+                          <AIImageAnalysisCard
+                            analysis={visualAnalysis}
+                            loading={isAnalyzingImage}
+                            previewUrl={primaryImagePreview}
+                            fusedPriority={mlPreview?.priority_prediction?.priority}
+                            onReanalyze={() => handlePrimaryImageSelect(primaryImageFile)}
+                            onAdoptDescription={(desc) => setDescription(desc)}
+                          />
+
+                          {visualAnalysis && visualAnalysis.evidence_match === 'MATCH' && visualAnalysis.predicted_category && visualAnalysis.predicted_category !== 'INSUFFICIENT_VISUAL_EVIDENCE' && visualAnalysis.predicted_category !== selectedCategory && (
+                            <div style={{
+                              marginTop: '12px',
+                              padding: '12px 16px',
+                              borderRadius: '8px',
+                              background: 'var(--bg-surface-elevated)',
+                              border: '1px solid var(--border-subtle)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              flexWrap: 'wrap',
+                              gap: '10px'
+                            }}>
+                              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                                <span>AI Visual Category Suggestion: </span>
+                                <strong style={{ color: 'var(--accent-cyan)' }}>{visualAnalysis.predicted_category}</strong>
+                                {visualAnalysis.predicted_subcategory && (
+                                  <span style={{ color: 'var(--text-muted)' }}> ({visualAnalysis.predicted_subcategory})</span>
+                                )}
+                              </div>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedCategory(visualAnalysis.predicted_category);
+                                    if (visualAnalysis.predicted_subcategory) {
+                                      setSelectedSubcategory(visualAnalysis.predicted_subcategory);
+                                    }
+                                  }}
+                                  className="btn btn-sm"
+                                  style={{
+                                    background: 'rgba(16, 185, 129, 0.2)',
+                                    border: '1px solid #10b981',
+                                    color: '#6ee7b7',
+                                    fontSize: '0.78rem',
+                                    padding: '4px 10px',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  ✓ Adopt AI Suggestion
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    // Citizen confirms keeping their text category
+                                  }}
+                                  className="btn btn-sm"
+                                  style={{
+                                    background: 'transparent',
+                                    border: '1px solid var(--border-subtle)',
+                                    color: 'var(--text-muted)',
+                                    fontSize: '0.78rem',
+                                    padding: '4px 10px',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  Keep Manual Category
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
 
-                    {/* Step 5 Footer Navigation */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px' }}>
+                    {/* Step 4 Footer Navigation */}
+                    <div className="step-nav-footer">
                       <button
                         type="button"
-                        onClick={() => setActiveStep(4)}
-                        className="btn btn-secondary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        onClick={() => setActiveStep(3)}
+                        className="btn btn-secondary step-nav-btn step-nav-btn-back"
                       >
                         <ChevronLeft size={16} />
-                        <span>Back: Impact</span>
+                        <span className="desktop-only">Back: Location</span>
+                        <span className="mobile-only">Back</span>
                       </button>
                       <button
                         type="button"
-                        onClick={() => setActiveStep(6)}
-                        className="btn btn-primary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        onClick={() => setActiveStep(5)}
+                        className="btn btn-primary step-nav-btn step-nav-btn-next"
                       >
-                        <span>Next: Review & Submit</span>
+                        <span className="desktop-only">Next: Review & Submit</span>
+                        <span className="mobile-only">Next: Review</span>
                         <ChevronRight size={16} />
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* ================= STEP 6: REVIEW & SUBMIT ================= */}
-                {activeStep === 6 && (
+                {/* ================= STEP 5: REVIEW & SUBMIT ================= */}
+                {activeStep === 5 && (
                   <div>
                     <div style={{ marginBottom: '18px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                         <CheckCircle2 size={18} color="#10b981" />
                         <h3 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-primary)' }}>
-                          Step 6: Review Summary & Official Submission
+                          Step 5: Review Summary & Official Submission
                         </h3>
                       </div>
                       <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>
@@ -1431,26 +1398,26 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                       </div>
                     )}
 
-                    {/* Step 6 Footer Navigation & Submission */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', flexWrap: 'wrap', gap: '12px' }}>
+                    {/* Step 5 Footer Navigation & Submission */}
+                    <div className="step-nav-footer step-nav-footer-step5 step-nav-footer-step6">
                       <button
                         type="button"
-                        onClick={() => setActiveStep(5)}
-                        className="btn btn-secondary btn-md"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        onClick={() => setActiveStep(4)}
+                        className="btn btn-secondary step-nav-btn step-nav-btn-back"
                       >
                         <ChevronLeft size={16} />
-                        <span>Back: Evidence</span>
+                        <span className="desktop-only">Back: Evidence</span>
+                        <span className="mobile-only">Back</span>
                       </button>
 
-                      <button 
-                        type="submit" 
-                        className="btn btn-primary btn-lg" 
+                      <button
+                        type="submit"
+                        className="btn btn-primary step-submit-btn"
                         disabled={submitting}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '12px 28px', fontSize: '0.98rem' }}
                       >
                         <Send size={18} />
-                        <span>{submitting ? 'Submitting & Routing...' : 'Submit Official Grievance'}</span>
+                        <span className="desktop-only">{submitting ? 'Submitting & Routing...' : 'Submit Official Grievance'}</span>
+                        <span className="mobile-only">{submitting ? 'Submitting...' : 'Submit Grievance'}</span>
                       </button>
                     </div>
                   </div>
@@ -1463,8 +1430,10 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
               <div className="glass-panel" style={{ padding: '24px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <BrainCircuit size={22} color="var(--accent-cyan)" />
-                    <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>Real-Time AI Pipeline</h3>
+                    <Shield size={20} color={isDark ? '#38bdf8' : '#0284c7'} />
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                      Automated Grievance Triage System
+                    </h3>
                   </div>
                   {previewLoading && (
                     <span style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)' }} className="animate-spin">
@@ -1474,12 +1443,66 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                 </div>
 
                 {!mlPreview ? (
-                  <div style={{ textAlign: 'center', padding: '36px 14px', color: 'var(--text-muted)' }}>
-                    <Sparkles size={34} style={{ margin: '0 auto 12px', opacity: 0.7, color: 'var(--accent-primary)' }} />
-                    <p style={{ fontSize: '0.85rem', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
-                      Start typing your complaint description to witness live multi-stage machine learning:
-                      <strong style={{ color: 'var(--text-primary)' }}> 30-class categorization, subcategory inference, priority ranking, duplicate check, and SLA forecast</strong>.
+                  <div style={{ textAlign: 'center', padding: '32px 14px', color: 'var(--text-muted)' }}>
+                    <div style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '12px',
+                      background: isDark ? 'rgba(56, 189, 248, 0.12)' : '#e0f2fe',
+                      border: isDark ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid #bae6fd',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 12px',
+                      color: isDark ? '#38bdf8' : '#0284c7'
+                    }}>
+                      <Building size={22} />
+                    </div>
+                    <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                      Automated Department Routing & SLA Forecast
+                    </div>
+                    <p style={{ fontSize: '0.82rem', lineHeight: 1.55, color: 'var(--text-secondary)', margin: '0 auto', maxWidth: '320px' }}>
+                      Enter your grievance details to initiate real-time departmental routing, urgency assessment, duplicate verification, and official SLA timeline allocation.
                     </p>
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '6px',
+                      justifyContent: 'center',
+                      marginTop: '14px',
+                      fontSize: '0.72rem'
+                    }}>
+                      <span style={{
+                        background: isDark ? 'rgba(56, 189, 248, 0.12)' : '#e0f2fe',
+                        color: isDark ? '#38bdf8' : '#0284c7',
+                        border: isDark ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid #bae6fd',
+                        padding: '3px 9px',
+                        borderRadius: '6px',
+                        fontWeight: 700
+                      }}>
+                        30 Division Classification
+                      </span>
+                      <span style={{
+                        background: isDark ? 'rgba(245, 158, 11, 0.12)' : '#fef3c7',
+                        color: isDark ? '#fbbf24' : '#b45309',
+                        border: isDark ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid #fde68a',
+                        padding: '3px 9px',
+                        borderRadius: '6px',
+                        fontWeight: 700
+                      }}>
+                        Priority Assessment
+                      </span>
+                      <span style={{
+                        background: isDark ? 'rgba(16, 185, 129, 0.12)' : '#dcfce7',
+                        color: isDark ? '#34d399' : '#15803d',
+                        border: isDark ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid #bbf7d0',
+                        padding: '3px 9px',
+                        borderRadius: '6px',
+                        fontWeight: 700
+                      }}>
+                        SLA Timeline Allocation
+                      </span>
+                    </div>
                   </div>
                 ) : (
                   <div>
@@ -1514,20 +1537,41 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
                           Predicted Category (30 Divisions)
                         </span>
-                        <span style={{ fontSize: '0.78rem', color: 'var(--accent-emerald)', fontWeight: 700 }}>
-                          {Math.round((mlPreview.summary?.departmentConfidence ?? mlPreview.category_prediction?.confidence ?? 0.95) * 100)}% Confidence
+                        <span style={{ 
+                          fontSize: '0.78rem', 
+                          color: (mlPreview.summary?.primaryDepartment === 'CLASSIFICATION_UNCERTAIN' || mlPreview.summary?.requiresHumanReview) ? '#f59e0b' : 'var(--accent-emerald)', 
+                          fontWeight: 700 
+                        }}>
+                          {Math.round((mlPreview.summary?.departmentConfidence ?? mlPreview.category_prediction?.confidence ?? 0.95) * 100)}% Calibrated Confidence
                         </span>
                       </div>
                       <div style={{
                         fontSize: '1.12rem',
                         fontWeight: 800,
-                        color: 'var(--text-primary)',
+                        color: mlPreview.summary?.primaryDepartment === 'CLASSIFICATION_UNCERTAIN' ? '#f59e0b' : 'var(--text-primary)',
                         marginTop: '4px',
                         wordBreak: 'break-word',
                         lineHeight: 1.3
                       }}>
-                        {mlPreview.summary?.primaryDepartment || mlPreview.category_prediction?.category}
+                        {mlPreview.summary?.primaryDepartment === 'CLASSIFICATION_UNCERTAIN' ? 'CLASSIFICATION UNCERTAIN — MANUAL REVIEW' : (mlPreview.summary?.primaryDepartment || mlPreview.category_prediction?.category)}
                       </div>
+                      {(mlPreview.summary?.primaryDepartment === 'CLASSIFICATION_UNCERTAIN' || mlPreview.summary?.requiresHumanReview) && (
+                        <div style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          marginTop: '4px',
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          background: 'rgba(245, 158, 11, 0.12)',
+                          color: '#f59e0b',
+                          border: '1px solid rgba(245, 158, 11, 0.3)'
+                        }}>
+                          ⚠️ Routed for Human Verification & Manual Review
+                        </div>
+                      )}
 
                       {/* Subcategory - Multi-line responsive wrapping */}
                       <div style={{
@@ -1585,6 +1629,18 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                         </div>
                       )}
 
+                      {/* Top Alternative Predictions */}
+                      {mlPreview.summary?.alternative_categories && mlPreview.summary.alternative_categories.length > 0 && (
+                        <div style={{ marginTop: '8px', paddingTop: '6px', borderTop: '1px dashed var(--border-subtle)', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                          <span style={{ fontWeight: 600 }}>Top Alternative(s): </span>
+                          {mlPreview.summary.alternative_categories.map((alt, idx) => (
+                            <span key={idx} style={{ marginRight: '8px' }}>
+                              {alt.category} ({Math.round(alt.confidence * 100)}%)
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
                       {/* Responsible Department */}
                       <div style={{
                         fontSize: '0.75rem',
@@ -1605,10 +1661,9 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                         Priority & SLA Routing Target
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '6px' }}>
-                        <span className={`badge ${
-                          mlPreview.priority_prediction?.priority === 'CRITICAL' ? 'badge-critical' :
-                          mlPreview.priority_prediction?.priority === 'HIGH' ? 'badge-high' : 'badge-medium'
-                        }`}>
+                        <span className={`badge ${mlPreview.priority_prediction?.priority === 'CRITICAL' ? 'badge-critical' :
+                            mlPreview.priority_prediction?.priority === 'HIGH' ? 'badge-high' : 'badge-medium'
+                          }`}>
                           {mlPreview.priority_prediction?.priority} PRIORITY
                         </span>
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
@@ -1660,7 +1715,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                     </div>
 
                     {/* 6. Spatial Duplicate Detection Alert */}
-                    <DuplicateAlert 
+                    <DuplicateAlert
                       duplicateData={mlPreview.duplicate_detection}
                       onViewExisting={(matchId) => {
                         setSelectedComplaintId(matchId);
@@ -1671,14 +1726,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                 )}
               </div>
 
-              {/* AI Visual Evidence Analysis Card */}
-              {(visualAnalysis || isAnalyzingImage) && (
-                <AIImageAnalysisCard 
-                  analysis={visualAnalysis}
-                  loading={isAnalyzingImage}
-                  fusedPriority={mlPreview?.priority_prediction?.priority}
-                />
-              )}
+
             </div>
           </div>
         </div>

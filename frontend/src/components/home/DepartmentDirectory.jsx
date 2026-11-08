@@ -47,6 +47,7 @@ import {
   Activity
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 export const ALL_30_DEPARTMENTS_DATA = [
   {
@@ -534,9 +535,11 @@ const GROUP_CONFIG = {
 
 export default function DepartmentDirectory({ onSelectDepartment }) {
   const { isDark } = useTheme();
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('ALL');
   const [copiedItem, setCopiedItem] = useState(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const handleCopy = (text, type, id) => {
     navigator.clipboard.writeText(text);
@@ -722,7 +725,9 @@ export default function DepartmentDirectory({ onSelectDepartment }) {
                 margin: 0
               }}
             >
-              Direct contact channels for all 30 public utility and municipal divisions. Call toll-free emergency hotlines, copy verified emails, or file an instant AI-routed complaint.
+              {user?.role === 'officer'
+                ? 'Official contact channels and taskforce dispatch registries for all 30 public utility and municipal divisions across West Bengal.'
+                : 'Direct contact channels for all 30 public utility and municipal divisions. Call toll-free emergency hotlines, copy verified emails, or file an instant AI-routed complaint.'}
             </p>
           </div>
 
@@ -799,10 +804,10 @@ export default function DepartmentDirectory({ onSelectDepartment }) {
             width: '100%',
             background: isDark ? 'rgba(15, 23, 42, 0.85)' : '#ffffff',
             borderRadius: '14px',
-            border: search 
-              ? '1px solid var(--accent-primary)' 
+            border: (isSearchFocused || search)
+              ? '1.5px solid var(--accent-primary)' 
               : isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(15, 23, 42, 0.12)',
-            boxShadow: search 
+            boxShadow: (isSearchFocused || search)
               ? isDark 
                 ? '0 0 0 3px rgba(59, 130, 246, 0.25), 0 8px 24px rgba(0,0,0,0.3)' 
                 : '0 0 0 3px rgba(37, 99, 235, 0.18), 0 6px 18px rgba(15, 23, 42, 0.08)'
@@ -818,7 +823,7 @@ export default function DepartmentDirectory({ onSelectDepartment }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: search ? 'var(--accent-primary)' : 'var(--text-muted)',
+              color: (isSearchFocused || search) ? 'var(--accent-primary)' : 'var(--text-muted)',
               flexShrink: 0
             }}>
               <Search size={18} />
@@ -826,18 +831,23 @@ export default function DepartmentDirectory({ onSelectDepartment }) {
 
             <input
               type="text"
-              className="input dept-search-input"
+              className="dept-search-input"
               value={search}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by department, 112, 1930, PWD, or issue..."
+              placeholder="Search departments, 112, 1930..."
               style={{
                 flex: 1,
                 minWidth: 0,
                 background: 'transparent',
                 border: 'none',
+                boxShadow: 'none',
+                outline: 'none',
                 color: isDark ? '#ffffff' : '#0f172a',
                 fontFamily: 'var(--font-body)',
-                outline: 'none'
+                fontSize: '0.84rem',
+                padding: '11px 12px'
               }}
             />
 
@@ -1331,9 +1341,19 @@ export default function DepartmentDirectory({ onSelectDepartment }) {
                   className="dept-action-btn"
                   onClick={() => onSelectDepartment(dept)}
                 >
-                  <Sparkles size={15} />
-                  File Grievance to {dept.code}
-                  <ArrowRight size={14} />
+                  {user?.role === 'officer' ? (
+                    <>
+                      <Briefcase size={15} />
+                      View {dept.code} Tasks
+                      <ArrowRight size={14} />
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={15} />
+                      File Grievance to {dept.code}
+                      <ArrowRight size={14} />
+                    </>
+                  )}
                 </button>
               </div>
             );

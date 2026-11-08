@@ -70,6 +70,16 @@ class CloudinaryService {
 
         const isVideo = uploadResult.resource_type === 'video';
 
+        // Cleanup local temporary file once safely stored in Cloudinary
+        if (typeof filePathOrBuffer === 'string' && fs.existsSync(filePathOrBuffer)) {
+          try {
+            fs.unlinkSync(filePathOrBuffer);
+            console.log(`✓ [Cloudinary] Cleaned up temporary local upload: ${path.basename(filePathOrBuffer)}`);
+          } catch (unlinkErr) {
+            console.warn(`⚠️ [Cloudinary] Failed to unlink temporary local upload: ${unlinkErr.message}`);
+          }
+        }
+
         return {
           success: true,
           is_cloud: true,
@@ -87,12 +97,20 @@ class CloudinaryService {
           optimized_url: this.getOptimizedUrl(uploadResult.public_id, { resourceType: uploadResult.resource_type })
         };
       } catch (cloudErr) {
+        // Also cleanup temporary file on failure
+        if (typeof filePathOrBuffer === 'string' && fs.existsSync(filePathOrBuffer)) {
+          try { fs.unlinkSync(filePathOrBuffer); } catch (_) {}
+        }
         console.error('Cloudinary API upload failed:', cloudErr.message);
         throw new Error(`Cloudinary upload failed: ${cloudErr.message}`);
       }
     }
 
-    // 2. Local Fallback Mode (when credentials not yet entered in .env)
+    // 2. If credentials are intentionally not configured, throw explicit error
+    if (typeof filePathOrBuffer === 'string' && fs.existsSync(filePathOrBuffer)) {
+      try { fs.unlinkSync(filePathOrBuffer); } catch (_) {}
+    }
+    throw new Error('Cloudinary credentials are not configured in backend/.env. Evidence must be uploaded to Cloudinary.');
     const uploadsDir = path.resolve(__dirname, '../../uploads');
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });

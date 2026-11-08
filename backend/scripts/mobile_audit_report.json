@@ -1,0 +1,1329 @@
+{
+  "timestamp": "2026-11-01T19:26:46.152Z",
+  "passCount": 23,
+  "failCount": 0,
+  "results": [
+    {
+      "route": "home",
+      "routeName": "home",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 615,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 615,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 438,
+          "right": 416,
+          "scrollWidth": 438,
+          "clientWidth": 438
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 492,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 486,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        },
+        {
+          "selector": "div",
+          "width": 7,
+          "right": 477,
+          "scrollWidth": 7,
+          "clientWidth": 7
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 492,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 486,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        }
+      ],
+      "screenshot": "mobile_y200e_home.png"
+    },
+    {
+      "route": "departments",
+      "routeName": "departments",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "div",
+          "width": 260,
+          "right": 440,
+          "scrollWidth": 260,
+          "clientWidth": 260
+        },
+        {
+          "selector": "button.dept-tab-pill",
+          "width": 190,
+          "right": 415,
+          "scrollWidth": 188,
+          "clientWidth": 188
+        },
+        {
+          "selector": "span",
+          "width": 17,
+          "right": 402,
+          "scrollWidth": 17,
+          "clientWidth": 17
+        },
+        {
+          "selector": "button.dept-tab-pill",
+          "width": 214,
+          "right": 637,
+          "scrollWidth": 212,
+          "clientWidth": 212
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 14,
+          "right": 450,
+          "scrollWidth": 14,
+          "clientWidth": 14
+        },
+        {
+          "selector": "path.[object.SVGAnimatedString]",
+          "width": 2,
+          "right": 444,
+          "scrollWidth": 0,
+          "clientWidth": 0
+        },
+        {
+          "selector": "path.[object.SVGAnimatedString]",
+          "width": 4,
+          "right": 448,
+          "scrollWidth": 0,
+          "clientWidth": 0
+        },
+        {
+          "selector": "path.[object.SVGAnimatedString]",
+          "width": 4,
+          "right": 442,
+          "scrollWidth": 0,
+          "clientWidth": 0
+        }
+      ],
+      "screenshot": "mobile_y200e_departments.png"
+    },
+    {
+      "route": "login",
+      "routeName": "login",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "div.auth-ambient-orb-1",
+          "width": 542,
+          "right": 561,
+          "scrollWidth": 540,
+          "clientWidth": 540
+        },
+        {
+          "selector": "div.auth-ambient-orb-3",
+          "width": 360,
+          "right": 525,
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "selector": "button.portal-role-card",
+          "width": 137,
+          "right": 493,
+          "scrollWidth": 135,
+          "clientWidth": 135
+        },
+        {
+          "selector": "div",
+          "width": 115,
+          "right": 482,
+          "scrollWidth": 115,
+          "clientWidth": 115
+        },
+        {
+          "selector": "span",
+          "width": 85,
+          "right": 482,
+          "scrollWidth": 85,
+          "clientWidth": 85
+        },
+        {
+          "selector": "span",
+          "width": 84,
+          "right": 451,
+          "scrollWidth": 84,
+          "clientWidth": 84
+        }
+      ],
+      "screenshot": "mobile_y200e_login.png"
+    },
+    {
+      "route": "demo-vault-modal",
+      "routeName": "demo-vault-modal",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 454,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 110,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 597,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 28,
+          "right": 501,
+          "scrollWidth": 28,
+          "clientWidth": 28
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 586,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 586,
+          "scrollWidth": 112,
+          "clientWidth": 75
+        }
+      ],
+      "screenshot": "mobile_y200e_demo_vault.png"
+    },
+    {
+      "route": "register",
+      "routeName": "register",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "div.auth-ambient-orb-1",
+          "width": 541,
+          "right": 560,
+          "scrollWidth": 540,
+          "clientWidth": 540
+        },
+        {
+          "selector": "div.auth-ambient-orb-3",
+          "width": 360,
+          "right": 525,
+          "scrollWidth": 360,
+          "clientWidth": 360
+        }
+      ],
+      "screenshot": "mobile_y200e_register.png"
+    },
+    {
+      "route": "citizen-dashboard",
+      "routeName": "citizen-dashboard",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [],
+      "screenshot": "mobile_y200e_citizen_dashboard.png"
+    },
+    {
+      "route": "new-complaint",
+      "routeName": "new-complaint",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 454,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 110,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 597,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 28,
+          "right": 501,
+          "scrollWidth": 28,
+          "clientWidth": 28
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 586,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 586,
+          "scrollWidth": 112,
+          "clientWidth": 75
+        }
+      ],
+      "screenshot": "mobile_y200e_new_complaint.png"
+    },
+    {
+      "route": "officer-dashboard",
+      "routeName": "officer-dashboard",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [],
+      "screenshot": "mobile_y200e_officer_dashboard.png"
+    },
+    {
+      "route": "admin-dashboard",
+      "routeName": "admin-dashboard",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 615,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 615,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 438,
+          "right": 416,
+          "scrollWidth": 438,
+          "clientWidth": 438
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 492,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 486,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        },
+        {
+          "selector": "div",
+          "width": 7,
+          "right": 477,
+          "scrollWidth": 7,
+          "clientWidth": 7
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 492,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 486,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        }
+      ],
+      "screenshot": "mobile_y200e_admin_dashboard.png"
+    },
+    {
+      "route": "gis-heatmap",
+      "routeName": "gis-heatmap",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 615,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 615,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 438,
+          "right": 416,
+          "scrollWidth": 438,
+          "clientWidth": 438
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 492,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 486,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        },
+        {
+          "selector": "div",
+          "width": 7,
+          "right": 477,
+          "scrollWidth": 7,
+          "clientWidth": 7
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 492,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 486,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        }
+      ],
+      "screenshot": "mobile_y200e_gis_heatmap.png"
+    },
+    {
+      "route": "ml-inspector",
+      "routeName": "ml-inspector",
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "windowWidth": 393,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 615,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 615,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 438,
+          "right": 416,
+          "scrollWidth": 438,
+          "clientWidth": 438
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 492,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 486,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        },
+        {
+          "selector": "div",
+          "width": 7,
+          "right": 477,
+          "scrollWidth": 7,
+          "clientWidth": 7
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 492,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 486,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        }
+      ],
+      "screenshot": "mobile_y200e_ml_inspector.png"
+    },
+    {
+      "routeName": "home_360x800",
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "windowWidth": 360,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 598,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 598,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 408,
+          "right": 384,
+          "scrollWidth": 408,
+          "clientWidth": 408
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 475,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 469,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        },
+        {
+          "selector": "div",
+          "width": 7,
+          "right": 460,
+          "scrollWidth": 7,
+          "clientWidth": 7
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 475,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 469,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        }
+      ]
+    },
+    {
+      "routeName": "login_360x800",
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "windowWidth": 360,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "div.auth-ambient-orb-1",
+          "width": 542,
+          "right": 559,
+          "scrollWidth": 540,
+          "clientWidth": 540
+        },
+        {
+          "selector": "div.auth-ambient-orb-3",
+          "width": 360,
+          "right": 511,
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "selector": "button.portal-role-card",
+          "width": 137,
+          "right": 493,
+          "scrollWidth": 135,
+          "clientWidth": 135
+        },
+        {
+          "selector": "div",
+          "width": 115,
+          "right": 482,
+          "scrollWidth": 115,
+          "clientWidth": 115
+        },
+        {
+          "selector": "div",
+          "width": 24,
+          "right": 391,
+          "scrollWidth": 24,
+          "clientWidth": 24
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 14,
+          "right": 386,
+          "scrollWidth": 14,
+          "clientWidth": 14
+        },
+        {
+          "selector": "path.[object.SVGAnimatedString]",
+          "width": 9,
+          "right": 384,
+          "scrollWidth": 0,
+          "clientWidth": 0
+        },
+        {
+          "selector": "path.[object.SVGAnimatedString]",
+          "width": 4,
+          "right": 381,
+          "scrollWidth": 0,
+          "clientWidth": 0
+        }
+      ]
+    },
+    {
+      "routeName": "new-complaint_360x800",
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "windowWidth": 360,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 450,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 439,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 439,
+          "scrollWidth": 110,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 439,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 593,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 28,
+          "right": 497,
+          "scrollWidth": 28,
+          "clientWidth": 28
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 582,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 582,
+          "scrollWidth": 112,
+          "clientWidth": 75
+        }
+      ]
+    },
+    {
+      "routeName": "home_375x812",
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "windowWidth": 375,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 606,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 606,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 426,
+          "right": 401,
+          "scrollWidth": 426,
+          "clientWidth": 426
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 483,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 477,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        },
+        {
+          "selector": "div",
+          "width": 7,
+          "right": 468,
+          "scrollWidth": 7,
+          "clientWidth": 7
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 483,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 477,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        }
+      ]
+    },
+    {
+      "routeName": "login_375x812",
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "windowWidth": 375,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "div.auth-ambient-orb-1",
+          "width": 543,
+          "right": 560,
+          "scrollWidth": 540,
+          "clientWidth": 540
+        },
+        {
+          "selector": "div.auth-ambient-orb-3",
+          "width": 360,
+          "right": 518,
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "selector": "button.portal-role-card",
+          "width": 137,
+          "right": 493,
+          "scrollWidth": 135,
+          "clientWidth": 135
+        },
+        {
+          "selector": "div",
+          "width": 115,
+          "right": 482,
+          "scrollWidth": 115,
+          "clientWidth": 115
+        },
+        {
+          "selector": "div",
+          "width": 24,
+          "right": 391,
+          "scrollWidth": 24,
+          "clientWidth": 24
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 14,
+          "right": 386,
+          "scrollWidth": 14,
+          "clientWidth": 14
+        },
+        {
+          "selector": "path.[object.SVGAnimatedString]",
+          "width": 9,
+          "right": 384,
+          "scrollWidth": 0,
+          "clientWidth": 0
+        },
+        {
+          "selector": "path.[object.SVGAnimatedString]",
+          "width": 4,
+          "right": 381,
+          "scrollWidth": 0,
+          "clientWidth": 0
+        }
+      ]
+    },
+    {
+      "routeName": "new-complaint_375x812",
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "windowWidth": 375,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 450,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 439,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 439,
+          "scrollWidth": 110,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 439,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 593,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 28,
+          "right": 497,
+          "scrollWidth": 28,
+          "clientWidth": 28
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 582,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 582,
+          "scrollWidth": 112,
+          "clientWidth": 75
+        }
+      ]
+    },
+    {
+      "routeName": "home_390x844",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "windowWidth": 390,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 614,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 614,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 434,
+          "right": 412,
+          "scrollWidth": 434,
+          "clientWidth": 434
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 491,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 485,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        },
+        {
+          "selector": "div",
+          "width": 7,
+          "right": 476,
+          "scrollWidth": 7,
+          "clientWidth": 7
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 491,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 485,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        }
+      ]
+    },
+    {
+      "routeName": "login_390x844",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "windowWidth": 390,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "div.auth-ambient-orb-1",
+          "width": 543,
+          "right": 561,
+          "scrollWidth": 540,
+          "clientWidth": 540
+        },
+        {
+          "selector": "div.auth-ambient-orb-3",
+          "width": 360,
+          "right": 524,
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "selector": "button.portal-role-card",
+          "width": 137,
+          "right": 493,
+          "scrollWidth": 135,
+          "clientWidth": 135
+        },
+        {
+          "selector": "div",
+          "width": 115,
+          "right": 482,
+          "scrollWidth": 115,
+          "clientWidth": 115
+        },
+        {
+          "selector": "span",
+          "width": 85,
+          "right": 482,
+          "scrollWidth": 85,
+          "clientWidth": 85
+        },
+        {
+          "selector": "span",
+          "width": 84,
+          "right": 451,
+          "scrollWidth": 84,
+          "clientWidth": 84
+        }
+      ]
+    },
+    {
+      "routeName": "new-complaint_390x844",
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "windowWidth": 390,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 454,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 110,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 443,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "button",
+          "width": 135,
+          "right": 597,
+          "scrollWidth": 133,
+          "clientWidth": 133
+        },
+        {
+          "selector": "div",
+          "width": 28,
+          "right": 501,
+          "scrollWidth": 28,
+          "clientWidth": 28
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 586,
+          "scrollWidth": 75,
+          "clientWidth": 75
+        },
+        {
+          "selector": "div",
+          "width": 75,
+          "right": 586,
+          "scrollWidth": 112,
+          "clientWidth": 75
+        }
+      ]
+    },
+    {
+      "routeName": "home_430x932",
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "windowWidth": 430,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 634,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "img.leaflet-tile.leaflet-tile-loaded",
+          "width": 256,
+          "right": 634,
+          "scrollWidth": 256,
+          "clientWidth": 256
+        },
+        {
+          "selector": "svg.[object.SVGAnimatedString]",
+          "width": 482,
+          "right": 456,
+          "scrollWidth": 482,
+          "clientWidth": 482
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 511,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 505,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        },
+        {
+          "selector": "div",
+          "width": 7,
+          "right": 496,
+          "scrollWidth": 7,
+          "clientWidth": 7
+        },
+        {
+          "selector": "div.leaflet-marker-icon.custom-leaflet-marker",
+          "width": 32,
+          "right": 511,
+          "scrollWidth": 32,
+          "clientWidth": 32
+        },
+        {
+          "selector": "div",
+          "width": 26,
+          "right": 505,
+          "scrollWidth": 20,
+          "clientWidth": 20
+        }
+      ]
+    },
+    {
+      "routeName": "login_430x932",
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "windowWidth": 430,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "div.auth-ambient-orb-1",
+          "width": 543,
+          "right": 563,
+          "scrollWidth": 540,
+          "clientWidth": 540
+        },
+        {
+          "selector": "div.auth-ambient-orb-3",
+          "width": 360,
+          "right": 541,
+          "scrollWidth": 360,
+          "clientWidth": 360
+        },
+        {
+          "selector": "button.portal-role-card",
+          "width": 137,
+          "right": 493,
+          "scrollWidth": 135,
+          "clientWidth": 135
+        },
+        {
+          "selector": "div",
+          "width": 115,
+          "right": 482,
+          "scrollWidth": 115,
+          "clientWidth": 115
+        },
+        {
+          "selector": "span",
+          "width": 85,
+          "right": 482,
+          "scrollWidth": 85,
+          "clientWidth": 85
+        },
+        {
+          "selector": "span",
+          "width": 84,
+          "right": 451,
+          "scrollWidth": 84,
+          "clientWidth": 84
+        }
+      ]
+    },
+    {
+      "routeName": "new-complaint_430x932",
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "windowWidth": 430,
+      "hasOverflow": false,
+      "offendingElements": [
+        {
+          "selector": "button",
+          "width": 145,
+          "right": 484,
+          "scrollWidth": 143,
+          "clientWidth": 143
+        },
+        {
+          "selector": "div",
+          "width": 85,
+          "right": 473,
+          "scrollWidth": 85,
+          "clientWidth": 85
+        },
+        {
+          "selector": "div",
+          "width": 85,
+          "right": 473,
+          "scrollWidth": 110,
+          "clientWidth": 85
+        },
+        {
+          "selector": "div",
+          "width": 85,
+          "right": 473,
+          "scrollWidth": 85,
+          "clientWidth": 85
+        },
+        {
+          "selector": "button",
+          "width": 145,
+          "right": 637,
+          "scrollWidth": 143,
+          "clientWidth": 143
+        },
+        {
+          "selector": "div",
+          "width": 28,
+          "right": 531,
+          "scrollWidth": 28,
+          "clientWidth": 28
+        },
+        {
+          "selector": "div",
+          "width": 85,
+          "right": 626,
+          "scrollWidth": 85,
+          "clientWidth": 85
+        },
+        {
+          "selector": "div",
+          "width": 85,
+          "right": 626,
+          "scrollWidth": 112,
+          "clientWidth": 85
+        }
+      ]
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ]
+}

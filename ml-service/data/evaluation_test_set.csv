@@ -1,0 +1,119 @@
+complaint_id,complaint_text,expected_category,subcategory,split,source
+CP-SYN-0124,Kindly register a complaint about inadequate colony drainage in a village area.,Housing & Urban Development,Housing Scheme Disbursement Delay,test,synthetic
+CP-SYN-0160,Kindly register a complaint about unbarricaded construction site beside a local market.,Building & Municipal Engineering,Dangerous Dilapidated Building,test,synthetic
+CP-SYN-0164,There is a problem with stalking near a school; please inspect it.,Women & Child Safety,Street Harassment / Eve Teasing,test,synthetic
+CP-SYN-0197,Please arrange appropriate action for incorrect plot number along a main road.,Land & Land Records,Encroachment on Govt Land,test,synthetic
+CP-SYN-0211,Please investigate oil in drain in a village area.,Environment & Pollution,Industrial Smoke & Air Emissions,test,synthetic
+CP-SYN-0213,Can the responsible team address multiple failed streetlights in a village area?,Street Lighting & Electrical,Streetlight Completely Off,test,synthetic
+CP-SYN-0221,I want to report factory PPE missing in a West Bengal neighborhood.,Labour & Employment,Unpaid Worker Wages / Salary Withheld,test,synthetic
+CP-SYN-0223,Can the responsible team address library access failure in a village area?,Higher Education,University Examination Result Discrepancy,test,synthetic
+CP-SYN-0229,Please investigate physical assault beside a public park.,Police & Law Enforcement,Death Investigation / Suspicious or Unexplained Death (pending verification),test,synthetic
+CP-SYN-0243,Can the responsible team address fake bill payment link near a residential lane?,Cyber Crime,UPI / Payment Gateway Fraud,test,synthetic
+CP-SYN-0251,Please investigate eroded road shoulder near a school.,Roads & Public Works,Pothole / Surface Crater,test,synthetic
+CP-SYN-0253,Please arrange appropriate action for nonworking fire alarm near a government office.,Fire & Emergency Services,Residential Structure Fire,test,synthetic
+CP-SYN-0268,Kindly register a complaint about construction waste in lane in a West Bengal neighborhood.,Solid Waste Management,Overflowing Garbage Vat / Bin,test,synthetic
+CP-SYN-0269,Please investigate overcrowded waiting area near a government office.,Health & Hospitals,Hospital Emergency Services Unavailable,test,synthetic
+CP-SYN-0274,Residents are affected by missing office service hours near a bus stop.,Public Grievance / General Administration,Delay in Government Service Application,test,synthetic
+CP-SYN-0287,A local resident reports dead animal on road beside a public park.,Public Health & Sanitation,Mosquito Breeding & Dengue Risk,test,synthetic
+CP-SYN-0289,Please investigate school entrance blocked by parking in a village area.,Education – Schools,School Building Urgent Repair / Roof Seepage,test,synthetic
+CP-SYN-0294,Residents are affected by public transport harassment in a West Bengal neighborhood.,Women & Child Safety,Street Harassment / Eve Teasing,test,synthetic
+CP-SYN-0304,Kindly register a complaint about illegal parking in a village area.,Traffic & Road Safety,Fatal Vehicle Collision,test,synthetic
+CP-SYN-0308,A local resident reports overcrowded bus beside a public park.,Public Transport,Bus Route Cancellation / Absence,test,synthetic
+CP-SYN-0314,Can the responsible team address unsafe playground equipment beside a local market?,Parks & Public Spaces,Damaged Swings & Playground,test,synthetic
+CP-SYN-0322,There is a problem with agricultural market waste along a main road; please inspect it.,Agriculture,Irrigation Canal Water Siltation,test,synthetic
+CP-SYN-0323,There is a problem with leaking sewer pipe along a main road; please inspect it.,Drainage & Sewerage,Open / Missing Manhole Cover,test,synthetic
+CP-SYN-0345,Residents are affected by broken waiting-room seat near a school.,Railway-related Public Complaints,Railway Station Approach Sanitation,test,synthetic
+CP-SYN-0352,Residents are affected by repeated power cuts beside a public park.,Electricity & Power,Transformer Sparking / Overheating,test,synthetic
+CP-SYN-0373,Please investigate wind-damaged house near a residential lane.,Disaster Management,Flood Inundation & Rescue,test,synthetic
+CP-SYN-0416,There is a problem with bill refused in a West Bengal neighborhood; please inspect it.,Consumer Affairs,Retailer Charging Above MRP,test,synthetic
+CP-SYN-0417,There is a problem with structural building crack near a school; please inspect it.,Building & Municipal Engineering,Dangerous Dilapidated Building,test,synthetic
+CP-SYN-0423,A local resident reports injured wild animal near road in a village area.,Forest & Wildlife,Illegal Tree Cutting & Timber Smuggling,test,synthetic
+CP-SYN-0426,Please investigate missing housing project facilities near a bus stop.,Housing & Urban Development,Housing Scheme Disbursement Delay,test,synthetic
+CP-SYN-0430,Kindly register a complaint about vehicle collision blocking traffic in a West Bengal neighborhood.,Traffic & Road Safety,Fatal Vehicle Collision,test,synthetic
+CP-SYN-0434,Please arrange appropriate action for wastewater into canal beside a local market.,Environment & Pollution,Industrial Smoke & Air Emissions,test,synthetic
+CP-SYN-0453,Kindly register a complaint about emergency treatment refusal near a residential lane.,Health & Hospitals,Hospital Emergency Services Unavailable,test,synthetic
+CP-SYN-0457,Residents are affected by pipeline damaged by roadwork in a West Bengal neighborhood.,Water Supply,Pipeline Burst / Leakage,test,synthetic
+CP-SYN-0461,Residents are affected by broken light cover exposing wires in a village area.,Street Lighting & Electrical,Streetlight Completely Off,test,synthetic
+CP-SYN-0466,Please arrange appropriate action for ration shop closed on hours near a government office.,Food & Public Distribution,Ration Shop PDS Irregularity,test,synthetic
+CP-SYN-0473,Kindly register a complaint about incorrect land area in a West Bengal neighborhood.,Land & Land Records,Encroachment on Govt Land,test,synthetic
+CP-SYN-0491,A local resident reports hacked email near a residential lane.,Cyber Crime,UPI / Payment Gateway Fraud,test,synthetic
+CP-SYN-0500,Kindly register a complaint about shop theft along a main road.,Police & Law Enforcement,Death Investigation / Suspicious or Unexplained Death (pending verification),test,synthetic
+CP-SYN-0507,Please investigate delayed veterinary request along a main road.,Animal Resources,Stray Cattle & Livestock Road Obstruction,test,synthetic
+CP-SYN-0516,Please investigate excessive hours without breaks in a ward.,Labour & Employment,Unpaid Worker Wages / Salary Withheld,test,synthetic
+CP-SYN-0522,Can the responsible team address stagnant mosquito water beside a public park?,Public Health & Sanitation,Mosquito Breeding & Dengue Risk,test,synthetic
+CP-SYN-0543,A local resident reports leaking gas cylinder beside a local market.,Fire & Emergency Services,Residential Structure Fire,test,synthetic
+CP-SYN-0544,Please arrange appropriate action for broken drain cover near a school.,Drainage & Sewerage,Open / Missing Manhole Cover,test,synthetic
+CP-SYN-0550,Can the responsible team address broken terminal seating beside a local market?,Public Transport,Bus Route Cancellation / Absence,test,synthetic
+CP-SYN-0580,Kindly register a complaint about incorrect semester registration near a school.,Higher Education,University Examination Result Discrepancy,test,synthetic
+CP-SYN-0607,A local resident reports blocked station ramp near a residential lane.,Railway-related Public Complaints,Railway Station Approach Sanitation,test,synthetic
+CP-SYN-0615,A local resident reports unauthorized waste dumping beside a public park.,Solid Waste Management,Overflowing Garbage Vat / Bin,test,synthetic
+CP-SYN-0627,Kindly register a complaint about leaking irrigation pipe along a main road.,Agriculture,Irrigation Canal Water Siltation,test,synthetic
+CP-SYN-0629,Can the responsible team address damaged public ceiling in a ward?,Building & Municipal Engineering,Dangerous Dilapidated Building,test,synthetic
+CP-SYN-0646,I want to report bench with sharp edges along a main road.,Parks & Public Spaces,Damaged Swings & Playground,test,synthetic
+CP-SYN-0649,A local resident reports wastewater into canal in a West Bengal neighborhood.,Environment & Pollution,Industrial Smoke & Air Emissions,test,synthetic
+CP-SYN-0668,A local resident reports speeding near school near a bus stop.,Traffic & Road Safety,Fatal Vehicle Collision,test,synthetic
+CP-SYN-0703,Residents are affected by streetlight outage near a bus stop.,Street Lighting & Electrical,Streetlight Completely Off,test,synthetic
+CP-SYN-0707,A local resident reports severe waterlogging beside a public park.,Disaster Management,Flood Inundation & Rescue,test,synthetic
+CP-SYN-0717,I want to report leaking gas cylinder beside a local market.,Fire & Emergency Services,Residential Structure Fire,test,synthetic
+CP-SYN-0719,I want to report water outage for days in a ward.,Water Supply,Pipeline Burst / Leakage,test,synthetic
+CP-SYN-0723,A local resident reports stolen documents near a bus stop.,Police & Law Enforcement,Death Investigation / Suspicious or Unexplained Death (pending verification),test,synthetic
+CP-SYN-0738,Kindly register a complaint about unauthorized service deduction along a main road.,Consumer Affairs,Retailer Charging Above MRP,test,synthetic
+CP-SYN-0741,A local resident reports damaged common staircase in a village area.,Housing & Urban Development,Housing Scheme Disbursement Delay,test,synthetic
+CP-SYN-0745,Please investigate incorrect meter reading in a village area.,Electricity & Power,Transformer Sparking / Overheating,test,synthetic
+CP-SYN-0750,Residents are affected by damaged bridge surface in a ward.,Roads & Public Works,Pothole / Surface Crater,test,synthetic
+CP-SYN-0760,Residents are affected by inaccessible bus stop in a ward.,Public Transport,Bus Route Cancellation / Absence,test,synthetic
+CP-SYN-0763,Can the responsible team address unusable school toilet beside a local market?,Education – Schools,School Building Urgent Repair / Roof Seepage,test,synthetic
+CP-SYN-0766,I want to report unavailable ambulance in a village area.,Health & Hospitals,Hospital Emergency Services Unavailable,test,synthetic
+CP-SYN-0769,I want to report sewage entering pond near a school.,Drainage & Sewerage,Open / Missing Manhole Cover,test,synthetic
+CP-SYN-0803,Can the responsible team address dead animal near water beside a local market?,Animal Resources,Stray Cattle & Livestock Road Obstruction,test,synthetic
+CP-SYN-0827,A local resident reports school bullying along a main road.,Women & Child Safety,Street Harassment / Eve Teasing,test,synthetic
+CP-SYN-0852,I want to report public counter closed along a main road.,Public Grievance / General Administration,Delay in Government Service Application,test,synthetic
+CP-SYN-0872,Please arrange appropriate action for fake bill payment link along a main road.,Cyber Crime,UPI / Payment Gateway Fraud,test,synthetic
+CP-SYN-0877,Please investigate plastic waste in park near a government office.,Solid Waste Management,Overflowing Garbage Vat / Bin,test,synthetic
+CP-SYN-0882,Residents are affected by plastic in pond near a residential lane.,Environment & Pollution,Industrial Smoke & Air Emissions,test,synthetic
+CP-SYN-0887,Please arrange appropriate action for unbarricaded construction site in a village area.,Building & Municipal Engineering,Dangerous Dilapidated Building,test,synthetic
+CP-SYN-0895,There is a problem with exam portal rejecting form in a ward; please inspect it.,Higher Education,University Examination Result Discrepancy,test,synthetic
+CP-SYN-0896,Residents are affected by dumping near forest in a village area.,Forest & Wildlife,Illegal Tree Cutting & Timber Smuggling,test,synthetic
+CP-SYN-0899,Please arrange appropriate action for difficulty obtaining land copy near a school.,Land & Land Records,Encroachment on Govt Land,test,synthetic
+CP-SYN-0906,A local resident reports illegal parking near a government office.,Traffic & Road Safety,Fatal Vehicle Collision,test,synthetic
+CP-SYN-0921,Please investigate streetlight outage near a bus stop.,Street Lighting & Electrical,Streetlight Completely Off,test,synthetic
+CP-SYN-0929,A local resident reports damaged irrigation canal near a residential lane.,Agriculture,Irrigation Canal Water Siltation,test,synthetic
+CP-SYN-0931,Please investigate power line touching branches near a government office.,Electricity & Power,Transformer Sparking / Overheating,test,synthetic
+CP-SYN-0943,A local resident reports storm-damaged infrastructure beside a local market.,Disaster Management,Flood Inundation & Rescue,test,synthetic
+CP-SYN-0947,Can the responsible team address animal waste in public area beside a local market?,Public Health & Sanitation,Mosquito Breeding & Dengue Risk,test,synthetic
+CP-SYN-0951,There is a problem with delayed housing application beside a public park; please inspect it.,Housing & Urban Development,Housing Scheme Disbursement Delay,test,synthetic
+CP-SYN-0952,Please investigate stolen mobile phone in a village area.,Police & Law Enforcement,Death Investigation / Suspicious or Unexplained Death (pending verification),test,synthetic
+CP-SYN-0982,A local resident reports ration shop closed on hours in a West Bengal neighborhood.,Food & Public Distribution,Ration Shop PDS Irregularity,test,synthetic
+CP-SYN-0988,Please arrange appropriate action for defective appliance near a bus stop.,Consumer Affairs,Retailer Charging Above MRP,test,synthetic
+CP-SYN-0989,Please investigate overflowing water tank in a West Bengal neighborhood.,Water Supply,Pipeline Burst / Leakage,test,synthetic
+CP-SYN-0991,There is a problem with unsafe playground equipment near a residential lane; please inspect it.,Parks & Public Spaces,Damaged Swings & Playground,test,synthetic
+CURATED-TEST-8,A resident reports an unidentified suspicious package in a public place.,Police & Law Enforcement,Death Investigation / Suspicious or Unexplained Death (pending verification),test,curated_250
+CURATED-TEST-10,"A citizen receives a fake UPI message claiming ₹25,000 was debited.",Cyber Crime,UPI / Payment Gateway Fraud,test,curated_250
+CURATED-TEST-19,A woman reports repeated harassment while walking home.,Women & Child Safety,Street Harassment / Eve Teasing,test,curated_250
+CURATED-TEST-33,A damaged traffic sign is difficult to read.,Traffic & Road Safety,Fatal Vehicle Collision,test,curated_250
+CURATED-TEST-37,A large pothole filled with rainwater is present near a school.,Roads & Public Works,Pothole / Surface Crater,test,curated_250
+CURATED-TEST-49,A drain emits a strong foul smell near a market.,Drainage & Sewerage,Open / Missing Manhole Cover,test,curated_250
+CURATED-TEST-60,Water from a community supply has an unusual smell.,Water Supply,Pipeline Burst / Leakage,test,curated_250
+CURATED-TEST-66,Residents are dumping household waste in an unauthorized location.,Solid Waste Management,Overflowing Garbage Vat / Bin,test,curated_250
+CURATED-TEST-75,An exposed electrical junction box is accessible to pedestrians.,Street Lighting & Electrical,Streetlight Completely Off,test,curated_250
+CURATED-TEST-82,Stagnant water near houses is creating mosquito breeding conditions.,Public Health & Sanitation,Mosquito Breeding & Dengue Risk,test,curated_250
+CURATED-TEST-97,A small fire has started in a garbage dumping area.,Fire & Emergency Services,Residential Structure Fire,test,curated_250
+CURATED-TEST-99,Heavy rainfall has flooded a residential street.,Disaster Management,Flood Inundation & Rescue,test,curated_250
+CURATED-TEST-107,Smoke from a factory is affecting nearby residents.,Environment & Pollution,Industrial Smoke & Air Emissions,test,curated_250
+CURATED-TEST-116,A park boundary wall has collapsed.,Parks & Public Spaces,Damaged Swings & Playground,test,curated_250
+CURATED-TEST-127,An unauthorized structure is obstructing a public passage.,Building & Municipal Engineering,Dangerous Dilapidated Building,test,curated_250
+CURATED-TEST-131,A citizen reports an incorrect name on a land record.,Land & Land Records,Encroachment on Govt Land,test,curated_250
+CURATED-TEST-143,A residential colony has inadequate drainage infrastructure.,Housing & Urban Development,Housing Scheme Disbursement Delay,test,curated_250
+CURATED-TEST-147,A locality has experienced repeated power cuts.,Electricity & Power,Transformer Sparking / Overheating,test,curated_250
+CURATED-TEST-157,A bus route has been discontinued without clear information.,Public Transport,Bus Route Cancellation / Absence,test,curated_250
+CURATED-TEST-169,A railway station lacks adequate lighting in a passenger area.,Railway-related Public Complaints,Railway Station Approach Sanitation,test,curated_250
+CURATED-TEST-174,A health center has no functioning public toilet.,Health & Hospitals,Hospital Emergency Services Unavailable,test,curated_250
+CURATED-TEST-180,A ration shop is distributing less food grain than the stated quantity.,Food & Public Distribution,Ration Shop PDS Irregularity,test,curated_250
+CURATED-TEST-189,A customer reports a defective household appliance.,Consumer Affairs,Retailer Charging Above MRP,test,curated_250
+CURATED-TEST-195,A school classroom roof leaks during rainfall.,Education – Schools,School Building Urgent Repair / Roof Seepage,test,curated_250
+CURATED-TEST-205,A college laboratory has damaged electrical equipment.,Higher Education,University Examination Result Discrepancy,test,curated_250
+CURATED-TEST-211,A contractor has not paid workers their wages for two months.,Labour & Employment,Unpaid Worker Wages / Salary Withheld,test,curated_250
+CURATED-TEST-219,A farmer reports a damaged irrigation canal.,Agriculture,Irrigation Canal Water Siltation,test,curated_250
+CURATED-TEST-229,A livestock vaccination camp has not visited the locality.,Animal Resources,Stray Cattle & Livestock Road Obstruction,test,curated_250
+CURATED-TEST-237,A forest boundary fence is damaged.,Forest & Wildlife,Illegal Tree Cutting & Timber Smuggling,test,curated_250
+CURATED-TEST-245,A citizen reports an incorrect entry in a government document.,Public Grievance / General Administration,Delay in Government Service Application,test,curated_250

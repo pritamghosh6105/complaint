@@ -143,11 +143,19 @@ const complaintSchema = new mongoose.Schema({
   cause_known: { type: Boolean, default: false },
   classification_reason: { type: String, default: null },
   original_predicted_department: { type: String, default: null },
+  original_citizen_input: { type: String, default: null },
+  structured_incident: { type: mongoose.Schema.Types.Mixed, default: null },
+  was_overridden_by_citizen: { type: Boolean, default: false },
+  final_citizen_category: { type: String, default: null },
   final_department: { type: String, default: null, index: true },
   reviewed_by: { type: String, default: null },
   reviewed_at: { type: Date, default: null },
   admin_override: { type: Boolean, default: false },
-  admin_override_reason: { type: String, default: null }
+  admin_override_reason: { type: String, default: null },
+  triage_status: { type: String, enum: ['PENDING_OFFICER_TRIAGE', 'CONFIRMED_CRITICAL', 'RECALIBRATED_NORMAL', null], default: null, index: true },
+  triage_reason: { type: String, default: null },
+  triaged_by: { type: String, default: null },
+  triaged_at: { type: Date, default: null }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });

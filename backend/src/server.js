@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
+// Guarantee backend/.env is loaded regardless of process launch directory
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
@@ -52,6 +54,17 @@ app.post('/api/ai/draft-complaint', async (req, res) => {
   } catch (err) {
     console.error('AI draft error:', err);
     res.status(500).json({ error: 'AI drafting failed', details: err.message });
+  }
+});
+
+// AI Deep Incident Understanding & Clarification Assistant
+app.post('/api/ai/understand-incident', async (req, res) => {
+  try {
+    const understanding = await aiAssistantService.understandIncident(req.body);
+    res.json(understanding);
+  } catch (err) {
+    console.error('AI incident understanding error:', err);
+    res.status(500).json({ error: 'AI incident understanding failed', details: err.message });
   }
 });
 
@@ -236,6 +249,12 @@ app.listen(PORT, async () => {
     await db.syncFromMongo();
   }
 
+  // Automatically sync 30 Department Demo Officer Accounts
+  const demoCredentialService = require('./services/demoCredentialService');
+  demoCredentialService.seedOrSyncDemoAccounts(db);
+
   // Start SLA escalation scheduler
   escalationService.startScheduler(30000); // checks every 30 seconds
 });
+
+module.exports = app;

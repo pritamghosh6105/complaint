@@ -1,0 +1,8354 @@
+[
+  {
+    "image_id": "CIV-IMG-00031",
+    "filename": "CIV-IMG-00031_garbage_dump_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00031_garbage_dump_blurry.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001878"
+  },
+  {
+    "image_id": "CIV-IMG-00115",
+    "filename": "CIV-IMG-00115_fallen_tree_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00115_fallen_tree_blurry.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008532"
+  },
+  {
+    "image_id": "CIV-IMG-00028",
+    "filename": "CIV-IMG-00028_garbage_dump_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00028_garbage_dump_acceptable.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007211"
+  },
+  {
+    "image_id": "CIV-IMG-00062",
+    "filename": "CIV-IMG-00062_exposed_wire_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00062_exposed_wire_good.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006105"
+  },
+  {
+    "image_id": "CIV-IMG-00063",
+    "filename": "CIV-IMG-00063_exposed_wire_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00063_exposed_wire_good.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006314"
+  },
+  {
+    "image_id": "CIV-IMG-00139",
+    "filename": "CIV-IMG-00139_unrelated_scene_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00139_unrelated_scene_blurry.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006562"
+  },
+  {
+    "image_id": "CIV-IMG-00002",
+    "filename": "CIV-IMG-00002_pothole_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00002_pothole_good.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001409"
+  },
+  {
+    "image_id": "CIV-IMG-00047",
+    "filename": "CIV-IMG-00047_waterlogging_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00047_waterlogging_low_light.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003972"
+  },
+  {
+    "image_id": "CIV-IMG-00069",
+    "filename": "CIV-IMG-00069_exposed_wire_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00069_exposed_wire_blurry.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002336"
+  },
+  {
+    "image_id": "CIV-IMG-00001",
+    "filename": "CIV-IMG-00001_pothole_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00001_pothole_good.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002824"
+  },
+  {
+    "image_id": "CIV-IMG-00033",
+    "filename": "CIV-IMG-00033_garbage_dump_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00033_garbage_dump_blurry.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003529"
+  },
+  {
+    "image_id": "CIV-IMG-00108",
+    "filename": "CIV-IMG-00108_active_fire_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00108_active_fire_low_light.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009196"
+  },
+  {
+    "image_id": "CIV-IMG-00106",
+    "filename": "CIV-IMG-00106_active_fire_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00106_active_fire_low_light.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009725"
+  },
+  {
+    "image_id": "CIV-IMG-00015",
+    "filename": "CIV-IMG-00015_open_manhole_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00015_open_manhole_good.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004811"
+  },
+  {
+    "image_id": "CIV-IMG-00133",
+    "filename": "CIV-IMG-00133_unrelated_scene_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00133_unrelated_scene_good.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008138"
+  },
+  {
+    "image_id": "CIV-IMG-00026",
+    "filename": "CIV-IMG-00026_garbage_dump_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00026_garbage_dump_good.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002528"
+  },
+  {
+    "image_id": "CIV-IMG-00054",
+    "filename": "CIV-IMG-00054_pipe_burst_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00054_pipe_burst_acceptable.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009691"
+  },
+  {
+    "image_id": "CIV-IMG-00056",
+    "filename": "CIV-IMG-00056_pipe_burst_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00056_pipe_burst_blurry.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007163"
+  },
+  {
+    "image_id": "CIV-IMG-00135",
+    "filename": "CIV-IMG-00135_unrelated_scene_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00135_unrelated_scene_good.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009584"
+  },
+  {
+    "image_id": "CIV-IMG-00018",
+    "filename": "CIV-IMG-00018_open_manhole_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00018_open_manhole_acceptable.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004257"
+  },
+  {
+    "image_id": "CIV-IMG-00116",
+    "filename": "CIV-IMG-00116_fallen_tree_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00116_fallen_tree_blurry.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002275"
+  },
+  {
+    "image_id": "CIV-IMG-00003",
+    "filename": "CIV-IMG-00003_pothole_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00003_pothole_good.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005506"
+  },
+  {
+    "image_id": "CIV-IMG-00072",
+    "filename": "CIV-IMG-00072_exposed_wire_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00072_exposed_wire_low_light.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007947"
+  },
+  {
+    "image_id": "CIV-IMG-00091",
+    "filename": "CIV-IMG-00091_building_crack_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00091_building_crack_blurry.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001125"
+  },
+  {
+    "image_id": "CIV-IMG-00013",
+    "filename": "CIV-IMG-00013_open_manhole_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00013_open_manhole_good.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002535"
+  },
+  {
+    "image_id": "CIV-IMG-00070",
+    "filename": "CIV-IMG-00070_exposed_wire_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00070_exposed_wire_low_light.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005458"
+  },
+  {
+    "image_id": "CIV-IMG-00134",
+    "filename": "CIV-IMG-00134_unrelated_scene_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00134_unrelated_scene_good.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007560"
+  },
+  {
+    "image_id": "CIV-IMG-00021",
+    "filename": "CIV-IMG-00021_open_manhole_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00021_open_manhole_blurry.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004611"
+  },
+  {
+    "image_id": "CIV-IMG-00032",
+    "filename": "CIV-IMG-00032_garbage_dump_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00032_garbage_dump_blurry.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001601"
+  },
+  {
+    "image_id": "CIV-IMG-00087",
+    "filename": "CIV-IMG-00087_building_crack_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00087_building_crack_good.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001744"
+  },
+  {
+    "image_id": "CIV-IMG-00144",
+    "filename": "CIV-IMG-00144_unrelated_scene_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00144_unrelated_scene_low_light.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009363"
+  },
+  {
+    "image_id": "CIV-IMG-00035",
+    "filename": "CIV-IMG-00035_garbage_dump_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00035_garbage_dump_low_light.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005106"
+  },
+  {
+    "image_id": "CIV-IMG-00064",
+    "filename": "CIV-IMG-00064_exposed_wire_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00064_exposed_wire_acceptable.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002391"
+  },
+  {
+    "image_id": "CIV-IMG-00132",
+    "filename": "CIV-IMG-00132_crop_damage_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00132_crop_damage_low_light.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004986"
+  },
+  {
+    "image_id": "CIV-IMG-00089",
+    "filename": "CIV-IMG-00089_building_crack_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00089_building_crack_acceptable.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007475"
+  },
+  {
+    "image_id": "CIV-IMG-00017",
+    "filename": "CIV-IMG-00017_open_manhole_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00017_open_manhole_acceptable.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001434"
+  },
+  {
+    "image_id": "CIV-IMG-00053",
+    "filename": "CIV-IMG-00053_pipe_burst_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00053_pipe_burst_acceptable.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002503"
+  },
+  {
+    "image_id": "CIV-IMG-00052",
+    "filename": "CIV-IMG-00052_pipe_burst_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00052_pipe_burst_acceptable.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001502"
+  },
+  {
+    "image_id": "CIV-IMG-00103",
+    "filename": "CIV-IMG-00103_active_fire_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00103_active_fire_blurry.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003878"
+  },
+  {
+    "image_id": "CIV-IMG-00007",
+    "filename": "CIV-IMG-00007_pothole_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00007_pothole_blurry.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002679"
+  },
+  {
+    "image_id": "CIV-IMG-00043",
+    "filename": "CIV-IMG-00043_waterlogging_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00043_waterlogging_blurry.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006062"
+  },
+  {
+    "image_id": "CIV-IMG-00093",
+    "filename": "CIV-IMG-00093_building_crack_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00093_building_crack_blurry.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005938"
+  },
+  {
+    "image_id": "CIV-IMG-00049",
+    "filename": "CIV-IMG-00049_pipe_burst_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00049_pipe_burst_good.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007566"
+  },
+  {
+    "image_id": "CIV-IMG-00105",
+    "filename": "CIV-IMG-00105_active_fire_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00105_active_fire_blurry.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007229"
+  },
+  {
+    "image_id": "CIV-IMG-00120",
+    "filename": "CIV-IMG-00120_fallen_tree_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00120_fallen_tree_low_light.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007843"
+  },
+  {
+    "image_id": "CIV-IMG-00004",
+    "filename": "CIV-IMG-00004_pothole_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00004_pothole_acceptable.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005012"
+  },
+  {
+    "image_id": "CIV-IMG-00104",
+    "filename": "CIV-IMG-00104_active_fire_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00104_active_fire_blurry.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003116"
+  },
+  {
+    "image_id": "CIV-IMG-00068",
+    "filename": "CIV-IMG-00068_exposed_wire_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00068_exposed_wire_blurry.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001815"
+  },
+  {
+    "image_id": "CIV-IMG-00022",
+    "filename": "CIV-IMG-00022_open_manhole_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00022_open_manhole_low_light.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008359"
+  },
+  {
+    "image_id": "CIV-IMG-00121",
+    "filename": "CIV-IMG-00121_crop_damage_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00121_crop_damage_good.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005743"
+  },
+  {
+    "image_id": "CIV-IMG-00143",
+    "filename": "CIV-IMG-00143_unrelated_scene_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00143_unrelated_scene_low_light.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002251"
+  },
+  {
+    "image_id": "CIV-IMG-00101",
+    "filename": "CIV-IMG-00101_active_fire_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00101_active_fire_acceptable.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009149"
+  },
+  {
+    "image_id": "CIV-IMG-00019",
+    "filename": "CIV-IMG-00019_open_manhole_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00019_open_manhole_blurry.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009928"
+  },
+  {
+    "image_id": "CIV-IMG-00055",
+    "filename": "CIV-IMG-00055_pipe_burst_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00055_pipe_burst_blurry.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004524"
+  },
+  {
+    "image_id": "CIV-IMG-00024",
+    "filename": "CIV-IMG-00024_open_manhole_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00024_open_manhole_low_light.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001106"
+  },
+  {
+    "image_id": "CIV-IMG-00067",
+    "filename": "CIV-IMG-00067_exposed_wire_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00067_exposed_wire_blurry.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003579"
+  },
+  {
+    "image_id": "CIV-IMG-00096",
+    "filename": "CIV-IMG-00096_building_crack_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00096_building_crack_low_light.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005186"
+  },
+  {
+    "image_id": "CIV-IMG-00059",
+    "filename": "CIV-IMG-00059_pipe_burst_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00059_pipe_burst_low_light.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006585"
+  },
+  {
+    "image_id": "CIV-IMG-00034",
+    "filename": "CIV-IMG-00034_garbage_dump_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00034_garbage_dump_low_light.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003165"
+  },
+  {
+    "image_id": "CIV-IMG-00085",
+    "filename": "CIV-IMG-00085_building_crack_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00085_building_crack_good.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009633"
+  },
+  {
+    "image_id": "CIV-IMG-00029",
+    "filename": "CIV-IMG-00029_garbage_dump_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00029_garbage_dump_acceptable.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001096"
+  },
+  {
+    "image_id": "CIV-IMG-00099",
+    "filename": "CIV-IMG-00099_active_fire_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00099_active_fire_good.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002965"
+  },
+  {
+    "image_id": "CIV-IMG-00016",
+    "filename": "CIV-IMG-00016_open_manhole_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00016_open_manhole_acceptable.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009279"
+  },
+  {
+    "image_id": "CIV-IMG-00086",
+    "filename": "CIV-IMG-00086_building_crack_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00086_building_crack_good.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006053"
+  },
+  {
+    "image_id": "CIV-IMG-00023",
+    "filename": "CIV-IMG-00023_open_manhole_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00023_open_manhole_low_light.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005557"
+  },
+  {
+    "image_id": "CIV-IMG-00118",
+    "filename": "CIV-IMG-00118_fallen_tree_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00118_fallen_tree_low_light.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008033"
+  },
+  {
+    "image_id": "CIV-IMG-00011",
+    "filename": "CIV-IMG-00011_pothole_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00011_pothole_low_light.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001520"
+  },
+  {
+    "image_id": "CIV-IMG-00044",
+    "filename": "CIV-IMG-00044_waterlogging_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00044_waterlogging_blurry.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006567"
+  },
+  {
+    "image_id": "CIV-IMG-00014",
+    "filename": "CIV-IMG-00014_open_manhole_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00014_open_manhole_good.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004582"
+  },
+  {
+    "image_id": "CIV-IMG-00078",
+    "filename": "CIV-IMG-00078_broken_streetlight_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00078_broken_streetlight_acceptable.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009394"
+  },
+  {
+    "image_id": "CIV-IMG-00092",
+    "filename": "CIV-IMG-00092_building_crack_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00092_building_crack_blurry.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004349"
+  },
+  {
+    "image_id": "CIV-IMG-00110",
+    "filename": "CIV-IMG-00110_fallen_tree_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00110_fallen_tree_good.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002180"
+  },
+  {
+    "image_id": "CIV-IMG-00084",
+    "filename": "CIV-IMG-00084_broken_streetlight_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00084_broken_streetlight_low_light.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008972"
+  },
+  {
+    "image_id": "CIV-IMG-00107",
+    "filename": "CIV-IMG-00107_active_fire_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00107_active_fire_low_light.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004770"
+  },
+  {
+    "image_id": "CIV-IMG-00114",
+    "filename": "CIV-IMG-00114_fallen_tree_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00114_fallen_tree_acceptable.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001307"
+  },
+  {
+    "image_id": "CIV-IMG-00025",
+    "filename": "CIV-IMG-00025_garbage_dump_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00025_garbage_dump_good.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008433"
+  },
+  {
+    "image_id": "CIV-IMG-00074",
+    "filename": "CIV-IMG-00074_broken_streetlight_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00074_broken_streetlight_good.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008242"
+  },
+  {
+    "image_id": "CIV-IMG-00094",
+    "filename": "CIV-IMG-00094_building_crack_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00094_building_crack_low_light.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004460"
+  },
+  {
+    "image_id": "CIV-IMG-00006",
+    "filename": "CIV-IMG-00006_pothole_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00006_pothole_acceptable.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003286"
+  },
+  {
+    "image_id": "CIV-IMG-00071",
+    "filename": "CIV-IMG-00071_exposed_wire_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00071_exposed_wire_low_light.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008259"
+  },
+  {
+    "image_id": "CIV-IMG-00123",
+    "filename": "CIV-IMG-00123_crop_damage_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00123_crop_damage_good.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007636"
+  },
+  {
+    "image_id": "CIV-IMG-00095",
+    "filename": "CIV-IMG-00095_building_crack_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00095_building_crack_low_light.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003248"
+  },
+  {
+    "image_id": "CIV-IMG-00141",
+    "filename": "CIV-IMG-00141_unrelated_scene_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00141_unrelated_scene_blurry.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006456"
+  },
+  {
+    "image_id": "CIV-IMG-00124",
+    "filename": "CIV-IMG-00124_crop_damage_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00124_crop_damage_acceptable.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001341"
+  },
+  {
+    "image_id": "CIV-IMG-00077",
+    "filename": "CIV-IMG-00077_broken_streetlight_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00077_broken_streetlight_acceptable.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004531"
+  },
+  {
+    "image_id": "CIV-IMG-00079",
+    "filename": "CIV-IMG-00079_broken_streetlight_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00079_broken_streetlight_blurry.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002864"
+  },
+  {
+    "image_id": "CIV-IMG-00012",
+    "filename": "CIV-IMG-00012_pothole_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00012_pothole_low_light.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001488"
+  },
+  {
+    "image_id": "CIV-IMG-00117",
+    "filename": "CIV-IMG-00117_fallen_tree_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00117_fallen_tree_blurry.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006129"
+  },
+  {
+    "image_id": "CIV-IMG-00126",
+    "filename": "CIV-IMG-00126_crop_damage_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00126_crop_damage_acceptable.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003815"
+  },
+  {
+    "image_id": "CIV-IMG-00037",
+    "filename": "CIV-IMG-00037_waterlogging_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00037_waterlogging_good.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008030"
+  },
+  {
+    "image_id": "CIV-IMG-00048",
+    "filename": "CIV-IMG-00048_waterlogging_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00048_waterlogging_low_light.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003347"
+  },
+  {
+    "image_id": "CIV-IMG-00100",
+    "filename": "CIV-IMG-00100_active_fire_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00100_active_fire_acceptable.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001126"
+  },
+  {
+    "image_id": "CIV-IMG-00005",
+    "filename": "CIV-IMG-00005_pothole_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00005_pothole_acceptable.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004657"
+  },
+  {
+    "image_id": "CIV-IMG-00122",
+    "filename": "CIV-IMG-00122_crop_damage_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00122_crop_damage_good.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002887"
+  },
+  {
+    "image_id": "CIV-IMG-00128",
+    "filename": "CIV-IMG-00128_crop_damage_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00128_crop_damage_blurry.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006928"
+  },
+  {
+    "image_id": "CIV-IMG-00142",
+    "filename": "CIV-IMG-00142_unrelated_scene_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00142_unrelated_scene_low_light.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003754"
+  },
+  {
+    "image_id": "CIV-IMG-00010",
+    "filename": "CIV-IMG-00010_pothole_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00010_pothole_low_light.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007912"
+  },
+  {
+    "image_id": "CIV-IMG-00065",
+    "filename": "CIV-IMG-00065_exposed_wire_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00065_exposed_wire_acceptable.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001861"
+  },
+  {
+    "image_id": "CIV-IMG-00129",
+    "filename": "CIV-IMG-00129_crop_damage_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00129_crop_damage_blurry.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002443"
+  },
+  {
+    "image_id": "CIV-IMG-00008",
+    "filename": "CIV-IMG-00008_pothole_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00008_pothole_blurry.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-009935"
+  },
+  {
+    "image_id": "CIV-IMG-00076",
+    "filename": "CIV-IMG-00076_broken_streetlight_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00076_broken_streetlight_acceptable.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005475"
+  },
+  {
+    "image_id": "CIV-IMG-00036",
+    "filename": "CIV-IMG-00036_garbage_dump_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00036_garbage_dump_low_light.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004705"
+  },
+  {
+    "image_id": "CIV-IMG-00102",
+    "filename": "CIV-IMG-00102_active_fire_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00102_active_fire_acceptable.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008055"
+  },
+  {
+    "image_id": "CIV-IMG-00039",
+    "filename": "CIV-IMG-00039_waterlogging_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00039_waterlogging_good.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005381"
+  },
+  {
+    "image_id": "CIV-IMG-00112",
+    "filename": "CIV-IMG-00112_fallen_tree_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00112_fallen_tree_acceptable.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001693"
+  },
+  {
+    "image_id": "CIV-IMG-00109",
+    "filename": "CIV-IMG-00109_fallen_tree_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00109_fallen_tree_good.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006802"
+  },
+  {
+    "image_id": "CIV-IMG-00137",
+    "filename": "CIV-IMG-00137_unrelated_scene_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00137_unrelated_scene_acceptable.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007484"
+  },
+  {
+    "image_id": "CIV-IMG-00009",
+    "filename": "CIV-IMG-00009_pothole_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00009_pothole_blurry.jpg",
+    "incident_category": "Roads & Public Works",
+    "incident_subcategory": "Pothole / Surface Crater",
+    "detected_objects": [
+      {
+        "label": "pothole",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002424"
+  },
+  {
+    "image_id": "CIV-IMG-00057",
+    "filename": "CIV-IMG-00057_pipe_burst_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00057_pipe_burst_blurry.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007878"
+  },
+  {
+    "image_id": "CIV-IMG-00130",
+    "filename": "CIV-IMG-00130_crop_damage_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00130_crop_damage_low_light.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008155"
+  },
+  {
+    "image_id": "CIV-IMG-00041",
+    "filename": "CIV-IMG-00041_waterlogging_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00041_waterlogging_acceptable.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003955"
+  },
+  {
+    "image_id": "CIV-IMG-00081",
+    "filename": "CIV-IMG-00081_broken_streetlight_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00081_broken_streetlight_blurry.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008043"
+  },
+  {
+    "image_id": "CIV-IMG-00111",
+    "filename": "CIV-IMG-00111_fallen_tree_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00111_fallen_tree_good.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007505"
+  },
+  {
+    "image_id": "CIV-IMG-00042",
+    "filename": "CIV-IMG-00042_waterlogging_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00042_waterlogging_acceptable.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005477"
+  },
+  {
+    "image_id": "CIV-IMG-00080",
+    "filename": "CIV-IMG-00080_broken_streetlight_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00080_broken_streetlight_blurry.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006655"
+  },
+  {
+    "image_id": "CIV-IMG-00082",
+    "filename": "CIV-IMG-00082_broken_streetlight_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00082_broken_streetlight_low_light.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002816"
+  },
+  {
+    "image_id": "CIV-IMG-00083",
+    "filename": "CIV-IMG-00083_broken_streetlight_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00083_broken_streetlight_low_light.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005640"
+  },
+  {
+    "image_id": "CIV-IMG-00125",
+    "filename": "CIV-IMG-00125_crop_damage_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00125_crop_damage_acceptable.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006321"
+  },
+  {
+    "image_id": "CIV-IMG-00113",
+    "filename": "CIV-IMG-00113_fallen_tree_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00113_fallen_tree_acceptable.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008147"
+  },
+  {
+    "image_id": "CIV-IMG-00119",
+    "filename": "CIV-IMG-00119_fallen_tree_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00119_fallen_tree_low_light.jpg",
+    "incident_category": "Disaster Management",
+    "incident_subcategory": "Uprooted Trees Blocking Arterial Highway",
+    "detected_objects": [
+      {
+        "label": "fallen_tree",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007626"
+  },
+  {
+    "image_id": "CIV-IMG-00088",
+    "filename": "CIV-IMG-00088_building_crack_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00088_building_crack_acceptable.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004612"
+  },
+  {
+    "image_id": "CIV-IMG-00058",
+    "filename": "CIV-IMG-00058_pipe_burst_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00058_pipe_burst_low_light.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008432"
+  },
+  {
+    "image_id": "CIV-IMG-00075",
+    "filename": "CIV-IMG-00075_broken_streetlight_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00075_broken_streetlight_good.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007785"
+  },
+  {
+    "image_id": "CIV-IMG-00098",
+    "filename": "CIV-IMG-00098_active_fire_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00098_active_fire_good.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006375"
+  },
+  {
+    "image_id": "CIV-IMG-00073",
+    "filename": "CIV-IMG-00073_broken_streetlight_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00073_broken_streetlight_good.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Streetlight Completely Off (Dark Corridor)",
+    "detected_objects": [
+      {
+        "label": "broken_streetlight",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008957"
+  },
+  {
+    "image_id": "CIV-IMG-00097",
+    "filename": "CIV-IMG-00097_active_fire_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00097_active_fire_good.jpg",
+    "incident_category": "Fire & Emergency Services",
+    "incident_subcategory": "Residential / Commercial Structure Fire",
+    "detected_objects": [
+      {
+        "label": "active_fire",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005742"
+  },
+  {
+    "image_id": "CIV-IMG-00060",
+    "filename": "CIV-IMG-00060_pipe_burst_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00060_pipe_burst_low_light.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003578"
+  },
+  {
+    "image_id": "CIV-IMG-00127",
+    "filename": "CIV-IMG-00127_crop_damage_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00127_crop_damage_blurry.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-008538"
+  },
+  {
+    "image_id": "CIV-IMG-00046",
+    "filename": "CIV-IMG-00046_waterlogging_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00046_waterlogging_low_light.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001100"
+  },
+  {
+    "image_id": "CIV-IMG-00020",
+    "filename": "CIV-IMG-00020_open_manhole_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00020_open_manhole_blurry.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Open / Missing Manhole Cover",
+    "detected_objects": [
+      {
+        "label": "open_manhole",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007873"
+  },
+  {
+    "image_id": "CIV-IMG-00040",
+    "filename": "CIV-IMG-00040_waterlogging_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00040_waterlogging_acceptable.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001474"
+  },
+  {
+    "image_id": "CIV-IMG-00045",
+    "filename": "CIV-IMG-00045_waterlogging_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00045_waterlogging_blurry.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006751"
+  },
+  {
+    "image_id": "CIV-IMG-00051",
+    "filename": "CIV-IMG-00051_pipe_burst_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00051_pipe_burst_good.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003324"
+  },
+  {
+    "image_id": "CIV-IMG-00066",
+    "filename": "CIV-IMG-00066_exposed_wire_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00066_exposed_wire_acceptable.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-003549"
+  },
+  {
+    "image_id": "CIV-IMG-00138",
+    "filename": "CIV-IMG-00138_unrelated_scene_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00138_unrelated_scene_acceptable.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-006083"
+  },
+  {
+    "image_id": "CIV-IMG-00027",
+    "filename": "CIV-IMG-00027_garbage_dump_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00027_garbage_dump_good.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005533"
+  },
+  {
+    "image_id": "CIV-IMG-00061",
+    "filename": "CIV-IMG-00061_exposed_wire_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00061_exposed_wire_good.jpg",
+    "incident_category": "Street Lighting & Electrical",
+    "incident_subcategory": "Exposed High-Mast Junction Box",
+    "detected_objects": [
+      {
+        "label": "exposed_wire",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "CRITICAL",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-007062"
+  },
+  {
+    "image_id": "CIV-IMG-00038",
+    "filename": "CIV-IMG-00038_waterlogging_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00038_waterlogging_good.jpg",
+    "incident_category": "Drainage & Sewerage",
+    "incident_subcategory": "Severe Monsoon Waterlogging",
+    "detected_objects": [
+      {
+        "label": "waterlogging",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001430"
+  },
+  {
+    "image_id": "CIV-IMG-00140",
+    "filename": "CIV-IMG-00140_unrelated_scene_blurry.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00140_unrelated_scene_blurry.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.45,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "BLURRY",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-004630"
+  },
+  {
+    "image_id": "CIV-IMG-00090",
+    "filename": "CIV-IMG-00090_building_crack_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00090_building_crack_acceptable.jpg",
+    "incident_category": "Building & Municipal Engineering",
+    "incident_subcategory": "Dangerous Dilapidated Structure at Risk of Collapse",
+    "detected_objects": [
+      {
+        "label": "building_crack",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-001897"
+  },
+  {
+    "image_id": "CIV-IMG-00050",
+    "filename": "CIV-IMG-00050_pipe_burst_good.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00050_pipe_burst_good.jpg",
+    "incident_category": "Water Supply",
+    "incident_subcategory": "Pipeline Burst / Severe Leakage",
+    "detected_objects": [
+      {
+        "label": "pipe_burst",
+        "confidence": 0.95,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "GOOD",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002140"
+  },
+  {
+    "image_id": "CIV-IMG-00131",
+    "filename": "CIV-IMG-00131_crop_damage_low_light.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00131_crop_damage_low_light.jpg",
+    "incident_category": "Agriculture",
+    "incident_subcategory": "Crop Damage Assessment & Insurance Compensation",
+    "detected_objects": [
+      {
+        "label": "crop_damage",
+        "confidence": 0.68,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "SEVERE",
+    "image_quality": "LOW_LIGHT",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002734"
+  },
+  {
+    "image_id": "CIV-IMG-00136",
+    "filename": "CIV-IMG-00136_unrelated_scene_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00136_unrelated_scene_acceptable.jpg",
+    "incident_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+    "incident_subcategory": "Non-Civic Scene",
+    "detected_objects": [
+      {
+        "label": "unrelated_scene",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "LOW",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-002288"
+  },
+  {
+    "image_id": "CIV-IMG-00030",
+    "filename": "CIV-IMG-00030_garbage_dump_acceptable.jpg",
+    "relative_path": "ml-service/vision/data/images/CIV-IMG-00030_garbage_dump_acceptable.jpg",
+    "incident_category": "Solid Waste Management",
+    "incident_subcategory": "Overflowing Garbage Vat / Bin",
+    "detected_objects": [
+      {
+        "label": "garbage_dump",
+        "confidence": 0.88,
+        "box": [
+          150,
+          200,
+          330,
+          440
+        ]
+      }
+    ],
+    "bounding_boxes": [
+      [
+        150,
+        200,
+        330,
+        440
+      ]
+    ],
+    "segmentation_masks": [
+      {
+        "type": "polygon",
+        "coordinates": [
+          [
+            200,
+            150
+          ],
+          [
+            440,
+            150
+          ],
+          [
+            440,
+            330
+          ],
+          [
+            200,
+            330
+          ]
+        ]
+      }
+    ],
+    "visible_damage_level": "MODERATE",
+    "image_quality": "ACCEPTABLE",
+    "annotation_source": "expert_civic_engineer_annotated",
+    "annotation_verified": true,
+    "source_type": "consented_citizen_evidence_sample",
+    "is_synthetic": true,
+    "consent_and_usage_status": "APPROVED_FOR_CIVICPULSE_AI_TRAINING",
+    "original_incident_id": "CMP-WB-005425"
+  }
+]

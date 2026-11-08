@@ -1,42 +1,60 @@
 import React, { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { 
+  Eye, 
   BrainCircuit, 
-  CheckCircle2, 
-  AlertTriangle, 
-  ShieldAlert, 
+  Sliders, 
   Info, 
+  Shield, 
+  AlertTriangle, 
+  CheckCircle2, 
+  Layers, 
+  RefreshCw, 
+  FileText, 
   Sparkles, 
-  ChevronDown, 
-  ChevronUp, 
-  Activity,
-  Gauge,
-  Sun,
-  Eye
+  Check, 
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 
 export default function AIImageAnalysisCard({ 
   analysis, 
   loading = false, 
   previewUrl = null,
-  fusedPriority = null
+  fusedPriority = null,
+  onReanalyze = null,
+  onAdoptDescription = null
 }) {
   const { isDark } = useTheme();
-  const [showTechnicalMetrics, setShowTechnicalMetrics] = useState(false);
+  const [showBoundingBoxes, setShowBoundingBoxes] = useState(true);
+  const [copiedDesc, setCopiedDesc] = useState(false);
 
+  // 1. Loading State
   if (loading) {
     return (
-      <div className="glass-card" style={{ padding: '20px', border: '1px solid rgba(14, 165, 233, 0.4)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+      <div 
+        className="glass-card" 
+        style={{ 
+          padding: '24px', 
+          borderRadius: '12px',
+          border: '1px solid rgba(14, 165, 233, 0.4)',
+          background: isDark ? 'var(--bg-surface-elevated, #1e293b)' : '#ffffff',
+          boxShadow: '0 4px 18px rgba(14, 165, 233, 0.08)',
+          textAlign: 'center'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
           <div className="spin-animation">
-            <BrainCircuit size={22} color="var(--accent-cyan)" />
+            <BrainCircuit size={28} color="var(--accent-cyan, #00f0ff)" />
           </div>
-          <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
-            Running Computer Vision & Laplacian Quality Pipeline...
-          </span>
-        </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          Computing sharpness gradient, perceived luminance matrix, and cross-referencing civic hazards.
+          <div style={{ textAlign: 'left' }}>
+            <div style={{ fontWeight: 700, color: 'var(--text-primary, #0f172a)', fontSize: '1.02rem' }}>
+              Gemini Vision AI Analyzing Evidence...
+            </div>
+            <div style={{ fontSize: '0.80rem', color: 'var(--text-muted, #64748b)', marginTop: '2px' }}>
+              Detecting civic incident, department classification & localizing blue bounding boxes
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -46,238 +64,660 @@ export default function AIImageAnalysisCard({
     return null;
   }
 
-  const {
-    image_quality = 'GOOD',
-    quality_note = '',
-    quality_metrics = {},
-    detected_issue = 'Civic Infrastructure Feature',
-    confidence = 0.9,
-    visual_severity = 'MEDIUM',
-    visual_risk = 'Standard civic inspection required',
-    evidence_consistency = 'MATCH',
-    consistency_badge = '✓ MATCH',
-    consistency_details = '',
-    analysis_status = 'COMPLETED'
-  } = analysis;
+  try {
+    // 2. Normalize Structured Schema (Section 6 + Legacy Fallbacks)
+    const incidentData = analysis.incident || {};
+    const detectedIncident = incidentData.detected_incident || 
+      analysis.category_prediction?.category || 
+      analysis.detected_incident || 
+      'Civic Problem Identified';
 
-  const isPoorQuality = image_quality === 'POOR';
-  const isMismatch = evidence_consistency === 'POSSIBLE MISMATCH';
-  const confidencePercent = `${Math.round(confidence * 100)}%`;
+    const visualDept = incidentData.visual_category || 
+      analysis.category_prediction?.department || 
+      analysis.predicted_category || 
+      'UNKNOWN';
 
-  const getQualityBadgeStyle = (q) => {
-    if (q === 'GOOD') return { bg: isDark ? 'rgba(16, 185, 129, 0.15)' : '#dcfce7', border: '#10b981', color: isDark ? '#6ee7b7' : '#15803d', text: '✓ GOOD' };
-    if (q === 'ACCEPTABLE') return { bg: isDark ? 'rgba(59, 130, 246, 0.15)' : '#dbeafe', border: '#3b82f6', color: isDark ? '#93c5fd' : '#1d4ed8', text: 'ACCEPTABLE' };
-    return { bg: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2', border: '#ef4444', color: isDark ? '#fca5a5' : '#b91c1c', text: '⚠️ POOR' };
-  };
+    const visualSubcat = incidentData.visual_subcategory || 
+      analysis.category_prediction?.subcategory || 
+      analysis.predicted_subcategory || 
+      'General';
 
-  const getSeverityBadgeClass = (s) => {
-    if (s === 'CRITICAL') return 'badge-critical';
-    if (s === 'HIGH') return 'badge-high';
-    if (s === 'MEDIUM') return 'badge-medium';
-    return 'badge-low';
-  };
+    const rawConf = incidentData.category_confidence ?? 
+      analysis.category_prediction?.confidence ?? 
+      analysis.model_confidence ?? 
+      0.92;
+    const confidencePct = `${Math.round(rawConf * 100)}%`;
 
-  const qStyle = getQualityBadgeStyle(image_quality);
+    const classificationStatus = incidentData.classification_status || 
+      (visualDept !== 'UNKNOWN' && visualDept !== 'INSUFFICIENT_VISUAL_EVIDENCE' ? 'CLASSIFIED' : 'UNCERTAIN');
 
-  return (
-    <div 
-      className="glass-card" 
-      style={{ 
-        padding: '20px', 
-        borderRadius: 'var(--radius-md)',
-        border: isDark ? '1px solid rgba(59, 130, 246, 0.45)' : '1px solid rgba(59, 130, 246, 0.3)',
-        background: isDark 
-          ? 'linear-gradient(145deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.65))' 
-          : 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-        boxShadow: isDark ? '0 8px 32px rgba(0, 0, 0, 0.35)' : 'var(--shadow-md)'
-      }}
-    >
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <BrainCircuit size={20} color="var(--accent-cyan)" />
-          <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.5px' }}>
-            🤖 VISUAL AI ANALYSIS
-          </h4>
-        </div>
+    // Scene & Evidence
+    const sceneData = analysis.scene || {};
+    const sceneDescription = sceneData.description || 
+      analysis.scene_analysis?.scene_description || 
+      analysis.image_overview?.description || 
+      'Photographic evidence captured for municipal verification.';
 
-        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-          Model: {analysis.model_name || 'VisionEngine-v2'}
-        </span>
-      </div>
+    const sceneType = sceneData.scene_type || 
+      analysis.scene_analysis?.scene_type || 
+      'Civic Infrastructure';
 
-      {/* Structured Metric Grid */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.86rem' }}>
-        {/* Row 1: Image Quality */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>Image Quality:</span>
-          <span style={{
-            background: qStyle.bg,
-            border: `1px solid ${qStyle.border}`,
-            color: qStyle.color,
-            padding: '2px 10px',
-            borderRadius: '4px',
-            fontWeight: 700,
-            fontSize: '0.78rem'
-          }}>
-            {qStyle.text}
-          </span>
-        </div>
+    const evidenceData = analysis.evidence || {};
+    const rawDirectObs = evidenceData.direct_observations || 
+      (Array.isArray(analysis.visual_findings) ? analysis.visual_findings.map(f => typeof f === 'object' ? f.observation : f) : []);
+    const directObservations = rawDirectObs.slice(0, 5);
 
-        {/* Row 2: Detected Issue & Confidence */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>Detected Issue:</span>
-          <span style={{ fontWeight: 700, color: '#fff', textAlign: 'right' }}>
-            {detected_issue}
-          </span>
-        </div>
+    const possibleInterpretations = evidenceData.possible_interpretations || 
+      (Array.isArray(analysis.possible_interpretations) ? analysis.possible_interpretations.map(p => typeof p === 'object' ? p.interpretation : p) : []);
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>Confidence:</span>
-          <span style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>
-            {confidencePercent}
-          </span>
-        </div>
+    // Suggested Description
+    const suggestedDescription = analysis.suggested_description || 
+      `A civic condition regarding ${detectedIncident} is observable in the photographic evidence. Kindly inspect the site and arrange for necessary municipal repair and maintenance.`;
 
-        {/* Row 3: Visual Severity & Safety Risk */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>Visual Severity:</span>
-          <span className={`badge ${getSeverityBadgeClass(visual_severity)}`} style={{ fontSize: '0.75rem' }}>
-            {visual_severity}
-          </span>
-        </div>
+    // Quality & Severity
+    const qualityData = analysis.image_quality || {};
+    const qualityLevel = (qualityData.level || qualityData.rating || 'GOOD').toUpperCase();
+    const blurLevel = (qualityData.blur || 'LOW').toUpperCase();
+    const lightingLevel = (qualityData.lighting || 'GOOD').toUpperCase();
+    const occlusionLevel = (qualityData.occlusion || 'LOW').toUpperCase();
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>Safety Risk:</span>
-          <span style={{ fontSize: '0.8rem', color: '#cbd5e1', fontWeight: 600, textAlign: 'right', maxWidth: '65%' }}>
-            {visual_risk}
-          </span>
-        </div>
+    const severityData = analysis.visual_severity || {};
+    const severityLevel = (severityData.level || 'MEDIUM').toUpperCase();
+    const severityReason = severityData.reason || severityData.explanation || 'Severity evaluation based strictly on observable physical indicators.';
 
-        {/* Row 4: Evidence Match */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>Evidence Match:</span>
-          <span style={{
-            background: isMismatch ? 'rgba(234, 179, 8, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-            border: isMismatch ? '1px solid #eab308' : '1px solid #10b981',
-            color: isMismatch ? '#fde047' : '#6ee7b7',
-            padding: '2px 10px',
-            borderRadius: '4px',
-            fontWeight: 700,
-            fontSize: '0.78rem'
-          }}>
-            {consistency_badge}
-          </span>
-        </div>
+    // Review Notice
+    const reviewData = analysis.review || {};
+    const needsReview = reviewData.human_review_required ?? 
+      (analysis.review_status !== 'AUTO_CLEARED' || visualDept === 'UNKNOWN');
+    const reviewReasons = reviewData.review_reasons || [];
 
-        {/* Mismatch Alert Callout */}
-        {isMismatch && (
-          <div style={{
-            background: isDark ? 'rgba(234, 179, 8, 0.12)' : '#fef9c3',
-            border: isDark ? '1px solid rgba(234, 179, 8, 0.4)' : '1px solid #facc15',
-            borderRadius: 'var(--radius-sm)',
-            padding: '10px 12px',
-            fontSize: '0.78rem',
-            color: isDark ? '#fef08a' : '#854d0e',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '8px'
-          }}>
-            <AlertTriangle size={16} color={isDark ? '#eab308' : '#ca8a04'} style={{ flexShrink: 0, marginTop: '2px' }} />
-            <div>
-              <strong>Advisory:</strong> AI detected content that may not directly match the reported description. Ticket forwarded for human officer verification.
-            </div>
-          </div>
-        )}
+    // 3. Filter and Validate Bounding Boxes (Incident-Only Focus)
+    const rawDetections = Array.isArray(analysis.object_detections) && analysis.object_detections.length > 0
+      ? analysis.object_detections
+      : (Array.isArray(analysis.visible_objects) ? analysis.visible_objects : []);
 
-        {/* Poor Quality Alert Callout */}
-        {isPoorQuality && (
-          <div style={{
-            background: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fef2f2',
-            border: isDark ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid #fca5a5',
-            borderRadius: 'var(--radius-sm)',
-            padding: '8px 12px',
-            fontSize: '0.76rem',
-            color: isDark ? '#fca5a5' : '#b91c1c'
-          }}>
-            ⚠️ {quality_note || 'Image may be too dark or blurry for reliable AI analysis. Submission is still accepted.'}
-          </div>
-        )}
+    const validBoxes = rawDetections.map(item => {
+      if (!item || typeof item !== 'object') return null;
 
-        {/* Row 5: AI Recommendation / Multimodal Priority */}
+      // Extract box coordinates
+      let coords = null;
+      if (item.bbox && typeof item.bbox === 'object') {
+        const { x_min, y_min, x_max, y_max } = item.bbox;
+        coords = [Number(x_min), Number(y_min), Number(x_max), Number(y_max)];
+      } else if (Array.isArray(item.box_pct) && item.box_pct.length === 4) {
+        coords = item.box_pct.map(Number);
+      } else if (Array.isArray(item.box_2d) && item.box_2d.length === 4) {
+        const scale = item.box_2d.some(c => Number(c) > 1.0) ? 1000.0 : 1.0;
+        const [ymin, xmin, ymax, xmax] = item.box_2d.map(c => Number(c) / scale);
+        coords = [xmin, ymin, xmax, ymax];
+      }
+
+      if (!coords || coords.some(c => isNaN(c))) return null;
+
+      let [xmin, ymin, xmax, ymax] = coords;
+      if (xmin > xmax) [xmin, xmax] = [xmax, xmin];
+      if (ymin > ymax) [ymin, ymax] = [ymax, ymin];
+
+      // Enforce valid coordinate boundaries
+      xmin = Math.max(0.0, Math.min(1.0, xmin));
+      ymin = Math.max(0.0, Math.min(1.0, ymin));
+      xmax = Math.max(0.0, Math.min(1.0, xmax));
+      ymax = Math.max(0.0, Math.min(1.0, ymax));
+
+      if ((xmax - xmin) < 0.02 || (ymax - ymin) < 0.02) return null;
+
+      const label = item.label || item.display_name || detectedIncident;
+      const conf = item.confidence ? Math.round(Number(item.confidence) * 100) : Math.round(rawConf * 100);
+
+      return {
+        label,
+        conf: `${conf}%`,
+        x_min: xmin,
+        y_min: ymin,
+        x_max: xmax,
+        y_max: ymax
+      };
+    }).filter(Boolean);
+
+    // Visual Palette
+    const cardBg = isDark ? '#0f172a' : '#ffffff';
+    const subCardBg = isDark ? 'rgba(30, 41, 59, 0.65)' : '#f8fafc';
+    const textPrimary = isDark ? '#f8fafc' : '#0f172a';
+    const textSecondary = isDark ? '#cbd5e1' : '#334155';
+    const textMuted = isDark ? '#94a3b8' : '#64748b';
+    const borderSubtle = isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0';
+
+    const activeImageUrl = previewUrl || analysis.preview_url || analysis.image_url || null;
+
+    const handleCopyOrAdopt = () => {
+      if (onAdoptDescription) {
+        onAdoptDescription(suggestedDescription);
+      }
+      navigator.clipboard?.writeText(suggestedDescription);
+      setCopiedDesc(true);
+      setTimeout(() => setCopiedDesc(false), 2500);
+    };
+
+    return (
+      <div 
+        className="visual-evidence-panel"
+        style={{
+          borderRadius: '12px',
+          border: `1px solid ${borderSubtle}`,
+          background: cardBg,
+          boxShadow: isDark ? '0 4px 20px -2px rgba(0, 0, 0, 0.45)' : '0 4px 18px rgba(15, 23, 42, 0.06)',
+          overflow: 'hidden',
+          boxSizing: 'border-box',
+          marginBottom: '20px'
+        }}
+      >
+        {/* Top Gradient Bar */}
         <div style={{
-          marginTop: '6px',
-          padding: '10px 14px',
-          borderRadius: 'var(--radius-sm)',
-          background: isDark ? 'rgba(14, 165, 233, 0.12)' : 'rgba(14, 165, 233, 0.08)',
-          border: isDark ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid rgba(14, 165, 233, 0.25)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
+          height: '3px',
+          background: 'linear-gradient(90deg, #00f0ff, #0284c7, #10b981)'
+        }} />
+        
+
+
+        {/* 1. HEADER */}
+        <div className="ai-vision-header" style={{
+          borderBottom: `1px solid ${borderSubtle}`
         }}>
-          <div>
-            <div style={{ fontSize: '0.72rem', color: isDark ? 'var(--accent-cyan)' : '#0284c7', fontWeight: 700, textTransform: 'uppercase' }}>
-              Multimodal Priority Recommendation
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: 'rgba(0, 240, 255, 0.12)',
+              border: '1px solid rgba(0, 240, 255, 0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Eye size={20} color="#00f0ff" />
             </div>
-            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-              Priority: <span style={{ color: fusedPriority === 'CRITICAL' ? (isDark ? '#ef4444' : '#dc2626') : (fusedPriority === 'HIGH' ? (isDark ? '#f97316' : '#ea580c') : (isDark ? '#3b82f6' : '#2563eb')) }}>
-                {fusedPriority || visual_severity}
-              </span>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h4 style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700, color: textPrimary }}>
+                  Visual AI Image Analysis
+                </h4>
+                <span style={{
+                  fontSize: '0.70rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  background: classificationStatus === 'CLASSIFIED' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                  color: classificationStatus === 'CLASSIFIED' ? '#10b981' : '#f59e0b',
+                  border: `1px solid ${classificationStatus === 'CLASSIFIED' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`
+                }}>
+                  {classificationStatus}
+                </span>
+              </div>
+              <div style={{ fontSize: '0.76rem', color: textMuted, marginTop: '2px' }}>
+                Objective Vision-Language Evidence Evaluation
+              </div>
             </div>
           </div>
 
-          <Sparkles size={20} color={isDark ? 'var(--accent-cyan)' : '#0284c7'} />
+          {/* Model Badge & Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              padding: '4px 10px',
+              borderRadius: '6px',
+              background: isDark ? 'rgba(56, 189, 248, 0.12)' : '#e0f2fe',
+              color: isDark ? '#38bdf8' : '#0284c7',
+              border: isDark ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid #bae6fd'
+            }}>
+              {analysis.model || 'Gemini 3.5 Flash'}
+            </span>
+
+            {validBoxes.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowBoundingBoxes(!showBoundingBoxes)}
+                style={{
+                  background: showBoundingBoxes ? 'rgba(0, 240, 255, 0.12)' : 'none',
+                  border: `1px solid ${showBoundingBoxes ? '#00f0ff' : borderSubtle}`,
+                  borderRadius: '6px',
+                  padding: '4px 10px',
+                  fontSize: '0.74rem',
+                  fontWeight: 600,
+                  color: showBoundingBoxes ? '#00f0ff' : textSecondary,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <Layers size={13} />
+                {showBoundingBoxes ? 'Hide Boxes' : 'Show Boxes'}
+              </button>
+            )}
+
+            {onReanalyze && (
+              <button
+                type="button"
+                onClick={onReanalyze}
+                title="Re-run Gemini Vision Analysis"
+                style={{
+                  background: 'none',
+                  border: `1px solid ${borderSubtle}`,
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  fontSize: '0.74rem',
+                  color: textSecondary,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                <RefreshCw size={13} />
+                <span>Re-analyze</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="ai-vision-card-container">
+          {/* 2. UPLOADED EVIDENCE & BLUE BOUNDING BOXES */}
+          {activeImageUrl && (
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '8px',
+                marginBottom: '8px'
+              }}>
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Uploaded Photographic Evidence
+                </span>
+                {validBoxes.length > 0 && (
+                  <span style={{ fontSize: '0.72rem', color: '#00f0ff', fontWeight: 600 }}>
+                    • {validBoxes.length} {validBoxes.length === 1 ? 'incident object localized' : 'incident objects localized'}
+                  </span>
+                )}
+              </div>
+
+              <div style={{
+                borderRadius: '10px',
+                overflow: 'hidden',
+                background: '#090d16',
+                border: `1px solid ${borderSubtle}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '8px'
+              }}>
+                <div style={{
+                  position: 'relative',
+                  display: 'inline-block',
+                  maxWidth: '100%',
+                  lineHeight: 0
+                }}>
+                  <img
+                    src={activeImageUrl}
+                    alt="Civic evidence"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '380px',
+                      display: 'block',
+                      borderRadius: '6px',
+                      objectFit: 'contain'
+                    }}
+                  />
+
+                  {/* Standardized Blue Bounding Box Overlays */}
+                  {showBoundingBoxes && validBoxes.map((box, idx) => {
+                    const leftPct = Math.max(0, Math.min(100, box.x_min * 100));
+                    const topPct = Math.max(0, Math.min(100, box.y_min * 100));
+                    const widthPct = Math.max(4, Math.min(100 - leftPct, (box.x_max - box.x_min) * 100));
+                    const heightPct = Math.max(4, Math.min(100 - topPct, (box.y_max - box.y_min) * 100));
+
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          position: 'absolute',
+                          left: `${leftPct}%`,
+                          top: `${topPct}%`,
+                          width: `${widthPct}%`,
+                          height: `${heightPct}%`,
+                          border: '2px solid #00f0ff',
+                          background: 'rgba(0, 240, 255, 0.12)',
+                          boxShadow: '0 0 14px rgba(0, 240, 255, 0.55), inset 0 0 8px rgba(0, 240, 255, 0.20)',
+                          borderRadius: '4px',
+                          pointerEvents: 'none',
+                          zIndex: 10,
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        {/* High-contrast Pill Label */}
+                        <div style={{
+                          position: 'absolute',
+                          top: topPct > 8 ? '-24px' : '3px',
+                          left: '0',
+                          maxWidth: 'calc(100% - 4px)',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          background: 'rgba(15, 23, 42, 0.94)',
+                          color: '#00f0ff',
+                          border: '1px solid #00f0ff',
+                          padding: '2px 8px',
+                          fontSize: 'clamp(0.62rem, 2vw, 0.72rem)',
+                          fontWeight: 700,
+                          borderRadius: '4px',
+                          whiteSpace: 'nowrap',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.7)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          lineHeight: 1.2
+                        }}>
+                          <span style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '50%',
+                            background: '#00f0ff',
+                            flexShrink: 0
+                          }} />
+                          <span>{box.label} · {box.conf}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Honest location limitation notice if no boxes could be localized */}
+              {validBoxes.length === 0 && (
+                <div style={{
+                  marginTop: '8px',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  background: isDark ? 'rgba(30, 41, 59, 0.5)' : '#f1f5f9',
+                  border: `1px solid ${borderSubtle}`,
+                  fontSize: '0.76rem',
+                  color: textMuted,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <Info size={14} color="#0284c7" />
+                  <span>Incident identified, but its exact physical coordinates could not be localized reliably on the image.</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 3. INCIDENT SUMMARY (4-CARD GRID) */}
+          <div className="ai-vision-grid-4">
+            {/* Detected Incident */}
+            <div style={{
+              background: subCardBg,
+              borderRadius: '8px',
+              padding: '12px 14px',
+              border: `1px solid ${borderSubtle}`
+            }}>
+              <div style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Detected Incident
+              </div>
+              <div style={{ fontSize: '0.90rem', fontWeight: 700, color: textPrimary, marginTop: '4px' }}>
+                {detectedIncident}
+              </div>
+            </div>
+
+            {/* Department */}
+            <div style={{
+              background: subCardBg,
+              borderRadius: '8px',
+              padding: '12px 14px',
+              border: `1px solid ${borderSubtle}`
+            }}>
+              <div style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Department
+              </div>
+              <div style={{ fontSize: '0.90rem', fontWeight: 700, color: '#0284c7', marginTop: '4px' }}>
+                {visualDept}
+              </div>
+            </div>
+
+            {/* Subcategory */}
+            <div style={{
+              background: subCardBg,
+              borderRadius: '8px',
+              padding: '12px 14px',
+              border: `1px solid ${borderSubtle}`
+            }}>
+              <div style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Subcategory
+              </div>
+              <div style={{ fontSize: '0.86rem', fontWeight: 600, color: textSecondary, marginTop: '4px' }}>
+                {visualSubcat}
+              </div>
+            </div>
+
+            {/* AI Confidence Estimate */}
+            <div style={{
+              background: subCardBg,
+              borderRadius: '8px',
+              padding: '12px 14px',
+              border: `1px solid ${borderSubtle}`
+            }}>
+              <div style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                AI Confidence Estimate
+              </div>
+              <div style={{ fontSize: '0.90rem', fontWeight: 700, color: '#10b981', marginTop: '4px' }}>
+                {confidencePct}
+              </div>
+            </div>
+          </div>
+
+          {/* 4. SCENE DESCRIPTION & DIRECT VISUAL OBSERVATIONS */}
+          <div style={{
+            background: subCardBg,
+            borderRadius: '10px',
+            padding: '14px 16px',
+            marginBottom: '16px',
+            border: `1px solid ${borderSubtle}`
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '8px',
+              marginBottom: '8px'
+            }}>
+              <span style={{
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                color: 'var(--accent-primary, #0284c7)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                whiteSpace: 'nowrap'
+              }}>
+                Scene Description
+              </span>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.72rem',
+                color: textMuted,
+                background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9',
+                padding: '2px 8px',
+                borderRadius: '6px',
+                border: `1px solid ${borderSubtle}`,
+                whiteSpace: 'nowrap'
+              }}>
+                <span>Scene Type:</span>
+                <strong style={{ color: textSecondary }}>{String(sceneType)}</strong>
+              </div>
+            </div>
+
+            <p style={{ margin: '0 0 12px 0', fontSize: '0.88rem', color: textPrimary, lineHeight: 1.5, fontWeight: 500 }}>
+              {sceneDescription}
+            </p>
+
+            {/* Direct Observations (3-5 Concise Bullets) */}
+            {directObservations.length > 0 && (
+              <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: `1px solid ${borderSubtle}` }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                  Direct Visual Observations:
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {directObservations.map((obs, idx) => (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.82rem', color: textSecondary, lineHeight: 1.4 }}>
+                      <CheckCircle2 size={14} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <span>{obs}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 5. SUGGESTED COMPLAINT PETITION (SECTION 10) */}
+          {suggestedDescription && (
+            <div style={{
+              background: isDark ? 'rgba(2, 132, 199, 0.08)' : '#f0f9ff',
+              borderRadius: '10px',
+              padding: '14px 16px',
+              marginBottom: '16px',
+              border: isDark ? '1px solid rgba(2, 132, 199, 0.25)' : '1px solid #bae6fd'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '8px',
+                marginBottom: '8px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Sparkles size={14} color="#0284c7" />
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#0284c7', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Suggested Complaint Description
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyOrAdopt}
+                  style={{
+                    background: copiedDesc ? '#10b981' : '#0284c7',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '4px 12px',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {copiedDesc ? <Check size={13} /> : <Copy size={13} />}
+                  <span>{copiedDesc ? 'Applied to Form!' : 'Adopt AI Description'}</span>
+                </button>
+              </div>
+              <p style={{ margin: 0, fontSize: '0.84rem', color: textPrimary, lineHeight: 1.5, fontStyle: 'italic' }}>
+                "{suggestedDescription}"
+              </p>
+            </div>
+          )}
+
+          {/* 6. IMAGE QUALITY & VISUAL SEVERITY */}
+          <div className="ai-vision-grid-2">
+            {/* Image Quality */}
+            <div style={{
+              background: subCardBg,
+              borderRadius: '8px',
+              padding: '12px 14px',
+              border: `1px solid ${borderSubtle}`
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase' }}>
+                  Image Quality
+                </span>
+                <span style={{
+                  fontSize: '0.70rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  background: qualityLevel === 'GOOD' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                  color: qualityLevel === 'GOOD' ? '#10b981' : '#f59e0b'
+                }}>
+                  {qualityLevel}
+                </span>
+              </div>
+              <div style={{ fontSize: '0.74rem', color: textSecondary, display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <span>Blur: <strong>{blurLevel}</strong></span>
+                <span>•</span>
+                <span>Lighting: <strong>{lightingLevel}</strong></span>
+                <span>•</span>
+                <span>Occlusion: <strong>{occlusionLevel}</strong></span>
+              </div>
+            </div>
+
+            {/* Visual Severity */}
+            <div style={{
+              background: subCardBg,
+              borderRadius: '8px',
+              padding: '12px 14px',
+              border: `1px solid ${borderSubtle}`
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase' }}>
+                  Visual Severity
+                </span>
+                <span style={{
+                  fontSize: '0.70rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  background: severityLevel === 'CRITICAL' || severityLevel === 'HIGH' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(56, 189, 248, 0.15)',
+                  color: severityLevel === 'CRITICAL' || severityLevel === 'HIGH' ? '#ef4444' : '#0284c7'
+                }}>
+                  {severityLevel}
+                </span>
+              </div>
+              <div style={{ fontSize: '0.74rem', color: textSecondary }}>
+                {severityReason}
+              </div>
+            </div>
+          </div>
+
+          {/* 7. HUMAN REVIEW WARNING (ONLY WHEN REQUIRED) */}
+          {needsReview && (
+            <div style={{
+              padding: '10px 14px',
+              borderRadius: '8px',
+              background: isDark ? 'rgba(245, 158, 11, 0.12)' : '#fffbeb',
+              border: '1px solid rgba(245, 158, 11, 0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px'
+            }}>
+              <AlertTriangle size={16} color="#f59e0b" style={{ flexShrink: 0 }} />
+              <div style={{ fontSize: '0.76rem', color: isDark ? '#fbbf24' : '#b45309', lineHeight: 1.4 }}>
+                <strong>Field Inspection Required:</strong> {reviewReasons.length > 0 ? reviewReasons.join('; ') : 'Visual inspection suggests on-site officer review to substantiate conditions.'}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Collapsible Technical CV Metrics (Blur variance, luminance, contrast) */}
-      <div style={{ marginTop: '12px', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px' }}>
-        <button
-          type="button"
-          onClick={() => setShowTechnicalMetrics(!showTechnicalMetrics)}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'var(--text-muted)',
-            fontSize: '0.75rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            cursor: 'pointer',
-            padding: 0
-          }}
-        >
-          {showTechnicalMetrics ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          <span>{showTechnicalMetrics ? 'Hide Mathematical CV Metrics' : 'View Image Quality Diagnostics (Laplacian / Luminance)'}</span>
-        </button>
-
-        {showTechnicalMetrics && quality_metrics && (
-          <div style={{
-            marginTop: '10px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '8px',
-            background: 'rgba(0, 0, 0, 0.35)',
-            padding: '10px',
-            borderRadius: '6px',
-            fontSize: '0.72rem',
-            color: 'var(--text-secondary)'
-          }}>
-            <div>
-              <div style={{ color: 'var(--text-muted)' }}>Laplacian Blur:</div>
-              <strong style={{ color: '#fff' }}>{quality_metrics.blur_score || 'N/A'}</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)' }}>Luminance:</div>
-              <strong style={{ color: '#fff' }}>{quality_metrics.brightness || 'N/A'} / 255</strong>
-            </div>
-            <div>
-              <div style={{ color: 'var(--text-muted)' }}>Contrast Std:</div>
-              <strong style={{ color: '#fff' }}>{quality_metrics.contrast || 'N/A'}</strong>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+    );
+  } catch (err) {
+    console.error('Error rendering AIImageAnalysisCard:', err);
+    return null;
+  }
 }

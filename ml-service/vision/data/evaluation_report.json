@@ -1,0 +1,276 @@
+{
+  "total_test_samples": 23,
+  "image_quality_accuracy_pct": 95.65,
+  "incident_category_accuracy_pct": 100.0,
+  "visual_damage_severity_agreement_pct": 95.65,
+  "quality_confusion_matrix": {
+    "LOW_LIGHT": {
+      "LOW_LIGHT": 4
+    },
+    "GOOD": {
+      "GOOD": 9
+    },
+    "BLURRY": {
+      "BLURRY": 4
+    },
+    "ACCEPTABLE": {
+      "BLURRY": 1,
+      "ACCEPTABLE": 5
+    }
+  },
+  "samples_evaluated": [
+    {
+      "image_id": "CIV-IMG-00058",
+      "gt_quality": "LOW_LIGHT",
+      "pred_quality": "LOW_LIGHT",
+      "gt_category": "Water Supply",
+      "pred_category": "Water Supply",
+      "gt_damage": "SEVERE",
+      "pred_damage": "LOW",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.39
+    },
+    {
+      "image_id": "CIV-IMG-00075",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Street Lighting & Electrical",
+      "pred_category": "Street Lighting & Electrical",
+      "gt_damage": "LOW",
+      "pred_damage": "LOW",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.51
+    },
+    {
+      "image_id": "CIV-IMG-00098",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Fire & Emergency Services",
+      "pred_category": "Fire & Emergency Services",
+      "gt_damage": "CRITICAL",
+      "pred_damage": "CRITICAL",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.71
+    },
+    {
+      "image_id": "CIV-IMG-00073",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Street Lighting & Electrical",
+      "pred_category": "Street Lighting & Electrical",
+      "gt_damage": "LOW",
+      "pred_damage": "LOW",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.41
+    },
+    {
+      "image_id": "CIV-IMG-00097",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Fire & Emergency Services",
+      "pred_category": "Fire & Emergency Services",
+      "gt_damage": "CRITICAL",
+      "pred_damage": "CRITICAL",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.71
+    },
+    {
+      "image_id": "CIV-IMG-00060",
+      "gt_quality": "LOW_LIGHT",
+      "pred_quality": "LOW_LIGHT",
+      "gt_category": "Water Supply",
+      "pred_category": "Water Supply",
+      "gt_damage": "SEVERE",
+      "pred_damage": "SEVERE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.32
+    },
+    {
+      "image_id": "CIV-IMG-00127",
+      "gt_quality": "BLURRY",
+      "pred_quality": "BLURRY",
+      "gt_category": "Agriculture",
+      "pred_category": "Unclassified",
+      "gt_damage": "SEVERE",
+      "pred_damage": "UNKNOWN",
+      "analysis_status": "INSUFFICIENT_EVIDENCE",
+      "confidence": null
+    },
+    {
+      "image_id": "CIV-IMG-00046",
+      "gt_quality": "LOW_LIGHT",
+      "pred_quality": "LOW_LIGHT",
+      "gt_category": "Drainage & Sewerage",
+      "pred_category": "Drainage & Sewerage",
+      "gt_damage": "SEVERE",
+      "pred_damage": "SEVERE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.75
+    },
+    {
+      "image_id": "CIV-IMG-00020",
+      "gt_quality": "BLURRY",
+      "pred_quality": "BLURRY",
+      "gt_category": "Drainage & Sewerage",
+      "pred_category": "Unclassified",
+      "gt_damage": "CRITICAL",
+      "pred_damage": "UNKNOWN",
+      "analysis_status": "INSUFFICIENT_EVIDENCE",
+      "confidence": null
+    },
+    {
+      "image_id": "CIV-IMG-00040",
+      "gt_quality": "ACCEPTABLE",
+      "pred_quality": "BLURRY",
+      "gt_category": "Drainage & Sewerage",
+      "pred_category": "Unclassified",
+      "gt_damage": "SEVERE",
+      "pred_damage": "UNKNOWN",
+      "analysis_status": "INSUFFICIENT_EVIDENCE",
+      "confidence": null
+    },
+    {
+      "image_id": "CIV-IMG-00045",
+      "gt_quality": "BLURRY",
+      "pred_quality": "BLURRY",
+      "gt_category": "Drainage & Sewerage",
+      "pred_category": "Unclassified",
+      "gt_damage": "SEVERE",
+      "pred_damage": "UNKNOWN",
+      "analysis_status": "INSUFFICIENT_EVIDENCE",
+      "confidence": null
+    },
+    {
+      "image_id": "CIV-IMG-00051",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Water Supply",
+      "pred_category": "Water Supply",
+      "gt_damage": "SEVERE",
+      "pred_damage": "SEVERE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.4
+    },
+    {
+      "image_id": "CIV-IMG-00066",
+      "gt_quality": "ACCEPTABLE",
+      "pred_quality": "ACCEPTABLE",
+      "gt_category": "Street Lighting & Electrical",
+      "pred_category": "Street Lighting & Electrical",
+      "gt_damage": "CRITICAL",
+      "pred_damage": "CRITICAL",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.76
+    },
+    {
+      "image_id": "CIV-IMG-00138",
+      "gt_quality": "ACCEPTABLE",
+      "pred_quality": "ACCEPTABLE",
+      "gt_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+      "pred_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+      "gt_damage": "LOW",
+      "pred_damage": "LOW",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.71
+    },
+    {
+      "image_id": "CIV-IMG-00027",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Solid Waste Management",
+      "pred_category": "Solid Waste Management",
+      "gt_damage": "MODERATE",
+      "pred_damage": "MODERATE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.74
+    },
+    {
+      "image_id": "CIV-IMG-00061",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Street Lighting & Electrical",
+      "pred_category": "Street Lighting & Electrical",
+      "gt_damage": "CRITICAL",
+      "pred_damage": "CRITICAL",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.7
+    },
+    {
+      "image_id": "CIV-IMG-00038",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Drainage & Sewerage",
+      "pred_category": "Drainage & Sewerage",
+      "gt_damage": "SEVERE",
+      "pred_damage": "SEVERE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.69
+    },
+    {
+      "image_id": "CIV-IMG-00140",
+      "gt_quality": "BLURRY",
+      "pred_quality": "BLURRY",
+      "gt_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+      "pred_category": "Unclassified",
+      "gt_damage": "LOW",
+      "pred_damage": "UNKNOWN",
+      "analysis_status": "INSUFFICIENT_EVIDENCE",
+      "confidence": null
+    },
+    {
+      "image_id": "CIV-IMG-00090",
+      "gt_quality": "ACCEPTABLE",
+      "pred_quality": "ACCEPTABLE",
+      "gt_category": "Building & Municipal Engineering",
+      "pred_category": "Building & Municipal Engineering",
+      "gt_damage": "SEVERE",
+      "pred_damage": "SEVERE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.73
+    },
+    {
+      "image_id": "CIV-IMG-00050",
+      "gt_quality": "GOOD",
+      "pred_quality": "GOOD",
+      "gt_category": "Water Supply",
+      "pred_category": "Water Supply",
+      "gt_damage": "SEVERE",
+      "pred_damage": "SEVERE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.46
+    },
+    {
+      "image_id": "CIV-IMG-00131",
+      "gt_quality": "LOW_LIGHT",
+      "pred_quality": "LOW_LIGHT",
+      "gt_category": "Agriculture",
+      "pred_category": "Agriculture",
+      "gt_damage": "SEVERE",
+      "pred_damage": "SEVERE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.32
+    },
+    {
+      "image_id": "CIV-IMG-00136",
+      "gt_quality": "ACCEPTABLE",
+      "pred_quality": "ACCEPTABLE",
+      "gt_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+      "pred_category": "INSUFFICIENT_VISUAL_EVIDENCE",
+      "gt_damage": "LOW",
+      "pred_damage": "LOW",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.71
+    },
+    {
+      "image_id": "CIV-IMG-00030",
+      "gt_quality": "ACCEPTABLE",
+      "pred_quality": "ACCEPTABLE",
+      "gt_category": "Solid Waste Management",
+      "pred_category": "Solid Waste Management",
+      "gt_damage": "MODERATE",
+      "pred_damage": "MODERATE",
+      "analysis_status": "NEEDS_REVIEW",
+      "confidence": 0.75
+    }
+  ]
+}

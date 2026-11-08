@@ -68,8 +68,8 @@ npm run seed:mongo
 🌱 Connecting to MongoDB Atlas...
 ✓ Connected to MongoDB Atlas successfully.
 ✓ MongoDB Atlas Database Successfully Seeded!
-  - 10 Municipal Departments
-  - 8 Demo Accounts (Admin, Officers, Citizens)
+  - 30 Municipal Departments
+  - 31 Demo Accounts (Admin & Officers)
   - 3 Geolocated Incident Documents with GeoJSON & SLA
 ```
 

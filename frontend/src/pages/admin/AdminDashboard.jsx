@@ -55,6 +55,9 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
   const [selectedDept, setSelectedDept] = useState('all');
   const [selectedPriority, setSelectedPriority] = useState('all');
   const [onlyEscalated, setOnlyEscalated] = useState(false);
+  const [selectedClearance, setSelectedClearance] = useState('all');
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewSuccess, setReviewSuccess] = useState(null);
 
   // Geographic Analytics Data
   const [geoAnalytics, setGeoAnalytics] = useState(null);
@@ -100,6 +103,34 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
 
   // Inspect AI Visual Evidence Modal
   const [inspectEvidenceComplaint, setInspectEvidenceComplaint] = useState(null);
+
+  const handleAdminEvidenceReview = async (action) => {
+    const targetEvidence = inspectEvidenceComplaint?.evidence?.[0];
+    const targetAnalysis = inspectEvidenceComplaint?.visual_analyses?.[0];
+    const targetId = targetEvidence?.id || targetAnalysis?.id;
+    if (!targetId) {
+      alert('No active evidence ID found to verify.');
+      return;
+    }
+    try {
+      setReviewSubmitting(true);
+      await api.post(`/evidence/${targetId}/verify`, {
+        action,
+        notes: `Administrator verified via Admin Inspection Modal: ${action}`
+      });
+      setReviewSuccess(`Decision successfully recorded: ${action}`);
+      if (typeof fetchComplaints === 'function') fetchComplaints();
+      else fetchAdminData();
+      setTimeout(() => {
+        setReviewSuccess(null);
+        setInspectEvidenceComplaint(null);
+      }, 1500);
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to submit officer verification review');
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   // Assign Officer Modal
   const [assignComplaint, setAssignComplaint] = useState(null);
@@ -296,6 +327,10 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
     if (selectedDept !== 'all' && c.department_id !== Number(selectedDept)) return false;
     if (selectedPriority !== 'all' && c.priority !== selectedPriority) return false;
     if (onlyEscalated && c.is_escalated !== 1) return false;
+    if (selectedClearance !== 'all') {
+      const clearance = c.visual_analyses?.[0]?.clearance_tier || 'STANDARD_REVIEW';
+      if (clearance !== selectedClearance) return false;
+    }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -332,7 +367,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
         {/* Admin Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>
           <div>
-            <h1 style={{ fontSize: '2.1rem', color: 'var(--text-primary)', margin: 0 }}>
+            <h1 style={{ fontSize: 'clamp(1.4rem, 4vw, 2.1rem)', color: 'var(--text-primary)', margin: 0 }}>
               West Bengal Municipal & Rural Administration Portal
             </h1>
             <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -484,8 +519,8 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                 </div>
 
                 {/* Filter & Search Bar */}
-                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <div style={{ position: 'relative', width: '220px' }}>
+                <div className="admin-filter-bar" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <div style={{ position: 'relative', minWidth: 'min(100%, 200px)', flex: '1 1 180px' }}>
                     <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input 
                       type="text"
@@ -493,7 +528,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                       placeholder="Search location / title..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      style={{ paddingLeft: '32px', fontSize: '0.8rem', height: '36px' }}
+                      style={{ paddingLeft: '32px', fontSize: '0.8rem', height: '36px', width: '100%' }}
                     />
                   </div>
 
@@ -518,6 +553,19 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                     <option value="LOW">Low</option>
                   </select>
 
+                  <select 
+                    className="form-select" 
+                    style={{ width: 'auto', padding: '6px 10px', fontSize: '0.8rem' }} 
+                    value={selectedClearance} 
+                    onChange={(e) => setSelectedClearance(e.target.value)}
+                  >
+                    <option value="all">All Clearance Tiers</option>
+                    <option value="FLAGGED_FRAUD_REVIEW">🛡️ Flagged Fraud / Risk</option>
+                    <option value="MANDATORY_OFFICER_TRIAGE">⚠️ Mandatory Officer Triage</option>
+                    <option value="AUTO_CLEARED">⚡ Auto-Cleared</option>
+                    <option value="STANDARD_REVIEW">Standard Queue</option>
+                  </select>
+
                   <button 
                     className={`btn btn-sm ${onlyEscalated ? 'btn-danger' : 'btn-secondary'}`}
                     onClick={() => setOnlyEscalated(!onlyEscalated)}
@@ -528,18 +576,23 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
               </div>
 
               {/* Table */}
-              <div className="table-responsive">
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.72rem', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  ↔ Scroll horizontally to view all columns
+                </span>
+              </div>
+              <div className="table-responsive" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', width: '100%' }}>
+                <table style={{ minWidth: '980px', width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
-                      <th style={{ padding: '12px 14px' }}>Ticket #</th>
-                      <th style={{ padding: '12px 14px' }}>Title & Normalized Location</th>
-                      <th style={{ padding: '12px 14px' }}>Jurisdiction Details</th>
-                      <th style={{ padding: '12px 14px' }}>Priority</th>
-                      <th style={{ padding: '12px 14px' }}>Department</th>
-                      <th style={{ padding: '12px 14px' }}>Officer Assigned</th>
-                      <th style={{ padding: '12px 14px' }}>Status / SLA</th>
-                      <th style={{ padding: '12px 14px', textAlign: 'right' }}>Actions</th>
+                      <th style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>Ticket #</th>
+                      <th style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>Title & Normalized Location</th>
+                      <th style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>Jurisdiction Details</th>
+                      <th style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>Priority</th>
+                      <th style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>Department</th>
+                      <th style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>Officer Assigned</th>
+                      <th style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>Status / SLA</th>
+                      <th style={{ padding: '12px 14px', textAlign: 'right', whiteSpace: 'nowrap' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -554,45 +607,73 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                             background: isBreached ? 'rgba(239, 68, 68, 0.05)' : 'transparent'
                           }}
                         >
-                          <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontWeight: 700, color: 'var(--accent-cyan)' }}>
+                          <td style={{ padding: '12px 14px', fontFamily: 'monospace', fontWeight: 700, color: 'var(--accent-cyan)', whiteSpace: 'nowrap' }}>
                             #{c.tracking_id}
                           </td>
 
-                          <td style={{ padding: '12px 14px', maxWidth: '230px' }}>
-                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>{c.title}</div>
+                          <td style={{ padding: '12px 14px', minWidth: '220px', maxWidth: '300px' }}>
+                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px', wordBreak: 'normal', overflowWrap: 'break-word' }}>{c.title}</div>
                             <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
                               📍 {c.district || 'West Bengal'} 
                               {c.municipality ? ` • ${c.municipality}` : c.block ? ` • ${c.block}` : ''}
                             </div>
                           </td>
 
-                          <td style={{ padding: '12px 14px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                            {c.ward && <div>🏛️ {c.ward}</div>}
-                            {c.gram_panchayat && <div>🌾 GP: {c.gram_panchayat}</div>}
-                            {c.police_station && <div style={{ color: '#c084fc' }}>🚓 PS: {c.police_station}</div>}
+                          <td style={{ padding: '12px 14px', fontSize: '0.75rem', color: 'var(--text-secondary)', minWidth: '150px' }}>
+                            {c.ward && <div style={{ whiteSpace: 'nowrap' }}>🏛️ {c.ward}</div>}
+                            {c.gram_panchayat && <div style={{ whiteSpace: 'nowrap' }}>🌾 GP: {c.gram_panchayat}</div>}
+                            {c.police_station && <div style={{ color: '#c084fc', whiteSpace: 'nowrap' }}>🚓 PS: {c.police_station}</div>}
                           </td>
 
-                          <td style={{ padding: '12px 14px' }}>
+                          <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                             <span className={`badge ${getPriorityBadgeClass(c.priority)}`}>
                               {c.priority}
                             </span>
+                            {c.visual_analyses?.[0]?.clearance_tier && (
+                              <div style={{ marginTop: '4px' }}>
+                                <span style={{
+                                  fontSize: '0.66rem',
+                                  fontWeight: 700,
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.04em',
+                                  display: 'inline-block',
+                                  background: c.visual_analyses[0].clearance_tier === 'FLAGGED_FRAUD_REVIEW' ? 'rgba(239, 68, 68, 0.15)' :
+                                              c.visual_analyses[0].clearance_tier === 'MANDATORY_OFFICER_TRIAGE' ? 'rgba(245, 158, 11, 0.15)' :
+                                              c.visual_analyses[0].clearance_tier === 'AUTO_CLEARED' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(59, 130, 246, 0.15)',
+                                  color: c.visual_analyses[0].clearance_tier === 'FLAGGED_FRAUD_REVIEW' ? '#ef4444' :
+                                         c.visual_analyses[0].clearance_tier === 'MANDATORY_OFFICER_TRIAGE' ? '#f59e0b' :
+                                         c.visual_analyses[0].clearance_tier === 'AUTO_CLEARED' ? '#10b981' : '#3b82f6',
+                                  border: `1px solid ${
+                                    c.visual_analyses[0].clearance_tier === 'FLAGGED_FRAUD_REVIEW' ? 'rgba(239, 68, 68, 0.4)' :
+                                    c.visual_analyses[0].clearance_tier === 'MANDATORY_OFFICER_TRIAGE' ? 'rgba(245, 158, 11, 0.4)' :
+                                    c.visual_analyses[0].clearance_tier === 'AUTO_CLEARED' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(59, 130, 246, 0.4)'
+                                  }`
+                                }}>
+                                  {c.visual_analyses[0].clearance_tier === 'FLAGGED_FRAUD_REVIEW' ? '🛡️ FRAUD REVIEW' :
+                                   c.visual_analyses[0].clearance_tier === 'MANDATORY_OFFICER_TRIAGE' ? '⚠️ TRIAGE REQ' :
+                                   c.visual_analyses[0].clearance_tier === 'AUTO_CLEARED' ? '⚡ AUTO CLEARED' : 'STANDARD'}
+                                </span>
+                              </div>
+                            )}
                           </td>
 
-                          <td style={{ padding: '12px 14px', color: 'var(--text-secondary)' }}>
+                          <td style={{ padding: '12px 14px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                             {c.department_name || 'Public Works'}
                           </td>
 
-                          <td style={{ padding: '12px 14px' }}>
+                          <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                             <span style={{ color: c.officer_name ? 'var(--accent-cyan)' : 'var(--text-muted)' }}>
                               {c.officer_name || 'Unassigned'}
                             </span>
                           </td>
 
-                          <td style={{ padding: '12px 14px' }}>
+                          <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                               <span className={`badge badge-status ${
                                 c.status === 'Resolved' ? 'badge-resolved' : 'badge-inprogress'
-                              }`}>
+                              }`} style={{ whiteSpace: 'nowrap' }}>
                                 {c.status}
                               </span>
                             </div>
@@ -605,26 +686,27 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                                 padding: '2px 6px',
                                 borderRadius: '4px',
                                 display: 'inline-block',
-                                border: '1px solid rgba(239, 68, 68, 0.3)'
+                                border: '1px solid rgba(239, 68, 68, 0.3)',
+                                whiteSpace: 'nowrap'
                               }}>
                                 🚨 SLA BREACHED (L{c.escalation_level || 1})
                               </div>
                             ) : c.status === 'Resolved' ? (
-                              <span style={{ fontSize: '0.72rem', color: 'var(--status-low)' }}>✓ Completed</span>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--status-low)', whiteSpace: 'nowrap' }}>✓ Completed</span>
                             ) : (
-                              <span style={{ fontSize: '0.72rem', color: 'var(--accent-purple)' }}>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--accent-purple)', whiteSpace: 'nowrap' }}>
                                 SLA: {c.priority === 'CRITICAL' ? '24h' : c.priority === 'HIGH' ? '48h' : c.priority === 'MEDIUM' ? '3d' : '7d'}
                               </span>
                             )}
                           </td>
 
-                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                          <td style={{ padding: '12px 14px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', flexWrap: 'nowrap' }}>
                                 {((c.evidence && c.evidence.length > 0) || c.image_url) && (
                                   <button 
                                     className="btn btn-secondary btn-sm"
                                     title="Inspect AI Visual Evidence"
-                                    style={{ padding: '4px 8px', color: 'var(--accent-cyan)' }}
+                                    style={{ padding: '4px 8px', color: 'var(--accent-cyan)', whiteSpace: 'nowrap' }}
                                     onClick={() => setInspectEvidenceComplaint(c)}
                                   >
                                     <Sparkles size={13} /> AI
@@ -634,7 +716,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                                 <button 
                                   className="btn btn-secondary btn-sm"
                                   title="Override Priority"
-                                  style={{ padding: '4px 8px', color: '#f59e0b' }}
+                                  style={{ padding: '4px 8px', color: '#f59e0b', whiteSpace: 'nowrap' }}
                                   onClick={() => {
                                     setOverridePriorityComplaint(c);
                                     setNewPriority(c.priority);
@@ -646,7 +728,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                                 <button 
                                   className="btn btn-secondary btn-sm"
                                   title="Override Department"
-                                  style={{ padding: '4px 8px' }}
+                                  style={{ padding: '4px 8px', whiteSpace: 'nowrap' }}
                                   onClick={() => {
                                     setOverrideComplaint(c);
                                     setOverrideDeptId(c.department_id || '');
@@ -658,7 +740,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                               <button 
                                 className="btn btn-secondary btn-sm"
                                 title="Assign Officer"
-                                style={{ padding: '4px 8px' }}
+                                style={{ padding: '4px 8px', whiteSpace: 'nowrap' }}
                                 onClick={() => {
                                   setAssignComplaint(c);
                                   setAssignOfficerId(c.officer_id || '');
@@ -670,7 +752,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                               <button 
                                 className="btn btn-primary btn-sm"
                                 title="View Details"
-                                style={{ padding: '4px 8px' }}
+                                style={{ padding: '4px 8px', whiteSpace: 'nowrap' }}
                                 onClick={() => {
                                   setSelectedComplaintId(c.id);
                                   setCurrentRoute('complaint-details');
@@ -733,7 +815,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                 </div>
 
                 {/* Grid: Districts Distribution & ULB vs Block */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '20px' }}>
                   
                   {/* Complaints by District */}
                   <div className="glass-card" style={{ padding: '22px' }}>
@@ -804,7 +886,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                 </div>
 
                 {/* Hotspot Wards, Gram Panchayats & Police Stations */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '20px' }}>
                   
                   {/* Top Hotspot Wards */}
                   <div className="glass-card" style={{ padding: '20px' }}>
@@ -926,16 +1008,22 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                 Loading registry records...
               </div>
             ) : (
-              <div className="table-responsive">
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    ↔ Scroll horizontally to view all columns
+                  </span>
+                </div>
+              <div className="table-responsive" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', width: '100%' }}>
+                <table style={{ minWidth: '780px', width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
-                      <th style={{ padding: '10px 12px' }}>ID</th>
-                      <th style={{ padding: '10px 12px' }}>Name / Identifier</th>
-                      <th style={{ padding: '10px 12px' }}>Classification & Hierarchy</th>
-                      <th style={{ padding: '10px 12px' }}>Centroid Coordinates</th>
-                      <th style={{ padding: '10px 12px' }}>Status</th>
-                      <th style={{ padding: '10px 12px', textAlign: 'right' }}>Actions</th>
+                      <th style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>ID</th>
+                      <th style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>Name / Identifier</th>
+                      <th style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>Classification & Hierarchy</th>
+                      <th style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>Centroid Coordinates</th>
+                      <th style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>Status</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'right', whiteSpace: 'nowrap' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -944,11 +1032,11 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
 
                       return (
                         <tr key={item.id} style={{ borderBottom: '1px solid var(--border-subtle)', opacity: isActive ? 1 : 0.5 }}>
-                          <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: 'var(--text-muted)' }}>
+                          <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                             #{item.id}
                           </td>
 
-                          <td style={{ padding: '10px 12px' }}>
+                          <td style={{ padding: '10px 12px', minWidth: '160px' }}>
                             <strong style={{ color: 'var(--text-primary)' }}>
                               {item.name || item.pincode || item.ward_name}
                             </strong>
@@ -957,7 +1045,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                             )}
                           </td>
 
-                          <td style={{ padding: '10px 12px', fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                          <td style={{ padding: '10px 12px', fontSize: '0.76rem', color: 'var(--text-secondary)', minWidth: '200px' }}>
                             {item.division && <span>Division: {item.division} • </span>}
                             {item.headquarters && <span>HQ: {item.headquarters} • </span>}
                             {item.type && <span>Type: {item.type} • </span>}
@@ -965,7 +1053,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                             {item.jl_number && <span>JL #{item.jl_number}</span>}
                           </td>
 
-                          <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '0.75rem', color: 'var(--accent-cyan)' }}>
+                          <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: '0.75rem', color: 'var(--accent-cyan)', whiteSpace: 'nowrap' }}>
                             {item.lat || item.center_lat ? (
                               `${(item.lat || item.center_lat).toFixed(4)}, ${(item.lng || item.center_lng).toFixed(4)}`
                             ) : (
@@ -973,7 +1061,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                             )}
                           </td>
 
-                          <td style={{ padding: '10px 12px' }}>
+                          <td style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>
                             {isActive ? (
                               <span style={{ 
                                 background: 'rgba(16, 185, 129, 0.15)', 
@@ -999,11 +1087,11 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                             )}
                           </td>
 
-                          <td style={{ padding: '10px 12px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                          <td style={{ padding: '10px 12px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', flexWrap: 'nowrap' }}>
                               <button 
                                 className="btn btn-secondary btn-sm"
-                                style={{ padding: '3px 8px', fontSize: '0.75rem' }}
+                                style={{ padding: '3px 8px', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
                                 onClick={() => setEditLocationItem(item)}
                               >
                                 <Edit3 size={13} /> Edit
@@ -1011,7 +1099,7 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
 
                               <button 
                                 className={`btn btn-sm ${isActive ? 'btn-danger' : 'btn-secondary'}`}
-                                style={{ padding: '3px 8px', fontSize: '0.75rem' }}
+                                style={{ padding: '3px 8px', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
                                 onClick={() => handleToggleActive(item)}
                                 title={isActive ? 'Soft-Deactivate Entity' : 'Reactivate Entity'}
                               >
@@ -1025,7 +1113,8 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                   </tbody>
                 </table>
               </div>
-            )}
+            </>
+          )}
           </div>
         )}
 
@@ -1507,29 +1596,67 @@ export default function AdminDashboard({ setCurrentRoute, setSelectedComplaintId
                   quality_metrics: { blur_score: 245.8, brightness: 132.4, contrast: 48.2 }
                 }}
                 fusedPriority={inspectEvidenceComplaint.final_priority || inspectEvidenceComplaint.priority}
+                previewUrl={inspectEvidenceComplaint.evidence?.[0]?.secure_url || inspectEvidenceComplaint.evidence?.[0]?.optimized_url || inspectEvidenceComplaint.evidence?.[0]?.url || inspectEvidenceComplaint.image_url}
               />
 
+              {reviewSuccess && (
+                <div style={{
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid #10b981',
+                  color: '#10b981',
+                  fontSize: '0.85rem',
+                  fontWeight: 600
+                }}>
+                  ✓ {reviewSuccess}
+                </div>
+              )}
+
               {/* Action Buttons */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => setInspectEvidenceComplaint(null)}
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-warning btn-sm"
-                  onClick={() => {
-                    const c = inspectEvidenceComplaint;
-                    setInspectEvidenceComplaint(null);
-                    setOverridePriorityComplaint(c);
-                    setNewPriority(c.priority);
-                  }}
-                >
-                  <Activity size={14} /> Adjust Priority
-                </button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginTop: '10px' }}>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    className="btn btn-sm"
+                    style={{ background: 'rgba(16, 185, 129, 0.2)', border: '1px solid #10b981', color: '#10b981', fontWeight: 600 }}
+                    onClick={() => handleAdminEvidenceReview('CONFIRMED')}
+                    disabled={reviewSubmitting}
+                  >
+                    ✓ Confirm AI Findings
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm"
+                    style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', color: '#ef4444', fontWeight: 600 }}
+                    onClick={() => handleAdminEvidenceReview('REJECTED_MISLEADING')}
+                    disabled={reviewSubmitting}
+                  >
+                    🛡️ Flag Fake / Misleading
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    className="btn btn-warning btn-sm"
+                    onClick={() => {
+                      const c = inspectEvidenceComplaint;
+                      setInspectEvidenceComplaint(null);
+                      setOverridePriorityComplaint(c);
+                      setNewPriority(c.priority);
+                    }}
+                  >
+                    <Activity size={14} /> Adjust Priority
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setInspectEvidenceComplaint(null)}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           )}

@@ -178,7 +178,7 @@ export default function EvidenceUploader({
             ? '2px dashed var(--accent-primary)' 
             : '2px dashed var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
-          padding: '24px 20px',
+          padding: 'clamp(16px, 4vw, 24px) clamp(12px, 3vw, 20px)',
           textAlign: 'center',
           background: dragActive 
             ? 'rgba(37, 99, 235, 0.08)' 
@@ -215,13 +215,13 @@ export default function EvidenceUploader({
         </div>
 
         <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
-          Drag & drop incident photos or video proof here
+          Drag & drop incident photos here
         </div>
         <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
           or <span style={{ color: 'var(--accent-primary)', textDecoration: 'underline', fontWeight: 600 }}>browse from your device</span>
         </div>
         <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-          Supported: <strong>JPG, PNG, WebP</strong> (max 10MB) • <strong>MP4, WebM, MOV</strong> (max 50MB) • Up to {maxFiles} files
+          Supported: <strong>JPG, PNG, WebP</strong> (max 10MB) • Up to 1 file
         </div>
       </div>
 
@@ -263,7 +263,7 @@ export default function EvidenceUploader({
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 160px), 1fr))',
             gap: '12px'
           }}>
             {evidenceList.map((item, index) => (

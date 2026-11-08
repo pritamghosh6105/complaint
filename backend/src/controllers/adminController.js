@@ -19,7 +19,8 @@ class AdminController {
         gram_panchayat,
         police_station,
         is_escalated, 
-        search 
+        search, 
+        clearance_tier
       } = req.query;
       let complaints = db.prepare('SELECT * FROM complaints').all();
 
@@ -87,6 +88,13 @@ class AdminController {
           visual_analyses: visualAnalyses
         };
       });
+
+      if (clearance_tier && clearance_tier !== 'all') {
+        complaints = complaints.filter(c => {
+          const analyses = c.visual_analyses || [];
+          return analyses.some(v => v.clearance_tier === clearance_tier);
+        });
+      }
 
       res.json({
         total: complaints.length,

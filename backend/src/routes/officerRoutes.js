@@ -13,5 +13,7 @@ const resolutionUpload = upload.fields([{ name: 'resolution_image', maxCount: 1 
 router.get('/tasks', (req, res) => officerController.getMyAssignedTasks(req, res));
 router.patch('/tasks/:id/status', resolutionUpload, (req, res) => officerController.updateTaskStatus(req, res));
 router.patch('/complaints/:id/status', resolutionUpload, (req, res) => officerController.updateTaskStatus(req, res));
+router.patch('/tasks/:id/triage', (req, res) => officerController.triageTask(req, res));
+router.patch('/complaints/:id/triage', (req, res) => officerController.triageTask(req, res));
 
 module.exports = router;

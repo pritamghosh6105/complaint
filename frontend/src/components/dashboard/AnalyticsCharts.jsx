@@ -127,33 +127,38 @@ export default function AnalyticsCharts({ breakdownData, departmentData }) {
       </div>
 
       {/* Department Resolution Leaderboard */}
-      <div className="glass-card" style={{ padding: '20px' }}>
-        <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '16px' }}>
-          Department Workload & Resolution Performance
-        </h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+      <div className="glass-card" style={{ padding: 'clamp(14px, 3vw, 20px)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+          <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', margin: 0 }}>
+            Department Workload & Resolution Performance
+          </h3>
+          <span style={{ fontSize: '0.72rem', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            ↔ Scroll horizontally
+          </span>
+        </div>
+        <div className="table-responsive" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', width: '100%' }}>
+          <table style={{ minWidth: '820px', width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
-                <th style={{ padding: '10px 14px' }}>Department</th>
-                <th style={{ padding: '10px 14px' }}>Department Head</th>
-                <th style={{ padding: '10px 14px' }}>Total Assigned</th>
-                <th style={{ padding: '10px 14px' }}>Resolved</th>
-                <th style={{ padding: '10px 14px' }}>Resolution Rate</th>
-                <th style={{ padding: '10px 14px' }}>SLA Breaches</th>
-                <th style={{ padding: '10px 14px' }}>Satisfaction</th>
+                <th style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>Department</th>
+                <th style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>Department Head</th>
+                <th style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>Total Assigned</th>
+                <th style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>Resolved</th>
+                <th style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>Resolution Rate</th>
+                <th style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>SLA Breaches</th>
+                <th style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>Satisfaction</th>
               </tr>
             </thead>
             <tbody>
               {departments.map((d) => (
                 <tr key={d.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                  <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
                     {d.name} <span style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)' }}>({d.code})</span>
                   </td>
-                  <td style={{ padding: '12px 14px', color: 'var(--text-secondary)' }}>{d.head_name || 'N/A'}</td>
-                  <td style={{ padding: '12px 14px', fontWeight: 700 }}>{d.totalAssigned}</td>
-                  <td style={{ padding: '12px 14px', color: 'var(--accent-emerald)', fontWeight: 700 }}>{d.resolved}</td>
-                  <td style={{ padding: '12px 14px' }}>
+                  <td style={{ padding: '12px 14px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{d.head_name || 'N/A'}</td>
+                  <td style={{ padding: '12px 14px', fontWeight: 700, whiteSpace: 'nowrap' }}>{d.totalAssigned}</td>
+                  <td style={{ padding: '12px 14px', color: 'var(--accent-emerald)', fontWeight: 700, whiteSpace: 'nowrap' }}>{d.resolved}</td>
+                  <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div style={{ width: '60px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
                         <div style={{ width: `${d.resolutionRate}%`, height: '100%', background: '#10b981' }}></div>
@@ -161,14 +166,14 @@ export default function AnalyticsCharts({ breakdownData, departmentData }) {
                       <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{d.resolutionRate}%</span>
                     </div>
                   </td>
-                  <td style={{ padding: '12px 14px' }}>
+                  <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                     {d.slaBreaches > 0 ? (
-                      <span className="badge badge-critical" style={{ fontSize: '0.7rem' }}>{d.slaBreaches} Breaches</span>
+                      <span className="badge badge-critical" style={{ fontSize: '0.7rem', whiteSpace: 'nowrap' }}>{d.slaBreaches} Breaches</span>
                     ) : (
-                      <span style={{ color: 'var(--accent-emerald)', fontSize: '0.8rem' }}>0 (100% On-time)</span>
+                      <span style={{ color: 'var(--accent-emerald)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>0 (100% On-time)</span>
                     )}
                   </td>
-                  <td style={{ padding: '12px 14px', color: '#fbbf24', fontWeight: 700 }}>
+                  <td style={{ padding: '12px 14px', color: '#fbbf24', fontWeight: 700, whiteSpace: 'nowrap' }}>
                     ★ {d.satisfactionRating} / 5.0
                   </td>
                 </tr>

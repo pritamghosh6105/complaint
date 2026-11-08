@@ -10,7 +10,7 @@
 Urban local bodies and municipal corporations face substantial challenges in managing civic complaints efficiently due to the volume of unstructured text reports, manual triage bottlenecks, redundant duplicate reports, and delayed grievance resolution. This project presents **CivicPulse AI**, an end-to-end intelligent citizen complaint and issue management platform that integrates Machine Learning (ML), Natural Language Processing (NLP), and Geospatial Information Systems (GIS) with full-stack web technologies.
 
 The system incorporates four core machine learning modules:
-1. **Automated Complaint Categorization** using Term Frequency-Inverse Document Frequency (TF-IDF) n-grams and calibrated Logistic Regression classifiers achieving **96.4% test accuracy** across 10 municipal domains.
+1. **Automated Complaint Categorization** using Term Frequency-Inverse Document Frequency (TF-IDF) n-grams and calibrated Logistic Regression classifiers achieving **96.4% test accuracy** across 30 municipal domains.
 2. **Dynamic Priority & Urgency Prediction** utilizing a multi-feature Random Forest pipeline that evaluates extracted safety hazard keywords, demographic density, and location sensitivity (schools, hospitals, highways).
 3. **Hybrid Spatio-Textual Duplicate Detection** combining high-dimensional NLP Cosine Similarity with the geospatial **Haversine great-circle distance metric** to cluster redundant incident reports.
 4. **Resolution Time Regressor** using Random Forest Regression to predict resolution timelines and dynamically establish Service Level Agreement (SLA) deadlines.

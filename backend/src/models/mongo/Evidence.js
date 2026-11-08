@@ -33,7 +33,12 @@ const evidenceSchema = new mongoose.Schema({
     default: 'pending' 
   },
   ai_analysis_id: { type: Number, default: null, index: true },
-  is_sensitive: { type: Boolean, default: false }
+  is_sensitive: { type: Boolean, default: false },
+  processing_status: {
+    type: String,
+    enum: ['UPLOADED', 'QUEUED', 'PROCESSING', 'COMPLETED', 'FAILED', 'NEEDS_REVIEW'],
+    default: 'UPLOADED'
+  }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
