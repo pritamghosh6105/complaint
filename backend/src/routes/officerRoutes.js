@@ -6,7 +6,7 @@ const { requireRoles } = require('../middleware/roleMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
 router.use(authMiddleware);
-router.use(requireRoles('officer', 'admin'));
+router.use(requireRoles('officer', 'admin', 'police_officer', 'cyber_crime_officer'));
 
 const resolutionUpload = upload.fields([{ name: 'resolution_image', maxCount: 1 }, { name: 'image', maxCount: 1 }]);
 

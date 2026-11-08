@@ -33,6 +33,7 @@ import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../../components/common/Modal';
 import SceneDescriptionCard from '../../components/complaint/SceneDescriptionCard';
+import { compressImage } from '../../utils/imageCompressor';
 
 export default function OfficerDashboard({ 
   setCurrentRoute, 
@@ -181,7 +182,9 @@ export default function OfficerDashboard({
       formData.append('status', 'Resolved');
       formData.append('notes', resolutionNotes || 'On-ground remediation completed and verified.');
       if (resolutionFile) {
-        formData.append('resolution_image', resolutionFile);
+        // Fast client-side image compression down to ~150KB to eliminate upload delay
+        const optimizedFile = await compressImage(resolutionFile);
+        formData.append('resolution_image', optimizedFile);
       }
 
       await api.patch(`/officer/tasks/${resolvingComplaint.id}/status`, formData, {
@@ -1017,11 +1020,14 @@ export default function OfficerDashboard({
                 type="file" 
                 accept="image/*"
                 className="form-input"
-                onChange={(e) => {
+                onChange={async (e) => {
                   const f = e.target.files[0];
                   if (f) {
                     setResolutionFile(f);
                     setResolutionFilePreview(URL.createObjectURL(f));
+                    compressImage(f).then(comp => {
+                      if (comp) setResolutionFile(comp);
+                    });
                   }
                 }}
               />

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { compressImage } from '../../utils/imageCompressor';
 import { 
   Upload, 
   X, 
@@ -74,7 +75,7 @@ export default function EvidenceUploader({
     return { valid: true, isImage, isVideo, ext };
   };
 
-  const handleFiles = (incomingFiles) => {
+  const handleFiles = async (incomingFiles) => {
     setErrorMessage('');
     const newItems = [];
     let firstImageFound = null;
@@ -85,12 +86,16 @@ export default function EvidenceUploader({
     }
 
     for (let i = 0; i < incomingFiles.length; i++) {
-      const file = incomingFiles[i];
+      let file = incomingFiles[i];
       const validation = validateFile(file);
 
       if (!validation.valid) {
         setErrorMessage(validation.error);
         return;
+      }
+
+      if (validation.isImage) {
+        file = await compressImage(file);
       }
 
       const previewUrl = URL.createObjectURL(file);

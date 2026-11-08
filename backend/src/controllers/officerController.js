@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const db = require('../models/db');
 const cloudinaryService = require('../services/cloudinaryService');
 const mlClient = require('../services/mlClient');
@@ -83,54 +84,88 @@ class OfficerController {
       const uploadedFile = req.file || req.files?.resolution_image?.[0] || req.files?.image?.[0];
 
       if (uploadedFile) {
+        // Fast local file preservation to eliminate mobile latency
+        const uploadsDir = path.resolve(__dirname, '../../uploads');
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        const fileExt = path.extname(uploadedFile.originalname) || '.jpg';
+        const localFileName = `resolution-${complaint.id}-${Date.now()}${fileExt}`;
+        const permanentLocalPath = path.join(uploadsDir, localFileName);
+        
         try {
-          const uploadRes = await cloudinaryService.uploadEvidence(uploadedFile.path, {
-            complaintId: complaint.tracking_id || complaint.id,
-            folderType: 'resolution',
-            resourceType: 'image',
-            originalFilename: uploadedFile.originalname,
-            tags: ['resolution', complaint.category]
-          });
-
-          resolutionImageUrl = uploadRes.secure_url;
-
-          resolutionEvidenceRecord = db.insertEvidence({
-            complaint_id: complaint.id,
-            uploaded_by: officerId,
-            cloudinary_public_id: uploadRes.cloudinary_public_id,
-            cloudinary_url: uploadRes.cloudinary_url,
-            secure_url: uploadRes.secure_url,
-            resource_type: uploadRes.resource_type,
-            format: uploadRes.format,
-            original_filename: uploadRes.original_filename || uploadedFile.originalname,
-            file_size: uploadRes.file_size || uploadedFile.size,
-            width: uploadRes.width,
-            height: uploadRes.height,
-            thumbnail_url: uploadRes.thumbnail_url,
-            evidence_type: 'resolution',
-            is_sensitive: Boolean(complaint.is_crime || complaint.is_sensitive)
-          });
-
-          if (resolutionEvidenceRecord) {
-            db.logEvidenceAudit({
-              complaint_id: complaint.id,
-              evidence_id: resolutionEvidenceRecord.id,
-              cloudinary_public_id: uploadRes.cloudinary_public_id,
-              action: 'UPLOAD',
-              user_id: officerId,
-              user_role: 'officer',
-              user_name: officerName,
-              ip_address: req.ip || '127.0.0.1',
-              details: `Officer uploaded resolution proof photo: ${uploadedFile.originalname} to Cloudinary`
-            });
-          }
-        } catch (uploadErr) {
-          console.error('Resolution photo upload error:', uploadErr);
+          fs.copyFileSync(uploadedFile.path, permanentLocalPath);
+          resolutionImageUrl = `/uploads/${localFileName}`;
+        } catch (copyErr) {
+          console.error('[Resolution] Local storage copy error:', copyErr);
           resolutionImageUrl = `/uploads/${uploadedFile.filename || uploadedFile.originalname || 'resolution.jpg'}`;
         }
-        // Ensure temporary local upload file is deleted
-        if (uploadedFile && uploadedFile.path && fs.existsSync(uploadedFile.path)) {
+
+        // Clean up temporary multer upload file
+        if (uploadedFile.path && fs.existsSync(uploadedFile.path)) {
           try { fs.unlinkSync(uploadedFile.path); } catch (_) { }
+        }
+
+        // Background Cloudinary Synchronization with 2.5s quick-race
+        const syncToCloudinary = async () => {
+          try {
+            const uploadRes = await cloudinaryService.uploadEvidence(permanentLocalPath, {
+              complaintId: complaint.tracking_id || complaint.id,
+              folderType: 'resolution',
+              resourceType: 'image',
+              originalFilename: uploadedFile.originalname,
+              tags: ['resolution', complaint.category]
+            });
+
+            if (uploadRes && uploadRes.secure_url) {
+              resolutionImageUrl = uploadRes.secure_url;
+              db.prepare('UPDATE complaints SET resolution_image_url = ? WHERE id = ?').run(uploadRes.secure_url, complaint.id);
+
+              const evRecord = db.insertEvidence({
+                complaint_id: complaint.id,
+                uploaded_by: officerId,
+                cloudinary_public_id: uploadRes.cloudinary_public_id,
+                cloudinary_url: uploadRes.cloudinary_url,
+                secure_url: uploadRes.secure_url,
+                resource_type: uploadRes.resource_type,
+                format: uploadRes.format,
+                original_filename: uploadRes.original_filename || uploadedFile.originalname,
+                file_size: uploadRes.file_size || uploadedFile.size,
+                width: uploadRes.width,
+                height: uploadRes.height,
+                thumbnail_url: uploadRes.thumbnail_url,
+                evidence_type: 'resolution',
+                is_sensitive: Boolean(complaint.is_crime || complaint.is_sensitive)
+              });
+
+              if (evRecord) {
+                db.prepare('UPDATE complaints SET resolution_evidence_id = ? WHERE id = ?').run(evRecord.id, complaint.id);
+                db.logEvidenceAudit({
+                  complaint_id: complaint.id,
+                  evidence_id: evRecord.id,
+                  cloudinary_public_id: uploadRes.cloudinary_public_id,
+                  action: 'UPLOAD',
+                  user_id: officerId,
+                  user_role: 'officer',
+                  user_name: officerName,
+                  ip_address: req.ip || '127.0.0.1',
+                  details: `Officer resolution proof photo synced to Cloudinary: ${uploadedFile.originalname}`
+                });
+              }
+            }
+          } catch (cloudErr) {
+            console.warn(`[Resolution Upload] Cloudinary sync deferred or local fallback maintained: ${cloudErr.message}`);
+          }
+        };
+
+        // If Cloudinary completes in under 2.5 seconds, use CDN immediately; otherwise let it finish in background
+        try {
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT_DEFERRED')), 2500));
+          await Promise.race([syncToCloudinary(), timeoutPromise]);
+        } catch (raceErr) {
+          if (raceErr.message === 'TIMEOUT_DEFERRED') {
+            console.log(`[Resolution Upload] Fast response triggered: Cloudinary deferred to background for #${complaint.tracking_id}`);
+          }
         }
       } else if (req.body.resolution_image_url) {
         resolutionImageUrl = req.body.resolution_image_url;
