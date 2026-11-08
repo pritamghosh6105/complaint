@@ -18,7 +18,7 @@ An enterprise-grade, full-stack civic governance platform powered by **Machine L
 7. **Automated SLA Escalation Engine**: Multi-tier escalation watchdog (Level 1: Dept Head $\to$ Level 2: Municipal Commissioner $\to$ Level 3: Mayor).
 8. **Interactive GIS Heatmaps & Pin Locator**: OpenStreetMap Leaflet integration with interactive incident pin-dropping, GPS reverse geocoding, and ward-level density clustering.
 9. **30 Specialized Department Portals**: Dedicated operational workspaces for Police, Fire, Roads, Water, Electricity, Sanitation, Health, Revenue, and 22 other municipal divisions.
-10. **Secure Credentials Vault**: Administrative password-protected vault (`6105`) providing instant 1-click access to the Administrator and all 30 departmental officer accounts.
+10. **Role-Based Governance**: Dedicated, secure role-separated portals for Citizens, Municipal Administrators, and 30 departmental field officers.
 11. **Responsive Mobile-First UI**: Dark and light themes, touch-optimized off-canvas drawers, centered modals, and streamlined operational KPI cards.
 
 ---
@@ -130,26 +130,6 @@ npm install
 npm run dev -- --port 3000
 # Frontend running at http://localhost:3000
 ```
-
----
-
-## 🔐 Credentials & Role-Based Access
-
-The platform includes a built-in **Credentials Vault** on the Sign-In page. Enter the administrative passcode `6105` to unlock instant 1-click access to all 31 municipal accounts:
-
-| Role | Username / Identifier | Password | Description |
-| :--- | :--- | :--- | :--- |
-| **Municipal Administrator** | `admin` | `Admin@123` | City-wide oversight, cross-department reassignment, ML Inspector |
-| **Police & Law Enforcement** | `police_officer` | `Police@123` | Law enforcement, crime prevention, public safety taskforce |
-| **Fire & Emergency Services** | `fire_officer` | `Fire@123` | Fire hazard response, emergency rescue operations |
-| **Roads & Highway Authority** | `pwd_officer` | `Pwd@123` | Pothole repair, bridge safety, road infrastructure |
-| **Water Supply & Sewerage** | `water_officer` | `Water@123` | Water pipeline leaks, contamination, sewage blockages |
-| **Electricity & Power Grid** | `electricity_officer` | `Electric@123` | Power outages, downed powerlines, transformer repairs |
-| **Solid Waste & Sanitation** | `sanitation_officer` | `Sanitation@123` | Garbage clearance, street cleaning, dump maintenance |
-| **Public Health & Disease** | `health_officer` | `Health@123` | Epidemic monitoring, medical camps, sanitization |
-| **Citizen (Demo)** | `5334950948` | `citizen123` | Grievance lodging, GPS map pin, evidence gallery, live tracking |
-
-*(Additional accounts for the other 22 civic departments are available directly inside the Credentials Vault.)*
 
 ---
 
