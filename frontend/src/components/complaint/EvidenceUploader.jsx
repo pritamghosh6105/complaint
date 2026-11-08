@@ -253,7 +253,9 @@ export default function EvidenceUploader({
             marginBottom: '10px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '6px'
           }}>
             <span>ATTACHED EVIDENCE ({evidenceList.length}/{maxFiles})</span>
             <span style={{ color: 'var(--accent-emerald)', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px' }}>

@@ -223,100 +223,140 @@ export default function AIImageAnalysisCard({
         <div className="ai-vision-header" style={{
           borderBottom: `1px solid ${borderSubtle}`
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              background: 'rgba(0, 240, 255, 0.12)',
-              border: '1px solid rgba(0, 240, 255, 0.35)',
-              display: 'flex',
+          <div className="ai-vision-header-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', width: '100%', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
+              <div style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                background: 'rgba(0, 240, 255, 0.12)',
+                border: '1px solid rgba(0, 240, 255, 0.35)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <Eye size={19} color="#00f0ff" />
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <h4 className="ai-vision-header-title" style={{
+                  margin: 0,
+                  fontSize: '0.98rem',
+                  fontWeight: 700,
+                  color: textPrimary,
+                  lineHeight: 1.25,
+                  wordBreak: 'break-word'
+                }}>
+                  Visual AI Image Analysis
+                </h4>
+                <div style={{
+                  fontSize: '0.74rem',
+                  color: textMuted,
+                  marginTop: '2px',
+                  lineHeight: 1.25,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>
+                  Objective Vision-Language Evidence Evaluation
+                </div>
+              </div>
+            </div>
+
+            {/* Status Badge - Fixed No Wrap */}
+            <span className="ai-vision-status-badge" style={{
+              fontSize: '0.70rem',
+              fontWeight: 800,
+              padding: '3px 9px',
+              borderRadius: '5px',
+              background: classificationStatus === 'CLASSIFIED' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+              color: classificationStatus === 'CLASSIFIED' ? '#10b981' : '#f59e0b',
+              border: `1px solid ${classificationStatus === 'CLASSIFIED' ? 'rgba(16, 185, 129, 0.35)' : 'rgba(245, 158, 11, 0.35)'}`,
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+              letterSpacing: '0.04em',
+              display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <Eye size={20} color="#00f0ff" />
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h4 style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700, color: textPrimary }}>
-                  Visual AI Image Analysis
-                </h4>
-                <span style={{
-                  fontSize: '0.70rem',
-                  fontWeight: 700,
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  background: classificationStatus === 'CLASSIFIED' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                  color: classificationStatus === 'CLASSIFIED' ? '#10b981' : '#f59e0b',
-                  border: `1px solid ${classificationStatus === 'CLASSIFIED' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`
-                }}>
-                  {classificationStatus}
-                </span>
-              </div>
-              <div style={{ fontSize: '0.76rem', color: textMuted, marginTop: '2px' }}>
-                Objective Vision-Language Evidence Evaluation
-              </div>
-            </div>
+              {classificationStatus}
+            </span>
           </div>
 
-          {/* Model Badge & Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{
-              fontSize: '0.74rem',
+          {/* Model Badge & Controls Toolbar */}
+          <div className="ai-vision-controls-bar" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            flexWrap: 'wrap',
+            width: '100%',
+            paddingTop: '8px',
+            borderTop: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.05)'
+          }}>
+            <span className="ai-vision-model-pill" style={{
+              fontSize: '0.72rem',
               fontWeight: 700,
-              padding: '4px 10px',
+              padding: '4px 9px',
               borderRadius: '6px',
               background: isDark ? 'rgba(56, 189, 248, 0.12)' : '#e0f2fe',
               color: isDark ? '#38bdf8' : '#0284c7',
-              border: isDark ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid #bae6fd'
+              border: isDark ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid #bae6fd',
+              whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px'
             }}>
-              {analysis.model || 'Gemini 3.5 Flash'}
+              <BrainCircuit size={12} />
+              <span>{analysis.model || 'Gemini 3.5 Flash'}</span>
             </span>
 
             {validBoxes.length > 0 && (
               <button
                 type="button"
+                className="ai-vision-ctrl-btn"
                 onClick={() => setShowBoundingBoxes(!showBoundingBoxes)}
                 style={{
-                  background: showBoundingBoxes ? 'rgba(0, 240, 255, 0.12)' : 'none',
+                  background: showBoundingBoxes ? 'rgba(0, 240, 255, 0.12)' : 'transparent',
                   border: `1px solid ${showBoundingBoxes ? '#00f0ff' : borderSubtle}`,
                   borderRadius: '6px',
                   padding: '4px 10px',
-                  fontSize: '0.74rem',
+                  fontSize: '0.72rem',
                   fontWeight: 600,
                   color: showBoundingBoxes ? '#00f0ff' : textSecondary,
                   cursor: 'pointer',
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '5px',
                   whiteSpace: 'nowrap',
                   transition: 'all 0.15s ease'
                 }}
               >
                 <Layers size={13} />
-                {showBoundingBoxes ? 'Hide Boxes' : 'Show Boxes'}
+                <span>{showBoundingBoxes ? 'Hide Boxes' : 'Show Boxes'}</span>
               </button>
             )}
 
             {onReanalyze && (
               <button
                 type="button"
+                className="ai-vision-ctrl-btn"
                 onClick={onReanalyze}
                 title="Re-run Gemini Vision Analysis"
                 style={{
-                  background: 'none',
+                  background: 'transparent',
                   border: `1px solid ${borderSubtle}`,
                   borderRadius: '6px',
-                  padding: '4px 8px',
-                  fontSize: '0.74rem',
+                  padding: '4px 10px',
+                  fontSize: '0.72rem',
                   color: textSecondary,
                   cursor: 'pointer',
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px'
+                  gap: '5px',
+                  whiteSpace: 'nowrap'
                 }}
               >
-                <RefreshCw size={13} />
+                <RefreshCw size={12} />
                 <span>Re-analyze</span>
               </button>
             )}
@@ -459,61 +499,61 @@ export default function AIImageAnalysisCard({
           {/* 3. INCIDENT SUMMARY (4-CARD GRID) */}
           <div className="ai-vision-grid-4">
             {/* Detected Incident */}
-            <div style={{
+            <div className="ai-vision-subcard" style={{
               background: subCardBg,
               borderRadius: '8px',
               padding: '12px 14px',
               border: `1px solid ${borderSubtle}`
             }}>
-              <div style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <div className="ai-vision-subcard-title" style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Detected Incident
               </div>
-              <div style={{ fontSize: '0.90rem', fontWeight: 700, color: textPrimary, marginTop: '4px' }}>
+              <div className="ai-vision-subcard-value" style={{ fontSize: '0.90rem', fontWeight: 700, color: textPrimary, marginTop: '4px', wordBreak: 'break-word' }}>
                 {detectedIncident}
               </div>
             </div>
 
             {/* Department */}
-            <div style={{
+            <div className="ai-vision-subcard" style={{
               background: subCardBg,
               borderRadius: '8px',
               padding: '12px 14px',
               border: `1px solid ${borderSubtle}`
             }}>
-              <div style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <div className="ai-vision-subcard-title" style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Department
               </div>
-              <div style={{ fontSize: '0.90rem', fontWeight: 700, color: '#0284c7', marginTop: '4px' }}>
+              <div className="ai-vision-subcard-value" style={{ fontSize: '0.90rem', fontWeight: 700, color: '#0284c7', marginTop: '4px', wordBreak: 'break-word' }}>
                 {visualDept}
               </div>
             </div>
 
             {/* Subcategory */}
-            <div style={{
+            <div className="ai-vision-subcard" style={{
               background: subCardBg,
               borderRadius: '8px',
               padding: '12px 14px',
               border: `1px solid ${borderSubtle}`
             }}>
-              <div style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <div className="ai-vision-subcard-title" style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Subcategory
               </div>
-              <div style={{ fontSize: '0.86rem', fontWeight: 600, color: textSecondary, marginTop: '4px' }}>
+              <div className="ai-vision-subcard-value" style={{ fontSize: '0.86rem', fontWeight: 600, color: textSecondary, marginTop: '4px', wordBreak: 'break-word' }}>
                 {visualSubcat}
               </div>
             </div>
 
             {/* AI Confidence Estimate */}
-            <div style={{
+            <div className="ai-vision-subcard" style={{
               background: subCardBg,
               borderRadius: '8px',
               padding: '12px 14px',
               border: `1px solid ${borderSubtle}`
             }}>
-              <div style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                AI Confidence Estimate
+              <div className="ai-vision-subcard-title" style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                AI Confidence
               </div>
-              <div style={{ fontSize: '0.90rem', fontWeight: 700, color: '#10b981', marginTop: '4px' }}>
+              <div className="ai-vision-subcard-value" style={{ fontSize: '0.90rem', fontWeight: 700, color: '#10b981', marginTop: '4px' }}>
                 {confidencePct}
               </div>
             </div>
@@ -545,7 +585,7 @@ export default function AIImageAnalysisCard({
               }}>
                 Scene Description
               </span>
-              <div style={{
+              <div className="ai-vision-scene-type-tag" style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
@@ -562,7 +602,7 @@ export default function AIImageAnalysisCard({
               </div>
             </div>
 
-            <p style={{ margin: '0 0 12px 0', fontSize: '0.88rem', color: textPrimary, lineHeight: 1.5, fontWeight: 500 }}>
+            <p className="ai-vision-scene-desc" style={{ margin: '0 0 12px 0', fontSize: '0.88rem', color: textPrimary, lineHeight: 1.5, fontWeight: 500 }}>
               {sceneDescription}
             </p>
 
@@ -609,6 +649,7 @@ export default function AIImageAnalysisCard({
                 </div>
                 <button
                   type="button"
+                  className="ai-vision-adopt-btn"
                   onClick={handleCopyOrAdopt}
                   style={{
                     background: copiedDesc ? '#10b981' : '#0284c7',
@@ -638,14 +679,14 @@ export default function AIImageAnalysisCard({
           {/* 6. IMAGE QUALITY & VISUAL SEVERITY */}
           <div className="ai-vision-grid-2">
             {/* Image Quality */}
-            <div style={{
+            <div className="ai-vision-subcard" style={{
               background: subCardBg,
               borderRadius: '8px',
               padding: '12px 14px',
               border: `1px solid ${borderSubtle}`
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase' }}>
+                <span className="ai-vision-subcard-title" style={{ fontSize: '0.70rem', fontWeight: 700, color: textMuted, textTransform: 'uppercase' }}>
                   Image Quality
                 </span>
                 <span style={{
@@ -669,7 +710,7 @@ export default function AIImageAnalysisCard({
             </div>
 
             {/* Visual Severity */}
-            <div style={{
+            <div className="ai-vision-subcard" style={{
               background: subCardBg,
               borderRadius: '8px',
               padding: '12px 14px',

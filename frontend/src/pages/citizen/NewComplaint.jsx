@@ -1239,7 +1239,7 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                                   <span style={{ color: 'var(--text-muted)' }}> ({visualAnalysis.predicted_subcategory})</span>
                                 )}
                               </div>
-                              <div style={{ display: 'flex', gap: '8px' }}>
+                              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -1257,7 +1257,8 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                                     fontSize: '0.78rem',
                                     padding: '4px 10px',
                                     borderRadius: '4px',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap'
                                   }}
                                 >
                                   ✓ Adopt AI Suggestion
@@ -1275,7 +1276,8 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
                                     fontSize: '0.78rem',
                                     padding: '4px 10px',
                                     borderRadius: '4px',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap'
                                   }}
                                 >
                                   Keep Manual Category

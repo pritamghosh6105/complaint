@@ -11,7 +11,7 @@ class OfficerController {
     try {
       const officerId = req.user.id;
       const deptId = req.user.department_id;
-      
+
       let tasks;
       if (deptId) {
         // Fetch all complaints assigned to this officer or to their department taskforce
@@ -130,7 +130,7 @@ class OfficerController {
         }
         // Ensure temporary local upload file is deleted
         if (uploadedFile && uploadedFile.path && fs.existsSync(uploadedFile.path)) {
-          try { fs.unlinkSync(uploadedFile.path); } catch (_) {}
+          try { fs.unlinkSync(uploadedFile.path); } catch (_) { }
         }
       } else if (req.body.resolution_image_url) {
         resolutionImageUrl = req.body.resolution_image_url;
@@ -245,7 +245,7 @@ class OfficerController {
 
       if (action === 'CONFIRM_CRITICAL') {
         const triageReason = reason || 'Verified by field officer: genuine life-safety hazard detected. Rapid 24-hour response protocol locked.';
-        
+
         let slaDeadline = complaint.sla_deadline;
         if (!slaDeadline || new Date(slaDeadline) < now) {
           slaDeadline = new Date(now.getTime() + 24 * 3600 * 1000).toISOString();

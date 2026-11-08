@@ -158,7 +158,7 @@ export default function EvidenceGallery({
           {/* Before & After Dual Preview Grid */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
             gap: '18px',
             marginBottom: '16px'
           }}>
@@ -311,8 +311,8 @@ export default function EvidenceGallery({
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-            gap: '14px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 140px), 1fr))',
+            gap: '12px',
             marginBottom: '16px'
           }}>
             {initialEvidence.map((item, idx) => (
@@ -393,7 +393,7 @@ export default function EvidenceGallery({
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button
                     type="button"
                     className="btn btn-secondary btn-sm"

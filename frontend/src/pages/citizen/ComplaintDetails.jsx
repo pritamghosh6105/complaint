@@ -455,7 +455,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               {complaint.triage_status !== 'CONFIRMED_CRITICAL' && (
                 <button
                   type="button"

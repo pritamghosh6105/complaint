@@ -38,16 +38,17 @@ export default function SceneDescriptionCard({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Eye size={16} color="#f59e0b" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+            <Eye size={16} color="#f59e0b" style={{ flexShrink: 0 }} />
             <span style={{
               fontSize: '0.74rem',
               fontWeight: 700,
               color: '#f59e0b',
               textTransform: 'uppercase',
-              letterSpacing: '0.05em'
+              letterSpacing: '0.05em',
+              whiteSpace: 'nowrap'
             }}>
-              Officer Visual Identification Required
+              Officer Visual Inspection Required
             </span>
           </div>
           <span style={{
@@ -57,7 +58,9 @@ export default function SceneDescriptionCard({
             padding: '2px 8px',
             borderRadius: '6px',
             fontWeight: 600,
-            border: '1px solid rgba(245, 158, 11, 0.25)'
+            border: '1px solid rgba(245, 158, 11, 0.25)',
+            whiteSpace: 'nowrap',
+            flexShrink: 0
           }}>
             Manual Identification Required
           </span>
@@ -92,13 +95,14 @@ export default function SceneDescriptionCard({
         marginBottom: '10px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Sparkles size={15} color="var(--accent-primary, #0284c7)" />
+          <Sparkles size={15} color="var(--accent-primary, #0284c7)" style={{ flexShrink: 0 }} />
           <span style={{
             fontSize: '0.76rem',
             fontWeight: 800,
             color: 'var(--accent-primary, #0284c7)',
             textTransform: 'uppercase',
-            letterSpacing: '0.05em'
+            letterSpacing: '0.05em',
+            whiteSpace: 'nowrap'
           }}>
             Scene Description
           </span>
@@ -175,3 +179,4 @@ export default function SceneDescriptionCard({
     </div>
   );
 }
+
