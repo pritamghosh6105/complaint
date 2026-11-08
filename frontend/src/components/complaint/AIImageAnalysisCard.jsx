@@ -592,17 +592,20 @@ export default function AIImageAnalysisCard({
                 fontSize: '0.72rem',
                 color: textMuted,
                 background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9',
-                padding: '2px 8px',
+                padding: '3px 8px',
                 borderRadius: '6px',
                 border: `1px solid ${borderSubtle}`,
-                whiteSpace: 'nowrap'
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                flexWrap: 'wrap',
+                lineHeight: 1.3
               }}>
-                <span>Scene Type:</span>
-                <strong style={{ color: textSecondary }}>{String(sceneType)}</strong>
+                <span style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>Scene Type:</span>
+                <strong style={{ color: textSecondary, wordBreak: 'break-word' }}>{String(sceneType)}</strong>
               </div>
             </div>
 
-            <p className="ai-vision-scene-desc" style={{ margin: '0 0 12px 0', fontSize: '0.88rem', color: textPrimary, lineHeight: 1.5, fontWeight: 500 }}>
+            <p style={{ margin: '0 0 12px 0', fontSize: '0.88rem', color: textPrimary, lineHeight: 1.5, fontWeight: 500 }}>
               {sceneDescription}
             </p>
 
@@ -649,7 +652,6 @@ export default function AIImageAnalysisCard({
                 </div>
                 <button
                   type="button"
-                  className="ai-vision-adopt-btn"
                   onClick={handleCopyOrAdopt}
                   style={{
                     background: copiedDesc ? '#10b981' : '#0284c7',

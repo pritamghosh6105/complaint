@@ -1099,6 +1099,12 @@ class RelationalStorage {
     return record;
   }
 
+  getComplaintById(id) {
+    this.load();
+    const list = this.data.complaints || [];
+    return list.find(c => Number(c.id) === Number(id));
+  }
+
   getEvidenceByComplaintId(complaintId) {
     this.load();
     const list = this.data.complaint_evidence || [];

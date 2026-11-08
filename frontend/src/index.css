@@ -6825,11 +6825,15 @@ body {
     font-size: 0.82rem !important;
     line-height: 1.45 !important;
   }
-  .ai-vision-scene-type-tag {
+  .ai-vision-scene-type-tag,
+  .scene-description-type-badge {
     font-size: 0.68rem !important;
-    padding: 2px 6px !important;
+    padding: 3px 6px !important;
     max-width: 100% !important;
     word-break: break-word !important;
+    display: inline-flex !important;
+    flex-wrap: wrap !important;
+    box-sizing: border-box !important;
   }
   .ai-vision-adopt-btn {
     width: 100% !important;

@@ -34,7 +34,9 @@ export default function SceneDescriptionCard({
           borderRadius: '10px',
           padding: compact ? '10px 14px' : '14px 16px',
           marginTop: '12px',
-          marginBottom: '12px'
+          marginBottom: '12px',
+          overflow: 'hidden',
+          boxSizing: 'border-box'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
@@ -82,7 +84,9 @@ export default function SceneDescriptionCard({
         padding: compact ? '12px 14px' : '14px 16px',
         border: `1px solid ${borderSubtle}`,
         marginTop: '12px',
-        marginBottom: '12px'
+        marginBottom: '12px',
+        overflow: 'hidden',
+        boxSizing: 'border-box'
       }}
     >
       {/* 1. Header with SCENE DESCRIPTION & Scene Type */}
@@ -109,20 +113,26 @@ export default function SceneDescriptionCard({
         </div>
 
         {sceneType && (
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '0.72rem',
-            color: textMuted,
-            background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9',
-            padding: '2px 8px',
-            borderRadius: '6px',
-            border: `1px solid ${borderSubtle}`,
-            whiteSpace: 'nowrap'
-          }}>
-            <span>Scene Type:</span>
-            <strong style={{ color: textSecondary }}>{String(sceneType)}</strong>
+          <div
+            className="scene-description-type-badge"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '0.72rem',
+              color: textMuted,
+              background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9',
+              padding: '3px 8px',
+              borderRadius: '6px',
+              border: `1px solid ${borderSubtle}`,
+              maxWidth: '100%',
+              boxSizing: 'border-box',
+              flexWrap: 'wrap',
+              lineHeight: 1.3
+            }}
+          >
+            <span style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>Scene Type:</span>
+            <strong style={{ color: textSecondary, wordBreak: 'break-word' }}>{String(sceneType)}</strong>
           </div>
         )}
       </div>
