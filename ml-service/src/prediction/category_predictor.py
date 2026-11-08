@@ -56,9 +56,14 @@ DOMAIN_INTENT_RULES = {
         "abusive husband", "unsafe for women", "following home",
     ],
     "Traffic & Road Safety": [
-        "traffic signal", "traffic light", "rash driving", "dangerous driving", "illegal parking",
+        "accident", "an accident", "road accident", "highway accident", "traffic accident", "car accident", "bike accident",
+        "truck accident", "bus accident", "vehicle accident", "vehicle crash", "car crash", "bike crash", "truck crash",
+        "traffic collision", "vehicular collision", "head-on collision", "rear-end collision", "vehicle collision",
+        "overturned vehicle", "overturned truck", "vehicle overturned", "pileup", "hit and run", "hit by vehicle", "run over",
+        "nh12", "nh-12", "nh 12", "nh34", "nh-34", "nh 34", "nh6", "nh-6", "nh2", "nh-2", "national highway", "state highway",
+        "expressway", "arterial road", "traffic signal", "traffic light", "rash driving", "dangerous driving", "illegal parking",
         "traffic jam", "gridlock", "speeding trucks", "drag racing", "zebra crossing", "speed breaker",
-        "obstructive parking", "wrong side driving", "hit and run", "fatal road accident", "vehicular collision",
+        "obstructive parking", "wrong side driving", "fatal road accident", "traffic congestion"
     ],
     "Roads & Public Works": [
         "pothole", "potholes", "crater", "craters", "broken road", "asphalt", "flyover", "bridge culvert",
@@ -403,6 +408,13 @@ class CategoryPredictor:
             else:
                 subcat = self.taxonomy.get(pred_cat, ["General Grievance"])[0] if pred_cat in self.taxonomy else "General Grievance"
 
+        # Explicit Subcategory Grounding for Road Accidents
+        if pred_cat == "Traffic & Road Safety" and any(k in text_lower for k in ["accident", "collision", "crash", "overturned", "hit and run", "nh12", "nh34", "nh6", "highway"]):
+            if is_fatal:
+                subcat = "Fatal Vehicle Collision"
+            else:
+                subcat = "Road Traffic Accident / Vehicular Collision"
+
         # Check multi-department cross involvement
         if not secondary_departments and pred_cat != "CLASSIFICATION_UNCERTAIN":
             if any(k in text_lower for k in ["traffic accident", "collision"]) and pred_cat == "Roads & Public Works":
@@ -417,9 +429,11 @@ class CategoryPredictor:
         is_emergency = stage1_semantic.get("emergency_status", False)
         emergency_triggers = [
             "active fire", "flames spreading", "currently attacking", "armed robbers right now",
-            "live wire sparking on road", "bleeding severely", "child in immediate danger"
+            "live wire sparking on road", "bleeding severely", "child in immediate danger",
+            "accident on nh", "accident on highway", "highway accident", "head-on collision",
+            "overturned truck", "overturned vehicle", "car crash on highway", "fatal road accident"
         ]
-        if any(t in text_lower for t in emergency_triggers):
+        if any(t in text_lower for t in emergency_triggers) or ("accident" in text_lower and any(h in text_lower for h in ["nh12", "nh34", "nh6", "nh2", "highway", "expressway"])):
             is_emergency = True
 
         emergency_guidance = None

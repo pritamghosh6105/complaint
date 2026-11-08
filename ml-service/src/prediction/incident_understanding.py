@@ -23,7 +23,7 @@ class IncidentUnderstandingEngine:
         # 3. Specific Cause Patterns for Fatal Incidents (English)
         self.cause_patterns = {
             "traffic_collision": [
-                r'\b(?:vehicular collision|vehicle collision|car crash|truck collision|truck hit|car hit|bike crash|motorcycle accident|hit a motorcycle|hit and run|road accident|bike accident|bus accident|speeding vehicle|speeding truck|run over|highway collision|road crash)\b'
+                r'\b(?:accident(?:\s+on|\s+at|\s+in)?(?:\s+(?:the\s+)?(?:nh\s*\d+|national\s+highway|highway|expressway|road|junction|crossing|bypass))?|highway\s+accident|road\s+accident|car\s+accident|bike\s+accident|truck\s+accident|bus\s+accident|vehicle\s+accident|vehicular collision|vehicle collision|vehicle crash|car crash|bike crash|truck crash|bus crash|truck collision|truck hit|car hit|bike crash|motorcycle accident|hit a motorcycle|hit and run|speeding vehicle|speeding truck|run over|highway collision|road crash|head-on collision|rear-end collision|overturned\s+(?:truck|bus|car|vehicle)|pileup|pile-up)\b'
             ],
             "hospital_negligence": [
                 r'\b(?:hospital negligence|medical negligence|doctor negligence|wrong treatment|oxygen shortage|clinical negligence)\b'
@@ -272,6 +272,13 @@ class IncidentUnderstandingEngine:
                     "The complaint reports a fatal incident resulting in the loss of life and explicitly requests an official law-enforcement "
                     "inquiry and report. The cause of death is unspecified; therefore, law-enforcement investigation takes primary jurisdiction."
                 )
+        elif cause_identified == "traffic_collision":
+            incident_type = "Traffic Accident / Collision"
+            cause_known = True
+            suggested_primary = "Traffic & Road Safety"
+            suggested_subcategory = "Road Traffic Accident / Vehicular Collision"
+            secondary_departments = ["Police & Law Enforcement"]
+            reason = "Road accident / vehicle collision reported on transit corridor. Primary operational jurisdiction rests with Traffic & Road Safety for immediate clearance and traffic diversion."
         
         return {
             "is_fatal": is_fatal,

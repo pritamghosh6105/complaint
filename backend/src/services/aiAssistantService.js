@@ -197,6 +197,9 @@ STRICT GROUNDING & ZERO-HALLUCINATION RULES:
      "I am reporting a suspected fraudulent UPI transaction. Kindly guide me through the appropriate cybercrime reporting process and review transaction logs upon submission."
      Example for "I sent ₹5,000 through UPI but the transaction was fraudulent":
      "I am reporting a suspected UPI-related financial fraud involving a transaction of ₹5,000. Kindly review the complaint and guide me through the appropriate cybercrime reporting process."
+   - For Road Traffic Accidents & Collisions (e.g. accident on NH12, highway collision, car crash):
+     Department MUST be 'Traffic & Road Safety'. Subcategory MUST be 'Road Traffic Accident / Vehicular Collision'.
+     Focus on immediate traffic safety, lane clearance, and emergency dispatch.
    - For Physical Civic Issues (e.g. potholes, broken swing, blocked drain, water leak):
      Focus on the visible physical defect and public safety condition.
 3. FORBIDDEN BOILERPLATE:
@@ -246,16 +249,18 @@ Produce the JSON object now.`;
           const geminiText = geminiRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
           if (geminiText) {
             const parsed = JSON.parse(geminiText);
+            const isAccident = /\b(accident|collision|crash|pileup|overturned|nh\s*\d+|national highway|highway accident)\b/i.test(issue + ' ' + (parsed.title || '') + ' ' + (parsed.description || ''));
+            const isCritical = isHazardous === 'Yes' || isAccident || parsed.priority === 'CRITICAL';
             return {
               success: true,
               source: 'CivicPulse Gemini Intelligence',
               model: 'gemini-3.5-flash-lite',
               title: parsed.title,
               description: parsed.description || parsed.formal_description,
-              department: parsed.department || 'Cyber Crime',
-              subcategory: parsed.subcategory || 'General',
-              priority: isHazardous === 'Yes' ? 'CRITICAL' : 'HIGH',
-              is_emergency: isHazardous === 'Yes',
+              department: isAccident ? 'Traffic & Road Safety' : (parsed.department || 'Traffic & Road Safety'),
+              subcategory: isAccident ? 'Road Traffic Accident / Vehicular Collision' : (parsed.subcategory || 'General'),
+              priority: isCritical ? 'CRITICAL' : 'HIGH',
+              is_emergency: isCritical,
               original_input: issue
             };
           }
@@ -309,15 +314,18 @@ Produce the JSON object now.`;
           const content = response?.data?.choices?.[0]?.message?.content;
           if (content) {
             const parsed = JSON.parse(content);
+            const isAccident = /\b(accident|collision|crash|pileup|overturned|nh\s*\d+|national highway|highway accident)\b/i.test(issue + ' ' + (parsed.title || '') + ' ' + (parsed.description || ''));
+            const isCritical = isHazardous === 'Yes' || isAccident || parsed.priority === 'CRITICAL';
             return {
               success: true,
               source: provider === 'openrouter' ? 'OpenRouter LLM' : `Groq AI (${usedModel.replace('openai/', '')})`,
               model: usedModel,
               title: parsed.title,
               description: parsed.description || parsed.formal_description,
-              department: parsed.department || 'Municipal Administration',
-              priority: parsed.priority || (isHazardous === 'Yes' ? 'CRITICAL' : 'HIGH'),
-              is_emergency: isHazardous === 'Yes' || parsed.priority === 'CRITICAL',
+              department: isAccident ? 'Traffic & Road Safety' : (parsed.department || 'Traffic & Road Safety'),
+              subcategory: isAccident ? 'Road Traffic Accident / Vehicular Collision' : (parsed.subcategory || 'General'),
+              priority: isCritical ? 'CRITICAL' : (parsed.priority || 'HIGH'),
+              is_emergency: isCritical,
               original_input: issue
             };
           }
@@ -349,7 +357,12 @@ Produce the JSON object now.`;
     let desc = '';
 
     // Grounded domain-specific synthesis without generic filler sentences
-    if (/\b(upi|cyber|phishing|otp|scam|fraud|hacked|banking fraud|transaction|debit card|credit card)\b/i.test(cleanIssue)) {
+    if (/\b(accident|collision|crash|pileup|overturned|hit and run|rash driving|speeding truck|nh\s*\d+|nh12|nh34|nh6|national highway|highway accident)\b/i.test(cleanIssue)) {
+      dept = 'Traffic & Road Safety';
+      subcat = 'Road Traffic Accident / Vehicular Collision';
+      title = `Urgent Road Accident / Traffic Emergency: ${cleanIssue.slice(0, 50)}`;
+      desc = `An urgent road accident / traffic collision incident has been reported: ${cleanIssue}${location ? ' located at ' + location : ''}. Immediate traffic police dispatch, emergency clearance, and medical assistance coordination required.`;
+    } else if (/\b(upi|cyber|phishing|otp|scam|fraud|hacked|banking fraud|transaction|debit card|credit card)\b/i.test(cleanIssue)) {
       dept = 'Cyber Crime';
       subcat = 'UPI / Digital Payment Fraud';
       title = `Suspected Financial / Cyber Fraud: ${cleanIssue.slice(0, 50)}`;
@@ -387,6 +400,10 @@ Produce the JSON object now.`;
       desc += ` Active safety hazard noted: ${hazardDetails || 'immediate hazard present'}.`;
     }
 
+    const isAccidentEmergency = dept === 'Traffic & Road Safety' && /\b(accident|collision|crash|pileup|overturned|nh\s*\d+|national highway|highway)\b/i.test(cleanIssue);
+    const isFireEmergency = dept === 'Fire & Emergency Services';
+    const isCritical = isHazardous === 'Yes' || isAccidentEmergency || isFireEmergency;
+
     return {
       success: true,
       source: 'CivicPulse Grounded Synthesis Engine',
@@ -395,8 +412,8 @@ Produce the JSON object now.`;
       description: desc,
       department: dept,
       subcategory: subcat,
-      priority: isHazardous === 'Yes' ? 'CRITICAL' : 'HIGH',
-      is_emergency: isHazardous === 'Yes',
+      priority: isCritical ? 'CRITICAL' : 'HIGH',
+      is_emergency: isCritical,
       original_input: cleanIssue
     };
   }

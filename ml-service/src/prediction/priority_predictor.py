@@ -81,7 +81,8 @@ class PriorityPredictor:
         inferred_severity = severity
         if severity == "Medium" or not severity:
             if not has_negation and (
-                any(k in text_lower for k in ["active shooter", "ongoing violence", "currently attacking", "bombing", "fire spreading"]) or
+                any(k in text_lower for k in ["active shooter", "ongoing violence", "currently attacking", "bombing", "fire spreading", "accident on nh", "highway accident", "head-on collision", "overturned truck", "overturned vehicle"]) or
+                ("accident" in text_lower and any(h in text_lower for h in ["nh12", "nh34", "nh6", "nh2", "highway", "expressway"])) or
                 (risk_signals.get("immediate_danger") and not is_fatal_mention)
             ):
                 inferred_severity = "Critical"
@@ -154,6 +155,9 @@ class PriorityPredictor:
             not has_negation and (
                 is_emergency or
                 risk_signals.get("immediate_danger") or
+                (any(k in text_lower for k in ["accident", "collision", "crash", "crashed", "overturned", "pileup", "hit and run"]) and any(h in text_lower for h in ["nh12", "nh34", "nh6", "nh2", "nh", "highway", "national highway", "expressway", "arterial", "bypass"])) or
+                (location_type == "Highway" and any(k in text_lower for k in ["accident", "collision", "crash", "crashed", "overturned"])) or
+                any(k in text_lower for k in ["accident on nh", "highway accident", "head-on collision", "overturned truck", "overturned vehicle", "car crash on highway", "fatal road accident"]) or
                 ("attacking a person right now" in text_lower or "physically attacked right now" in text_lower) or
                 ("child is currently in immediate danger" in text_lower) or
                 ("live electrical wire" in text_lower or "electrocuted" in text_lower) or

@@ -23,8 +23,8 @@ const CATEGORY_TAXONOMY = {
     actions: ['Deploy rapid women safety mobile patrol', 'Inspect lighting along transit corridor', 'Coordinate with designated Child Welfare Officer']
   },
   'Traffic & Road Safety': {
-    keywords: ['traffic', 'signal', 'red light', 'parking', 'zebra crossing', 'congestion', 'traffic jam', 'illegal parking', 'accident zone', 'over speeding'],
-    subcategories: ['Traffic Signal Outage', 'Illegal Road Parking & Encroachment', 'Chronic Junction Congestion', 'Missing Pedestrian Crossing / Signage', 'Frequent Accident Hotspot'],
+    keywords: ['traffic', 'accident', 'an accident', 'road accident', 'highway accident', 'car accident', 'truck accident', 'bike accident', 'car crash', 'collision', 'crash', 'overturned', 'hit and run', 'nh12', 'nh', 'national highway', 'expressway', 'signal', 'red light', 'parking', 'zebra crossing', 'congestion', 'traffic jam', 'illegal parking', 'accident zone', 'over speeding'],
+    subcategories: ['Road Traffic Accident / Vehicular Collision', 'Highway Accident / Emergency Clearance', 'Traffic Signal Outage', 'Illegal Road Parking & Encroachment', 'Chronic Junction Congestion', 'Missing Pedestrian Crossing / Signage', 'Frequent Accident Hotspot'],
     causes: ['Sensor failure or power glitch at junction signal', 'Unauthorized commercial parking on carriage-way', 'Peak commuter volume exceeding bottleneck capacity'],
     actions: ['Dispatch traffic control team for manual flow regulation', 'Initiate electronic signal repair', 'Deploy tow crane to clear lane encroachment']
   },
@@ -294,7 +294,7 @@ function localPredictAll(data) {
     text.match(/\b(killed|killing|fatal|fatality|death|died|dead body|dead person|corpse|loss of a? ?life|murder|homicide|found dead)\b/i)
   );
 
-  const isCollision = Boolean(text.match(/\b(vehicle collision|car crash|truck collision|hit and run|road accident|bike accident|run over)\b/i));
+  const isCollision = Boolean(text.match(/\b(accident|an accident|collision|crash|vehicular collision|vehicle collision|car crash|truck collision|truck hit|car hit|bike crash|motorcycle accident|hit a motorcycle|hit and run|road accident|bike accident|bus accident|overturned|nh\s*\d+|national highway|highway accident)\b/i));
   const isHospitalNegligence = Boolean(text.match(/\b(hospital negligence|medical negligence|doctor negligence|wrong treatment|oxygen shortage)\b/i));
   const isWorkplaceAccident = Boolean(text.match(/\b(workplace fatality|factory accident|industrial accident|construction site death|worker died)\b/i));
   const isBuildingCollapse = Boolean(text.match(/\b(building collapse|wall collapse|structural collapse|roof fell)\b/i));
@@ -352,6 +352,14 @@ function localPredictAll(data) {
       reason = 'The complaint reports a fatal incident resulting in the loss of life and explicitly requests an official law-enforcement inquiry and report. The cause of death is unspecified; therefore, law-enforcement investigation takes primary jurisdiction.';
     }
     confidence = 0.95;
+  } else if (isCollision) {
+    incidentType = 'Traffic Collision / Road Accident';
+    bestCat = 'Traffic & Road Safety';
+    bestSubcat = 'Road Traffic Accident / Vehicular Collision';
+    secondaryDepartments = ['Police & Law Enforcement'];
+    causeKnown = true;
+    reason = 'Road accident / vehicular collision reported on transit route. Primary responsibility rests with Traffic & Road Safety for immediate clearance and traffic management.';
+    confidence = 0.98;
   } else if (emergencyRes.isEmergency && emergencyRes.category) {
     bestCat = emergencyRes.category;
     confidence = 0.96;
@@ -418,7 +426,7 @@ function localPredictAll(data) {
   const hasChild = Boolean(text.match(/\b(child|children|minor|baby|school entrance)\b/i));
   const hasWoman = Boolean(text.match(/\b(woman|female|girl|stalking|followed|harassed|eve teasing)\b/i));
   const hasCyberLoss = Boolean(text.match(/\b(charged|debited|fraudulently|transferred|₹25,000|₹|siphoned|bank fraud)\b/i) && text.match(/\b(fraud|otp|upi|bank account|hacked)\b/i));
-  const hasAccident = Boolean(text.match(/\b(pothole|suddenly brake|accidents are becoming likely|accidents occurring|skid|crash)\b/i));
+  const hasAccident = Boolean(text.match(/\b(accident|collision|crash|pileup|overturned|hit and run|pothole|suddenly brake|accidents are becoming likely|accidents occurring|skid|nh\s*\d+|national highway|highway)\b/i));
   const hasHealthRisk = Boolean(text.match(/\b(large pile of waste|health risk|severe health|stench|carcass|epidemic)\b/i));
   const hasManhole = Boolean(text.match(/\b(uncovered manhole|open manhole|manhole)\b/i));
   const isActiveNow = Boolean(text.match(/\b(right now|currently|happening now|at this moment)\b/i));
@@ -427,11 +435,12 @@ function localPredictAll(data) {
   if (!hasNegation && (isEmergency || (isActiveNow && (hasViolence || hasChild || hasElec)))) {
     riskFactors.push('Immediate Life-Safety Hazard Detected');
   }
+  if (isCollision) riskFactors.push('Highway Traffic Accident / Arterial Road Obstruction');
   if (hasElec) riskFactors.push('Electrical Hazard / High-Voltage Risk');
   if (hasViolence) riskFactors.push('Active Physical Threat / Violent Conflict');
   if (hasChild) riskFactors.push('Child Safety / Minors at Risk');
   if (hasWoman) riskFactors.push('Women Safety Concern / Repeated Harassment');
-  if (hasAccident) riskFactors.push('Accident Risk on Busy Carriageway');
+  if (hasAccident && !isCollision) riskFactors.push('Accident Risk on Busy Carriageway');
   if (hasHealthRisk) riskFactors.push('Significant Public Health & Contamination Risk');
   if (hasManhole) riskFactors.push('Critical Public Infrastructure Vulnerability');
   if (hasCyberLoss) riskFactors.push('Financial Cyber Fraud / Account Intrusion');
@@ -447,7 +456,7 @@ function localPredictAll(data) {
   }
 
   // Priority Assessment
-  if (!hasNegation && (isEmergency || (hasElec && !hasNegation) || (hasManhole && hasChild) || (isActiveNow && (hasViolence || hasChild)) || (hasChild && text.includes('immediate danger')))) {
+  if (!hasNegation && (isEmergency || (hasElec && !hasNegation) || (hasManhole && hasChild) || (isActiveNow && (hasViolence || hasChild)) || (hasChild && text.includes('immediate danger')) || (isCollision && (text.match(/\b(nh\s*\d+|national highway|highway|expressway|overturned|car crash|truck|injured|head-on)\b/i) || locationType === 'Highway')))) {
     priority = 'CRITICAL';
     prioConfidence = 0.99;
   } else if (hasAccident || hasWoman || hasCyberLoss || hasHealthRisk || (severity === 'High' && !hasNegation)) {

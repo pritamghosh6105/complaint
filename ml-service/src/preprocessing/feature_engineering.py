@@ -94,7 +94,7 @@ def extract_safety_features(text: str) -> Dict[str, int]:
 
     # 11. Accident risk
     accident = 1 if bool(
-        re.search(r'\b(pothole|craters|suddenly brake|accidents are becoming likely|accidents occurring|skid|crash|collision|reckless speed)\b', t)
+        re.search(r'\b(accident|accidents|pothole|craters|suddenly brake|accidents are becoming likely|accidents occurring|skid|crash|collision|reckless speed|overturned|hit and run|nh\s*\d+|national highway|highway)\b', t)
     ) else 0
 
     # 12. Public infrastructure risk

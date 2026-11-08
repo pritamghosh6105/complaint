@@ -107,6 +107,8 @@ DEPARTMENT_SUBCATEGORIES = {
         "Unsafe Corridor / Transit Hazard"
     ],
     "Traffic & Road Safety": [
+        "Road Traffic Accident / Vehicular Collision",
+        "Highway Accident / Emergency Obstruction",
         "Fatal Vehicle Collision",
         "Dangerous / Rash Driving",
         "Traffic Signal Failure",
