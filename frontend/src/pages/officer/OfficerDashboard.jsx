@@ -505,7 +505,7 @@ export default function OfficerDashboard({
               <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px' }} />
               <input
                 type="text"
-                placeholder="Search tracking ID, title, address, citizen name..."
+                placeholder="Search tracking ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="form-input"
