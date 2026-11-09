@@ -124,9 +124,9 @@ class ComplaintController {
       });
 
       if (!hierarchyValidation.valid) {
-        return res.status(400).json({ 
-          error: hierarchyValidation.errors.join(' '), 
-          warnings: hierarchyValidation.warnings 
+        return res.status(400).json({
+          error: hierarchyValidation.errors.join(' '),
+          warnings: hierarchyValidation.warnings
         });
       }
 
@@ -171,8 +171,8 @@ class ComplaintController {
       const isEmergencyDetected = Boolean(manualEmergency || mlRes.summary.is_emergency);
 
       // Category & Subcategory: Use manual choice if selected, otherwise ML prediction
-      const finalCategory = (manualCategory && manualCategory !== 'AI Auto Detect' && manualCategory !== 'Auto-Detect with AI') 
-        ? manualCategory 
+      const finalCategory = (manualCategory && manualCategory !== 'AI Auto Detect' && manualCategory !== 'Auto-Detect with AI')
+        ? manualCategory
         : predictedCategory;
 
       const finalSubcategory = (manualSubcategory && manualSubcategory !== 'All' && manualSubcategory !== 'General')
@@ -221,7 +221,7 @@ class ComplaintController {
           clientAnalysis = typeof req.body.visual_analysis_data === 'string'
             ? JSON.parse(req.body.visual_analysis_data)
             : req.body.visual_analysis_data;
-        } catch (_) {}
+        } catch (_) { }
       }
 
       let clientSceneDescription = req.body.scene_description || clientAnalysis?.scene?.description || clientAnalysis?.scene_description || clientAnalysis?.scene_analysis?.scene_description || null;
@@ -251,7 +251,7 @@ class ComplaintController {
           if (v.valid && !v.isVideo) {
             try {
               firstImageBufferBase64 = fs.readFileSync(file.path).toString('base64');
-            } catch (_) {}
+            } catch (_) { }
           }
         }
       }
@@ -283,7 +283,7 @@ class ComplaintController {
       // Safety sweep: ensure any temporary files created by multer are completely unlinked from local disk
       for (const file of rawFiles) {
         if (file && file.path && fs.existsSync(file.path)) {
-          try { fs.unlinkSync(file.path); } catch (_) {}
+          try { fs.unlinkSync(file.path); } catch (_) { }
         }
       }
 
@@ -632,7 +632,7 @@ class ComplaintController {
       // Check RBAC permissions: Evidence is strictly confidential and never displayed to the general public.
       // It is only given to the designated Complaint Authority (Department/Field Officer, Admin) and the filing citizen.
       const isOwner = user && (String(complaint.citizen_id) === String(user.id));
-      const isOfficer = user && (user.role === 'officer' || user.role === 'field_officer') && 
+      const isOfficer = user && (user.role === 'officer' || user.role === 'field_officer') &&
         (String(complaint.officer_id) === String(user.id) || String(complaint.department_id) === String(user.department_id) || !complaint.department_id);
       const isAdmin = user && user.role === 'admin';
       const isAuthority = Boolean(isOfficer || isAdmin);
@@ -833,7 +833,7 @@ class ComplaintController {
           if (decoded && (decoded.role === 'admin' || decoded.role === 'officer')) {
             isAuthorizedAdmin = true;
           }
-        } catch (e) {}
+        } catch (e) { }
       }
 
       const { district, police_station, category, status, priority, date_from, date_to } = req.query;
@@ -868,7 +868,7 @@ class ComplaintController {
         .filter(c => c.latitude && c.longitude && Math.abs(c.latitude) > 0.1)
         .map(c => {
           const isCrime = c.is_crime === 1 || ['Police & Law Enforcement', 'Cyber Crime', 'Women & Child Safety'].includes(c.category);
-          
+
           return {
             id: c.id,
             tracking_id: c.tracking_id,
@@ -1046,9 +1046,9 @@ class ComplaintController {
             }
           }
         })
-        .select('id tracking_id title category priority status location latitude longitude district police_station postal_code created_at')
-        .limit(50)
-        .lean();
+          .select('id tracking_id title category priority status location latitude longitude district police_station postal_code created_at')
+          .limit(50)
+          .lean();
       }
 
       // Fallback: Haversine distance from memory if MongoDB not connected or 0 results returned
@@ -1060,8 +1060,8 @@ class ComplaintController {
           const dLat = toRad(lat2 - lat1);
           const dLon = toRad(lon2 - lon1);
           const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
           return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         };
 

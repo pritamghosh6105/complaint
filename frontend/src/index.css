@@ -7001,79 +7001,130 @@ body {
    OFFICIAL PRINTABLE CASE DOSSIER & @MEDIA PRINT STYLES
    ======================================================== */
 @media print {
-  /* Set clean background and text for print paper */
-  body {
-    background: #ffffff !important;
-    color: #000000 !important;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Hide app chrome, floating bars, buttons, and navigation */
-  nav, 
-  footer, 
+  /* 1. HIDE THE ENTIRE WEBSITE (#root) AND UNRELATED UI */
+  #root,
+  .no-print,
+  nav,
+  footer,
   header,
-  .navbar, 
-  .navbar-container, 
-  .officer-command-bar, 
-  .officer-kpi-grid, 
-  .officer-filters-box, 
-  .officer-card-actions, 
-  .btn, 
-  button, 
-  .no-print, 
-  .page-wrapper > :not(.container),
+  .navbar,
+  .sidebar,
+  .officer-command-bar,
+  .officer-kpi-grid,
+  .officer-filters-box,
+  .officer-card-actions,
+  .btn,
+  button,
   .toast-container {
     display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
   }
 
-  /* Seamless print formatting for modal wrapper */
+  /* 2. BODY RESETS TO CLEAN WHITE PAGE */
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    font-size: 8.5pt !important;
+    line-height: 1.35 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 3. DOSSIER FULL-BLEED PRINT CONTAINER */
   .dossier-modal-overlay {
     position: static !important;
     inset: auto !important;
-    background: none !important;
+    background: transparent !important;
     backdrop-filter: none !important;
     padding: 0 !important;
+    margin: 0 !important;
     display: block !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    overflow: visible !important;
   }
 
   .dossier-modal-window {
-    max-height: none !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    overflow: visible !important;
+    position: static !important;
     width: 100% !important;
     max-width: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
     border: none !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
   }
 
   .printable-case-dossier {
     padding: 0 !important;
+    margin: 0 !important;
     width: 100% !important;
     background: #ffffff !important;
-    color: #000000 !important;
+    color: #0f172a !important;
+    font-size: 8.5pt !important;
   }
 
+  /* 4. COMPACT 1-2 PAGE PRINT FORMATTING */
   .dossier-section {
+    margin-bottom: 8px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 
-  .dossier-evidence-card, .dossier-img {
+  .dossier-section-title {
+    padding: 3px 8px !important;
+    font-size: 7.8pt !important;
+    margin-bottom: 5px !important;
+  }
+
+  .dossier-table td, 
+  .dossier-table th {
+    padding: 3px 6px !important;
+    font-size: 7.5pt !important;
+    line-height: 1.25 !important;
+  }
+
+  .dossier-header-logo {
+    height: 50px !important;
+  }
+
+  .dossier-evidence-card {
+    padding: 5px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+  }
+
+  .dossier-img-box {
+    height: 125px !important;
+    max-height: 125px !important;
+  }
+
+  .dossier-img {
+    height: 125px !important;
+    max-height: 125px !important;
+    object-fit: contain !important;
+  }
+
+  .dossier-stamp-box {
+    height: 52px !important;
   }
 
   @page {
     size: A4 portrait;
-    margin: 12mm 10mm 12mm 10mm;
-  }
-
-  /* Ensure colors and borders are rendered by printer engines */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    margin: 8mm 8mm 8mm 8mm;
   }
 }
 
