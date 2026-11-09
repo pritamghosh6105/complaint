@@ -73,6 +73,48 @@ export default function OfficerDashboard({
   const [recalibrationReason, setRecalibrationReason] = useState('');
   const [submittingTriage, setSubmittingTriage] = useState(false);
 
+  // Transfer Department Modal State
+  const [transferringTask, setTransferringTask] = useState(null);
+  const [departments, setDepartments] = useState([]);
+  const [targetDeptId, setTargetDeptId] = useState('');
+  const [targetCategory, setTargetCategory] = useState('');
+  const [transferReason, setTransferReason] = useState('');
+  const [submittingTransfer, setSubmittingTransfer] = useState(false);
+
+  const openTransferModal = (task) => {
+    setTransferringTask(task);
+    setTargetDeptId('');
+    setTargetCategory('');
+    setTransferReason('');
+  };
+
+  const handleTransferSubmit = async (e) => {
+    e.preventDefault();
+    if (!transferringTask) return;
+    if (!targetDeptId) {
+      alert('Please select a target civic department.');
+      return;
+    }
+    if (!transferReason.trim() || transferReason.trim().length < 5) {
+      alert('Please state an official transfer justification (at least 5 characters).');
+      return;
+    }
+    setSubmittingTransfer(true);
+    try {
+      await api.post(`/officer/tasks/${transferringTask.id}/transfer`, {
+        target_department_id: Number(targetDeptId),
+        target_category: targetCategory || null,
+        reason: transferReason.trim()
+      });
+      setTransferringTask(null);
+      await fetchTasks();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to transfer complaint to target department');
+    } finally {
+      setSubmittingTransfer(false);
+    }
+  };
+
   const handleConfirmCritical = async (task) => {
     if (!window.confirm(`Confirm active life-safety emergency for #${task.tracking_id}? This locks the 24-hour response SLA.`)) {
       return;
@@ -136,6 +178,23 @@ export default function OfficerDashboard({
 
   useEffect(() => {
     fetchTasks();
+    api.get('/officer/departments')
+      .then(res => {
+        if (res.data?.departments?.length) setDepartments(res.data.departments);
+      })
+      .catch(() => {
+        setDepartments([
+          { id: 1, name: 'Traffic & Road Safety' },
+          { id: 2, name: 'Roads & Public Works' },
+          { id: 3, name: 'Solid Waste Management' },
+          { id: 4, name: 'Drainage & Sewerage' },
+          { id: 5, name: 'Health & Hospitals' },
+          { id: 6, name: 'Fire & Emergency Services' },
+          { id: 7, name: 'Police & Law Enforcement' },
+          { id: 8, name: 'Power & Electricity' },
+          { id: 9, name: 'Water Supply' }
+        ]);
+      });
     if (window.__OFFICER_FILTER__) {
       setStatusFilter(window.__OFFICER_FILTER__);
       delete window.__OFFICER_FILTER__;
@@ -213,8 +272,9 @@ export default function OfficerDashboard({
     const overdue = tasks.filter(t => t.status !== 'Resolved' && t.sla_deadline && new Date(t.sla_deadline) < now).length;
     const critical = tasks.filter(t => t.priority === 'CRITICAL' && t.status !== 'Resolved').length;
     const high = tasks.filter(t => t.priority === 'HIGH' && t.status !== 'Resolved').length;
+    const transferred = tasks.filter(t => Boolean(t.is_transferred || t.transferred_from_dept_id || t.status === 'Transferred')).length;
 
-    return { total, pending, inProgress, resolved, overdue, critical, high };
+    return { total, pending, inProgress, resolved, overdue, critical, high, transferred };
   }, [tasks]);
 
   // Filtered task list
@@ -232,7 +292,11 @@ export default function OfficerDashboard({
         const isOverdue = task.status !== 'Resolved' && task.sla_deadline && new Date(task.sla_deadline) < now;
         if (!isOverdue) return false;
       }
-      if (statusFilter !== 'All' && statusFilter !== 'Active' && statusFilter !== 'Pending' && statusFilter !== 'In Progress' && statusFilter !== 'Resolved' && statusFilter !== 'Overdue') {
+      if (statusFilter === 'Transferred') {
+        const isTransferred = Boolean(task.is_transferred || task.transferred_from_dept_id || task.status === 'Transferred' || task.transfer_reason);
+        if (!isTransferred) return false;
+      }
+      if (statusFilter !== 'All' && statusFilter !== 'Active' && statusFilter !== 'Pending' && statusFilter !== 'In Progress' && statusFilter !== 'Resolved' && statusFilter !== 'Overdue' && statusFilter !== 'Transferred') {
         // Match specific department name filter from departments page
         if (task.department_name && !task.department_name.toLowerCase().includes(statusFilter.toLowerCase()) && !task.category?.toLowerCase().includes(statusFilter.toLowerCase())) {
           return false;
@@ -481,6 +545,25 @@ export default function OfficerDashboard({
               {metrics.critical}
             </div>
           </div>
+
+          <div 
+            className="glass-card officer-kpi-card" 
+            style={{ 
+              padding: '14px 16px', 
+              borderLeft: '3px solid #8b5cf6',
+              cursor: 'pointer',
+              background: statusFilter === 'Transferred' ? 'rgba(139, 92, 246, 0.12)' : undefined
+            }}
+            onClick={() => setStatusFilter('Transferred')}
+            title="Click to view cross-department transferred complaints"
+          >
+            <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700 }}>
+              Transferred Cases
+            </div>
+            <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#8b5cf6', marginTop: '4px' }}>
+              {metrics.transferred}
+            </div>
+          </div>
         </div>
 
         {/* Search, Filter & Tab Controls - STRICTLY OPERATIONAL */}
@@ -603,6 +686,17 @@ export default function OfficerDashboard({
             >
               Resolved ({metrics.resolved})
             </button>
+            <button
+              className={`btn btn-sm ${statusFilter === 'Transferred' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setStatusFilter('Transferred')}
+              style={{
+                borderColor: statusFilter === 'Transferred' ? '#8b5cf6' : undefined,
+                background: statusFilter === 'Transferred' ? '#8b5cf6' : undefined,
+                color: statusFilter === 'Transferred' ? '#fff' : (metrics.transferred > 0 ? '#a78bfa' : undefined)
+              }}
+            >
+              🔁 Transferred ({metrics.transferred})
+            </button>
           </div>
         </div>
 
@@ -654,6 +748,37 @@ export default function OfficerDashboard({
                     gap: '14px'
                   }}
                 >
+                  {/* CROSS-DEPARTMENT TRANSFER PROVENANCE BANNER */}
+                  {Boolean(task.is_transferred || task.transferred_from_dept_id) && (
+                    <div style={{
+                      background: 'rgba(139, 92, 246, 0.10)',
+                      border: '1.5px solid rgba(139, 92, 246, 0.35)',
+                      borderRadius: '8px',
+                      padding: '10px 14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: '8px',
+                      fontSize: '0.82rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Building2 size={16} color="#a78bfa" />
+                        <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>
+                          Cross-Department Transfer:
+                        </span>
+                        <span style={{ color: '#c4b5fd', fontWeight: 600 }}>
+                          {task.transferred_from_dept_name || 'Previous Department'} ➔ {task.category || task.department_name}
+                        </span>
+                      </div>
+                      {task.transfer_reason && (
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                          <em>Reason: "{task.transfer_reason}"</em> {task.transferred_by_officer_name ? `• by ${task.transferred_by_officer_name}` : ''}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* EMERGENCY TRIAGE & VERIFICATION BAR */}
                   {(task.priority === 'CRITICAL' || task.is_emergency === 1 || task.triage_status) && (
                     <div style={{
@@ -779,6 +904,19 @@ export default function OfficerDashboard({
                       }}>
                         {task.category || 'General Civic'}
                       </span>
+                      {Boolean(task.is_transferred || task.transferred_from_dept_id) && (
+                        <span style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          background: 'rgba(139, 92, 246, 0.2)',
+                          color: '#c4b5fd',
+                          border: '1px solid rgba(139, 92, 246, 0.4)'
+                        }}>
+                          🔁 TRANSFERRED
+                        </span>
+                      )}
                     </div>
 
                     {/* SLA Deadline Tracker */}
@@ -928,6 +1066,17 @@ export default function OfficerDashboard({
                       >
                         <MessageSquare size={14} /> Add Note
                       </button>
+
+                      {task.status !== 'Resolved' && (
+                        <button 
+                          className="btn btn-secondary btn-sm"
+                          style={{ color: '#c084fc', borderColor: 'rgba(192, 132, 252, 0.4)' }}
+                          onClick={() => openTransferModal(task)}
+                          title="Transfer this complaint to another municipal department"
+                        >
+                          <RefreshCw size={14} /> Transfer Dept
+                        </button>
+                      )}
 
                       {task.status !== 'Resolved' && (
                         <button 
@@ -1254,6 +1403,134 @@ export default function OfficerDashboard({
                 >
                   <ArrowDownCircle size={15} />
                   {submittingTriage ? 'Recalibrating...' : `Confirm Recalibration to ${targetPriority}`}
+                </button>
+              </div>
+            </form>
+          </Modal>
+        )}
+
+        {/* Cross-Department Transfer Modal */}
+        {transferringTask && (
+          <Modal
+            isOpen={!!transferringTask}
+            onClose={() => setTransferringTask(null)}
+            title={`Transfer #${transferringTask.tracking_id} to Another Department`}
+          >
+            <form onSubmit={handleTransferSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{
+                background: 'rgba(139, 92, 246, 0.12)',
+                border: '1px solid rgba(139, 92, 246, 0.35)',
+                borderRadius: '8px',
+                padding: '12px 14px',
+                fontSize: '0.84rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#a78bfa', fontWeight: 700, marginBottom: '4px' }}>
+                  <Building2 size={16} /> Current Dept: {transferringTask.department_name || transferringTask.category || 'General Department'}
+                </div>
+                <div style={{ color: 'var(--text-secondary)' }}>
+                  {transferringTask.title}
+                </div>
+              </div>
+
+              {/* Target Department Dropdown */}
+              <div className="form-group">
+                <label className="form-label" style={{ fontWeight: 700 }}>
+                  Select Target Civic Department <span style={{ color: '#ef4444' }}>*</span>:
+                </label>
+                <select
+                  value={targetDeptId}
+                  onChange={(e) => {
+                    setTargetDeptId(e.target.value);
+                    const selected = departments.find(d => String(d.id) === e.target.value);
+                    if (selected) setTargetCategory(selected.name);
+                  }}
+                  required
+                  className="form-control"
+                  style={{ width: '100%', padding: '9px 12px', fontSize: '0.88rem' }}
+                >
+                  <option value="">-- Choose Competent Department --</option>
+                  {departments
+                    .filter(d => Number(d.id) !== Number(transferringTask.department_id))
+                    .map(d => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* Quick Presets */}
+              <div className="form-group">
+                <label className="form-label" style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  Quick-Fill Transfer Justification:
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {[
+                    "Accident on National / State Highway — rerouting to Traffic & Road Safety / PWD",
+                    "Solid waste dump in hospital vicinity — rerouting to Solid Waste Management",
+                    "Underground water pipeline rupture — rerouting to Water Supply",
+                    "High-voltage electrical spark / open transformer — rerouting to Power & Electricity",
+                    "Severe street flooding due to clogged canal — rerouting to Drainage & Sewerage"
+                  ].map((preset, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setTransferReason(preset)}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border-subtle)',
+                        background: 'rgba(255,255,255,0.03)',
+                        color: 'var(--text-secondary)',
+                        fontSize: '0.76rem',
+                        textAlign: 'left',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      + {preset}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Transfer Reason Textarea */}
+              <div className="form-group">
+                <label className="form-label" style={{ fontWeight: 700 }}>
+                  Official Audit Justification <span style={{ color: '#ef4444' }}>*</span>:
+                </label>
+                <textarea
+                  className="form-textarea"
+                  rows={3}
+                  required
+                  placeholder="State why this complaint was misclassified and why it requires specialized action by the target department..."
+                  value={transferReason}
+                  onChange={(e) => setTransferReason(e.target.value)}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '6px' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setTransferringTask(null)}
+                  disabled={submittingTransfer}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{
+                    background: '#7c3aed',
+                    borderColor: '#8b5cf6',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                  disabled={submittingTransfer || !targetDeptId || !transferReason.trim()}
+                >
+                  <Send size={15} />
+                  {submittingTransfer ? 'Transferring...' : 'Transfer Complaint'}
                 </button>
               </div>
             </form>

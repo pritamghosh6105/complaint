@@ -29,23 +29,24 @@ export default function SceneDescriptionCard({
       <div
         className="scene-description-card-fallback"
         style={{
-          background: isDark ? 'rgba(245, 158, 11, 0.07)' : 'rgba(245, 158, 11, 0.08)',
-          border: isDark ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid rgba(245, 158, 11, 0.3)',
+          background: isDark ? 'rgba(245, 158, 11, 0.08)' : '#fffbeb',
+          border: isDark ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid #fde68a',
           borderRadius: '10px',
           padding: compact ? '10px 14px' : '14px 16px',
           marginTop: '12px',
           marginBottom: '12px',
           overflow: 'hidden',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          boxShadow: isDark ? 'none' : '0 1px 3px rgba(245, 158, 11, 0.08)'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-            <Eye size={16} color="#f59e0b" style={{ flexShrink: 0 }} />
+            <Eye size={16} color={isDark ? '#f59e0b' : '#d97706'} style={{ flexShrink: 0 }} />
             <span style={{
               fontSize: '0.74rem',
-              fontWeight: 700,
-              color: '#f59e0b',
+              fontWeight: 800,
+              color: isDark ? '#f59e0b' : '#b45309',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               whiteSpace: 'nowrap'
@@ -55,12 +56,12 @@ export default function SceneDescriptionCard({
           </div>
           <span style={{
             fontSize: '0.70rem',
-            color: '#f59e0b',
+            color: isDark ? '#f59e0b' : '#92400e',
             background: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
-            padding: '2px 8px',
+            padding: '3px 8px',
             borderRadius: '6px',
-            fontWeight: 600,
-            border: '1px solid rgba(245, 158, 11, 0.25)',
+            fontWeight: 700,
+            border: isDark ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid #fcd34d',
             whiteSpace: 'nowrap',
             flexShrink: 0
           }}>
@@ -68,7 +69,7 @@ export default function SceneDescriptionCard({
           </span>
         </div>
 
-        <p style={{ margin: 0, fontSize: compact ? '0.82rem' : '0.86rem', color: textSecondary, lineHeight: 1.5 }}>
+        <p style={{ margin: 0, fontSize: compact ? '0.82rem' : '0.86rem', color: isDark ? '#e2e8f0' : '#451a03', lineHeight: 1.5, fontWeight: isDark ? 400 : 500 }}>
           Automated Vision AI scene description is not available for this case. As the assigned Field Officer, please inspect the attached photographic evidence directly to identify the on-site condition, hazard severity, and required field action.
         </p>
       </div>
@@ -79,14 +80,15 @@ export default function SceneDescriptionCard({
     <div
       className="scene-description-card"
       style={{
-        background: isDark ? 'rgba(15, 23, 42, 0.65)' : '#f8fafc',
+        background: isDark ? 'rgba(15, 23, 42, 0.65)' : '#ffffff',
         borderRadius: '10px',
         padding: compact ? '12px 14px' : '14px 16px',
         border: `1px solid ${borderSubtle}`,
         marginTop: '12px',
         marginBottom: '12px',
         overflow: 'hidden',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        boxShadow: isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.05)'
       }}
     >
       {/* 1. Header with SCENE DESCRIPTION & Scene Type */}

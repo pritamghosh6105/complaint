@@ -252,7 +252,7 @@ class RelationalStorage {
       } else if (qLower.includes('officer_id = ? or department_id = ?') || qLower.includes('c.officer_id = ? or c.department_id = ?') || qLower.includes('officer_id = ? or c.department_id = ?')) {
         const oid = Number(params[0]);
         const did = Number(params[1]);
-        list = list.filter(c => (c.officer_id !== null && c.officer_id === oid) || (c.department_id !== null && c.department_id === did));
+        list = list.filter(c => (c.officer_id !== null && c.officer_id === oid) || (c.department_id !== null && c.department_id === did) || (c.transferred_from_dept_id !== null && c.transferred_from_dept_id === did) || (c.transferred_by_officer_id !== null && c.transferred_by_officer_id === oid));
       } else if (qLower.includes('where c.officer_id = ?') || qLower.includes('where officer_id = ?')) {
         const oid = Number(params[0]);
         list = list.filter(c => c.officer_id === oid);
@@ -864,6 +864,20 @@ class RelationalStorage {
                   c.resolution_image_url = val || null;
                 } else if (col === 'resolution_evidence_id') {
                   c.resolution_evidence_id = val !== null && val !== undefined ? Number(val) : null;
+                } else if (col === 'transferred_from_dept_id') {
+                  c.transferred_from_dept_id = val !== null && val !== undefined ? Number(val) : null;
+                } else if (col === 'transferred_from_dept_name') {
+                  c.transferred_from_dept_name = val || null;
+                } else if (col === 'transfer_reason') {
+                  c.transfer_reason = val || null;
+                } else if (col === 'transferred_by_officer_id') {
+                  c.transferred_by_officer_id = val !== null && val !== undefined ? Number(val) : null;
+                } else if (col === 'transferred_by_officer_name') {
+                  c.transferred_by_officer_name = val || null;
+                } else if (col === 'transferred_at') {
+                  c.transferred_at = val || now;
+                } else if (col === 'is_transferred') {
+                  c.is_transferred = val ? Number(val) : 0;
                 }
               } else if (valExpr.toUpperCase() === 'NULL' && col === 'officer_id') {
                 c.officer_id = null;

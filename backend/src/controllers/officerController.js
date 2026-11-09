@@ -383,6 +383,146 @@ class OfficerController {
       res.status(500).json({ error: 'Failed to triage task priority' });
     }
   }
+
+  /**
+   * Transfer Complaint to another civic department
+   * Allows field officers to correct AI department misclassification and route to the correct authority
+   */
+  async transferDepartment(req, res) {
+    try {
+      const officerId = req.user.id;
+      const officerName = req.user.name || 'Field Officer';
+      const officerDeptId = req.user.department_id;
+      const { id } = req.params;
+      const { target_department_id, target_category, reason } = req.body;
+
+      if (!target_department_id) {
+        return res.status(400).json({ error: 'Target department is required' });
+      }
+
+      const complaint = db.prepare('SELECT * FROM complaints WHERE id = ?').get(id);
+      if (!complaint) {
+        return res.status(404).json({ error: 'Complaint not found' });
+      }
+
+      const isAssigned = complaint.officer_id === officerId;
+      const isDeptOfficer = officerDeptId && Number(complaint.department_id) === Number(officerDeptId);
+      const isAdmin = req.user.role === 'admin';
+
+      if (!isAssigned && !isDeptOfficer && !isAdmin) {
+        return res.status(403).json({ error: 'Only assigned officers, department taskforce, or administrators can transfer this complaint' });
+      }
+
+      const targetDept = db.prepare('SELECT * FROM departments WHERE id = ?').get(target_department_id);
+      if (!targetDept) {
+        return res.status(400).json({ error: 'Target department does not exist' });
+      }
+
+      if (Number(complaint.department_id) === Number(targetDept.id)) {
+        return res.status(400).json({ error: 'Complaint is already assigned to this department' });
+      }
+
+      const sourceDept = db.prepare('SELECT * FROM departments WHERE id = ?').get(complaint.department_id);
+      const sourceDeptName = sourceDept ? sourceDept.name : (complaint.category || 'General Department');
+      const now = new Date().toISOString();
+      const transferReason = reason || 'Incident misclassified by AI; reassigned to competent department by field officer';
+
+      db.prepare(`
+        UPDATE complaints
+        SET department_id = ?,
+            category = ?,
+            officer_id = NULL,
+            status = 'Assigned',
+            transferred_from_dept_id = ?,
+            transferred_from_dept_name = ?,
+            transfer_reason = ?,
+            transferred_by_officer_id = ?,
+            transferred_by_officer_name = ?,
+            transferred_at = ?,
+            is_transferred = 1,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(
+        targetDept.id,
+        target_category || targetDept.name,
+        complaint.department_id,
+        sourceDeptName,
+        transferReason,
+        officerId,
+        officerName,
+        now,
+        complaint.id
+      );
+
+      db.prepare(`
+        INSERT INTO complaint_timeline (complaint_id, status, notes, updated_by_name, updated_by_user_id)
+        VALUES (?, 'Assigned', ?, ?, ?)
+      `).run(
+        complaint.id,
+        `🔄 Cross-Department Transfer: Reassigned from "${sourceDeptName}" to "${targetDept.name}". Officer Note: ${transferReason}`,
+        officerName,
+        officerId
+      );
+
+      if (complaint.citizen_id) {
+        db.prepare(`
+          INSERT INTO notifications (user_id, title, message, link)
+          VALUES (?, 'Department Transfer Update 🔁', ?, ?)
+        `).run(
+          complaint.citizen_id,
+          `Your complaint #${complaint.tracking_id} was transferred from ${sourceDeptName} to ${targetDept.name} for specialized field action.`,
+          `/complaints/${complaint.id}`
+        );
+      }
+
+      try {
+        const ComplaintMongo = require('../models/mongo/Complaint');
+        ComplaintMongo.findOneAndUpdate(
+          { $or: [{ id: complaint.id }, { tracking_id: complaint.tracking_id }] },
+          {
+            $set: {
+              department_id: targetDept.id,
+              category: target_category || targetDept.name,
+              officer_id: null,
+              status: 'Assigned',
+              transferred_from_dept_id: complaint.department_id,
+              transferred_from_dept_name: sourceDeptName,
+              transfer_reason: transferReason,
+              transferred_by_officer_id: officerId,
+              transferred_by_officer_name: officerName,
+              transferred_at: new Date(),
+              is_transferred: 1
+            }
+          }
+        ).catch(() => {});
+      } catch (_) {}
+
+      const updated = db.prepare('SELECT * FROM complaints WHERE id = ?').get(complaint.id);
+      const timeline = db.prepare('SELECT * FROM complaint_timeline WHERE complaint_id = ?').all(complaint.id);
+
+      return res.json({
+        message: `Complaint successfully transferred to ${targetDept.name}.`,
+        complaint: updated,
+        timeline
+      });
+    } catch (err) {
+      console.error('Transfer department error:', err);
+      res.status(500).json({ error: 'Failed to transfer complaint to target department' });
+    }
+  }
+
+  /**
+   * Get all civic departments for routing and transfer
+   */
+  getDepartments(req, res) {
+    try {
+      const departments = db.prepare('SELECT * FROM departments').all();
+      res.json({ departments });
+    } catch (err) {
+      console.error('Fetch departments error:', err);
+      res.status(500).json({ error: 'Failed to fetch departments' });
+    }
+  }
 }
 
 module.exports = new OfficerController();

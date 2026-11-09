@@ -158,7 +158,14 @@ const complaintSchema = new mongoose.Schema({
   triage_status: { type: String, enum: ['PENDING_OFFICER_TRIAGE', 'CONFIRMED_CRITICAL', 'RECALIBRATED_NORMAL', null], default: null, index: true },
   triage_reason: { type: String, default: null },
   triaged_by: { type: String, default: null },
-  triaged_at: { type: Date, default: null }
+  triaged_at: { type: Date, default: null },
+  is_transferred: { type: Number, default: 0, index: true },
+  transferred_from_dept_id: { type: Number, default: null },
+  transferred_from_dept_name: { type: String, default: null },
+  transfer_reason: { type: String, default: null },
+  transferred_by_officer_id: { type: Number, default: null },
+  transferred_by_officer_name: { type: String, default: null },
+  transferred_at: { type: Date, default: null }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });

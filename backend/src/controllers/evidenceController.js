@@ -804,10 +804,9 @@ class EvidenceController {
 
       const user = req.user;
 
-      if (user.role !== 'officer' && user.role !== 'admin') {
-
+      const allowedRoles = ['officer', 'admin', 'police_officer', 'cyber_crime_officer', 'field_officer', 'department_officer'];
+      if (!allowedRoles.includes(user.role)) {
         return res.status(403).json({ error: 'Only authorized officers and administrators may review and verify AI evidence.' });
-
       }
 
 
