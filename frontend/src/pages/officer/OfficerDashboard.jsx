@@ -27,12 +27,14 @@ import {
   RefreshCw,
   ArrowDownCircle,
   HelpCircle,
-  Info
+  Info,
+  Printer
 } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../../components/common/Modal';
 import SceneDescriptionCard from '../../components/complaint/SceneDescriptionCard';
+import PrintableCaseDossier from '../../components/complaint/PrintableCaseDossier';
 import { compressImage } from '../../utils/imageCompressor';
 
 export default function OfficerDashboard({
@@ -44,6 +46,7 @@ export default function OfficerDashboard({
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [printingTask, setPrintingTask] = useState(null);
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
@@ -1096,6 +1099,15 @@ export default function OfficerDashboard({
                       >
                         <Eye size={14} /> View Case File
                       </button>
+
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        style={{ color: '#0284c7', borderColor: 'rgba(2, 132, 199, 0.4)' }}
+                        onClick={() => setPrintingTask(task)}
+                        title="Print complete official case dossier with all photographic evidence"
+                      >
+                        <Printer size={14} /> Print Case Dossier
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1535,6 +1547,15 @@ export default function OfficerDashboard({
               </div>
             </form>
           </Modal>
+        )}
+
+        {/* Official Printable Case Dossier Modal */}
+        {printingTask && (
+          <PrintableCaseDossier
+            complaint={printingTask}
+            onClose={() => setPrintingTask(null)}
+            isOpen={!!printingTask}
+          />
         )}
 
       </div>

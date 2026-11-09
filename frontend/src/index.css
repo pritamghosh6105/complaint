@@ -6996,3 +6996,84 @@ body {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ========================================================
+   OFFICIAL PRINTABLE CASE DOSSIER & @MEDIA PRINT STYLES
+   ======================================================== */
+@media print {
+  /* Set clean background and text for print paper */
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide app chrome, floating bars, buttons, and navigation */
+  nav, 
+  footer, 
+  header,
+  .navbar, 
+  .navbar-container, 
+  .officer-command-bar, 
+  .officer-kpi-grid, 
+  .officer-filters-box, 
+  .officer-card-actions, 
+  .btn, 
+  button, 
+  .no-print, 
+  .page-wrapper > :not(.container),
+  .toast-container {
+    display: none !important;
+  }
+
+  /* Seamless print formatting for modal wrapper */
+  .dossier-modal-overlay {
+    position: static !important;
+    inset: auto !important;
+    background: none !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .dossier-modal-window {
+    max-height: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+  }
+
+  .printable-case-dossier {
+    padding: 0 !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .dossier-section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .dossier-evidence-card, .dossier-img {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm 12mm 10mm;
+  }
+
+  /* Ensure colors and borders are rendered by printer engines */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+

@@ -19,7 +19,8 @@ import {
   PhoneCall,
   Lock,
   ShieldCheck,
-  ArrowDownCircle
+  ArrowDownCircle,
+  Printer
 } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -27,6 +28,7 @@ import Timeline from '../../components/complaint/Timeline';
 import FeedbackModal from '../../components/complaint/FeedbackModal';
 import EvidenceGallery from '../../components/complaint/EvidenceGallery';
 import SceneDescriptionCard from '../../components/complaint/SceneDescriptionCard';
+import PrintableCaseDossier from '../../components/complaint/PrintableCaseDossier';
 import { useToast } from '../../components/ui/Toast';
 
 export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
@@ -34,6 +36,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
   const { addToast } = useToast();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isReopenOpen, setIsReopenOpen] = useState(false);
   const [reopenReason, setReopenReason] = useState('');
@@ -180,7 +183,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
   return (
     <div className="page-wrapper">
       <div className="container" style={{ maxWidth: '960px' }}>
-        {/* Back Button & Community Upvote Bar */}
+        {/* Back Button, Print Dossier & Community Upvote Bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
           <button 
             onClick={() => {
@@ -193,20 +196,40 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             <ArrowLeft size={16} /> {user?.role === 'officer' ? 'Back to Taskforce Queue' : user?.role === 'admin' ? 'Back to Admin Portal' : 'Back to My Complaints'}
           </button>
 
-          <button
-            onClick={handleUpvote}
-            disabled={upvoting}
-            className="btn btn-sm btn-secondary"
-            style={{
-              borderColor: 'var(--accent-cyan)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <ThumbsUp size={15} color="var(--accent-cyan)" />
-            <span>Support This Issue (<strong>{complaint.upvote_count || 0}</strong> Endorsements)</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => setIsPrintModalOpen(true)}
+              className="btn btn-sm btn-secondary"
+              style={{
+                borderColor: 'var(--accent-cyan)',
+                color: 'var(--accent-cyan)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontWeight: 600
+              }}
+              title="Print official case file dossier with all photographic evidence and audit history"
+            >
+              <Printer size={15} />
+              <span>Print Case Dossier</span>
+            </button>
+
+            <button
+              onClick={handleUpvote}
+              disabled={upvoting}
+              className="btn btn-sm btn-secondary"
+              style={{
+                borderColor: 'var(--accent-cyan)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <ThumbsUp size={15} color="var(--accent-cyan)" />
+              <span>Support This Issue (<strong>{complaint.upvote_count || 0}</strong> Endorsements)</span>
+            </button>
+          </div>
         </div>
 
         {/* Main Header Card */}
@@ -894,6 +917,15 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
               </form>
             </div>
           </div>
+        )}
+
+        {/* Official Printable Case Dossier Modal */}
+        {isPrintModalOpen && (
+          <PrintableCaseDossier
+            complaint={complaint}
+            onClose={() => setIsPrintModalOpen(false)}
+            isOpen={isPrintModalOpen}
+          />
         )}
       </div>
     </div>
