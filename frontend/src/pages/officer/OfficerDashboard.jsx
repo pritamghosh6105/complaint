@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Briefcase, 
-  Clock, 
-  CheckCircle2, 
-  MapPin, 
-  AlertTriangle, 
-  Upload, 
-  Camera, 
-  ShieldAlert, 
+import {
+  Briefcase,
+  Clock,
+  CheckCircle2,
+  MapPin,
+  AlertTriangle,
+  Upload,
+  Camera,
+  ShieldAlert,
   Send,
   Navigation,
   Film,
@@ -35,22 +35,22 @@ import Modal from '../../components/common/Modal';
 import SceneDescriptionCard from '../../components/complaint/SceneDescriptionCard';
 import { compressImage } from '../../utils/imageCompressor';
 
-export default function OfficerDashboard({ 
-  setCurrentRoute, 
-  setSelectedComplaintId, 
-  roleNotice 
+export default function OfficerDashboard({
+  setCurrentRoute,
+  setSelectedComplaintId,
+  roleNotice
 }) {
   const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  
+
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState(() => window.__OFFICER_FILTER__ || 'All');
   const [priorityFilter, setPriorityFilter] = useState('All');
   const [slaFilter, setSlaFilter] = useState('All'); // 'All', 'Overdue', 'DueSoon'
-  
+
   // Resolve Modal State
   const [resolvingComplaint, setResolvingComplaint] = useState(null);
   const [resolutionNotes, setResolutionNotes] = useState('');
@@ -178,7 +178,7 @@ export default function OfficerDashboard({
 
   useEffect(() => {
     fetchTasks();
-    api.get('/officer/departments')
+    api.get('/departments')
       .then(res => {
         if (res.data?.departments?.length) setDepartments(res.data.departments);
       })
@@ -203,7 +203,7 @@ export default function OfficerDashboard({
 
   const handleStatusUpdate = async (complaintId, newStatus, customNotes) => {
     try {
-      await api.patch(`/officer/tasks/${complaintId}/status`, { 
+      await api.patch(`/officer/tasks/${complaintId}/status`, {
         status: newStatus,
         notes: customNotes || `Task marked as ${newStatus} by field officer.`
       });
@@ -389,7 +389,7 @@ export default function OfficerDashboard({
   return (
     <div className="page-wrapper" style={{ paddingBottom: '80px' }}>
       <div className="container">
-        
+
         {/* Role Enforcement Notice (if routed incorrectly or role protected) */}
         {roleNotice && (
           <div style={{
@@ -412,7 +412,7 @@ export default function OfficerDashboard({
         )}
 
         {/* Officer Profile & Department Command Bar */}
-        <div 
+        <div
           className="officer-command-bar"
           style={{
             background: 'var(--bg-surface-elevated, var(--bg-surface))',
@@ -483,7 +483,7 @@ export default function OfficerDashboard({
         </div>
 
         {/* 6-Metric KPI Stat Grid */}
-        <div 
+        <div
           className="officer-kpi-grid"
           style={{
             display: 'grid',
@@ -546,10 +546,10 @@ export default function OfficerDashboard({
             </div>
           </div>
 
-          <div 
-            className="glass-card officer-kpi-card" 
-            style={{ 
-              padding: '14px 16px', 
+          <div
+            className="glass-card officer-kpi-card"
+            style={{
+              padding: '14px 16px',
               borderLeft: '3px solid #8b5cf6',
               cursor: 'pointer',
               background: statusFilter === 'Transferred' ? 'rgba(139, 92, 246, 0.12)' : undefined
@@ -567,7 +567,7 @@ export default function OfficerDashboard({
         </div>
 
         {/* Search, Filter & Tab Controls - STRICTLY OPERATIONAL */}
-        <div 
+        <div
           className="officer-filters-box"
           style={{
             background: 'var(--bg-surface)',
@@ -732,13 +732,13 @@ export default function OfficerDashboard({
             {filteredTasks.map(task => {
               const now = new Date();
               const isOverdue = task.sla_deadline && new Date(task.sla_deadline) < now && task.status !== 'Resolved';
-              const slaRemainingHours = task.sla_deadline 
+              const slaRemainingHours = task.sla_deadline
                 ? Math.round((new Date(task.sla_deadline) - now) / (1000 * 3600))
                 : 72;
 
               return (
-                <div 
-                  key={task.id} 
+                <div
+                  key={task.id}
                   className="glass-card officer-task-card"
                   style={{
                     padding: '22px',
@@ -782,8 +782,8 @@ export default function OfficerDashboard({
                   {/* EMERGENCY TRIAGE & VERIFICATION BAR */}
                   {(task.priority === 'CRITICAL' || task.is_emergency === 1 || task.triage_status) && (
                     <div style={{
-                      background: task.triage_status === 'CONFIRMED_CRITICAL' 
-                        ? 'rgba(239, 68, 68, 0.08)' 
+                      background: task.triage_status === 'CONFIRMED_CRITICAL'
+                        ? 'rgba(239, 68, 68, 0.08)'
                         : task.triage_status === 'RECALIBRATED_NORMAL'
                           ? 'rgba(59, 130, 246, 0.08)'
                           : 'linear-gradient(135deg, rgba(239, 68, 68, 0.14) 0%, rgba(245, 158, 11, 0.12) 100%)',
@@ -814,7 +814,7 @@ export default function OfficerDashboard({
                             display: 'block',
                             color: task.triage_status === 'CONFIRMED_CRITICAL' ? '#f87171' : task.triage_status === 'RECALIBRATED_NORMAL' ? '#60a5fa' : '#fbbf24'
                           }}>
-                            {task.triage_status === 'CONFIRMED_CRITICAL' 
+                            {task.triage_status === 'CONFIRMED_CRITICAL'
                               ? 'Verified Life-Safety Emergency — 24h SLA Locked'
                               : task.triage_status === 'RECALIBRATED_NORMAL'
                                 ? `Priority Recalibrated: ${task.priority} Priority (${task.priority === 'HIGH' ? '48h' : '72h'} SLA)`
@@ -930,8 +930,8 @@ export default function OfficerDashboard({
                     }}>
                       <Clock size={14} color={isOverdue ? '#ef4444' : 'currentColor'} />
                       <span>
-                        {isOverdue 
-                          ? `Overdue by ${Math.abs(slaRemainingHours)} hours` 
+                        {isOverdue
+                          ? `Overdue by ${Math.abs(slaRemainingHours)} hours`
                           : task.status === 'Resolved'
                             ? `Resolved on ${new Date(task.resolved_at || task.updated_at || Date.now()).toLocaleDateString()}`
                             : `SLA: ${slaRemainingHours}h remaining (${new Date(task.sla_deadline).toLocaleDateString()})`}
@@ -971,14 +971,14 @@ export default function OfficerDashboard({
                       </div>
                       <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '2px' }}>
                         {(task.evidence && task.evidence.length > 0 ? task.evidence : [{ secure_url: task.image_url, resource_type: 'image' }]).map((ev, i) => (
-                          <div 
-                            key={i} 
+                          <div
+                            key={i}
                             onClick={() => setPreviewMedia({ ...ev, task })}
-                            style={{ 
-                              width: '56px', 
-                              height: '56px', 
-                              borderRadius: '6px', 
-                              overflow: 'hidden', 
+                            style={{
+                              width: '56px',
+                              height: '56px',
+                              borderRadius: '6px',
+                              overflow: 'hidden',
                               border: '1px solid var(--border-subtle)',
                               background: '#0f172a',
                               flexShrink: 0,
@@ -998,7 +998,7 @@ export default function OfficerDashboard({
                       </div>
 
                       {/* Vision AI Scene Description or Officer Inspection Notice in Case Card */}
-                      <SceneDescriptionCard 
+                      <SceneDescriptionCard
                         sceneDescription={task.scene_description || task.evidence?.[0]?.scene_description || task.evidence?.[0]?.visual_analysis?.scene?.description || task.evidence?.[0]?.visual_analysis?.scene_description}
                         sceneType={task.scene_type || task.evidence?.[0]?.scene_type || task.evidence?.[0]?.visual_analysis?.scene?.scene_type || task.evidence?.[0]?.visual_analysis?.scene_type}
                         directObservations={task.direct_observations || task.evidence?.[0]?.direct_observations || task.evidence?.[0]?.visual_analysis?.evidence?.direct_observations || task.evidence?.[0]?.visual_analysis?.direct_observations}
@@ -1029,7 +1029,7 @@ export default function OfficerDashboard({
                         Citizen: <strong>{task.citizen_name || 'Anonymous'}</strong>
                       </span>
                       {task.citizen_phone && (
-                        <a 
+                        <a
                           href={`tel:${task.citizen_phone}`}
                           style={{
                             display: 'flex',
@@ -1048,7 +1048,7 @@ export default function OfficerDashboard({
                     {/* Authorised Officer Action Controls */}
                     <div className="officer-card-actions" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                       {task.status === 'Assigned' && (
-                        <button 
+                        <button
                           className="btn btn-secondary btn-sm"
                           style={{ color: '#60a5fa', borderColor: 'rgba(96, 165, 250, 0.4)' }}
                           onClick={() => handleStatusUpdate(task.id, 'In Progress')}
@@ -1057,7 +1057,7 @@ export default function OfficerDashboard({
                         </button>
                       )}
 
-                      <button 
+                      <button
                         className="btn btn-secondary btn-sm"
                         onClick={() => {
                           setNoteComplaint(task);
@@ -1068,7 +1068,7 @@ export default function OfficerDashboard({
                       </button>
 
                       {task.status !== 'Resolved' && (
-                        <button 
+                        <button
                           className="btn btn-secondary btn-sm"
                           style={{ color: '#c084fc', borderColor: 'rgba(192, 132, 252, 0.4)' }}
                           onClick={() => openTransferModal(task)}
@@ -1079,7 +1079,7 @@ export default function OfficerDashboard({
                       )}
 
                       {task.status !== 'Resolved' && (
-                        <button 
+                        <button
                           className="btn btn-success btn-sm"
                           onClick={() => setResolvingComplaint(task)}
                         >
@@ -1087,7 +1087,7 @@ export default function OfficerDashboard({
                         </button>
                       )}
 
-                      <button 
+                      <button
                         className="btn btn-secondary btn-sm"
                         onClick={() => {
                           setSelectedComplaintId(task.id);
@@ -1105,17 +1105,17 @@ export default function OfficerDashboard({
         )}
 
         {/* Resolution Completion Proof Modal */}
-        <Modal 
-          isOpen={!!resolvingComplaint} 
-          onClose={() => setResolvingComplaint(null)} 
+        <Modal
+          isOpen={!!resolvingComplaint}
+          onClose={() => setResolvingComplaint(null)}
           title={`Mark Complaint Resolved #${resolvingComplaint?.tracking_id}`}
         >
           <form onSubmit={handleResolveSubmit}>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', 
-              gap: '12px', 
-              marginBottom: '16px' 
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
+              gap: '12px',
+              marginBottom: '16px'
             }}>
               <div>
                 <label className="form-label" style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
@@ -1123,10 +1123,10 @@ export default function OfficerDashboard({
                 </label>
                 <div style={{ height: '120px', background: '#090d16', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {(resolvingComplaint?.image_url || resolvingComplaint?.evidence?.[0]?.secure_url) ? (
-                    <img 
-                      src={resolvingComplaint.image_url || resolvingComplaint.evidence[0].secure_url} 
-                      alt="Before" 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    <img
+                      src={resolvingComplaint.image_url || resolvingComplaint.evidence[0].secure_url}
+                      alt="Before"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No before photo attached</span>
@@ -1140,10 +1140,10 @@ export default function OfficerDashboard({
                 </label>
                 <div style={{ height: '120px', background: '#090d16', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(16, 185, 129, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {resolutionFilePreview ? (
-                    <img 
-                      src={resolutionFilePreview} 
-                      alt="After Proof" 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    <img
+                      src={resolutionFilePreview}
+                      alt="After Proof"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Select proof photo below</span>
@@ -1154,8 +1154,8 @@ export default function OfficerDashboard({
 
             <div className="form-group">
               <label className="form-label">Remediation Work Details:</label>
-              <textarea 
-                className="form-textarea" 
+              <textarea
+                className="form-textarea"
                 placeholder="Describe physical on-ground work conducted (e.g. road patched with hot mix asphalt, water pipeline leak sealed, transformer fuse replaced)..."
                 required
                 value={resolutionNotes}
@@ -1165,8 +1165,8 @@ export default function OfficerDashboard({
 
             <div className="form-group">
               <label className="form-label">Upload Resolution Proof Image (After):</label>
-              <input 
-                type="file" 
+              <input
+                type="file"
                 accept="image/*"
                 className="form-input"
                 onChange={async (e) => {
@@ -1182,9 +1182,9 @@ export default function OfficerDashboard({
               />
             </div>
 
-            <button 
-              type="submit" 
-              className="btn btn-success btn-lg" 
+            <button
+              type="submit"
+              className="btn btn-success btn-lg"
               style={{ width: '100%', marginTop: '10px' }}
               disabled={submitting}
             >
@@ -1232,22 +1232,22 @@ export default function OfficerDashboard({
             <div>
               <div style={{ textAlign: 'center', marginBottom: '14px' }}>
                 {previewMedia.resource_type === 'video' ? (
-                  <video 
-                    controls 
-                    src={previewMedia.secure_url || previewMedia.url} 
-                    style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }} 
+                  <video
+                    controls
+                    src={previewMedia.secure_url || previewMedia.url}
+                    style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }}
                   />
                 ) : (
-                  <img 
-                    src={previewMedia.secure_url || previewMedia.url} 
-                    alt="Full Evidence" 
-                    style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px', objectFit: 'contain' }} 
+                  <img
+                    src={previewMedia.secure_url || previewMedia.url}
+                    alt="Full Evidence"
+                    style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px', objectFit: 'contain' }}
                   />
                 )}
               </div>
 
               {/* Official Vision AI Scene Description or Officer Visual Inspection Directive */}
-              <SceneDescriptionCard 
+              <SceneDescriptionCard
                 sceneDescription={previewMedia.scene_description || previewMedia.task?.scene_description || previewMedia.visual_analysis?.scene?.description || previewMedia.visual_analysis?.scene_description}
                 sceneType={previewMedia.scene_type || previewMedia.task?.scene_type || previewMedia.visual_analysis?.scene?.scene_type || previewMedia.visual_analysis?.scene_type}
                 directObservations={previewMedia.direct_observations || previewMedia.task?.direct_observations || previewMedia.visual_analysis?.evidence?.direct_observations || previewMedia.visual_analysis?.direct_observations}

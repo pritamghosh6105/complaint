@@ -1257,12 +1257,39 @@ class RelationalStorage {
   updateVisualAnalysis(id, updateData) {
     this.load();
     if (!this.data.visual_analyses) this.data.visual_analyses = [];
-    const record = this.data.visual_analyses.find(v => Number(v.id) === Number(id) || Number(v.complaint_evidence_id) === Number(id));
-    if (!record) return null;
-    
-    Object.assign(record, updateData, { updated_at: new Date().toISOString() });
+    let record = this.data.visual_analyses.find(v => Number(v.id) === Number(id) || Number(v.complaint_evidence_id) === Number(id));
+    if (!record) {
+      if (!this.data._counters) this.data._counters = {};
+      if (!this.data._counters.visual_analyses) this.data._counters.visual_analyses = 1;
+      const newId = this.data._counters.visual_analyses++;
+      record = {
+        id: newId,
+        complaint_evidence_id: Number(id),
+        analysis_status: 'COMPLETED',
+        ...updateData,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      this.data.visual_analyses.push(record);
+    } else {
+      Object.assign(record, updateData, { updated_at: new Date().toISOString() });
+    }
+
+    if (this.data.complaint_evidence) {
+      const ev = this.data.complaint_evidence.find(e => Number(e.id) === Number(id));
+      if (ev) {
+        ev.human_verified = true;
+        ev.officer_action = updateData.officer_action;
+        ev.officer_notes = updateData.officer_notes;
+        ev.verified_by = updateData.reviewed_by;
+        ev.verified_at = updateData.reviewed_at;
+      }
+    }
+
     this.save();
-    this.pushToMongo('VisualAnalysis', { id: record.id }, record);
+    try {
+      this.pushToMongo('VisualAnalysis', { id: record.id }, record);
+    } catch (_) {}
     return record;
   }
 

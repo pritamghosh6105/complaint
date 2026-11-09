@@ -5,8 +5,11 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 const { requireRoles } = require('../middleware/roleMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
+// Public or authenticated departments retrieval (never block on role)
+router.get('/departments', (req, res) => officerController.getDepartments(req, res));
+
 router.use(authMiddleware);
-router.use(requireRoles('officer', 'admin', 'police_officer', 'cyber_crime_officer'));
+router.use(requireRoles('officer', 'admin', 'police_officer', 'cyber_crime_officer', 'field_officer', 'department_officer'));
 
 const resolutionUpload = upload.fields([{ name: 'resolution_image', maxCount: 1 }, { name: 'image', maxCount: 1 }]);
 

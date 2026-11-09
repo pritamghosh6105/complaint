@@ -100,7 +100,7 @@ export default function EvidenceGallery({
   // Load departments list for transfer workflow
   useEffect(() => {
     let isMounted = true;
-    api.get('/officer/departments')
+    api.get('/departments')
       .then(res => {
         if (isMounted && res.data?.departments?.length) {
           setDepartments(res.data.departments);

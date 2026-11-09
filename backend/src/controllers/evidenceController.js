@@ -860,50 +860,36 @@ class EvidenceController {
 
 
       // Find the visual analysis record
-
       const visualAnalysis = db.getVisualAnalysisById ? db.getVisualAnalysisById(Number(id)) : null;
-
       const evidence = db.getEvidenceById ? db.getEvidenceById(Number(id)) : null;
 
-
-
-      const VisualAnalysisMongo = require('../models/mongo/VisualAnalysis');
-
-      const updatedMongo = await VisualAnalysisMongo.findOneAndUpdate(
-
-        { $or: [{ id: Number(id) }, { complaint_evidence_id: Number(id) }] },
-
-        {
-
-          $set: {
-
-            human_verified: true,
-
-            reviewed_by: user.id,
-
-            reviewed_at: new Date(),
-
-            officer_action: action,
-
-            corrected_category: corrected_category || null,
-
-            corrected_subcategory: corrected_subcategory || null,
-
-            corrected_authority: corrected_authority || null,
-
-            corrected_damage_level: corrected_damage_level || null,
-
-            officer_notes: notes,
-
-            analysis_status: action === 'REJECTED_MISLEADING' ? 'FAILED' : 'COMPLETED'
-
-          }
-
-        },
-
-        { new: true, upsert: false }
-
-      );
+      let updatedMongo = null;
+      try {
+        const mongoose = require('mongoose');
+        if (mongoose.connection && mongoose.connection.readyState === 1) {
+          const VisualAnalysisMongo = require('../models/mongo/VisualAnalysis');
+          updatedMongo = await VisualAnalysisMongo.findOneAndUpdate(
+            { $or: [{ id: Number(id) }, { complaint_evidence_id: Number(id) }] },
+            {
+              $set: {
+                human_verified: true,
+                reviewed_by: user.id,
+                reviewed_at: new Date(),
+                officer_action: action,
+                corrected_category: corrected_category || null,
+                corrected_subcategory: corrected_subcategory || null,
+                corrected_authority: corrected_authority || null,
+                corrected_damage_level: corrected_damage_level || null,
+                officer_notes: notes,
+                analysis_status: action === 'REJECTED_MISLEADING' ? 'FAILED' : 'COMPLETED'
+              }
+            },
+            { returnDocument: 'after', upsert: false }
+          );
+        }
+      } catch (mongoErr) {
+        console.warn('[Evidence Verification] MongoDB sync deferred to local database:', mongoErr.message);
+      }
 
 
 
