@@ -18,8 +18,11 @@ import {
   Download
 } from 'lucide-react';
 import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
+import wbGovtLogo from '../../assets/wb-govt-logo.png';
 
 export default function PrintableCaseDossier({ complaint, onClose, isOpen = true }) {
+  const { user } = useAuth();
   const [fullData, setFullData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -69,6 +72,12 @@ export default function PrintableCaseDossier({ complaint, onClose, isOpen = true
   const resolutionEvidence = rawEvidence.filter(e => e.evidence_type === 'resolution');
   const primaryBefore = initialEvidence[0]?.secure_url || initialEvidence[0]?.optimized_url || comp.image_url;
   const primaryAfter = resolutionEvidence[0]?.secure_url || resolutionEvidence[0]?.optimized_url || comp.resolution_image_url;
+
+  // Dynamic Department Name Resolution
+  const rawDept = comp.department_name || comp.category || user?.department_name || 'Civic Services';
+  const formattedDeptName = rawDept.toLowerCase().startsWith('department of')
+    ? rawDept.toUpperCase()
+    : `DEPARTMENT OF ${rawDept.toUpperCase()}`;
 
   const handlePrint = () => {
     window.print();
@@ -205,32 +214,32 @@ export default function PrintableCaseDossier({ complaint, onClose, isOpen = true
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '50%',
-                border: '2px solid #0f172a',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 900,
-                fontSize: '0.72rem',
-                textAlign: 'center',
-                lineHeight: 1.1,
-                background: '#f8fafc',
                 flexShrink: 0
               }}>
-                GOVT OF<br />WEST BENGAL
+                <img 
+                  src={wbGovtLogo} 
+                  alt="Government of West Bengal" 
+                  style={{
+                    height: '84px',
+                    width: 'auto',
+                    objectFit: 'contain',
+                    background: 'transparent'
+                  }} 
+                />
               </div>
 
               <div>
-                <div style={{ fontSize: '0.76rem', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', color: '#475569' }}>
-                  DEPARTMENT OF URBAN DEVELOPMENT & MUNICIPAL AFFAIRS
+                <div style={{ fontSize: '0.76rem', fontWeight: 800, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#0369a1' }}>
+                  GOVERNMENT OF WEST BENGAL • {formattedDeptName}
                 </div>
-                <h1 style={{ margin: '3px 0 2px', fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.3px' }}>
-                  CIVICPULSE PUBLIC GRIEVANCE & FIELD INVESTIGATION DOSSIER
+                <h1 style={{ margin: '3px 0 2px', fontSize: '1.4rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.3px' }}>
+                  {rawDept.toUpperCase()} — CASE DOSSIER
                 </h1>
                 <div style={{ fontSize: '0.82rem', color: '#334155' }}>
-                  Civic Operations Command Network • Official Case File Record
+                  Official Incident Record & Photographic Evidence Docket • #{comp.tracking_id || comp.id}
                 </div>
               </div>
             </div>
@@ -293,7 +302,7 @@ export default function PrintableCaseDossier({ complaint, onClose, isOpen = true
                 </tr>
                 <tr>
                   <td style={{ padding: '6px 10px', border: '1px solid #cbd5e1', background: '#f8fafc', fontWeight: 700 }}>Target Department:</td>
-                  <td style={{ padding: '6px 10px', border: '1px solid #cbd5e1', fontWeight: 700 }}>{comp.department_name || comp.category || 'General Municipal Affairs'}</td>
+                  <td style={{ padding: '6px 10px', border: '1px solid #cbd5e1', fontWeight: 700 }}>{rawDept}</td>
                   <td style={{ padding: '6px 10px', border: '1px solid #cbd5e1', background: '#f8fafc', fontWeight: 700 }}>Category / Subcategory:</td>
                   <td style={{ padding: '6px 10px', border: '1px solid #cbd5e1' }}>{comp.category} {comp.subcategory ? `— ${comp.subcategory}` : ''}</td>
                 </tr>
@@ -688,19 +697,20 @@ export default function PrintableCaseDossier({ complaint, onClose, isOpen = true
 
               {/* Department Head Seal Box */}
               <div style={{
-                border: '2px solid #cbd5e1',
-                height: '70px',
+                border: '2px dashed #94a3b8',
+                height: '72px',
                 borderRadius: '6px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#94a3b8',
+                color: '#64748b',
                 fontSize: '0.72rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
-                textAlign: 'center'
+                textAlign: 'center',
+                padding: '4px 8px'
               }}>
-                [ MUNICIPAL DEPARTMENT<br />OFFICIAL STAMP ]
+                [ {rawDept.toUpperCase()}<br />OFFICIAL STAMP & SEAL ]
               </div>
 
               {/* Supervising Authority Signature */}
@@ -724,3 +734,4 @@ export default function PrintableCaseDossier({ complaint, onClose, isOpen = true
     </div>
   );
 }
+

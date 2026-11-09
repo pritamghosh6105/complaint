@@ -37,8 +37,12 @@ class OfficerController {
           };
         });
 
+        const dept = t.department_id ? db.prepare('SELECT * FROM departments WHERE id = ?').get(t.department_id) : null;
+        const resolvedDeptName = dept?.name || t.department_name || t.category || null;
+
         return {
           ...t,
+          department_name: resolvedDeptName,
           evidence: enrichedEvidence,
           visual_analyses: visualAnalyses,
           scene_description: t.scene_description || primaryAnalysis?.scene_description || primaryAnalysis?.scene?.description || (enrichedEvidence[0]?.scene_description || null),

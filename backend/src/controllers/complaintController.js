@@ -622,6 +622,8 @@ class ComplaintController {
 
       const timeline = db.prepare('SELECT * FROM complaint_timeline WHERE complaint_id = ?').all(complaint.id);
       const feedback = db.prepare('SELECT * FROM feedback WHERE complaint_id = ?').get(complaint.id);
+      const deptRecord = complaint.department_id ? db.prepare('SELECT * FROM departments WHERE id = ?').get(complaint.department_id) : null;
+      const resolvedDepartmentName = deptRecord?.name || complaint.department_name || complaint.category || null;
 
       // Fetch Evidence Items and AI Visual Analyses
       const evidenceList = db.getEvidenceByComplaintId(complaint.id);
@@ -663,6 +665,7 @@ class ComplaintController {
       res.json({
         complaint: {
           ...complaint,
+          department_name: resolvedDepartmentName,
           image_url: safeImageUrl,
           resolution_image_url: safeResolutionImageUrl,
           evidence: enrichedEvidence,
