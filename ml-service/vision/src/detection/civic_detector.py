@@ -1,4 +1,26 @@
 
+from __future__ import annotations
+"""
+CivicPulse AI — Civic Incident Object & Damage Detector (Stage A)
+Pure Computer Vision Image-Only Analysis.
+Analyzes image pixels strictly independently of complaint text or external metadata.
+Strictly English-only taxonomy.
+Returns INSUFFICIENT_VISUAL_EVIDENCE when visual proof cannot verify non-visual administrative complaints.
+"""
+
+import os
+import math
+import joblib
+import numpy as np
+from PIL import Image
+from typing import Dict, Any, List, Optional, Tuple
+
+MODELS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models"))
+VISION_CAT_MODEL_PATH = os.path.join(MODELS_DIR, "vision_category_model.joblib")
+DAMAGE_MODEL_PATH = os.path.join(MODELS_DIR, "damage_severity_model.joblib")
+BBOX_MODEL_PATH = os.path.join(MODELS_DIR, "bounding_box_regressor.joblib")
+
+
 def extract_36_features_from_pil(img: Image.Image):
     w, h = img.size
     arr = np.asarray(img.convert('RGB'), dtype=np.float32) / 255.0
@@ -71,27 +93,6 @@ def extract_36_features_from_pil(img: Image.Image):
         float(np.mean((r > 0.4) & (g > 0.4) & (b > 0.4))), float(np.var(gray)),
         float(np.max(gray) - np.min(gray))
     ]
-
-"""
-CivicPulse AI — Civic Incident Object & Damage Detector (Stage A)
-Pure Computer Vision Image-Only Analysis.
-Analyzes image pixels strictly independently of complaint text or external metadata.
-Strictly English-only taxonomy.
-Returns INSUFFICIENT_VISUAL_EVIDENCE when visual proof cannot verify non-visual administrative complaints.
-"""
-
-import os
-import joblib
-
-MODELS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models"))
-VISION_CAT_MODEL_PATH = os.path.join(MODELS_DIR, "vision_category_model.joblib")
-DAMAGE_MODEL_PATH = os.path.join(MODELS_DIR, "damage_severity_model.joblib")
-BBOX_MODEL_PATH = os.path.join(MODELS_DIR, "bounding_box_regressor.joblib")
-
-import math
-import numpy as np
-from PIL import Image
-from typing import Dict, Any, List, Optional, Tuple
 
 # Comprehensive Visual Civic Incident Classes
 VISUAL_CIVIC_TAXONOMY = {
