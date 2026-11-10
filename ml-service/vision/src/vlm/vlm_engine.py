@@ -21,10 +21,10 @@ from typing import Dict, Any, Optional, List, Union, Literal
 from PIL import Image
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-# Ensure src/ is on sys.path
-src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../src"))
-if src_dir not in sys.path:
-    sys.path.insert(0, src_dir)
+# Ensure ml-service root is on sys.path
+ml_service_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+if ml_service_dir not in sys.path:
+    sys.path.insert(0, ml_service_dir)
 
 try:
     from src.prediction.taxonomy_constants import CANONICAL_30_DEPARTMENTS, DEPARTMENT_NAME_NORMALIZATION

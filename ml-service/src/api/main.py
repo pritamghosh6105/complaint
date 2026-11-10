@@ -8,7 +8,9 @@ from pydantic import BaseModel, Field
 
 # Ensure path resolution
 current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.abspath(os.path.join(current_dir, "../..")))
+ml_root = os.path.abspath(os.path.join(current_dir, "../.."))
+if ml_root not in sys.path:
+    sys.path.insert(0, ml_root)
 
 from src.prediction.category_predictor import CategoryPredictor, CATEGORY_DEPARTMENT_MAP
 from src.prediction.incident_understanding import incident_engine
