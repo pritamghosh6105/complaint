@@ -236,7 +236,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server, Connect MongoDB, and Start SLA Watchdog
-app.listen(PORT, async () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`=======================================================`);
   console.log(`🚀 Citizen Complaint API Server running on port ${PORT}`);
   console.log(`🌐 Health endpoint: http://localhost:${PORT}/api/health`);

@@ -787,13 +787,13 @@
       "id": 100,
       "name": "Municipal Administrator",
       "email": "admin@demo.com",
-      "password_hash": "$2b$10$DEV13S63VBCi/xM49p4/cuHk.4GwDUZaLAn9OCYJkPLsLxb1sC2Dq",
+      "password_hash": "$2b$10$aKCpdyxZKDz1DDKSJqDVVeNCDw8XxsqtmFPcHZM1Gz6ixR4Z.td46",
       "role": "admin",
       "phone": "+91 98765 43210",
       "department_id": null,
       "ward": "Ward 1",
       "created_at": "2026-09-19T21:21:49.423Z",
-      "updated_at": "2026-11-09T17:51:15.769Z",
+      "updated_at": "2026-11-10T07:24:51.166Z",
       "__v": 0,
       "officer_id": "ADMIN-HQ-001",
       "isDemoAccount": true,
@@ -1021,7 +1021,7 @@
       "name": "Inspector Rajesh Verma",
       "email": "demo.pol@civicpulse.gov.in",
       "officer_id": "DEMO-POL-001",
-      "password_hash": "$2b$10$UUKtjRyO/W8KJi1wDlI6FO8Q9TU9bjyUxHOI1gInSmnysOH51yD/G",
+      "password_hash": "$2b$10$4gLV4CfmKA3L9pUXtLmMxekPJuffstgz3XaKkM8kHz5YUffgd9xnO",
       "role": "officer",
       "phone": "+91 98300 10001",
       "ward": "West Bengal State Jurisdiction",
@@ -1031,14 +1031,14 @@
       "accountStatus": "Active",
       "category": "Police & Law Enforcement",
       "created_at": "2026-11-09T17:51:15.846Z",
-      "updated_at": "2026-11-09T17:51:15.846Z"
+      "updated_at": "2026-11-10T07:24:51.307Z"
     },
     {
       "id": 147,
       "name": "Inspector Meera Sen",
       "email": "demo.cyb@civicpulse.gov.in",
       "officer_id": "DEMO-CYB-002",
-      "password_hash": "$2b$10$KomnQoyVDy/iDkBuJsmDmefkJ/GZuloLK4JgI7thrvU0GJxmCctkq",
+      "password_hash": "$2b$10$H1TZiKluHDKsOrT9gY488u82kdEVjgaII5db8pSDzFsUlw4sEGfy6",
       "role": "officer",
       "phone": "+91 98300 10002",
       "ward": "West Bengal State Jurisdiction",
@@ -1048,14 +1048,14 @@
       "accountStatus": "Active",
       "category": "Cyber Crime",
       "created_at": "2026-11-09T17:51:15.924Z",
-      "updated_at": "2026-11-09T17:51:15.924Z"
+      "updated_at": "2026-11-10T07:24:51.422Z"
     },
     {
       "id": 148,
       "name": "Officer Ananya Roy",
       "email": "demo.wcs@civicpulse.gov.in",
       "officer_id": "DEMO-WCS-003",
-      "password_hash": "$2b$10$mw2.7UGK8CGrAwT48YDNZuZ8QQCUFL7gOSfD93zyaG.qxe4Qh4vZ.",
+      "password_hash": "$2b$10$cCNV5rphfS6vh.i8ocenI.sHxGBAZOQiABV8hedwj/iqRrosgh6Uu",
       "role": "officer",
       "phone": "+91 98300 10003",
       "ward": "West Bengal State Jurisdiction",
@@ -1065,14 +1065,14 @@
       "accountStatus": "Active",
       "category": "Women & Child Safety",
       "created_at": "2026-11-09T17:51:16.008Z",
-      "updated_at": "2026-11-09T17:51:16.008Z"
+      "updated_at": "2026-11-10T07:24:51.496Z"
     },
     {
       "id": 149,
       "name": "Inspector Vikram Singh",
       "email": "demo.trf@civicpulse.gov.in",
       "officer_id": "DEMO-TRF-004",
-      "password_hash": "$2b$10$CIMPNsiISM5wDyHOfg2NfOIMG9HsGkSf5bNR0c/Nl4fN5YRTkanIm",
+      "password_hash": "$2b$10$XlCZGIefZccOb2zzLN0BYe1FnOxqoDYvYF79BoH5h5Ou6OtaqPjNu",
       "role": "officer",
       "phone": "+91 98300 10004",
       "ward": "West Bengal State Jurisdiction",
@@ -1082,14 +1082,14 @@
       "accountStatus": "Active",
       "category": "Traffic & Road Safety",
       "created_at": "2026-11-09T17:51:16.093Z",
-      "updated_at": "2026-11-09T17:51:16.093Z"
+      "updated_at": "2026-11-10T07:24:51.568Z"
     },
     {
       "id": 150,
       "name": "Dr. Alok Mukherjee",
       "email": "demo.rpw@civicpulse.gov.in",
       "officer_id": "DEMO-RPW-005",
-      "password_hash": "$2b$10$51gFDbFK.Y1W4GWo4eGKGe5c7zQUMg8JLXPwmDKiOZEbsFJf9XcO2",
+      "password_hash": "$2b$10$MQrjy/Qk0p4Nl7AZPQztE.yJJ1JV.H5cRVuhqzHWsaQBaFw1i8.7S",
       "role": "officer",
       "phone": "+91 98300 10005",
       "ward": "West Bengal State Jurisdiction",
@@ -1099,14 +1099,14 @@
       "accountStatus": "Active",
       "category": "Roads & Public Works",
       "created_at": "2026-11-09T17:51:16.179Z",
-      "updated_at": "2026-11-09T17:51:16.179Z"
+      "updated_at": "2026-11-10T07:24:51.645Z"
     },
     {
       "id": 151,
       "name": "Er. Subrata Pal",
       "email": "demo.drn@civicpulse.gov.in",
       "officer_id": "DEMO-DRN-006",
-      "password_hash": "$2b$10$uJYJBwbEMpz.peMJkTV2ZuzvdhMnL89EfZwGrYkyZq9cml1ue4gMm",
+      "password_hash": "$2b$10$xqir0TbNX/GI.OJIITGPTe2XDtFaKCXmvgjeYU0ebGsIy6botJf7m",
       "role": "officer",
       "phone": "+91 98300 10006",
       "ward": "West Bengal State Jurisdiction",
@@ -1116,14 +1116,14 @@
       "accountStatus": "Active",
       "category": "Drainage & Sewerage",
       "created_at": "2026-11-09T17:51:16.292Z",
-      "updated_at": "2026-11-09T17:51:16.292Z"
+      "updated_at": "2026-11-10T07:24:51.723Z"
     },
     {
       "id": 152,
       "name": "Er. Debasis Das",
       "email": "demo.wtr@civicpulse.gov.in",
       "officer_id": "DEMO-WTR-007",
-      "password_hash": "$2b$10$vp.o25ZV4AQHZa0pDqAca.kQiH2EZcGAe/5bUnqbiGzsE8mpvMTpu",
+      "password_hash": "$2b$10$FV/Eh6fZ6bw23Ifi37k00.JLadsWb2c9BVYdGXHNCiGybE6bUloeO",
       "role": "officer",
       "phone": "+91 98300 10007",
       "ward": "West Bengal State Jurisdiction",
@@ -1133,14 +1133,14 @@
       "accountStatus": "Active",
       "category": "Water Supply",
       "created_at": "2026-11-09T17:51:16.396Z",
-      "updated_at": "2026-11-09T17:51:16.396Z"
+      "updated_at": "2026-11-10T07:24:51.797Z"
     },
     {
       "id": 153,
       "name": "Officer Sunita Banerjee",
       "email": "demo.swm@civicpulse.gov.in",
       "officer_id": "DEMO-SWM-008",
-      "password_hash": "$2b$10$vArSo0d2qjr.CXlPCrTNKu6IGcY702PZLnarYv9cbGOm33g3RlxX2",
+      "password_hash": "$2b$10$aryWgkne6sVuqHX4lBX6Re2ryqHz33qngyHsm.o02vSU3QtZu1u6W",
       "role": "officer",
       "phone": "+91 98300 10008",
       "ward": "West Bengal State Jurisdiction",
@@ -1150,14 +1150,14 @@
       "accountStatus": "Active",
       "category": "Solid Waste Management",
       "created_at": "2026-11-09T17:51:16.498Z",
-      "updated_at": "2026-11-09T17:51:16.498Z"
+      "updated_at": "2026-11-10T07:24:51.869Z"
     },
     {
       "id": 154,
       "name": "Er. Rajesh Roy",
       "email": "demo.sle@civicpulse.gov.in",
       "officer_id": "DEMO-SLE-009",
-      "password_hash": "$2b$10$AeYOxIFchN7y4YLYJX02XugGRNmINXBVOmwDFCatOCPR5gVxrnT4K",
+      "password_hash": "$2b$10$ohEz4sVn05I6tFc6vcMal.YGmRYPsRwkUOvwn/Vc0ZHW2GiQooIdm",
       "role": "officer",
       "phone": "+91 98300 10009",
       "ward": "West Bengal State Jurisdiction",
@@ -1167,14 +1167,14 @@
       "accountStatus": "Active",
       "category": "Street Lighting & Electrical",
       "created_at": "2026-11-09T17:51:16.579Z",
-      "updated_at": "2026-11-09T17:51:16.579Z"
+      "updated_at": "2026-11-10T07:24:51.940Z"
     },
     {
       "id": 155,
       "name": "Dr. Manoj Mondal",
       "email": "demo.phs@civicpulse.gov.in",
       "officer_id": "DEMO-PHS-010",
-      "password_hash": "$2b$10$l89PEBOc56VybT1Xtl4vduGq.2yqLxKZsTm1wyDG0wwDs0aqQbIoK",
+      "password_hash": "$2b$10$IFkKbTfxU45tzrUMNmZeaep6hOjFnLp18XHmXShMM6YFraX0iY81G",
       "role": "officer",
       "phone": "+91 98300 10010",
       "ward": "West Bengal State Jurisdiction",
@@ -1184,14 +1184,14 @@
       "accountStatus": "Active",
       "category": "Public Health & Sanitation",
       "created_at": "2026-11-09T17:51:16.657Z",
-      "updated_at": "2026-11-09T17:51:16.657Z"
+      "updated_at": "2026-11-10T07:24:52.014Z"
     },
     {
       "id": 156,
       "name": "CFO S. K. Bose",
       "email": "demo.fes@civicpulse.gov.in",
       "officer_id": "DEMO-FES-011",
-      "password_hash": "$2b$10$q6xDUAlmxelqYBov0Z4npuzCi3WrgUA37hO97be3tATT3s1moL/Vi",
+      "password_hash": "$2b$10$8ChRkYo5B7cRkMMPpGE1gOP82rNP14bDA46H94WnUkukrm9xWBKUW",
       "role": "officer",
       "phone": "+91 98300 10011",
       "ward": "West Bengal State Jurisdiction",
@@ -1201,14 +1201,14 @@
       "accountStatus": "Active",
       "category": "Fire & Emergency Services",
       "created_at": "2026-11-09T17:51:16.738Z",
-      "updated_at": "2026-11-09T17:51:16.738Z"
+      "updated_at": "2026-11-10T07:24:52.086Z"
     },
     {
       "id": 157,
       "name": "Officer Pradip Nandi",
       "email": "demo.dsm@civicpulse.gov.in",
       "officer_id": "DEMO-DSM-012",
-      "password_hash": "$2b$10$CjiX4lKi/61lz6tQIJu4YeV85jsiFP/RIWsWRcW.CJWEGL0JCVMim",
+      "password_hash": "$2b$10$10z/Qk2JGKzd9WcrW13LgenPy3gZQjksa0qkhr2NaeHvQY9HT90iG",
       "role": "officer",
       "phone": "+91 98300 10012",
       "ward": "West Bengal State Jurisdiction",
@@ -1218,14 +1218,14 @@
       "accountStatus": "Active",
       "category": "Disaster Management",
       "created_at": "2026-11-09T17:51:16.829Z",
-      "updated_at": "2026-11-09T17:51:16.829Z"
+      "updated_at": "2026-11-10T07:24:52.157Z"
     },
     {
       "id": 158,
       "name": "Dr. Sharmistha Guha",
       "email": "demo.env@civicpulse.gov.in",
       "officer_id": "DEMO-ENV-013",
-      "password_hash": "$2b$10$20MOC4z3.9PmOFqLXe95quJ/QWg7xnQgTkHTlDlhhEar87GsPGOY.",
+      "password_hash": "$2b$10$Jy9445NYQizjhb2mZ6ACbuT/zr3RJkcZyOylUkaDECWEAZ1SV3r5q",
       "role": "officer",
       "phone": "+91 98300 10013",
       "ward": "West Bengal State Jurisdiction",
@@ -1235,14 +1235,14 @@
       "accountStatus": "Active",
       "category": "Environment & Pollution",
       "created_at": "2026-11-09T17:51:16.938Z",
-      "updated_at": "2026-11-09T17:51:16.938Z"
+      "updated_at": "2026-11-10T07:24:52.229Z"
     },
     {
       "id": 159,
       "name": "Officer Ritu Sen",
       "email": "demo.pps@civicpulse.gov.in",
       "officer_id": "DEMO-PPS-014",
-      "password_hash": "$2b$10$e7Ghuo0Ba0KohdpYuRSxl.YM7.6kHSRdzqtjBdemhbAu9lX6t.pHy",
+      "password_hash": "$2b$10$4C2sT4GROjp3JC6ISOG4gu3vzT00NXKPV696qI/FoQAr0w29YjCFi",
       "role": "officer",
       "phone": "+91 98300 10014",
       "ward": "West Bengal State Jurisdiction",
@@ -1252,14 +1252,14 @@
       "accountStatus": "Active",
       "category": "Parks & Public Spaces",
       "created_at": "2026-11-09T17:51:17.060Z",
-      "updated_at": "2026-11-09T17:51:17.060Z"
+      "updated_at": "2026-11-10T07:24:52.300Z"
     },
     {
       "id": 160,
       "name": "Er. Tanmoy Dutta",
       "email": "demo.bme@civicpulse.gov.in",
       "officer_id": "DEMO-BME-015",
-      "password_hash": "$2b$10$v96.7b2IfkjlJWnwmjkx7.cTs6Q3VxqvTZdgmYttk5BoVxfZ130V.",
+      "password_hash": "$2b$10$35tGK.JPKdzuU/k29bR7xOmpeUhxh62paZV5R6CfhHVryIATs73Ry",
       "role": "officer",
       "phone": "+91 98300 10015",
       "ward": "West Bengal State Jurisdiction",
@@ -1269,14 +1269,14 @@
       "accountStatus": "Active",
       "category": "Building & Municipal Engineering",
       "created_at": "2026-11-09T17:51:17.195Z",
-      "updated_at": "2026-11-09T17:51:17.195Z"
+      "updated_at": "2026-11-10T07:24:52.368Z"
     },
     {
       "id": 161,
       "name": "Officer Bikas Chatterjee",
       "email": "demo.llr@civicpulse.gov.in",
       "officer_id": "DEMO-LLR-016",
-      "password_hash": "$2b$10$zDb2p/qiqbh0DwIuJbz72efIc8mQl/IAmuC6Pi0bjEHIIH9w3K1V2",
+      "password_hash": "$2b$10$QSAieFhbWB5CUeFEj/4au.s8/0iml1VQiKgCQKsql8rRlV5JS4L3S",
       "role": "officer",
       "phone": "+91 98300 10016",
       "ward": "West Bengal State Jurisdiction",
@@ -1286,14 +1286,14 @@
       "accountStatus": "Active",
       "category": "Land & Land Records",
       "created_at": "2026-11-09T17:51:17.324Z",
-      "updated_at": "2026-11-09T17:51:17.324Z"
+      "updated_at": "2026-11-10T07:24:52.439Z"
     },
     {
       "id": 162,
       "name": "Er. Nilanjan Ghosh",
       "email": "demo.hud@civicpulse.gov.in",
       "officer_id": "DEMO-HUD-017",
-      "password_hash": "$2b$10$7kPz7pnk04aN9mnnNrNrjOTWcoRp153YEyInw4h8QCHVaQ.ALIyJW",
+      "password_hash": "$2b$10$E59uhmNVGfxhoCme/zNHgeV.hqM3r5dPy7qYa6rZ3/mWUFjbUfPBS",
       "role": "officer",
       "phone": "+91 98300 10017",
       "ward": "West Bengal State Jurisdiction",
@@ -1303,14 +1303,14 @@
       "accountStatus": "Active",
       "category": "Housing & Urban Development",
       "created_at": "2026-11-09T17:51:17.467Z",
-      "updated_at": "2026-11-09T17:51:17.467Z"
+      "updated_at": "2026-11-10T07:24:52.510Z"
     },
     {
       "id": 163,
       "name": "Er. Amitava Ghosh",
       "email": "demo.elp@civicpulse.gov.in",
       "officer_id": "DEMO-ELP-018",
-      "password_hash": "$2b$10$rhS3q3CwAKbp/pAi5jaP1uyyT4hTgdkZl0SnPVKEJDHXKBYSX6AO2",
+      "password_hash": "$2b$10$6i8gkRR4rRgsOgHjRnp0curN3LNI8fKKoCcgvSmyFDkdqJyzh4bcu",
       "role": "officer",
       "phone": "+91 98300 10018",
       "ward": "West Bengal State Jurisdiction",
@@ -1320,14 +1320,14 @@
       "accountStatus": "Active",
       "category": "Electricity & Power",
       "created_at": "2026-11-09T17:51:17.554Z",
-      "updated_at": "2026-11-09T17:51:17.554Z"
+      "updated_at": "2026-11-10T07:24:52.581Z"
     },
     {
       "id": 164,
       "name": "Director Amitabha Basu",
       "email": "demo.ptr@civicpulse.gov.in",
       "officer_id": "DEMO-PTR-019",
-      "password_hash": "$2b$10$ZrxDDDVm6y0Piikijq32c.yhXyCkZLtUMPGTxZl3IhFoFnlHxirpO",
+      "password_hash": "$2b$10$AGJyjz.SIOdJUadgLKRwNeToqH7XQxNcs5MnO3RHz96JLqNxWtc2e",
       "role": "officer",
       "phone": "+91 98300 10019",
       "ward": "West Bengal State Jurisdiction",
@@ -1337,14 +1337,14 @@
       "accountStatus": "Active",
       "category": "Public Transport",
       "created_at": "2026-11-09T17:51:17.645Z",
-      "updated_at": "2026-11-09T17:51:17.645Z"
+      "updated_at": "2026-11-10T07:24:52.652Z"
     },
     {
       "id": 165,
       "name": "Liaison Officer Kalyan Das",
       "email": "demo.rlw@civicpulse.gov.in",
       "officer_id": "DEMO-RLW-020",
-      "password_hash": "$2b$10$rY/zF2yF2tbMrJwNUMkkkO/VkHzcO7RUNvP/uV5a8xV6NcKxkqaPu",
+      "password_hash": "$2b$10$rAfTFL7KdENbyZaZAH3ZPeJoLyd2no0KDHN/c7E4z60dzQlsA8feC",
       "role": "officer",
       "phone": "+91 98300 10020",
       "ward": "West Bengal State Jurisdiction",
@@ -1354,14 +1354,14 @@
       "accountStatus": "Active",
       "category": "Railway-related Public Complaints",
       "created_at": "2026-11-09T17:51:17.728Z",
-      "updated_at": "2026-11-09T17:51:17.728Z"
+      "updated_at": "2026-11-10T07:24:52.722Z"
     },
     {
       "id": 166,
       "name": "Dr. Arunima Sanyal",
       "email": "demo.hlh@civicpulse.gov.in",
       "officer_id": "DEMO-HLH-021",
-      "password_hash": "$2b$10$CxY9GITc7VQ7R4UH06uyS.OcvzI6LPPazjHmaClrK2m9ZAJqKTfc6",
+      "password_hash": "$2b$10$4oBfSCvZXuRQSV4E5Eve2ugvSxtgPZYExvnF839anBKjRk30EmrMW",
       "role": "officer",
       "phone": "+91 98300 10021",
       "ward": "West Bengal State Jurisdiction",
@@ -1371,14 +1371,14 @@
       "accountStatus": "Active",
       "category": "Health & Hospitals",
       "created_at": "2026-11-09T17:51:17.851Z",
-      "updated_at": "2026-11-09T17:51:17.851Z"
+      "updated_at": "2026-11-10T07:24:52.793Z"
     },
     {
       "id": 167,
       "name": "Officer Soumen Barik",
       "email": "demo.fpd@civicpulse.gov.in",
       "officer_id": "DEMO-FPD-022",
-      "password_hash": "$2b$10$W4PRIDMamwiUV4foCu0iV.btyBsLZRLLQCHVLXa28/5uG/lDr7Jju",
+      "password_hash": "$2b$10$g/h2A7Da2JbX5a1no2TP/OIM5fx/lFqNe2Qfcbu7pzoTk6laEgqpy",
       "role": "officer",
       "phone": "+91 98300 10022",
       "ward": "West Bengal State Jurisdiction",
@@ -1388,14 +1388,14 @@
       "accountStatus": "Active",
       "category": "Food & Public Distribution",
       "created_at": "2026-11-09T17:51:17.946Z",
-      "updated_at": "2026-11-09T17:51:17.946Z"
+      "updated_at": "2026-11-10T07:24:52.865Z"
     },
     {
       "id": 168,
       "name": "Advocate Snehasis Dey",
       "email": "demo.csa@civicpulse.gov.in",
       "officer_id": "DEMO-CSA-023",
-      "password_hash": "$2b$10$jOm88PM8zQAwNPtxqVOy.OW9pr9wzcZGhUZc54qoNylaQ/xkgr3la",
+      "password_hash": "$2b$10$D08rG0F7aou4VCeo1v0vo.OO4sjYAnxAY5UiKSO3iW23lRh8V4G/S",
       "role": "officer",
       "phone": "+91 98300 10023",
       "ward": "West Bengal State Jurisdiction",
@@ -1405,14 +1405,14 @@
       "accountStatus": "Active",
       "category": "Consumer Affairs",
       "created_at": "2026-11-09T17:51:18.021Z",
-      "updated_at": "2026-11-09T17:51:18.021Z"
+      "updated_at": "2026-11-10T07:24:52.936Z"
     },
     {
       "id": 169,
       "name": "Dr. Kaushik Maitra",
       "email": "demo.eds@civicpulse.gov.in",
       "officer_id": "DEMO-EDS-024",
-      "password_hash": "$2b$10$5AESOgeDokjBRiElP/iE4O7bSXCNa9NYVmjamxvZ9DjJ5poOuhPX2",
+      "password_hash": "$2b$10$r5dQtpvOMMLn79UJZURJ8uxQ2zOVDYFgeuRzVVD2T9rwK6jzDf3NS",
       "role": "officer",
       "phone": "+91 98300 10024",
       "ward": "West Bengal State Jurisdiction",
@@ -1422,14 +1422,14 @@
       "accountStatus": "Active",
       "category": "Education – Schools",
       "created_at": "2026-11-09T17:51:18.122Z",
-      "updated_at": "2026-11-09T17:51:18.122Z"
+      "updated_at": "2026-11-10T07:24:53.008Z"
     },
     {
       "id": 170,
       "name": "Prof. Debabrata Roy",
       "email": "demo.hed@civicpulse.gov.in",
       "officer_id": "DEMO-HED-025",
-      "password_hash": "$2b$10$Iobk/ZUiuSYWRWXr6TvoSOl/33KRzUlIiRvCx9yomWxY1OSfja/.y",
+      "password_hash": "$2b$10$yRIBP4x2ESPxNxRDVB8iqONoUVLkZvVG5X3sFtkHHV/Sn6UwnJVoq",
       "role": "officer",
       "phone": "+91 98300 10025",
       "ward": "West Bengal State Jurisdiction",
@@ -1439,14 +1439,14 @@
       "accountStatus": "Active",
       "category": "Higher Education",
       "created_at": "2026-11-09T17:51:18.210Z",
-      "updated_at": "2026-11-09T17:51:18.210Z"
+      "updated_at": "2026-11-10T07:24:53.078Z"
     },
     {
       "id": 171,
       "name": "Officer Tanuja Mitra",
       "email": "demo.lbe@civicpulse.gov.in",
       "officer_id": "DEMO-LBE-026",
-      "password_hash": "$2b$10$NvKWZhdJSBRYWGk7EMymSuxUUA/0/JOjWFF3D2kSTezblYoo/hdUq",
+      "password_hash": "$2b$10$aOyDulu5x6oTVSq0gBJgl.ngEBBUlTuO4CYvtKjOJKfKxsMPmzDZy",
       "role": "officer",
       "phone": "+91 98300 10026",
       "ward": "West Bengal State Jurisdiction",
@@ -1456,14 +1456,14 @@
       "accountStatus": "Active",
       "category": "Labour & Employment",
       "created_at": "2026-11-09T17:51:18.281Z",
-      "updated_at": "2026-11-09T17:51:18.281Z"
+      "updated_at": "2026-11-10T07:24:53.152Z"
     },
     {
       "id": 172,
       "name": "Dr. Partha Sarathi Roy",
       "email": "demo.agr@civicpulse.gov.in",
       "officer_id": "DEMO-AGR-027",
-      "password_hash": "$2b$10$gAat9wdzAx4Y6xAE79rr8eD.k5/PaAlXEPXTXa8u9ZMIKbkQmw1OK",
+      "password_hash": "$2b$10$oMSnwgaKadkrDz60DwLGv.cQTtR/03cYEKZ7uT5gGl.7bV9l7Iz46",
       "role": "officer",
       "phone": "+91 98300 10027",
       "ward": "West Bengal State Jurisdiction",
@@ -1473,14 +1473,14 @@
       "accountStatus": "Active",
       "category": "Agriculture",
       "created_at": "2026-11-09T17:51:18.358Z",
-      "updated_at": "2026-11-09T17:51:18.358Z"
+      "updated_at": "2026-11-10T07:24:53.228Z"
     },
     {
       "id": 173,
       "name": "Dr. Sujit Karmakar",
       "email": "demo.anr@civicpulse.gov.in",
       "officer_id": "DEMO-ANR-028",
-      "password_hash": "$2b$10$crUSUWdkglhX43kcW8iRh.knecLpG9LbHXVU.rtxI8lI7NKoc.tE2",
+      "password_hash": "$2b$10$tYN3EAeGFWqv97SMoMmUWeiiSQkZlgzUhiDn4iqCTV6DlzMLzz92S",
       "role": "officer",
       "phone": "+91 98300 10028",
       "ward": "West Bengal State Jurisdiction",
@@ -1490,14 +1490,14 @@
       "accountStatus": "Active",
       "category": "Animal Resources",
       "created_at": "2026-11-09T17:51:18.430Z",
-      "updated_at": "2026-11-09T17:51:18.430Z"
+      "updated_at": "2026-11-10T07:24:53.303Z"
     },
     {
       "id": 174,
       "name": "DFO R. K. Singh",
       "email": "demo.fwl@civicpulse.gov.in",
       "officer_id": "DEMO-FWL-029",
-      "password_hash": "$2b$10$R/o6gfYGPxoweCkWSUEwO.PEnOJo0r5HVV0rkmPnmnJ2v4CzpG9ti",
+      "password_hash": "$2b$10$oUbqFweJrmfROQOS5bP1D.MFiw1HQKxfxFuBA2GgY9XhpqG9L94AS",
       "role": "officer",
       "phone": "+91 98300 10029",
       "ward": "West Bengal State Jurisdiction",
@@ -1507,14 +1507,14 @@
       "accountStatus": "Active",
       "category": "Forest & Wildlife",
       "created_at": "2026-11-09T17:51:18.500Z",
-      "updated_at": "2026-11-09T17:51:18.500Z"
+      "updated_at": "2026-11-10T07:24:53.373Z"
     },
     {
       "id": 175,
       "name": "Deputy Commissioner P. K. Mallick",
       "email": "demo.pga@civicpulse.gov.in",
       "officer_id": "DEMO-PGA-030",
-      "password_hash": "$2b$10$1amREZh.pT26xAN9q7d6S.dYWWH7kjjbT/G58i3ANEQ92q46zNnL2",
+      "password_hash": "$2b$10$/ZJfZW2GVa60v44YGanWc.2jsftw0EKCiHCkpL0VbqUtrTjk7BjEa",
       "role": "officer",
       "phone": "+91 98300 10030",
       "ward": "West Bengal State Jurisdiction",
@@ -1524,7 +1524,7 @@
       "accountStatus": "Active",
       "category": "Public Grievance / General Administration",
       "created_at": "2026-11-09T17:51:18.570Z",
-      "updated_at": "2026-11-09T17:51:18.570Z"
+      "updated_at": "2026-11-10T07:24:53.448Z"
     }
   ],
   "complaints": [
@@ -4140,7 +4140,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-08T22:16:22.864Z",
+      "updated_at": "2026-11-09T19:01:43.713Z",
       "userEnteredAddress": "Baitakkhana North, Kolkata, Greater Kolkata, Kolkata, West Bengal, 700009, India",
       "village": "",
       "visual_analysis_id": null,
@@ -7349,6 +7349,15 @@
       "updated_by_name": "SLA Automated Engine",
       "updated_by_user_id": null,
       "timestamp": "2026-11-09T17:51:18.909Z"
+    },
+    {
+      "id": 137,
+      "complaint_id": 20,
+      "status": "In Progress",
+      "notes": "Community endorsement (+1 affected) registered by Pritam Ghosh. Total citizen supporters: 1. Impact score elevated to 52/100.",
+      "updated_by_name": "Community Support Engine",
+      "updated_by_user_id": 145,
+      "timestamp": "2026-11-09T19:01:43.795Z"
     }
   ],
   "feedback": [
@@ -43164,7 +43173,7 @@
     "departments": 31,
     "users": 176,
     "complaints": 26,
-    "complaint_timeline": 137,
+    "complaint_timeline": 138,
     "feedback": 5,
     "notifications": 102,
     "complaint_evidence": 28,
