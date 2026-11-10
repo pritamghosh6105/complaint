@@ -1,14 +1,23 @@
 import axios from 'axios';
 
 function getApiBaseUrl() {
-  // 1. Explicit Vite env var if provided
+  // 1. Runtime override via localStorage (enables instant URL swapping in browser console)
+  if (typeof window !== 'undefined') {
+    const customUrl = localStorage.getItem('CIVICPULSE_BACKEND_URL');
+    if (customUrl && customUrl.trim()) {
+      const clean = customUrl.trim().replace(/\/+$/, '');
+      return clean.endsWith('/api') ? clean : `${clean}/api`;
+    }
+  }
+
+  // 2. Explicit Vite env var if provided during build
   const envUrl = import.meta.env.VITE_API_URL;
   if (envUrl && envUrl.trim() && envUrl !== '/api') {
     const clean = envUrl.trim().replace(/\/+$/, '');
     return clean.endsWith('/api') ? clean : `${clean}/api`;
   }
 
-  // 2. Runtime browser detection: If running on Render (*.onrender.com),
+  // 3. Runtime browser detection: If running on Render (*.onrender.com),
   // automatically route API calls to the deployed backend web service!
   if (typeof window !== 'undefined' && window.location && window.location.hostname) {
     const host = window.location.hostname;
@@ -17,7 +26,7 @@ function getApiBaseUrl() {
     }
   }
 
-  // 3. Local development fallback (Vite proxy forwards /api -> localhost:5000)
+  // 4. Local development fallback (Vite proxy forwards /api -> localhost:5000)
   return '/api';
 }
 
