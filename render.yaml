@@ -37,7 +37,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: ML_SERVICE_URL
-        sync: false
+        value: https://civicpulse-ml-service.onrender.com
       - key: MONGODB_URI
         sync: false
       - key: CLOUDINARY_CLOUD_NAME

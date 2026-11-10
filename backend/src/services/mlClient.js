@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000';
+const ML_SERVICE_URL = process.env.ML_SERVICE_URL || (process.env.NODE_ENV === 'production' ? 'https://civicpulse-ml-service.onrender.com' : 'http://127.0.0.1:8000');
 
 // Comprehensive 30-Department Category Keywords with Subcategories & Taxonomies
 const CATEGORY_TAXONOMY = {
