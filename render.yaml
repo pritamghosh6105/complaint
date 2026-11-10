@@ -33,10 +33,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: ML_SERVICE_URL
-        fromService:
-          type: web
-          name: civicpulse-ml-service
-          property: host
+        sync: false
       - key: MONGODB_URI
         sync: false
       - key: CLOUDINARY_CLOUD_NAME
@@ -54,8 +51,6 @@ services:
   - type: web
     name: civicpulse-frontend
     runtime: static
-    plan: free
-    region: oregon
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     routes:
