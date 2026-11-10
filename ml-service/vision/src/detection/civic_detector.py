@@ -13,7 +13,7 @@ import math
 import joblib
 import numpy as np
 from PIL import Image
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional, Tuple, Union
 
 MODELS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models"))
 VISION_CAT_MODEL_PATH = os.path.join(MODELS_DIR, "vision_category_model.joblib")
@@ -285,19 +285,19 @@ class CivicDetector:
             print(f"Warning loading vision models: {e}")
 
     @staticmethod
-    def _create_box_pct(ymin: int, xmin: int, ymax: int, xmax: int, w: int, h: int) -> Tuple[List[int], Dict[str, float]]:
-        w = max(1, w)
-        h = max(1, h)
-        top = max(0.0, min(100.0, round((ymin / h) * 100.0, 1)))
-        left = max(0.0, min(100.0, round((xmin / w) * 100.0, 1)))
-        width = max(1.0, min(100.0 - left, round(((xmax - xmin) / w) * 100.0, 1)))
-        height = max(1.0, min(100.0 - top, round(((ymax - ymin) / h) * 100.0, 1)))
+    def _create_box_pct(ymin: Union[int, float], xmin: Union[int, float], ymax: Union[int, float], xmax: Union[int, float], w: Union[int, float], h: Union[int, float]) -> Tuple[List[int], Dict[str, float]]:
+        w_f = max(1.0, float(w))
+        h_f = max(1.0, float(h))
+        top = max(0.0, min(100.0, round((float(ymin) / h_f) * 100.0, 1)))
+        left = max(0.0, min(100.0, round((float(xmin) / w_f) * 100.0, 1)))
+        width = max(1.0, min(100.0 - left, round(((float(xmax) - float(xmin)) / w_f) * 100.0, 1)))
+        height = max(1.0, min(100.0 - top, round(((float(ymax) - float(ymin)) / h_f) * 100.0, 1)))
         
         box_2d = [
-            int(round((ymin / h) * 1000)),
-            int(round((xmin / w) * 1000)),
-            int(round((ymax / h) * 1000)),
-            int(round((xmax / w) * 1000))
+            round((float(ymin) / h_f) * 1000),
+            round((float(xmin) / w_f) * 1000),
+            round((float(ymax) / h_f) * 1000),
+            round((float(xmax) / w_f) * 1000)
         ]
         box_pct = {
             "top": top,
@@ -318,9 +318,9 @@ class CivicDetector:
         is_digital_document: bool,
         label: Optional[str],
         display_name: Optional[str],
-        box: List[int],
-        w: int,
-        h: int,
+        box: List[Union[int, float]],
+        w: Union[int, float],
+        h: Union[int, float],
         limitations: str,
         image_quality: str,
         analysis_status: str = "COMPLETED"
