@@ -17,12 +17,12 @@ function getApiBaseUrl() {
     return clean.endsWith('/api') ? clean : `${clean}/api`;
   }
 
-  // 3. Runtime browser detection: If running on Render (*.onrender.com),
+  // 3. Runtime browser detection: If running on cloud hosts (Vercel or Render),
   // automatically route API calls to the deployed backend web service!
   if (typeof window !== 'undefined' && window.location && window.location.hostname) {
     const host = window.location.hostname;
-    if (host.includes('onrender.com')) {
-      return 'https://civicpulse-backend.onrender.com/api';
+    if (host.includes('onrender.com') || host.includes('vercel.app')) {
+      return 'https://civicpulse-backend-sl9v.onrender.com/api';
     }
   }
 

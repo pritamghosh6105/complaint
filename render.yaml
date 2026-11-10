@@ -66,4 +66,4 @@ services:
       - key: NODE_VERSION
         value: 20.18.0
       - key: VITE_API_URL
-        value: https://civicpulse-backend.onrender.com/api
+        value: https://civicpulse-backend-sl9v.onrender.com/api
