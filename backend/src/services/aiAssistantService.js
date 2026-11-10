@@ -4,7 +4,7 @@ class AIAssistantService {
   constructor() {
     this.defaultGroqModel = 'llama-3.1-8b-instant';
     this.defaultOpenRouterModel = 'meta-llama/llama-3.3-70b-instruct';
-    this.mlServiceUrl = process.env.ML_SERVICE_URL || (process.env.NODE_ENV === 'production' ? 'https://civicpulse-ml-service.onrender.com' : 'http://127.0.0.1:8000');
+    this.mlServiceUrl = process.env.ML_SERVICE_URL || 'https://civicpulse-ml-service.onrender.com';
   }
 
   /**

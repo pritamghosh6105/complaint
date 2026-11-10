@@ -146,6 +146,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
     service: 'Smart Citizen Complaint Backend API',
+    mlServiceUrl: process.env.ML_SERVICE_URL || 'https://civicpulse-ml-service.onrender.com',
     database: mongo.connected ? 'MongoDB Atlas' : 'Embedded Relational JSON Storage',
     mongoStatus: mongo,
     mediaStorage: {
