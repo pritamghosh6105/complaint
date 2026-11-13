@@ -260,6 +260,64 @@ class AuthController {
       description: 'Password-protected demo credential vault for 30 departmental field officer test accounts.'
     });
   }
+
+  /**
+   * Administrative User Deletion Endpoint
+   * Purges user from both MongoDB Atlas and local embedded storage
+   */
+  async adminDeleteUser(req, res) {
+    try {
+      const email = req.body.email || req.query.email;
+      const phone = req.body.phone || req.query.phone;
+
+      if (!email && !phone) {
+        return res.status(400).json({ error: 'Please provide email or phone number to delete.' });
+      }
+
+      const cleanPhone = phone ? String(phone).replace(/\D/g, '').slice(-10) : '';
+      const cleanEmail = email ? String(email).toLowerCase().trim() : '';
+
+      // 1. Delete from MongoDB Atlas (Cloud)
+      let mongoDeleted = 0;
+      const mongoose = require('mongoose');
+      if (mongoose.connection && mongoose.connection.readyState === 1) {
+        try {
+          const mongoModels = require('../models/mongo');
+          const orConditions = [];
+          if (cleanEmail) orConditions.push({ email: cleanEmail });
+          if (cleanPhone) orConditions.push({ phone: { $regex: cleanPhone } });
+          if (orConditions.length > 0) {
+            const mRes = await mongoModels.User.deleteMany({ $or: orConditions });
+            mongoDeleted = mRes.deletedCount || 0;
+          }
+        } catch (mErr) {
+          console.warn('MongoDB deletion error:', mErr.message);
+        }
+      }
+
+      // 2. Delete from Local / In-memory Relational Storage
+      db.load();
+      const beforeCount = db.data.users.length;
+      db.data.users = db.data.users.filter(u => {
+        const uEmail = (u.email || '').toLowerCase().trim();
+        const uPhone = String(u.phone || '').replace(/\D/g, '').slice(-10);
+        if (cleanEmail && uEmail === cleanEmail) return false;
+        if (cleanPhone && uPhone === cleanPhone) return false;
+        return true;
+      });
+      db.save();
+      const localDeleted = beforeCount - db.data.users.length;
+
+      return res.json({
+        success: true,
+        message: `User ${cleanEmail || cleanPhone} deleted successfully from all database engines.`,
+        mongoDeleted,
+        localDeleted
+      });
+    } catch (err) {
+      return res.status(500).json({ error: err.message || 'Failed to delete user' });
+    }
+  }
 }
 
 module.exports = new AuthController();

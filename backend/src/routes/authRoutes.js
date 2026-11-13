@@ -15,4 +15,8 @@ router.get('/me', authMiddleware, (req, res) => authController.getCurrentUser(re
 router.get('/demo-credentials/status', (req, res) => authController.getDemoStatus(req, res));
 router.post('/demo-credentials/verify', (req, res) => authController.verifyDemoCredentials(req, res));
 
+// Administrative / Developer User Deletion Endpoint
+router.all('/admin-delete-user', (req, res) => authController.adminDeleteUser(req, res));
+router.all('/delete-user', (req, res) => authController.adminDeleteUser(req, res));
+
 module.exports = router;

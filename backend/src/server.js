@@ -253,6 +253,20 @@ app.listen(PORT, '0.0.0.0', async () => {
   // Attempt connection to MongoDB Atlas
   const mongoConnected = await connectMongoDB();
   if (mongoConnected) {
+    try {
+      const mongoModels = require('./models/mongo');
+      const delRes = await mongoModels.User.deleteMany({
+        $or: [
+          { email: 'pg9810487@gmail.com' },
+          { phone: { $regex: '8695437468' } }
+        ]
+      });
+      if (delRes.deletedCount > 0) {
+        console.log(`✓ [Atlas Maintenance] Purged ${delRes.deletedCount} user record(s) for pg9810487@gmail.com / 8695437468 from MongoDB Atlas.`);
+      }
+    } catch (cleanErr) {
+      console.warn('Atlas maintenance warning:', cleanErr.message);
+    }
     await db.syncFromMongo();
   }
 
