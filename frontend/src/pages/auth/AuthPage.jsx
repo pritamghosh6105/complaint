@@ -753,12 +753,6 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                 </div>
               </div>
 
-              {/* Small Contextual Role Description */}
-              <div className={`portal-context-banner ${currentRole.id}`}>
-                <Info size={15} style={{ flexShrink: 0 }} />
-                <span>{currentRole.detailedContext}</span>
-              </div>
-
               {/* 4. Role-Based Login Form */}
               <form 
                 id="civic-auth-form" 
