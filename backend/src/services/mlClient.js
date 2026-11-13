@@ -698,7 +698,27 @@ class MLClient {
     return calculateImpactScore(affectedCount, locationType, severity, isEmergency);
   }
 
-  async analyzeVisualEvidence({ imageUrl, imageBase64, imageId, textCategory, textSubcategory, description, title }) {
+  async analyzeVisualEvidence({ imageUrl, imageBase64, imageBuffer, imageId, textCategory, textSubcategory, description, title }) {
+    // 1. Solution A & D: Try direct backend vision analysis (Zero cold start, immediate response)
+    try {
+      const directVisionService = require('./directVisionService');
+      const directResult = await directVisionService.analyzeImage({
+        imageUrl,
+        imageBase64,
+        imageBuffer,
+        textCategory,
+        textSubcategory,
+        description,
+        title
+      });
+      if (directResult && directResult.analysis_status === 'SUCCESS') {
+        return directResult;
+      }
+    } catch (directErr) {
+      console.warn('Direct Vision Service failed, trying ML microservice:', directErr.message);
+    }
+
+    // 2. Secondary fallback: Remote Python ML microservice
     try {
       const response = await axios.post(`${ML_SERVICE_URL}/vision/analyze`, {
         image_url: imageUrl || null,

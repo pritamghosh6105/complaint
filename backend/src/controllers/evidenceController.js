@@ -615,17 +615,12 @@ class EvidenceController {
 
 
       const analysis = await mlClient.analyzeVisualEvidence({
-
+        imageBuffer: fileBuffer,
         imageBase64: base64Data,
-
         textCategory: category || '',
-
         textSubcategory: subcategory || '',
-
         description: description || '',
-
         title: title || ''
-
       });
 
 

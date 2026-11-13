@@ -272,6 +272,57 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
 
   const analysisRequestIdRef = useRef(0);
 
+  // Solution C: Client-Side Image Compression for rapid, low-bandwidth AI preview
+  const compressImageForAI = async (file, maxWidth = 1280, quality = 0.82) => {
+    if (!file || !file.type || !file.type.startsWith('image/')) return file;
+    return new Promise((resolve) => {
+      try {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            try {
+              let width = img.width;
+              let height = img.height;
+              if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              canvas.toBlob(
+                (blob) => {
+                  if (!blob) {
+                    resolve(file);
+                    return;
+                  }
+                  const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                  });
+                  resolve(compressedFile);
+                },
+                'image/jpeg',
+                quality
+              );
+            } catch (_) {
+              resolve(file);
+            }
+          };
+          img.onerror = () => resolve(file);
+          img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(file);
+        reader.readAsDataURL(file);
+      } catch (_) {
+        resolve(file);
+      }
+    });
+  };
+
   const handlePrimaryImageSelect = async (imgFile) => {
     const currentReqId = ++analysisRequestIdRef.current;
     setPrimaryImageFile(imgFile);
@@ -294,8 +345,10 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
     setIsAnalyzingImage(true);
 
     try {
+      // Compress image client-side to < 300KB before uploading to preview endpoint
+      const optimizedFile = await compressImageForAI(imgFile);
       const fd = new FormData();
-      fd.append('evidence', imgFile);
+      fd.append('evidence', optimizedFile);
 
       const res = await api.post('/evidence/preview-analysis', fd, {
         headers: { 'Content-Type': 'multipart/form-data' }
