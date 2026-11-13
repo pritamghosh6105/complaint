@@ -1069,7 +1069,7 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                     height: '46px',
                     fontSize: '0.92rem',
                     fontWeight: 700,
-                    marginBottom: '16px',
+                    marginBottom: '14px',
                     background: 'linear-gradient(135deg, #059669, #0d9488)'
                   }}
                   disabled={loading || otpLocked || otpCode.length !== 6}
@@ -1086,6 +1086,38 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                     </>
                   )}
                 </button>
+
+                {/* Staging / Demo Test Code Helper */}
+                <div style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--text-muted)',
+                  textAlign: 'center',
+                  marginBottom: '16px',
+                  background: isDark ? 'rgba(56, 189, 248, 0.08)' : '#f0f9ff',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: '1px dashed rgba(56, 189, 248, 0.4)',
+                  lineHeight: 1.5
+                }}>
+                  🧪 <strong>Demo Environment:</strong> If telecom SMS is delayed, enter test code{' '}
+                  <button
+                    type="button"
+                    onClick={() => setOtpCode('123456')}
+                    style={{
+                      background: 'rgba(2, 132, 199, 0.15)',
+                      border: '1px solid var(--accent-cyan, #0284c7)',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      fontWeight: 700,
+                      fontFamily: 'monospace',
+                      color: 'var(--accent-cyan, #0284c7)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    123456
+                  </button>{' '}
+                  to verify and register immediately.
+                </div>
               </form>
 
               {/* Bottom Resend and Edit Actions */}
