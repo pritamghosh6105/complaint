@@ -787,13 +787,13 @@
       "id": 100,
       "name": "Municipal Administrator",
       "email": "admin@demo.com",
-      "password_hash": "$2b$10$LOocpp1dp7wNmiHQHIwjjekE06O/Ttrw9G6rMVeT4nDwiLP.qFeBO",
+      "password_hash": "$2b$10$J5hBrXSQ.zVq0XK0ZLzcmuVNbhh/aMqjXV0SYwzBPoW/vJnbHvaoi",
       "role": "admin",
       "phone": "+91 98765 43210",
       "department_id": null,
       "ward": "Ward 1",
       "created_at": "2026-09-19T21:21:49.423Z",
-      "updated_at": "2026-11-10T17:05:26.562Z",
+      "updated_at": "2026-11-13T16:46:40.471Z",
       "__v": 0,
       "officer_id": "ADMIN-HQ-001",
       "isDemoAccount": true,
@@ -998,30 +998,11 @@
       "ward": "Ward 1"
     },
     {
-      "_id": "6ae77b47311a89d4aca7ad84",
-      "id": 145,
-      "__v": 0,
-      "accountStatus": "Active",
-      "accountType": "STANDARD",
-      "category": "",
-      "created_at": "2026-11-01T17:47:04.826Z",
-      "department_id": null,
-      "email": "pg9810487@gmail.com",
-      "isDemoAccount": false,
-      "name": "Pritam Ghosh",
-      "officer_id": null,
-      "password_hash": "$2b$10$.UO8QXaHbH4QbEc746FlBOkqZfnoPpRmlfgPpVICxHPSaCoLpyEv2",
-      "phone": "+918695437468",
-      "role": "citizen",
-      "updated_at": "2026-11-01T17:47:04.826Z",
-      "ward": "Ward 3"
-    },
-    {
       "id": 146,
       "name": "Inspector Rajesh Verma",
       "email": "demo.pol@civicpulse.gov.in",
       "officer_id": "DEMO-POL-001",
-      "password_hash": "$2b$10$4utUwz0U6rIsi4doNmaiNeUDLEC8fu4uP1QS029W/FFpRaXL3JqC6",
+      "password_hash": "$2b$10$3wQsV7d0O1SH383jk2YUNOR3oUQcz0gl2.90urbwRkJMg6iPwrjpu",
       "role": "officer",
       "phone": "+91 98300 10001",
       "ward": "West Bengal State Jurisdiction",
@@ -1031,14 +1012,14 @@
       "accountStatus": "Active",
       "category": "Police & Law Enforcement",
       "created_at": "2026-11-10T17:05:26.629Z",
-      "updated_at": "2026-11-10T17:05:26.629Z"
+      "updated_at": "2026-11-13T16:46:40.548Z"
     },
     {
       "id": 147,
       "name": "Inspector Meera Sen",
       "email": "demo.cyb@civicpulse.gov.in",
       "officer_id": "DEMO-CYB-002",
-      "password_hash": "$2b$10$9.HqsAZExvrR3/V2phY/V.xS5gbfxGNHG6blK8dOJmC8AwPtjHRrq",
+      "password_hash": "$2b$10$3gXQbgo.9thrjNXZzqK1ReJdtf5YtjkL8EtBl8C6AMSbritdpR2VK",
       "role": "officer",
       "phone": "+91 98300 10002",
       "ward": "West Bengal State Jurisdiction",
@@ -1048,14 +1029,14 @@
       "accountStatus": "Active",
       "category": "Cyber Crime",
       "created_at": "2026-11-10T17:05:26.696Z",
-      "updated_at": "2026-11-10T17:05:26.696Z"
+      "updated_at": "2026-11-13T16:46:40.620Z"
     },
     {
       "id": 148,
       "name": "Officer Ananya Roy",
       "email": "demo.wcs@civicpulse.gov.in",
       "officer_id": "DEMO-WCS-003",
-      "password_hash": "$2b$10$L3uA4H7AMyS5MFT/Y5oRAOqczzKwwr0EiOzJeVV4paP9CICmo4Qom",
+      "password_hash": "$2b$10$AmrijM5qp9yvylNnniGfau7xeKPy95SgBgvdZzm4z/ZExjiZz.TtK",
       "role": "officer",
       "phone": "+91 98300 10003",
       "ward": "West Bengal State Jurisdiction",
@@ -1065,14 +1046,14 @@
       "accountStatus": "Active",
       "category": "Women & Child Safety",
       "created_at": "2026-11-10T17:05:26.764Z",
-      "updated_at": "2026-11-10T17:05:26.764Z"
+      "updated_at": "2026-11-13T16:46:40.698Z"
     },
     {
       "id": 149,
       "name": "Inspector Vikram Singh",
       "email": "demo.trf@civicpulse.gov.in",
       "officer_id": "DEMO-TRF-004",
-      "password_hash": "$2b$10$UUSESMLJmV2HbomRPut3NuBUtCOEX.K1ofwulc0vzw8.w/cJrxtHy",
+      "password_hash": "$2b$10$THdIz.NWUzpB80pmFwXCo.92uJFWGxv5UIuVe3wlUl9i/U3pFp6Q.",
       "role": "officer",
       "phone": "+91 98300 10004",
       "ward": "West Bengal State Jurisdiction",
@@ -1082,14 +1063,14 @@
       "accountStatus": "Active",
       "category": "Traffic & Road Safety",
       "created_at": "2026-11-10T17:05:26.831Z",
-      "updated_at": "2026-11-10T17:05:26.831Z"
+      "updated_at": "2026-11-13T16:46:40.778Z"
     },
     {
       "id": 150,
       "name": "Dr. Alok Mukherjee",
       "email": "demo.rpw@civicpulse.gov.in",
       "officer_id": "DEMO-RPW-005",
-      "password_hash": "$2b$10$j/cwC/tUr60JcPR2nznFdu.o6CIHen39xt/6gvCi7.aizKz.kESd.",
+      "password_hash": "$2b$10$v1gizBuKv4ojy7vQWV1pce/12Z.WNYEzYETdgc76qvH0Cj1VqRRge",
       "role": "officer",
       "phone": "+91 98300 10005",
       "ward": "West Bengal State Jurisdiction",
@@ -1099,14 +1080,14 @@
       "accountStatus": "Active",
       "category": "Roads & Public Works",
       "created_at": "2026-11-10T17:05:26.898Z",
-      "updated_at": "2026-11-10T17:05:26.898Z"
+      "updated_at": "2026-11-13T16:46:40.850Z"
     },
     {
       "id": 151,
       "name": "Er. Subrata Pal",
       "email": "demo.drn@civicpulse.gov.in",
       "officer_id": "DEMO-DRN-006",
-      "password_hash": "$2b$10$GZsZIB91KhbwcDPI3Pb5QOVPS7OGWIpRvuOO3wK5QQoI1FTd9s542",
+      "password_hash": "$2b$10$JSOUrm1V7hTnMVGehyjRwefoB3z0aJpaN201ia10.QN0n.FCZ2jp6",
       "role": "officer",
       "phone": "+91 98300 10006",
       "ward": "West Bengal State Jurisdiction",
@@ -1116,14 +1097,14 @@
       "accountStatus": "Active",
       "category": "Drainage & Sewerage",
       "created_at": "2026-11-10T17:05:26.964Z",
-      "updated_at": "2026-11-10T17:05:26.964Z"
+      "updated_at": "2026-11-13T16:46:40.920Z"
     },
     {
       "id": 152,
       "name": "Er. Debasis Das",
       "email": "demo.wtr@civicpulse.gov.in",
       "officer_id": "DEMO-WTR-007",
-      "password_hash": "$2b$10$O4ELhtazMIj.8gn9x..pquk6TUKhQnKtisKqmv6D8vO6sKwuBVXLG",
+      "password_hash": "$2b$10$uDHUA74QDopVLyhtE1/LwuGIK/eq/RIV7J1fcZA0JD/ycQd2K42n2",
       "role": "officer",
       "phone": "+91 98300 10007",
       "ward": "West Bengal State Jurisdiction",
@@ -1133,14 +1114,14 @@
       "accountStatus": "Active",
       "category": "Water Supply",
       "created_at": "2026-11-10T17:05:27.034Z",
-      "updated_at": "2026-11-10T17:05:27.034Z"
+      "updated_at": "2026-11-13T16:46:40.989Z"
     },
     {
       "id": 153,
       "name": "Officer Sunita Banerjee",
       "email": "demo.swm@civicpulse.gov.in",
       "officer_id": "DEMO-SWM-008",
-      "password_hash": "$2b$10$MO7ICAajXUeRV6.XkADowu6r8KcoKVJEm8nGd/8MYk8viH0YhIN5C",
+      "password_hash": "$2b$10$T3ApJK3z/bBrI27gf/kB9.//ZTon4VoOCPYtTuc.1H0ABl7.j23VK",
       "role": "officer",
       "phone": "+91 98300 10008",
       "ward": "West Bengal State Jurisdiction",
@@ -1150,14 +1131,14 @@
       "accountStatus": "Active",
       "category": "Solid Waste Management",
       "created_at": "2026-11-10T17:05:27.101Z",
-      "updated_at": "2026-11-10T17:05:27.101Z"
+      "updated_at": "2026-11-13T16:46:41.063Z"
     },
     {
       "id": 154,
       "name": "Er. Rajesh Roy",
       "email": "demo.sle@civicpulse.gov.in",
       "officer_id": "DEMO-SLE-009",
-      "password_hash": "$2b$10$VGMDybXwsAOu6eGRInWhrO/JPSyBaHKEs2nLv80cDL.Gfe6zBQQCi",
+      "password_hash": "$2b$10$11.Sb6nL/ggvNLwB0rV6YuSRFOpFYL9RB/2BqwyQJJ8OtBz1M4Yt.",
       "role": "officer",
       "phone": "+91 98300 10009",
       "ward": "West Bengal State Jurisdiction",
@@ -1167,14 +1148,14 @@
       "accountStatus": "Active",
       "category": "Street Lighting & Electrical",
       "created_at": "2026-11-10T17:05:27.167Z",
-      "updated_at": "2026-11-10T17:05:27.167Z"
+      "updated_at": "2026-11-13T16:46:41.133Z"
     },
     {
       "id": 155,
       "name": "Dr. Manoj Mondal",
       "email": "demo.phs@civicpulse.gov.in",
       "officer_id": "DEMO-PHS-010",
-      "password_hash": "$2b$10$Jl2FJzptc2Oc..8YsZWwVOklHu2dOgQ.IWXHsiYfDIWpgvIJs73HG",
+      "password_hash": "$2b$10$XyksRt9C0hrvDauIA9cWW.85d5gT4rWmekW5efS/WemrPp8zFkAV6",
       "role": "officer",
       "phone": "+91 98300 10010",
       "ward": "West Bengal State Jurisdiction",
@@ -1184,14 +1165,14 @@
       "accountStatus": "Active",
       "category": "Public Health & Sanitation",
       "created_at": "2026-11-10T17:05:27.233Z",
-      "updated_at": "2026-11-10T17:05:27.233Z"
+      "updated_at": "2026-11-13T16:46:41.203Z"
     },
     {
       "id": 156,
       "name": "CFO S. K. Bose",
       "email": "demo.fes@civicpulse.gov.in",
       "officer_id": "DEMO-FES-011",
-      "password_hash": "$2b$10$e1s9RsHee7jnRW929A3xmu/WxSOeZBiYANaXCWznpsZfloE4kxtt.",
+      "password_hash": "$2b$10$CfoDHL05KOSs5CCjR9BUHeyVHwAa25yqjdQv/9rns7LQ9DfsFucam",
       "role": "officer",
       "phone": "+91 98300 10011",
       "ward": "West Bengal State Jurisdiction",
@@ -1201,14 +1182,14 @@
       "accountStatus": "Active",
       "category": "Fire & Emergency Services",
       "created_at": "2026-11-10T17:05:27.298Z",
-      "updated_at": "2026-11-10T17:05:27.298Z"
+      "updated_at": "2026-11-13T16:46:41.276Z"
     },
     {
       "id": 157,
       "name": "Officer Pradip Nandi",
       "email": "demo.dsm@civicpulse.gov.in",
       "officer_id": "DEMO-DSM-012",
-      "password_hash": "$2b$10$yOJWhXc7EvjsZlA8aPAO7ud4m1ZuaJN5WnZMhFo1pv3zf96foa60.",
+      "password_hash": "$2b$10$oJ3P72wZB.OE9az6zINNbOObz7ucsWQYdox0TkzptjpIfPiW5bMQ2",
       "role": "officer",
       "phone": "+91 98300 10012",
       "ward": "West Bengal State Jurisdiction",
@@ -1218,14 +1199,14 @@
       "accountStatus": "Active",
       "category": "Disaster Management",
       "created_at": "2026-11-10T17:05:27.363Z",
-      "updated_at": "2026-11-10T17:05:27.363Z"
+      "updated_at": "2026-11-13T16:46:41.346Z"
     },
     {
       "id": 158,
       "name": "Dr. Sharmistha Guha",
       "email": "demo.env@civicpulse.gov.in",
       "officer_id": "DEMO-ENV-013",
-      "password_hash": "$2b$10$dmmPpb33FAKfLy6yUShYYu.ZxW3J5CeWHoeM40VodKIH3ugwt9mte",
+      "password_hash": "$2b$10$o9QIogsx7FN.Uky7S5X5Mupk/fkj4xyyZZugNZv7D3DxCFp01R2Lu",
       "role": "officer",
       "phone": "+91 98300 10013",
       "ward": "West Bengal State Jurisdiction",
@@ -1235,14 +1216,14 @@
       "accountStatus": "Active",
       "category": "Environment & Pollution",
       "created_at": "2026-11-10T17:05:27.429Z",
-      "updated_at": "2026-11-10T17:05:27.429Z"
+      "updated_at": "2026-11-13T16:46:41.418Z"
     },
     {
       "id": 159,
       "name": "Officer Ritu Sen",
       "email": "demo.pps@civicpulse.gov.in",
       "officer_id": "DEMO-PPS-014",
-      "password_hash": "$2b$10$vH0orj3zggyKgzrts2rHyeLMMVtVo0XwTy5dqN4uEkM.ZTUfGo2kG",
+      "password_hash": "$2b$10$kkepwtb5fUwj2STjEH4ErOTPQ2oXZ8NypNFGpLEkPkF.eUTctWzRS",
       "role": "officer",
       "phone": "+91 98300 10014",
       "ward": "West Bengal State Jurisdiction",
@@ -1252,14 +1233,14 @@
       "accountStatus": "Active",
       "category": "Parks & Public Spaces",
       "created_at": "2026-11-10T17:05:27.494Z",
-      "updated_at": "2026-11-10T17:05:27.494Z"
+      "updated_at": "2026-11-13T16:46:41.490Z"
     },
     {
       "id": 160,
       "name": "Er. Tanmoy Dutta",
       "email": "demo.bme@civicpulse.gov.in",
       "officer_id": "DEMO-BME-015",
-      "password_hash": "$2b$10$dNvMPxENqu.dSteGiIsITeWxBQ7rKEFyBZvUvX.Nuq2DdmnGLLKhW",
+      "password_hash": "$2b$10$QvwjW.82KWflh.HwhZP0eOfEMvTu23OfuoWHhcvMvmRQ51pAshr5S",
       "role": "officer",
       "phone": "+91 98300 10015",
       "ward": "West Bengal State Jurisdiction",
@@ -1269,14 +1250,14 @@
       "accountStatus": "Active",
       "category": "Building & Municipal Engineering",
       "created_at": "2026-11-10T17:05:27.559Z",
-      "updated_at": "2026-11-10T17:05:27.560Z"
+      "updated_at": "2026-11-13T16:46:41.561Z"
     },
     {
       "id": 161,
       "name": "Officer Bikas Chatterjee",
       "email": "demo.llr@civicpulse.gov.in",
       "officer_id": "DEMO-LLR-016",
-      "password_hash": "$2b$10$zm60vwYSz3Wa3IGb374Huu77A6e83HoCO45JUHCwEPLYaGkAHdsUi",
+      "password_hash": "$2b$10$42VgGGj6QcRF6FpnYMI3se05kFTJih8MDjlcj567S5zL1kl14YC8e",
       "role": "officer",
       "phone": "+91 98300 10016",
       "ward": "West Bengal State Jurisdiction",
@@ -1286,14 +1267,14 @@
       "accountStatus": "Active",
       "category": "Land & Land Records",
       "created_at": "2026-11-10T17:05:27.639Z",
-      "updated_at": "2026-11-10T17:05:27.639Z"
+      "updated_at": "2026-11-13T16:46:41.645Z"
     },
     {
       "id": 162,
       "name": "Er. Nilanjan Ghosh",
       "email": "demo.hud@civicpulse.gov.in",
       "officer_id": "DEMO-HUD-017",
-      "password_hash": "$2b$10$RCHMRVSslC.S6dTXdywU8u84Z5qk.VZtXlNGa3tiUn0jt5iQTDNTa",
+      "password_hash": "$2b$10$Ve4YEj6nqvBEx8bk71FYb.X3QjzVN1ExqSuXyMXfvS.N1mn7oJPDW",
       "role": "officer",
       "phone": "+91 98300 10017",
       "ward": "West Bengal State Jurisdiction",
@@ -1303,14 +1284,14 @@
       "accountStatus": "Active",
       "category": "Housing & Urban Development",
       "created_at": "2026-11-10T17:05:27.717Z",
-      "updated_at": "2026-11-10T17:05:27.717Z"
+      "updated_at": "2026-11-13T16:46:41.738Z"
     },
     {
       "id": 163,
       "name": "Er. Amitava Ghosh",
       "email": "demo.elp@civicpulse.gov.in",
       "officer_id": "DEMO-ELP-018",
-      "password_hash": "$2b$10$Kbj1zSzieiwwwl1Bk4/HKONgTdZSbiOkD2dcIvYva.HFl7I31zz/u",
+      "password_hash": "$2b$10$7tRtr2bLlDhg6bJhwoXnfePiP.ZSuthtg96a2ugXmEK6cH8BZ9.y2",
       "role": "officer",
       "phone": "+91 98300 10018",
       "ward": "West Bengal State Jurisdiction",
@@ -1320,14 +1301,14 @@
       "accountStatus": "Active",
       "category": "Electricity & Power",
       "created_at": "2026-11-10T17:05:27.788Z",
-      "updated_at": "2026-11-10T17:05:27.788Z"
+      "updated_at": "2026-11-13T16:46:41.845Z"
     },
     {
       "id": 164,
       "name": "Director Amitabha Basu",
       "email": "demo.ptr@civicpulse.gov.in",
       "officer_id": "DEMO-PTR-019",
-      "password_hash": "$2b$10$2bfzto/E2rOhnIKrbRquS.X8DsiM/IEd50flYkq7UwE94xOataZrW",
+      "password_hash": "$2b$10$AyhpBFBg/oPkKP3AURKVB.ctBSXJX4IARDkSMFJvrfMuX783C1yby",
       "role": "officer",
       "phone": "+91 98300 10019",
       "ward": "West Bengal State Jurisdiction",
@@ -1337,14 +1318,14 @@
       "accountStatus": "Active",
       "category": "Public Transport",
       "created_at": "2026-11-10T17:05:27.860Z",
-      "updated_at": "2026-11-10T17:05:27.860Z"
+      "updated_at": "2026-11-13T16:46:41.920Z"
     },
     {
       "id": 165,
       "name": "Liaison Officer Kalyan Das",
       "email": "demo.rlw@civicpulse.gov.in",
       "officer_id": "DEMO-RLW-020",
-      "password_hash": "$2b$10$SpJId9b0Htd0LeUfu.uNmOaKlkXr3ev6M0yKSZ1IOCxDXrrCs9Zrq",
+      "password_hash": "$2b$10$Z2GNjTtx.pJ8XOJknLBC.eQl1F0IvAYoNKjTls6OeVwRE2zrhKd5W",
       "role": "officer",
       "phone": "+91 98300 10020",
       "ward": "West Bengal State Jurisdiction",
@@ -1354,14 +1335,14 @@
       "accountStatus": "Active",
       "category": "Railway-related Public Complaints",
       "created_at": "2026-11-10T17:05:27.929Z",
-      "updated_at": "2026-11-10T17:05:27.929Z"
+      "updated_at": "2026-11-13T16:46:41.995Z"
     },
     {
       "id": 166,
       "name": "Dr. Arunima Sanyal",
       "email": "demo.hlh@civicpulse.gov.in",
       "officer_id": "DEMO-HLH-021",
-      "password_hash": "$2b$10$lIq3n2nLWVxPWdtBUptrJ.61107lfAQQA8m2QvElkTKM8iRhr3Ukm",
+      "password_hash": "$2b$10$mClArgtGJMAS2BYItMpCZe8w3PJtFyR9VYtVBbsuhuQFRMepcvXE.",
       "role": "officer",
       "phone": "+91 98300 10021",
       "ward": "West Bengal State Jurisdiction",
@@ -1371,14 +1352,14 @@
       "accountStatus": "Active",
       "category": "Health & Hospitals",
       "created_at": "2026-11-10T17:05:27.998Z",
-      "updated_at": "2026-11-10T17:05:27.998Z"
+      "updated_at": "2026-11-13T16:46:42.077Z"
     },
     {
       "id": 167,
       "name": "Officer Soumen Barik",
       "email": "demo.fpd@civicpulse.gov.in",
       "officer_id": "DEMO-FPD-022",
-      "password_hash": "$2b$10$GEIKZu1HM5YUYZVYYqrLLej8r7Dk60dJQ9C2cQ9WJJav5lIZgDQ1m",
+      "password_hash": "$2b$10$xlCmkX5FjtBZIZuNV7Sc2OI/zxjb5Yb0jALYsr/LX8Hq6wMrHpeie",
       "role": "officer",
       "phone": "+91 98300 10022",
       "ward": "West Bengal State Jurisdiction",
@@ -1388,14 +1369,14 @@
       "accountStatus": "Active",
       "category": "Food & Public Distribution",
       "created_at": "2026-11-10T17:05:28.067Z",
-      "updated_at": "2026-11-10T17:05:28.067Z"
+      "updated_at": "2026-11-13T16:46:42.153Z"
     },
     {
       "id": 168,
       "name": "Advocate Snehasis Dey",
       "email": "demo.csa@civicpulse.gov.in",
       "officer_id": "DEMO-CSA-023",
-      "password_hash": "$2b$10$mz6bDfBTT3f/gEUvqPtQ3ulp4sf0OPrecr7eSaZCI3XMdhxI7RnZa",
+      "password_hash": "$2b$10$BUVPII5raVohH8KhOLQViOyoBhYG6L8tbKWvWhGUiygODJ8MSXLQG",
       "role": "officer",
       "phone": "+91 98300 10023",
       "ward": "West Bengal State Jurisdiction",
@@ -1405,14 +1386,14 @@
       "accountStatus": "Active",
       "category": "Consumer Affairs",
       "created_at": "2026-11-10T17:05:28.135Z",
-      "updated_at": "2026-11-10T17:05:28.135Z"
+      "updated_at": "2026-11-13T16:46:42.225Z"
     },
     {
       "id": 169,
       "name": "Dr. Kaushik Maitra",
       "email": "demo.eds@civicpulse.gov.in",
       "officer_id": "DEMO-EDS-024",
-      "password_hash": "$2b$10$cke5/t2ipVsviDCq/LcHNeO6sgM2z4ruJ1HyKy9renbEuWNdC6T2G",
+      "password_hash": "$2b$10$78TK585SY5xiSYR5SXzwsevabTU1xiURccBVBoso3ww7z6ApM4SFm",
       "role": "officer",
       "phone": "+91 98300 10024",
       "ward": "West Bengal State Jurisdiction",
@@ -1422,14 +1403,14 @@
       "accountStatus": "Active",
       "category": "Education – Schools",
       "created_at": "2026-11-10T17:05:28.205Z",
-      "updated_at": "2026-11-10T17:05:28.205Z"
+      "updated_at": "2026-11-13T16:46:42.305Z"
     },
     {
       "id": 170,
       "name": "Prof. Debabrata Roy",
       "email": "demo.hed@civicpulse.gov.in",
       "officer_id": "DEMO-HED-025",
-      "password_hash": "$2b$10$uBcFNEc5PNbxUwBYkUjcJeFG4aMtDjDS0YjvIXGJYV6yAI0zs1/YW",
+      "password_hash": "$2b$10$6dVqQnIUpC95qmR72A7gMudozw1pGfeO59yF5vOjpL8WJOOt9BRSe",
       "role": "officer",
       "phone": "+91 98300 10025",
       "ward": "West Bengal State Jurisdiction",
@@ -1439,14 +1420,14 @@
       "accountStatus": "Active",
       "category": "Higher Education",
       "created_at": "2026-11-10T17:05:28.279Z",
-      "updated_at": "2026-11-10T17:05:28.279Z"
+      "updated_at": "2026-11-13T16:46:42.379Z"
     },
     {
       "id": 171,
       "name": "Officer Tanuja Mitra",
       "email": "demo.lbe@civicpulse.gov.in",
       "officer_id": "DEMO-LBE-026",
-      "password_hash": "$2b$10$yd1paq44RkDf43MshKPa.OFbLPua7TDYNFkOMotRNIFje8xwD7FoS",
+      "password_hash": "$2b$10$62v9vCZnGxZq9J86efBiuuzVVZJy6dZatVqDv5IQP7jY/IOkSwjii",
       "role": "officer",
       "phone": "+91 98300 10026",
       "ward": "West Bengal State Jurisdiction",
@@ -1456,14 +1437,14 @@
       "accountStatus": "Active",
       "category": "Labour & Employment",
       "created_at": "2026-11-10T17:05:28.345Z",
-      "updated_at": "2026-11-10T17:05:28.345Z"
+      "updated_at": "2026-11-13T16:46:42.453Z"
     },
     {
       "id": 172,
       "name": "Dr. Partha Sarathi Roy",
       "email": "demo.agr@civicpulse.gov.in",
       "officer_id": "DEMO-AGR-027",
-      "password_hash": "$2b$10$IPHz9uPkP7o85vSSDCp.Feo6ljH.2RxfmJXJwQMKFFtBzk23/kvVy",
+      "password_hash": "$2b$10$ViaPoT9zl9US5Rh0Edga.ONdUDqc5qRnYUngeLO6nZO4EFTJnaigS",
       "role": "officer",
       "phone": "+91 98300 10027",
       "ward": "West Bengal State Jurisdiction",
@@ -1473,14 +1454,14 @@
       "accountStatus": "Active",
       "category": "Agriculture",
       "created_at": "2026-11-10T17:05:28.414Z",
-      "updated_at": "2026-11-10T17:05:28.414Z"
+      "updated_at": "2026-11-13T16:46:42.553Z"
     },
     {
       "id": 173,
       "name": "Dr. Sujit Karmakar",
       "email": "demo.anr@civicpulse.gov.in",
       "officer_id": "DEMO-ANR-028",
-      "password_hash": "$2b$10$kQMtk5hkw.53ZavevOb36uK0Ek9dBVAgTthnN67OwjXIoJnDPgIQ2",
+      "password_hash": "$2b$10$iM9ZJLjkkpx79dwvXU4kL.oJIRTwMXs3eosoA7BZ/neCts6ZrA4jC",
       "role": "officer",
       "phone": "+91 98300 10028",
       "ward": "West Bengal State Jurisdiction",
@@ -1490,14 +1471,14 @@
       "accountStatus": "Active",
       "category": "Animal Resources",
       "created_at": "2026-11-10T17:05:28.480Z",
-      "updated_at": "2026-11-10T17:05:28.480Z"
+      "updated_at": "2026-11-13T16:46:42.627Z"
     },
     {
       "id": 174,
       "name": "DFO R. K. Singh",
       "email": "demo.fwl@civicpulse.gov.in",
       "officer_id": "DEMO-FWL-029",
-      "password_hash": "$2b$10$rGDWMt.ur8MyM5ZAfOMi6e/Gkz0jTCnwnbnpZKsMd1fEosUe5qtCC",
+      "password_hash": "$2b$10$1ECsYWRLRYy894HoBJjP6OXdp2Qqxz39CmoAHsPBqxJiOH54/RFBW",
       "role": "officer",
       "phone": "+91 98300 10029",
       "ward": "West Bengal State Jurisdiction",
@@ -1507,14 +1488,14 @@
       "accountStatus": "Active",
       "category": "Forest & Wildlife",
       "created_at": "2026-11-10T17:05:28.551Z",
-      "updated_at": "2026-11-10T17:05:28.551Z"
+      "updated_at": "2026-11-13T16:46:42.702Z"
     },
     {
       "id": 175,
       "name": "Deputy Commissioner P. K. Mallick",
       "email": "demo.pga@civicpulse.gov.in",
       "officer_id": "DEMO-PGA-030",
-      "password_hash": "$2b$10$9bS/ypnfwwxpO/r6Oisdpe0rsk4yfoq2lUdemPOs5rp6hIuIP9HL6",
+      "password_hash": "$2b$10$4slMk0VSj6uRg9Z715JRMOW/12PRR/1cldOgHUft9zOarjr5OD0oi",
       "role": "officer",
       "phone": "+91 98300 10030",
       "ward": "West Bengal State Jurisdiction",
@@ -1524,7 +1505,7 @@
       "accountStatus": "Active",
       "category": "Public Grievance / General Administration",
       "created_at": "2026-11-10T17:05:28.678Z",
-      "updated_at": "2026-11-10T17:05:28.678Z"
+      "updated_at": "2026-11-13T16:46:42.773Z"
     }
   ],
   "complaints": [
@@ -3272,7 +3253,7 @@
       "duplicate_of_id": null,
       "duplicate_similarity": 0,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 2,
       "final_citizen_category": "Railway-related Public Complaints",
       "final_department": "Railway-related Public Complaints",
       "final_priority": "MEDIUM",
@@ -3388,7 +3369,7 @@
       "triage_status": "RECALIBRATED_NORMAL",
       "triaged_at": "2026-11-08T20:43:23.240Z",
       "triaged_by": "Liaison Officer Kalyan Das",
-      "updated_at": "2026-11-08T20:44:16.669Z",
+      "updated_at": "2026-11-13T16:33:49.978Z",
       "userEnteredAddress": "Chatterjee Lane, Bowbazar, Kolkata, Greater Kolkata, Kolkata, West Bengal, 700073, India",
       "village": "",
       "visual_analysis_id": null,
@@ -3417,7 +3398,7 @@
       "duplicate_of_id": null,
       "duplicate_similarity": 0,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 3,
       "final_citizen_category": "Cyber Crime",
       "final_department": "Cyber Crime",
       "final_priority": null,
@@ -3533,7 +3514,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-09T16:06:32.298Z",
+      "updated_at": "2026-11-13T16:34:20.371Z",
       "userEnteredAddress": "Chatterjee Lane, Bowbazar, Kolkata, Greater Kolkata, Kolkata, West Bengal, 700073, India",
       "village": "",
       "visual_analysis_id": null,
@@ -3718,7 +3699,7 @@
       "duplicate_of_id": null,
       "duplicate_similarity": 0,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 3,
       "final_citizen_category": "Fire & Emergency Services",
       "final_department": "Fire & Emergency Services",
       "final_priority": null,
@@ -3836,7 +3817,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-08T22:17:15.582Z",
+      "updated_at": "2026-11-13T16:34:20.103Z",
       "userEnteredAddress": "Baitakkhana North, Kolkata, Greater Kolkata, Kolkata, West Bengal, 700009, India",
       "village": "",
       "visual_analysis_id": null,
@@ -3870,7 +3851,7 @@
       "duplicate_of_id": 18,
       "duplicate_similarity": 100,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 3,
       "final_citizen_category": "Fire & Emergency Services",
       "final_department": "Fire & Emergency Services",
       "final_priority": null,
@@ -3988,7 +3969,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-08T22:16:27.228Z",
+      "updated_at": "2026-11-13T16:34:19.650Z",
       "userEnteredAddress": "Baitakkhana North, Kolkata, Greater Kolkata, Kolkata, West Bengal, 700009, India",
       "village": "",
       "visual_analysis_id": null,
@@ -4022,7 +4003,7 @@
       "duplicate_of_id": 19,
       "duplicate_similarity": 100,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 3,
       "final_citizen_category": "Fire & Emergency Services",
       "final_department": "Fire & Emergency Services",
       "final_priority": null,
@@ -4140,7 +4121,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-08T22:16:22.864Z",
+      "updated_at": "2026-11-13T16:34:19.418Z",
       "userEnteredAddress": "Baitakkhana North, Kolkata, Greater Kolkata, Kolkata, West Bengal, 700009, India",
       "village": "",
       "visual_analysis_id": null,
@@ -4173,7 +4154,7 @@
       "duplicate_of_id": null,
       "duplicate_similarity": 0,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 3,
       "final_citizen_category": "Fire & Emergency Services",
       "final_department": "Fire & Emergency Services",
       "final_priority": null,
@@ -4291,7 +4272,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-08T22:16:19.319Z",
+      "updated_at": "2026-11-13T16:34:19.099Z",
       "userEnteredAddress": "Coordinates: 22.664487, 88.330765",
       "village": "",
       "visual_analysis_id": null,
@@ -4325,7 +4306,7 @@
       "duplicate_of_id": 21,
       "duplicate_similarity": 100,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 3,
       "final_citizen_category": "Fire & Emergency Services",
       "final_department": "Fire & Emergency Services",
       "final_priority": null,
@@ -4443,7 +4424,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-08T22:18:26.505Z",
+      "updated_at": "2026-11-13T16:34:18.798Z",
       "userEnteredAddress": "Coordinates: 22.664487, 88.330765",
       "village": "",
       "visual_analysis_id": null,
@@ -4476,7 +4457,7 @@
       "duplicate_of_id": 20,
       "duplicate_similarity": 60,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 2,
       "final_citizen_category": "Fire & Emergency Services",
       "final_department": "Police & Law Enforcement",
       "final_priority": null,
@@ -4594,7 +4575,7 @@
       "triage_status": null,
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-09T17:32:49.759Z",
+      "updated_at": "2026-11-13T16:33:48.860Z",
       "userEnteredAddress": "Baitakkhana North, Kolkata, Greater Kolkata, Kolkata, West Bengal, 700009, India",
       "village": "",
       "visual_analysis_id": null,
@@ -4635,7 +4616,7 @@
       "duplicate_of_id": 23,
       "duplicate_similarity": 60,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 3,
       "final_citizen_category": "Fire & Emergency Services",
       "final_department": "Fire & Emergency Services",
       "final_priority": null,
@@ -4753,7 +4734,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-08T22:33:33.387Z",
+      "updated_at": "2026-11-13T16:34:18.617Z",
       "userEnteredAddress": "Chatterjee Lane, Bowbazar, Kolkata, Greater Kolkata, Kolkata, West Bengal, 700073, India",
       "village": "",
       "visual_analysis_id": null,
@@ -4787,7 +4768,7 @@
       "duplicate_of_id": null,
       "duplicate_similarity": 0,
       "escalated_to": null,
-      "escalation_level": 1,
+      "escalation_level": 3,
       "final_citizen_category": "Police & Law Enforcement",
       "final_department": "Police & Law Enforcement",
       "final_priority": null,
@@ -4912,7 +4893,7 @@
       "triage_status": "PENDING_OFFICER_TRIAGE",
       "triaged_at": null,
       "triaged_by": null,
-      "updated_at": "2026-11-09T17:51:19.205Z",
+      "updated_at": "2026-11-13T16:34:18.352Z",
       "userEnteredAddress": "Dr. Meghnad Saha Sarani, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
       "village": "",
       "visual_analysis_id": null,
@@ -7358,6 +7339,168 @@
       "updated_by_name": "SLA Automated Engine",
       "updated_by_role": null,
       "updated_by_user_id": null
+    },
+    {
+      "id": 137,
+      "complaint_id": 25,
+      "status": "Assigned",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:48.459Z"
+    },
+    {
+      "id": 138,
+      "complaint_id": 24,
+      "status": "Resolved",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:48.746Z"
+    },
+    {
+      "id": 139,
+      "complaint_id": 23,
+      "status": "Resolved",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:48.908Z"
+    },
+    {
+      "id": 140,
+      "complaint_id": 22,
+      "status": "Resolved",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:49.050Z"
+    },
+    {
+      "id": 141,
+      "complaint_id": 21,
+      "status": "In Progress",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:49.194Z"
+    },
+    {
+      "id": 142,
+      "complaint_id": 20,
+      "status": "In Progress",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:49.356Z"
+    },
+    {
+      "id": 143,
+      "complaint_id": 19,
+      "status": "In Progress",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:49.550Z"
+    },
+    {
+      "id": 144,
+      "complaint_id": 18,
+      "status": "Resolved",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:49.737Z"
+    },
+    {
+      "id": 145,
+      "complaint_id": 15,
+      "status": "In Progress",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:49.884Z"
+    },
+    {
+      "id": 146,
+      "complaint_id": 14,
+      "status": "Resolved",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 2 (Municipal Commissioner).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:33:50.024Z"
+    },
+    {
+      "id": 147,
+      "complaint_id": 25,
+      "status": "Assigned",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 3 (Mayor / Vigilance).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:34:18.516Z"
+    },
+    {
+      "id": 148,
+      "complaint_id": 24,
+      "status": "Resolved",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 3 (Mayor / Vigilance).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:34:18.663Z"
+    },
+    {
+      "id": 149,
+      "complaint_id": 22,
+      "status": "Resolved",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 3 (Mayor / Vigilance).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:34:18.941Z"
+    },
+    {
+      "id": 150,
+      "complaint_id": 21,
+      "status": "In Progress",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 3 (Mayor / Vigilance).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:34:19.215Z"
+    },
+    {
+      "id": 151,
+      "complaint_id": 20,
+      "status": "In Progress",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 3 (Mayor / Vigilance).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:34:19.497Z"
+    },
+    {
+      "id": 152,
+      "complaint_id": 19,
+      "status": "In Progress",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 3 (Mayor / Vigilance).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:34:19.723Z"
+    },
+    {
+      "id": 153,
+      "complaint_id": 18,
+      "status": "Resolved",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 3 (Mayor / Vigilance).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:34:20.185Z"
+    },
+    {
+      "id": 154,
+      "complaint_id": 15,
+      "status": "In Progress",
+      "notes": "⚠️ SLA Violation Detected! Ticket automatically escalated to Level 3 (Mayor / Vigilance).",
+      "updated_by_name": "SLA Automated Engine",
+      "updated_by_user_id": null,
+      "timestamp": "2026-11-13T16:34:20.462Z"
     }
   ],
   "feedback": [
@@ -8614,6 +8757,168 @@
       "title": "Complaint Escalated",
       "type": "info",
       "user_id": 145
+    },
+    {
+      "id": 102,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-93598 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/25",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:48.578Z"
+    },
+    {
+      "id": 103,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-26982 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/24",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:48.808Z"
+    },
+    {
+      "id": 104,
+      "user_id": 101,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-38556 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/23",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:48.952Z"
+    },
+    {
+      "id": 105,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-47914 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/22",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:49.098Z"
+    },
+    {
+      "id": 106,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-17307 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/21",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:49.245Z"
+    },
+    {
+      "id": 107,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-46987 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/20",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:49.419Z"
+    },
+    {
+      "id": 108,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-71979 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/19",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:49.604Z"
+    },
+    {
+      "id": 109,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-21594 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/18",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:49.789Z"
+    },
+    {
+      "id": 110,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-86749 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/15",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:49.931Z"
+    },
+    {
+      "id": 111,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-57543 exceeded resolution SLA and was automatically escalated to Municipal Commissioner.",
+      "link": "/complaints/14",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:33:50.067Z"
+    },
+    {
+      "id": 112,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-93598 exceeded resolution SLA and was automatically escalated to Mayor / Vigilance.",
+      "link": "/complaints/25",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:34:18.573Z"
+    },
+    {
+      "id": 113,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-26982 exceeded resolution SLA and was automatically escalated to Mayor / Vigilance.",
+      "link": "/complaints/24",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:34:18.718Z"
+    },
+    {
+      "id": 114,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-47914 exceeded resolution SLA and was automatically escalated to Mayor / Vigilance.",
+      "link": "/complaints/22",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:34:19.017Z"
+    },
+    {
+      "id": 115,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-17307 exceeded resolution SLA and was automatically escalated to Mayor / Vigilance.",
+      "link": "/complaints/21",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:34:19.340Z"
+    },
+    {
+      "id": 116,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-46987 exceeded resolution SLA and was automatically escalated to Mayor / Vigilance.",
+      "link": "/complaints/20",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:34:19.577Z"
+    },
+    {
+      "id": 117,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-71979 exceeded resolution SLA and was automatically escalated to Mayor / Vigilance.",
+      "link": "/complaints/19",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:34:19.938Z"
+    },
+    {
+      "id": 118,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-21594 exceeded resolution SLA and was automatically escalated to Mayor / Vigilance.",
+      "link": "/complaints/18",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:34:20.280Z"
+    },
+    {
+      "id": 119,
+      "user_id": 145,
+      "title": "Complaint Escalated",
+      "message": "Your complaint #CMP-2026-86749 exceeded resolution SLA and was automatically escalated to Mayor / Vigilance.",
+      "link": "/complaints/15",
+      "is_read": 0,
+      "created_at": "2026-11-13T16:34:20.550Z"
     }
   ],
   "complaint_evidence": [
@@ -43176,9 +43481,9 @@
     "departments": 31,
     "users": 176,
     "complaints": 26,
-    "complaint_timeline": 137,
+    "complaint_timeline": 155,
     "feedback": 5,
-    "notifications": 102,
+    "notifications": 120,
     "complaint_evidence": 28,
     "visual_analyses": 3,
     "evidence_audit_logs": 34,
