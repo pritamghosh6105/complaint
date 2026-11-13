@@ -179,6 +179,13 @@ class RelationalStorage {
       } else if (qLower.includes('where id = ?') || qLower.includes('where u.id = ?')) {
         const idVal = Number(params[0]);
         list = list.filter(u => u.id === idVal);
+      } else if (qLower.includes('where phone = ?') || qLower.includes('where u.phone = ?')) {
+        const phoneParam = String(params[0] || '').replace(/\D/g, '').slice(-10);
+        list = list.filter(u => {
+          if (!u.phone) return false;
+          const cleanUPhone = String(u.phone).replace(/\D/g, '').slice(-10);
+          return cleanUPhone === phoneParam;
+        });
       } else if (qLower.includes('where department_id = ?') || qLower.includes('u.department_id = ?') || qLower.includes('where u.department_id = ?')) {
         const deptId = Number(params[0]);
         list = list.filter(u => u.department_id === deptId);
