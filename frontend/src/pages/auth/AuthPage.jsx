@@ -393,31 +393,11 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
   const [departmentId, setDepartmentId] = useState(5); // Default Roads & PWD
   const [agreeTerms, setAgreeTerms] = useState(true);
 
-  // Mobile OTP Verification State
-  const [isOtpStep, setIsOtpStep] = useState(false);
-  const [otpCode, setOtpCode] = useState('');
-  const [otpTimer, setOtpTimer] = useState(0);
-  const [otpMaskedPhone, setOtpMaskedPhone] = useState('');
-  const [otpAttemptsRemaining, setOtpAttemptsRemaining] = useState(4);
-  const [otpLocked, setOtpLocked] = useState(false);
-  const [otpNotice, setOtpNotice] = useState('');
-
   // UI state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [roleRedirectMsg, setRoleRedirectMsg] = useState('');
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
-
-  // Resend OTP countdown timer
-  useEffect(() => {
-    let interval = null;
-    if (otpTimer > 0) {
-      interval = setInterval(() => {
-        setOtpTimer((prev) => (prev > 0 ? prev - 1 : 0));
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [otpTimer]);
 
   // Active role config
   const currentRole = PORTAL_ROLES.find(r => r.id === selectedRole) || PORTAL_ROLES[0];
@@ -516,66 +496,26 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
     }
   };
 
-  // Request 6-digit Mobile OTP
-  const handleRequestOtp = async () => {
-    const cleanDigits = (phone || '').replace(/\D/g, '');
-    if (cleanDigits.length < 10) {
-      setError('Please enter a valid 10-digit mobile number before requesting OTP.');
+  // Handle Citizen Registration Submit
+  const handleSignUpSubmit = async (e) => {
+    e.preventDefault();
+    if (!agreeTerms) {
+      setError('Please accept the Citizen Charter & Terms to proceed.');
       return;
     }
-
     setError('');
-    setOtpNotice('');
     setLoading(true);
 
     try {
-      const res = await api.post('/auth/otp/send', { phone });
-      setIsOtpStep(true);
-      setOtpMaskedPhone(res.data.maskedPhone || phone);
-      setOtpTimer(res.data.resendCooldownSeconds || 30);
-      setOtpAttemptsRemaining(4);
-      setOtpLocked(false);
-      setOtpCode('');
-      setOtpNotice(res.data.message || 'OTP verification code sent.');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to send verification code. Please check mobile number.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Verify entered code and complete citizen account creation
-  const handleVerifyOtpAndRegister = async (e) => {
-    if (e) e.preventDefault();
-    if (!otpCode || otpCode.trim().length !== 6) {
-      setError('Please enter the full 6-digit verification code.');
-      return;
-    }
-
-    setError('');
-    setOtpNotice('');
-    setLoading(true);
-
-    try {
-      // 1. Verify OTP with backend (Enforces 5-min expiry & 4-guess lockout)
-      const verifyRes = await api.post('/auth/otp/verify', {
-        phone,
-        code: otpCode.trim()
-      });
-
-      const verificationToken = verifyRes.data.verificationToken;
-
-      // 2. Complete Account Registration with verified phone token
       const finalWard = `${selectedDistrict} District`;
-      const user = await register(
+      await register(
         name,
         signUpEmail,
         signUpPassword,
         phone,
         'citizen',
         finalWard,
-        null,
-        verificationToken
+        null
       );
 
       confetti({
@@ -590,36 +530,10 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
         setCurrentRoute('citizen-dashboard');
       }
     } catch (err) {
-      const data = err.response?.data;
-      if (data?.locked) {
-        setOtpLocked(true);
-        setOtpAttemptsRemaining(0);
-        setError(data.error || 'Too many incorrect attempts. This OTP has been permanently invalidated. Please request a new code.');
-      } else if (data?.attemptsRemaining !== undefined) {
-        setOtpAttemptsRemaining(data.attemptsRemaining);
-        setError(data.error || `Incorrect code. ${data.attemptsRemaining} attempt(s) remaining.`);
-      } else {
-        setError(data?.error || 'Verification failed. Please check the code.');
-      }
+      setError(err.response?.data?.error || 'Registration failed. Please check your information.');
     } finally {
       setLoading(false);
     }
-  };
-
-  // Handle Sign Up Submit -> triggers Mobile OTP verification step
-  const handleSignUpSubmit = async (e) => {
-    e.preventDefault();
-    if (!agreeTerms) {
-      setError('Please accept the Citizen Charter & Terms to proceed.');
-      return;
-    }
-    const cleanDigits = (phone || '').replace(/\D/g, '');
-    if (cleanDigits.length < 10) {
-      setError('A valid 10-digit mobile number is required for verified citizen registration.');
-      return;
-    }
-    // Initiate OTP dispatch
-    await handleRequestOtp();
   };
 
   return (
@@ -961,203 +875,7 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
           )}
 
           {/* ================= SIGN UP MODE ================= */}
-          {mode === 'signup' && isOtpStep && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              style={{ padding: '8px 4px' }}
-            >
-              {/* Security Shield Icon */}
-              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '50%',
-                  background: isDark ? 'rgba(16, 185, 129, 0.15)' : '#d1fae5',
-                  border: '1px solid #10b981',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 12px'
-                }}>
-                  <ShieldCheck size={32} color="#10b981" />
-                </div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 6px', color: 'var(--text-primary)' }}>
-                  Verify Mobile Number
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
-                  Enter the 6-digit security code sent to <strong style={{ color: 'var(--accent-cyan)' }}>{otpMaskedPhone}</strong>
-                </p>
-              </div>
-
-              {/* Success / Info notice */}
-              {otpNotice && (
-                <div style={{
-                  background: isDark ? 'rgba(16, 185, 129, 0.1)' : '#ecfdf5',
-                  border: '1px solid #10b981',
-                  borderRadius: '8px',
-                  padding: '9px 12px',
-                  marginBottom: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontSize: '0.82rem',
-                  color: isDark ? '#6ee7b7' : '#065f46'
-                }}>
-                  <CheckCircle2 size={16} style={{ flexShrink: 0 }} />
-                  <span>{otpNotice}</span>
-                </div>
-              )}
-
-              {/* 6-Digit Code Input */}
-              <form onSubmit={handleVerifyOtpAndRegister}>
-                <div className="form-group" style={{ marginBottom: '16px' }}>
-                  <label htmlFor="signup-otp-input" className="form-label" style={{ fontSize: '0.82rem', fontWeight: 600, textAlign: 'center', display: 'block' }}>
-                    Enter 6-Digit Verification Code
-                  </label>
-                  <input
-                    id="signup-otp-input"
-                    name="otp"
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    autoComplete="one-time-code"
-                    maxLength={6}
-                    autoFocus
-                    disabled={otpLocked || loading}
-                    className="form-input"
-                    style={{
-                      textAlign: 'center',
-                      fontSize: '1.8rem',
-                      letterSpacing: '10px',
-                      fontWeight: 700,
-                      fontFamily: 'monospace',
-                      padding: '12px 16px',
-                      borderRadius: '10px',
-                      border: otpLocked ? '2px solid #ef4444' : '2px solid var(--accent-primary)',
-                      background: isDark ? 'rgba(0,0,0,0.3)' : '#f8fafc'
-                    }}
-                    placeholder="••••••"
-                    value={otpCode}
-                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  />
-                </div>
-
-                {/* Security Badges: 5-min expiration & attempt limits */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  fontSize: '0.78rem',
-                  color: 'var(--text-muted)',
-                  marginBottom: '20px',
-                  padding: '0 4px'
-                }}>
-                  <span>⏳ Code expires in 5 minutes</span>
-                  <span style={{ color: otpAttemptsRemaining <= 2 ? '#ef4444' : 'inherit', fontWeight: 600 }}>
-                    🔒 {otpAttemptsRemaining} attempt{otpAttemptsRemaining === 1 ? '' : 's'} left
-                  </span>
-                </div>
-
-                {/* Verify Button */}
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  style={{
-                    width: '100%',
-                    height: '46px',
-                    fontSize: '0.92rem',
-                    fontWeight: 700,
-                    marginBottom: '14px',
-                    background: 'linear-gradient(135deg, #059669, #0d9488)'
-                  }}
-                  disabled={loading || otpLocked || otpCode.length !== 6}
-                >
-                  {loading ? (
-                    <>
-                      <span className="animate-spin" style={{ display: 'inline-block', width: '16px', height: '16px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%' }} />
-                      <span>Verifying Code & Creating Account...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck size={18} />
-                      <span>Verify & Complete Registration</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Staging / Demo Test Code Helper */}
-                <div style={{
-                  fontSize: '0.78rem',
-                  color: 'var(--text-muted)',
-                  textAlign: 'center',
-                  marginBottom: '16px',
-                  background: isDark ? 'rgba(56, 189, 248, 0.08)' : '#f0f9ff',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  border: '1px dashed rgba(56, 189, 248, 0.4)',
-                  lineHeight: 1.5
-                }}>
-                  🧪 <strong>Demo Environment:</strong> If telecom SMS is delayed, enter test code{' '}
-                  <button
-                    type="button"
-                    onClick={() => setOtpCode('123456')}
-                    style={{
-                      background: 'rgba(2, 132, 199, 0.15)',
-                      border: '1px solid var(--accent-cyan, #0284c7)',
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      fontWeight: 700,
-                      fontFamily: 'monospace',
-                      color: 'var(--accent-cyan, #0284c7)',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    123456
-                  </button>{' '}
-                  to verify and register immediately.
-                </div>
-              </form>
-
-              {/* Bottom Resend and Edit Actions */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                fontSize: '0.82rem',
-                borderTop: '1px solid var(--border-subtle, rgba(255,255,255,0.08))',
-                paddingTop: '12px'
-              }}>
-                <button
-                  type="button"
-                  onClick={() => { setIsOtpStep(false); setError(''); setOtpNotice(''); }}
-                  style={{ background: 'none', border: 'none', color: 'var(--accent-cyan, #0284c7)', cursor: 'pointer', padding: 0, fontWeight: 500 }}
-                >
-                  ← Edit Phone / Details
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleRequestOtp}
-                  disabled={otpTimer > 0 || loading}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: otpTimer > 0 ? 'var(--text-muted, #94a3b8)' : 'var(--accent-cyan, #0284c7)',
-                    cursor: otpTimer > 0 ? 'not-allowed' : 'pointer',
-                    fontWeight: 600,
-                    padding: 0
-                  }}
-                >
-                  {otpTimer > 0 ? `Resend code in ${otpTimer}s` : 'Resend New OTP'}
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ================= SIGN UP MODE (REGISTRATION FORM) ================= */}
-          {mode === 'signup' && !isOtpStep && (
+          {mode === 'signup' && (
             <motion.form 
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
@@ -1363,12 +1081,12 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                 {loading ? (
                   <>
                     <span className="animate-spin" style={{ display: 'inline-block', width: '16px', height: '16px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%' }} />
-                    <span>Sending Mobile OTP...</span>
+                    <span>Creating Citizen Account...</span>
                   </>
                 ) : (
                   <>
-                    <ShieldCheck size={18} />
-                    <span>Verify Mobile & Create Account</span>
+                    <UserPlus size={18} />
+                    <span>Create Citizen Account</span>
                   </>
                 )}
               </button>

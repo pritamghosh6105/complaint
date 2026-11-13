@@ -47,8 +47,8 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
-  const register = async (name, email, password, phone, role = 'citizen', ward = 'Ward 1', department_id = null, verificationToken = null) => {
-    const res = await api.post('/auth/register', { name, email, password, phone, role, ward, department_id, verificationToken });
+  const register = async (name, email, password, phone, role = 'citizen', ward = 'Ward 1', department_id = null) => {
+    const res = await api.post('/auth/register', { name, email, password, phone, role, ward, department_id });
     const { token: jwtToken, user: userData } = res.data;
     localStorage.setItem('civic_token', jwtToken);
     localStorage.setItem('civic_user', JSON.stringify(userData));

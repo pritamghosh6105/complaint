@@ -3,10 +3,6 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 
-// Mobile OTP Verification Endpoints
-router.post('/otp/send', (req, res) => authController.sendRegistrationOtp(req, res));
-router.post('/otp/verify', (req, res) => authController.verifyRegistrationOtp(req, res));
-
 router.post('/register', (req, res) => authController.register(req, res));
 router.post('/login', (req, res) => authController.login(req, res));
 router.get('/me', authMiddleware, (req, res) => authController.getCurrentUser(req, res));

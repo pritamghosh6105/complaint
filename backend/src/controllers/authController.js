@@ -3,87 +3,13 @@ const jwt = require('jsonwebtoken');
 const db = require('../models/db');
 const { JWT_SECRET } = require('../middleware/authMiddleware');
 const demoCredentialService = require('../services/demoCredentialService');
-const otpService = require('../services/otpService');
 
 class AuthController {
-  async sendRegistrationOtp(req, res) {
-    try {
-      const { phone } = req.body;
-      if (!phone) {
-        return res.status(400).json({ error: 'Mobile phone number is required.' });
-      }
-
-      const cleanPhone = otpService.normalizePhone(phone);
-      if (cleanPhone.length !== 10) {
-        return res.status(400).json({ error: 'Please enter a valid 10-digit mobile number.' });
-      }
-
-      // Check if phone is already registered to another citizen
-      const existingUser = db.prepare('SELECT id FROM users WHERE phone = ?').get(cleanPhone);
-      if (existingUser) {
-        return res.status(400).json({ error: 'This mobile number is already registered to another account.' });
-      }
-
-      const result = await otpService.sendOtp(cleanPhone);
-      // Rule 1: Never send the OTP in the API response
-      return res.json({
-        success: true,
-        message: result.message,
-        maskedPhone: result.maskedPhone,
-        expiresInSeconds: result.expiresInSeconds,
-        resendCooldownSeconds: result.resendCooldownSeconds
-      });
-    } catch (err) {
-      return res.status(400).json({ error: err.message || 'Failed to send OTP' });
-    }
-  }
-
-  async verifyRegistrationOtp(req, res) {
-    try {
-      const { phone, code } = req.body;
-      if (!phone || !code) {
-        return res.status(400).json({ error: 'Mobile number and 6-digit code are required.' });
-      }
-
-      const result = await otpService.verifyOtp(phone, code);
-      if (!result.valid) {
-        const statusCode = result.locked ? 429 : 400;
-        return res.status(statusCode).json({
-          success: false,
-          error: result.error,
-          locked: result.locked || false,
-          attemptsRemaining: result.attemptsRemaining
-        });
-      }
-
-      return res.json({
-        success: true,
-        message: result.message,
-        verificationToken: result.verificationToken,
-        phone: result.phone
-      });
-    } catch (err) {
-      return res.status(500).json({ error: 'Server error during OTP verification' });
-    }
-  }
-
   register(req, res) {
     try {
-      const { name, email, password, phone, role, ward, verificationToken } = req.body;
+      const { name, email, password, phone, role, ward } = req.body;
       if (!name || !email || !password) {
         return res.status(400).json({ error: 'Name, email, and password are required' });
-      }
-
-      // Mobile OTP Enforcement: If citizen provided phone, verify cryptographic verificationToken
-      if (phone) {
-        const cleanPhone = otpService.normalizePhone(phone);
-        const isVerified = otpService.verifyPhoneToken(verificationToken, cleanPhone);
-        if (!isVerified) {
-          return res.status(400).json({
-            error: 'Mobile verification required. Please verify your phone number using the 6-digit OTP.',
-            requiresOtp: true
-          });
-        }
       }
 
       const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email.toLowerCase().trim());
@@ -94,7 +20,7 @@ class AuthController {
       const passwordHash = bcrypt.hashSync(password, 10);
       const userRole = ['citizen', 'officer', 'admin'].includes(role) ? role : 'citizen';
       const deptId = (userRole === 'officer' && req.body.department_id) ? Number(req.body.department_id) : null;
-      const cleanPhone = phone ? otpService.normalizePhone(phone) : '';
+      const cleanPhone = phone ? String(phone).trim() : '';
 
       const info = db.prepare(`
         INSERT INTO users (name, email, password_hash, role, phone, ward, department_id)
