@@ -11,7 +11,6 @@ import {
   ShieldAlert,
   CheckCircle2,
   Sparkles,
-  ThumbsUp,
   RotateCcw,
   Activity,
   BrainCircuit,
@@ -41,7 +40,6 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
   const [isReopenOpen, setIsReopenOpen] = useState(false);
   const [reopenReason, setReopenReason] = useState('');
   const [reopening, setReopening] = useState(false);
-  const [upvoting, setUpvoting] = useState(false);
   const [isTriageModalOpen, setIsTriageModalOpen] = useState(false);
   const [targetPriority, setTargetPriority] = useState('MEDIUM');
   const [recalibrationReason, setRecalibrationReason] = useState('');
@@ -63,19 +61,6 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
       fetchDetails();
     }
   }, [complaintId]);
-
-  const handleUpvote = async () => {
-    try {
-      setUpvoting(true);
-      const res = await api.post(`/complaints/${complaintId}/upvote`);
-      addToast('success', 'Endorsement Recorded', `You supported this complaint. Impact score is now ${res.data.impact_score}/100.`);
-      fetchDetails();
-    } catch (err) {
-      addToast('info', 'Endorsement Status', err.response?.data?.error || 'Failed to record endorsement.');
-    } finally {
-      setUpvoting(false);
-    }
-  };
 
   const handleConfirmCriticalDetail = async () => {
     const currentTrackingId = data?.complaint?.tracking_id || complaintId;
@@ -183,7 +168,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
   return (
     <div className="page-wrapper">
       <div className="container" style={{ maxWidth: '960px' }}>
-        {/* Back Button, Print Dossier & Community Upvote Bar */}
+        {/* Back Button & Print Dossier Bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
           <button 
             onClick={() => {
@@ -213,21 +198,6 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             >
               <Printer size={15} />
               <span>Print Case Dossier</span>
-            </button>
-
-            <button
-              onClick={handleUpvote}
-              disabled={upvoting}
-              className="btn btn-sm btn-secondary"
-              style={{
-                borderColor: 'var(--accent-cyan)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-            >
-              <ThumbsUp size={15} color="var(--accent-cyan)" />
-              <span>Support This Issue (<strong>{complaint.upvote_count || 0}</strong> Endorsements)</span>
             </button>
           </div>
         </div>
@@ -299,7 +269,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             </div>
 
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              👥 <strong>{complaint.affected_count || 10}+</strong> Residents Impacted • <strong>{complaint.upvote_count || 0}</strong> Endorsements
+              👥 <strong>{complaint.affected_count || 10}+</strong> Residents Impacted
             </div>
           </div>
 
