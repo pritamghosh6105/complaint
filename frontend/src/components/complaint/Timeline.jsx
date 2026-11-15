@@ -143,6 +143,21 @@ export default function Timeline({ history = [], currentStatus = 'Submitted' }) 
               const statusStr = typeof item.status === 'string' ? item.status : (item.status ? String(item.status) : 'Status Updated');
               const isEscalation = notesStr.includes('SLA Violation') || notesStr.includes('Escalated') || statusStr.includes('Escalated');
 
+              let displayTitle = statusStr;
+              if (isEscalation) {
+                if (notesStr.includes('Level 1')) displayTitle = 'SLA Escalation — Level 1 (Department Head)';
+                else if (notesStr.includes('Level 2')) displayTitle = 'SLA Escalation — Level 2 (Municipal Commissioner)';
+                else if (notesStr.includes('Level 3')) displayTitle = 'SLA Escalation — Level 3 (Mayor / Vigilance)';
+                else displayTitle = 'SLA Escalation Alert';
+              }
+
+              // Robust date parser (handles created_at, timestamp, updated_at, date)
+              const rawTimestamp = item.created_at || item.timestamp || item.updated_at || item.date;
+              const parsedDate = rawTimestamp ? new Date(rawTimestamp) : null;
+              const displayDate = (parsedDate && !isNaN(parsedDate.getTime())) 
+                ? parsedDate.toLocaleString() 
+                : 'System Recorded';
+
               return (
                 <div 
                   key={index} 
@@ -170,10 +185,10 @@ export default function Timeline({ history = [], currentStatus = 'Submitted' }) 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
                       <span style={{ fontSize: '0.84rem', fontWeight: 700, color: isEscalation ? 'var(--color-danger)' : 'var(--text-primary)' }}>
-                        {statusStr}
+                        {displayTitle}
                       </span>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        {new Date(item.timestamp).toLocaleString()}
+                        {displayDate}
                       </span>
                     </div>
 

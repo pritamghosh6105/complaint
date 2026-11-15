@@ -61,9 +61,10 @@ class EscalationService {
       if (targetLevel > currentLevel) {
         updateStmt.run(c.id);
 
+        // Inscribe escalation into chronological timeline with explicit Escalated status
         timelineStmt.run(
           c.id,
-          c.status,
+          'Escalated',
           `⚠️ SLA Violation Detected! Ticket automatically escalated to Level ${targetLevel} (${levelTitle}).`
         );
 
