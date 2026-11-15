@@ -16,7 +16,8 @@ import {
   Eye,
   Check,
   RefreshCw,
-  Download
+  Download,
+  Lock
 } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -71,6 +72,62 @@ export default function PrintableCaseDossier({ complaint, onClose, isOpen = true
   if (!isOpen) return null;
 
   const comp = fullData?.complaint || complaint || {};
+
+  // Authorization check: Only filing citizen or authorized municipal officials can view/print dossier
+  const isAuthority = Boolean(comp.is_authority || (user && (user.role === 'officer' || user.role === 'admin')));
+  const isOwner = Boolean(comp.is_owner || (user && (String(comp.citizen_id) === String(user.id))));
+  const canAccess = Boolean(comp.can_print_dossier ?? (isOwner || isAuthority));
+
+  if (!loading && !canAccess) {
+    return createPortal(
+      <div 
+        className="dossier-modal-overlay"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 99999,
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px'
+        }}
+      >
+        <div 
+          style={{
+            maxWidth: '460px',
+            width: '100%',
+            background: '#0f172a',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            borderRadius: '12px',
+            padding: '28px 24px',
+            textAlign: 'center',
+            color: '#f8fafc',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.6)'
+          }}
+        >
+          <div style={{ display: 'inline-flex', padding: '14px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', marginBottom: '16px' }}>
+            <Lock size={36} />
+          </div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '10px', color: '#ffffff' }}>Case Dossier Confidential</h3>
+          <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.55, marginBottom: '22px' }}>
+            Official Case Dossier printing is restricted. Only the citizen who registered this complaint or authorized municipal officers can export or print official case records. Viewing by Complaint ID alone does not grant dossier printing privileges.
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn btn-secondary"
+            style={{ width: '100%', padding: '10px 16px', fontWeight: 600 }}
+          >
+            Close
+          </button>
+        </div>
+      </div>,
+      document.body
+    );
+  }
+
   const timeline = fullData?.timeline || comp.timeline || [];
   const feedback = fullData?.feedback || comp.feedback || null;
   const rawEvidence = (fullData?.evidence && fullData.evidence.length > 0)

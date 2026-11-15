@@ -151,6 +151,11 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
 
   const { complaint, timeline, feedback } = data;
 
+  // Authorization: Only the citizen who filed this complaint or municipal authorities can print case dossier
+  const isAuthority = Boolean(complaint.is_authority || (user && (user.role === 'officer' || user.role === 'admin')));
+  const isOwner = Boolean(complaint.is_owner || (user && (String(complaint.citizen_id) === String(user.id))));
+  const canPrintDossier = Boolean(complaint.can_print_dossier ?? (isOwner || isAuthority));
+
   const getPriorityBadgeClass = (priority) => {
     if (priority === 'CRITICAL') return 'badge-critical';
     if (priority === 'HIGH') return 'badge-high';
@@ -182,23 +187,43 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              onClick={() => setIsPrintModalOpen(true)}
-              className="btn btn-sm btn-secondary"
-              style={{
-                borderColor: 'var(--accent-cyan)',
-                color: 'var(--accent-cyan)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontWeight: 600
-              }}
-              title="Print official case file dossier with all photographic evidence and audit history"
-            >
-              <Printer size={15} />
-              <span>Print Case Dossier</span>
-            </button>
+            {canPrintDossier ? (
+              <button
+                type="button"
+                onClick={() => setIsPrintModalOpen(true)}
+                className="btn btn-sm btn-secondary"
+                style={{
+                  borderColor: 'var(--accent-cyan)',
+                  color: 'var(--accent-cyan)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontWeight: 600
+                }}
+                title="Print official case file dossier with all photographic evidence and audit history"
+              >
+                <Printer size={15} />
+                <span>Print Case Dossier</span>
+              </button>
+            ) : (
+              <div 
+                style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'var(--bg-surface-elevated, rgba(255,255,255,0.05))',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid var(--border-subtle, rgba(255,255,255,0.1))'
+                }}
+                title="Case dossier printing is confidential and reserved strictly for the citizen who filed this complaint and verified authorities."
+              >
+                <Lock size={13} color="var(--text-muted)" />
+                <span>Dossier Confidential to Filing Citizen</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -889,8 +914,8 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
           </div>
         )}
 
-        {/* Official Printable Case Dossier Modal */}
-        {isPrintModalOpen && (
+        {/* Official Printable Case Dossier Modal (Guarded by Ownership / Authority) */}
+        {canPrintDossier && isPrintModalOpen && (
           <PrintableCaseDossier
             complaint={complaint}
             onClose={() => setIsPrintModalOpen(false)}

@@ -677,7 +677,8 @@ class ComplaintController {
           evidence_count: evidenceList.length || (complaint.image_url ? 1 : 0),
           evidence_restricted: !canAccessEvidence,
           is_authority: isAuthority,
-          is_owner: isOwner
+          is_owner: isOwner,
+          can_print_dossier: Boolean(canAccessEvidence)
         },
         timeline,
         feedback: feedback || null
