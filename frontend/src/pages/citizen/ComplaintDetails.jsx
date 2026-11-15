@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   Sparkles,
   RotateCcw,
-  Activity,
   BrainCircuit,
   FileCheck,
   PhoneCall,
@@ -278,42 +277,9 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             {complaint.title}
           </h1>
 
-          <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
+          <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
             {complaint.description}
           </p>
-
-          {/* Citizen Impact Score Strip */}
-          <div style={{
-            background: 'rgba(59, 130, 246, 0.08)',
-            border: '1px solid rgba(59, 130, 246, 0.25)',
-            borderRadius: 'var(--radius-sm)',
-            padding: '12px 16px',
-            marginBottom: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Activity size={20} color="var(--accent-primary)" />
-              <div>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
-                  Citizen Impact Score
-                </div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {complaint.impact_score || 50}%
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent-cyan)', marginLeft: '8px' }}>
-                    ({complaint.impact_label || 'Moderate Public Impact'})
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              👥 <strong>{complaint.affected_count || 10}+</strong> Residents Impacted
-            </div>
-          </div>
 
           <div style={{
             display: 'grid',

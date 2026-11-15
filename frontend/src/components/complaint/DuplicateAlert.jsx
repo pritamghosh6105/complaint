@@ -17,7 +17,7 @@ export default function DuplicateAlert({ duplicateData, onViewExisting }) {
       setLoadingId(complaintId);
       const res = await api.post(`/complaints/${complaintId}/upvote`);
       setUpvotedIds(prev => [...prev, complaintId]);
-      addToast('success', 'Community Endorsement Registered!', `You supported Ticket #${complaintId}. Impact score elevated to ${res.data.impact_score}/100.`);
+      addToast('success', 'Community Endorsement Registered!', `You supported Ticket #${complaintId}. Priority elevated.`);
     } catch (err) {
       if (err.response?.data?.already_upvoted) {
         addToast('info', 'Already Supported', 'You have already endorsed this complaint.');
@@ -48,7 +48,7 @@ export default function DuplicateAlert({ duplicateData, onViewExisting }) {
 
       <p style={{ fontSize: '0.825rem', color: '#fef9c3', lineHeight: 1.4, marginBottom: '12px' }}>
         Our AI Geospatial Engine detected that an identical or closely related problem has already been reported nearby.
-        Instead of filing a duplicate report, you can <strong>endorse and support</strong> the existing active ticket to increase its priority and impact score!
+        Instead of filing a duplicate report, you can <strong>endorse and support</strong> the existing active ticket to increase its priority!
       </p>
 
       {matches.length > 0 && (
