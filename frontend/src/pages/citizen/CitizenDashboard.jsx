@@ -53,6 +53,18 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
     fetchMyComplaints();
   }, [user]);
 
+  const handleSelectComplaint = (comp) => {
+    try {
+      sessionStorage.setItem(`civic_complaint_cache_${comp.id}`, JSON.stringify(comp));
+      if (comp.tracking_id) {
+        sessionStorage.setItem(`civic_complaint_cache_${comp.tracking_id}`, JSON.stringify(comp));
+      }
+      sessionStorage.setItem('civic_selected_complaint_id', String(comp.id));
+    } catch (e) {}
+    setSelectedComplaintId(comp.id);
+    setCurrentRoute('complaint-details');
+  };
+
   const totalCount = complaints.length;
   const underReviewCount = complaints.filter(c => c.status === 'Submitted' || c.status === 'Under Review' || c.status === 'AI Analyzed').length;
   const inProgressCount = complaints.filter(c => c.status === 'In Progress' || c.status === 'Assigned' || c.status === 'Verified').length;
@@ -271,10 +283,7 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
                 <div 
                   key={comp.id} 
                   className="gov-card gov-card-interactive"
-                  onClick={() => {
-                    setSelectedComplaintId(comp.id);
-                    setCurrentRoute('complaint-details');
-                  }}
+                  onClick={() => handleSelectComplaint(comp)}
                   style={{ 
                     padding: '18px 20px', 
                     display: 'flex', 
@@ -374,8 +383,7 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
                       icon={<ArrowRight size={13} />}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedComplaintId(comp.id);
-                        setCurrentRoute('complaint-details');
+                        handleSelectComplaint(comp);
                       }}
                     >
                       Track

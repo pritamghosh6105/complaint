@@ -1093,6 +1093,11 @@ export default function OfficerDashboard({
                       <button
                         className="btn btn-secondary btn-sm"
                         onClick={() => {
+                          try {
+                            sessionStorage.setItem(`civic_complaint_cache_${task.id}`, JSON.stringify(task));
+                            if (task.tracking_id) sessionStorage.setItem(`civic_complaint_cache_${task.tracking_id}`, JSON.stringify(task));
+                            sessionStorage.setItem('civic_selected_complaint_id', String(task.id));
+                          } catch (e) {}
                           setSelectedComplaintId(task.id);
                           setCurrentRoute('complaint-details');
                         }}

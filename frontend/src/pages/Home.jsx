@@ -63,6 +63,11 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
   }, []);
 
   const handleSelectComplaint = (comp) => {
+    try {
+      sessionStorage.setItem(`civic_complaint_cache_${comp.id}`, JSON.stringify(comp));
+      if (comp.tracking_id) sessionStorage.setItem(`civic_complaint_cache_${comp.tracking_id}`, JSON.stringify(comp));
+      sessionStorage.setItem('civic_selected_complaint_id', String(comp.id));
+    } catch (e) {}
     setSelectedComplaintId(comp.id);
     setCurrentRoute('complaint-details');
   };
@@ -83,13 +88,24 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
       );
 
       if (match) {
+        try {
+          sessionStorage.setItem(`civic_complaint_cache_${match.id}`, JSON.stringify(match));
+          if (match.tracking_id) sessionStorage.setItem(`civic_complaint_cache_${match.tracking_id}`, JSON.stringify(match));
+          sessionStorage.setItem('civic_selected_complaint_id', String(match.id));
+        } catch (e) {}
         setSelectedComplaintId(match.id);
         setCurrentRoute('complaint-details');
       } else {
         // Attempt backend direct fetch
         const res = await api.get(`/complaints/${q}`);
         if (res.data?.complaint) {
-          setSelectedComplaintId(res.data.complaint.id);
+          const comp = res.data.complaint;
+          try {
+            sessionStorage.setItem(`civic_complaint_cache_${comp.id}`, JSON.stringify(comp));
+            if (comp.tracking_id) sessionStorage.setItem(`civic_complaint_cache_${comp.tracking_id}`, JSON.stringify(comp));
+            sessionStorage.setItem('civic_selected_complaint_id', String(comp.id));
+          } catch (e) {}
+          setSelectedComplaintId(comp.id);
           setCurrentRoute('complaint-details');
         } else {
           setTrackingError(`No complaint found with tracking code #${q}. Please verify and try again.`);

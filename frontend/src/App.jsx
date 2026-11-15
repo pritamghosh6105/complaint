@@ -38,14 +38,35 @@ function getInitialRoute() {
 function AppContent() {
   const { user } = useAuth();
   const [currentRoute, setCurrentRoute] = useState(getInitialRoute);
-  const [selectedComplaintId, setSelectedComplaintId] = useState(null);
-
-  const handleSetRoute = (route) => {
-    setCurrentRoute(route);
+  const [selectedComplaintId, setSelectedComplaintId] = useState(() => {
     try {
-      const targetPath = route === 'home' ? '/' : `/${route}`;
-      if (window.location.pathname !== targetPath) {
-        window.history.pushState({ route }, '', targetPath);
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const urlId = params.get('id') || params.get('tracking');
+        if (urlId) return urlId;
+        const cached = sessionStorage.getItem('civic_selected_complaint_id');
+        if (cached) return cached;
+      }
+    } catch (e) {}
+    return null;
+  });
+
+  const handleSetRoute = (route, optId = null) => {
+    setCurrentRoute(route);
+    const activeId = optId || selectedComplaintId;
+    if (optId) {
+      setSelectedComplaintId(optId);
+      try {
+        sessionStorage.setItem('civic_selected_complaint_id', String(optId));
+      } catch (e) {}
+    }
+    try {
+      let targetPath = route === 'home' ? '/' : `/${route}`;
+      if (route === 'complaint-details' && activeId) {
+        targetPath += `?id=${encodeURIComponent(activeId)}`;
+      }
+      if (window.location.pathname + window.location.search !== targetPath) {
+        window.history.pushState({ route, id: activeId }, '', targetPath);
       }
     } catch (e) {}
   };
@@ -53,14 +74,25 @@ function AppContent() {
   useEffect(() => {
     const handlePopState = () => {
       setCurrentRoute(getInitialRoute());
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlId = params.get('id') || params.get('tracking');
+        if (urlId) {
+          setSelectedComplaintId(urlId);
+          sessionStorage.setItem('civic_selected_complaint_id', String(urlId));
+        }
+      } catch (e) {}
     };
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('hashchange', handlePopState);
 
     // Global testing hook
     window.__CIVICPULSE_NAVIGATE__ = (route, complaintId = null) => {
-      if (complaintId !== null) setSelectedComplaintId(complaintId);
-      handleSetRoute(route);
+      if (complaintId !== null) {
+        setSelectedComplaintId(complaintId);
+        try { sessionStorage.setItem('civic_selected_complaint_id', String(complaintId)); } catch (e) {}
+      }
+      handleSetRoute(route, complaintId);
     };
 
     return () => {
@@ -68,7 +100,7 @@ function AppContent() {
       window.removeEventListener('hashchange', handlePopState);
       delete window.__CIVICPULSE_NAVIGATE__;
     };
-  }, []);
+  }, [selectedComplaintId]);
 
   useEffect(() => {
     // Role-based route guard: Officers must never access citizen reporting routes
@@ -144,6 +176,7 @@ function AppContent() {
         return (
           <ComplaintDetails 
             complaintId={selectedComplaintId} 
+            setSelectedComplaintId={setSelectedComplaintId}
             setCurrentRoute={handleSetRoute} 
           />
         );

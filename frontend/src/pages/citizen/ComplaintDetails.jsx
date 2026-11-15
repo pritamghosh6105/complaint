@@ -18,7 +18,8 @@ import {
   Lock,
   ShieldCheck,
   ArrowDownCircle,
-  Printer
+  Printer,
+  Search
 } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -29,11 +30,48 @@ import SceneDescriptionCard from '../../components/complaint/SceneDescriptionCar
 import PrintableCaseDossier from '../../components/complaint/PrintableCaseDossier';
 import { useToast } from '../../components/ui/Toast';
 
-export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
+export default function ComplaintDetails({ complaintId, setSelectedComplaintId, setCurrentRoute }) {
   const { user } = useAuth();
   const { addToast } = useToast();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+
+  // 1. Resolve complaint ID from props, URL query parameter (?id= or ?tracking=), or sessionStorage cache
+  const resolvedTargetId = complaintId || (() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const fromUrl = params.get('id') || params.get('tracking');
+        if (fromUrl) return fromUrl;
+        return sessionStorage.getItem('civic_selected_complaint_id');
+      }
+    } catch (e) {}
+    return null;
+  })();
+
+  // 2. Instant Pre-Cache Retrieval: Stale-While-Revalidate (0ms visual render)
+  const getInitialCachedData = () => {
+    if (!resolvedTargetId) return null;
+    try {
+      const cached = sessionStorage.getItem(`civic_complaint_cache_${resolvedTargetId}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return {
+          complaint: parsed,
+          timeline: parsed.timeline || [],
+          feedback: parsed.feedback || null,
+          evidence: parsed.evidence || []
+        };
+      }
+    } catch (e) {}
+    return null;
+  };
+
+  const initialCached = getInitialCachedData();
+  const [data, setData] = useState(initialCached);
+  const [loading, setLoading] = useState(!initialCached && Boolean(resolvedTargetId));
+  const [fetchError, setFetchError] = useState(null);
+  const [manualTrackingInput, setManualTrackingInput] = useState('');
+  const [searchingManual, setSearchingManual] = useState(false);
+
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isReopenOpen, setIsReopenOpen] = useState(false);
@@ -44,36 +82,110 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
   const [recalibrationReason, setRecalibrationReason] = useState('');
   const [submittingTriage, setSubmittingTriage] = useState(false);
 
-  const fetchDetails = async () => {
+  const fetchDetails = async (targetId = resolvedTargetId) => {
+    if (!targetId) {
+      setLoading(false);
+      return;
+    }
     try {
-      const res = await api.get(`/complaints/${complaintId}`);
-      setData(res.data);
+      const res = await api.get(`/complaints/${targetId}`);
+      if (res.data && res.data.complaint) {
+        setData(res.data);
+        setFetchError(null);
+        try {
+          sessionStorage.setItem(`civic_complaint_cache_${res.data.complaint.id}`, JSON.stringify(res.data.complaint));
+          if (res.data.complaint.tracking_id) {
+            sessionStorage.setItem(`civic_complaint_cache_${res.data.complaint.tracking_id}`, JSON.stringify(res.data.complaint));
+          }
+          sessionStorage.setItem('civic_selected_complaint_id', String(res.data.complaint.id));
+        } catch (e) {}
+      } else {
+        if (!data) setFetchError('Complaint record not found');
+      }
     } catch (err) {
       console.error('Fetch complaint details error:', err);
+      if (!data) {
+        setFetchError(err.response?.data?.error || 'Unable to load complaint details. Please check the ID.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (complaintId) {
-      fetchDetails();
+    if (resolvedTargetId) {
+      // Sync URL query without full reload
+      try {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('civic_selected_complaint_id', String(resolvedTargetId));
+          const currentSearch = new URLSearchParams(window.location.search);
+          if (currentSearch.get('id') !== String(resolvedTargetId)) {
+            window.history.replaceState(
+              { route: 'complaint-details', id: resolvedTargetId },
+              '',
+              `/complaint-details?id=${encodeURIComponent(resolvedTargetId)}`
+            );
+          }
+        }
+      } catch (e) {}
+
+      fetchDetails(resolvedTargetId);
+    } else {
+      setLoading(false);
     }
-  }, [complaintId]);
+  }, [resolvedTargetId]);
+
+  const handleManualSearch = async (e) => {
+    e.preventDefault();
+    const q = manualTrackingInput.trim().replace(/^#/, '');
+    if (!q) {
+      addToast('warning', 'ID Required', 'Please enter a valid tracking ID or Complaint number.');
+      return;
+    }
+    try {
+      setSearchingManual(true);
+      setLoading(true);
+      const res = await api.get(`/complaints/${q}`);
+      if (res.data?.complaint) {
+        setData(res.data);
+        setFetchError(null);
+        if (setSelectedComplaintId) setSelectedComplaintId(res.data.complaint.id);
+        try {
+          sessionStorage.setItem(`civic_complaint_cache_${res.data.complaint.id}`, JSON.stringify(res.data.complaint));
+          sessionStorage.setItem('civic_selected_complaint_id', String(res.data.complaint.id));
+          window.history.replaceState(
+            { route: 'complaint-details', id: res.data.complaint.id },
+            '',
+            `/complaint-details?id=${encodeURIComponent(res.data.complaint.id)}`
+          );
+        } catch (e) {}
+      } else {
+        setFetchError(`No complaint found with ID #${q}`);
+        addToast('error', 'Not Found', `No complaint found with ID #${q}`);
+      }
+    } catch (err) {
+      setFetchError(`Tracking code #${q} not found.`);
+      addToast('error', 'Tracking Error', err.response?.data?.error || 'Complaint not found');
+    } finally {
+      setSearchingManual(false);
+      setLoading(false);
+    }
+  };
 
   const handleConfirmCriticalDetail = async () => {
-    const currentTrackingId = data?.complaint?.tracking_id || complaintId;
+    const currentId = data?.complaint?.id || resolvedTargetId;
+    const currentTrackingId = data?.complaint?.tracking_id || currentId;
     if (!window.confirm(`Confirm active life-safety emergency for #${currentTrackingId}? This locks the rapid 24-hour response SLA.`)) {
       return;
     }
     try {
       setSubmittingTriage(true);
-      await api.patch(`/officer/tasks/${complaintId}/triage`, {
+      await api.patch(`/officer/tasks/${currentId}/triage`, {
         action: 'CONFIRM_CRITICAL',
         reason: 'Officer on-ground verification: active life-safety hazard confirmed. Rapid 24-hour emergency SLA locked.'
       });
       addToast('success', 'Emergency Verified', '24-hour rapid emergency SLA protocol locked.');
-      fetchDetails();
+      fetchDetails(currentId);
     } catch (err) {
       addToast('error', 'Triage Error', err.response?.data?.error || 'Failed to confirm emergency');
     } finally {
@@ -87,9 +199,10 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
       addToast('warning', 'Reason Required', 'Please provide an official audit reason (at least 5 characters).');
       return;
     }
+    const currentId = data?.complaint?.id || resolvedTargetId;
     try {
       setSubmittingTriage(true);
-      await api.patch(`/officer/tasks/${complaintId}/triage`, {
+      await api.patch(`/officer/tasks/${currentId}/triage`, {
         action: 'RECALIBRATE_NORMAL',
         new_priority: targetPriority,
         reason: recalibrationReason.trim()
@@ -97,7 +210,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
       addToast('success', 'Priority Recalibrated', `Priority normalized to ${targetPriority}. SLA reset.`);
       setIsTriageModalOpen(false);
       setRecalibrationReason('');
-      fetchDetails();
+      fetchDetails(currentId);
     } catch (err) {
       addToast('error', 'Recalibration Error', err.response?.data?.error || 'Failed to recalibrate priority');
     } finally {
@@ -111,13 +224,14 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
       addToast('warning', 'Reason Required', 'Please provide a reason why this issue is not resolved.');
       return;
     }
+    const currentId = data?.complaint?.id || resolvedTargetId;
     try {
       setReopening(true);
-      await api.post(`/complaints/${complaintId}/reopen`, { reason: reopenReason });
+      await api.post(`/complaints/${currentId}/reopen`, { reason: reopenReason });
       addToast('success', 'Complaint Reopened', 'The complaint has been reopened and escalated for departmental re-inspection.');
       setIsReopenOpen(false);
       setReopenReason('');
-      fetchDetails();
+      fetchDetails(currentId);
     } catch (err) {
       addToast('error', 'Reopen Error', err.response?.data?.error || 'Failed to reopen complaint.');
     } finally {
@@ -125,24 +239,96 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
     }
   };
 
-  if (loading) {
+  // High-performance Skeleton Screen during initial load
+  if (loading && !data) {
     return (
       <div className="page-wrapper">
-        <div className="container" style={{ textAlign: 'center', padding: '80px 0', color: 'var(--text-muted)' }}>
-          Loading complaint tracking details...
+        <div className="container" style={{ maxWidth: '960px', padding: '24px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <div style={{ width: '140px', height: '36px', background: 'var(--bg-surface-elevated)', borderRadius: '6px', opacity: 0.7 }} />
+            <div style={{ width: '130px', height: '36px', background: 'var(--bg-surface-elevated)', borderRadius: '6px', opacity: 0.7 }} />
+          </div>
+
+          <div className="glass-card" style={{ padding: '24px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ width: '110px', height: '24px', background: 'var(--bg-surface-elevated)', borderRadius: '4px' }} />
+              <div style={{ width: '90px', height: '24px', background: 'var(--bg-surface-elevated)', borderRadius: '4px' }} />
+            </div>
+            <div style={{ width: '65%', height: '30px', background: 'var(--bg-surface-elevated)', borderRadius: '6px', marginBottom: '14px' }} />
+            <div style={{ width: '100%', height: '16px', background: 'var(--bg-surface-elevated)', borderRadius: '4px', marginBottom: '8px' }} />
+            <div style={{ width: '85%', height: '16px', background: 'var(--bg-surface-elevated)', borderRadius: '4px' }} />
+          </div>
+
+          <div className="glass-card" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <div className="spinner" style={{ margin: '0 auto 12px auto' }} />
+            <span>Loading official complaint tracking details...</span>
+          </div>
         </div>
       </div>
     );
   }
 
+  // Friendly Fallback with Direct Search Box when complaint ID is missing or not found
   if (!data || !data.complaint) {
     return (
       <div className="page-wrapper">
-        <div className="container" style={{ textAlign: 'center', padding: '80px 0' }}>
-          <h3>Complaint Not Found</h3>
-          <button className="btn btn-secondary" style={{ marginTop: '16px' }} onClick={() => setCurrentRoute('home')}>
-            <ArrowLeft size={16} /> Back to Home
-          </button>
+        <div className="container" style={{ maxWidth: '560px', textAlign: 'center', padding: '60px 16px' }}>
+          <div className="glass-card" style={{ padding: '36px 28px' }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'rgba(59, 130, 246, 0.1)',
+              color: 'var(--accent-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px auto'
+            }}>
+              <Search size={26} />
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>
+              {fetchError || 'Track Your Grievance'}
+            </h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.5 }}>
+              Enter your official Tracking ID (e.g. WB-2026-XXXX) or Complaint ID to inspect live status, timeline, and actions.
+            </p>
+
+            <form onSubmit={handleManualSearch} style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+              <input
+                type="text"
+                placeholder="Enter Tracking ID (e.g. WB-2026-1042)"
+                value={manualTrackingInput}
+                onChange={(e) => setManualTrackingInput(e.target.value)}
+                className="input"
+                style={{ flex: 1, padding: '10px 14px', fontSize: '0.9rem' }}
+                autoFocus
+              />
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                style={{ padding: '10px 18px', fontWeight: 600 }}
+                disabled={searchingManual}
+              >
+                {searchingManual ? 'Searching...' : 'Track'}
+              </button>
+            </form>
+
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
+              <button 
+                type="button" 
+                className="btn btn-secondary btn-sm" 
+                onClick={() => {
+                  if (user?.role === 'officer') setCurrentRoute('officer-dashboard');
+                  else if (user?.role === 'admin') setCurrentRoute('admin-dashboard');
+                  else setCurrentRoute('citizen-dashboard');
+                }}
+              >
+                <ArrowLeft size={14} /> Back to Dashboard
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );

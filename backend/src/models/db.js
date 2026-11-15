@@ -106,8 +106,6 @@ class RelationalStorage {
 
     if (!this.data.districts || this.data.districts.length < 23) {
       this.seedLocationData();
-    } else {
-      this.save();
     }
   }
 
@@ -231,11 +229,12 @@ class RelationalStorage {
 
     // 6. Complaints Select
     if (qLower.includes('from complaints')) {
-      let list = this.data.complaints.map(c => {
-        const dept = this.data.departments.find(d => d.id === c.department_id);
-        const citizen = this.data.users.find(u => u.id === c.citizen_id);
-        const officer = this.data.users.find(u => u.id === c.officer_id);
-        const fb = this.data.feedback.find(f => f.complaint_id === c.id);
+      const enrichComplaint = (c) => {
+        if (!c) return null;
+        const dept = this.data.departments?.find(d => d.id === c.department_id);
+        const citizen = this.data.users?.find(u => u.id === c.citizen_id);
+        const officer = this.data.users?.find(u => u.id === c.officer_id);
+        const fb = this.data.feedback?.find(f => f.complaint_id === c.id);
         return {
           ...c,
           department_name: dept ? dept.name : null,
@@ -245,15 +244,35 @@ class RelationalStorage {
           officer_name: officer ? officer.name : 'Unassigned',
           feedback: fb || null
         };
-      });
+      };
 
-      // Filter: ID or tracking ID
+      // Ultra-fast path for single complaint lookup by ID or tracking ID
+      if (qLower.includes('where id = ? or tracking_id = ?') || qLower.includes('where c.id = ? or c.tracking_id = ?')) {
+        const p1 = params[0];
+        const p2 = params[1] || p1;
+        const target = (this.data.complaints || []).find(c => 
+          c.id === Number(p1) || String(c.tracking_id) === String(p1) ||
+          c.id === Number(p2) || String(c.tracking_id) === String(p2)
+        );
+        return target ? [enrichComplaint(target)] : [];
+      }
+
       if (qLower.includes('where c.id = ?') || qLower.includes('where id = ?')) {
         const val = params[0];
-        list = list.filter(c => c.id === Number(val) || c.tracking_id === String(val));
-      } else if (qLower.includes('where tracking_id = ?')) {
-        list = list.filter(c => c.tracking_id === String(params[0]));
-      } else if (qLower.includes('where c.citizen_id = ?') || qLower.includes('where citizen_id = ?')) {
+        const target = (this.data.complaints || []).find(c => c.id === Number(val) || String(c.tracking_id) === String(val));
+        return target ? [enrichComplaint(target)] : [];
+      }
+
+      if (qLower.includes('where tracking_id = ?') || qLower.includes('where c.tracking_id = ?')) {
+        const val = String(params[0]);
+        const target = (this.data.complaints || []).find(c => String(c.tracking_id) === val);
+        return target ? [enrichComplaint(target)] : [];
+      }
+
+      let list = this.data.complaints.map(enrichComplaint);
+
+      // Filter: Citizen ID, Officer ID, Department ID, Status
+      if (qLower.includes('where c.citizen_id = ?') || qLower.includes('where citizen_id = ?')) {
         const cid = Number(params[0]);
         list = list.filter(c => c.citizen_id === cid);
       } else if (qLower.includes('officer_id = ? or department_id = ?') || qLower.includes('c.officer_id = ? or c.department_id = ?') || qLower.includes('officer_id = ? or c.department_id = ?')) {
