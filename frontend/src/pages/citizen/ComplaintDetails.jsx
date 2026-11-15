@@ -151,6 +151,22 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
 
   const { complaint, timeline, feedback } = data;
 
+  const formatCategoryDisplay = (cat, fallback = 'General Civic Grievance') => {
+    if (!cat || typeof cat !== 'string') return fallback;
+    if (cat.toUpperCase().includes('UNCERTAIN')) return 'General Civic Grievance';
+    return cat;
+  };
+
+  const formatDepartmentDisplay = (dept, cat, fallback = 'Competent Municipal Authority') => {
+    if (dept && typeof dept === 'string' && !dept.toUpperCase().includes('UNCERTAIN')) {
+      return dept;
+    }
+    if (cat && typeof cat === 'string' && !cat.toUpperCase().includes('UNCERTAIN')) {
+      return cat;
+    }
+    return fallback;
+  };
+
   // Authorization: Only the citizen who filed this complaint or municipal authorities can print case dossier
   const isAuthority = Boolean(complaint.is_authority || (user && (user.role === 'officer' || user.role === 'admin')));
   const isOwner = Boolean(complaint.is_owner || (user && (String(complaint.citizen_id) === String(user.id))));
@@ -209,18 +225,19 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
               <div 
                 style={{
                   fontSize: '0.78rem',
-                  color: 'var(--text-muted)',
+                  color: 'var(--text-secondary)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  background: 'var(--bg-surface-elevated, rgba(255,255,255,0.05))',
+                  background: 'var(--bg-surface-elevated)',
                   padding: '6px 12px',
                   borderRadius: '6px',
-                  border: '1px solid var(--border-subtle, rgba(255,255,255,0.1))'
+                  border: '1px solid var(--border-subtle)',
+                  fontWeight: 500
                 }}
                 title="Case dossier printing is confidential and reserved strictly for the citizen who filed this complaint and verified authorities."
               >
-                <Lock size={13} color="var(--text-muted)" />
+                <Lock size={13} color="var(--accent-primary)" />
                 <span>Dossier Confidential to Filing Citizen</span>
               </div>
             )}
@@ -310,7 +327,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
           }}>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Category:</span>
-              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.category}</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{formatCategoryDisplay(complaint.category)}</div>
             </div>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Subcategory:</span>
@@ -318,7 +335,7 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
             </div>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Assigned Department:</span>
-              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.department_name || complaint.category}</div>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{formatDepartmentDisplay(complaint.department_name, complaint.category)}</div>
             </div>
             <div>
               <span style={{ color: 'var(--text-muted)' }}>Field Officer:</span>
@@ -520,60 +537,31 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
 
           if (!canAccessEvidence) {
             // General Public / Unauthorized View: Evidence is confidential and NEVER displayed
+            const resolvedAuthorityName = formatDepartmentDisplay(complaint.department_name, complaint.category, 'Competent Municipal Authority');
+
             return (
-              <div 
-                className="glass-card" 
-                style={{
-                  padding: '20px 24px',
-                  marginBottom: '24px',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1.5px solid rgba(59, 130, 246, 0.35)',
-                  background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%)'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-                  <div style={{
-                    width: '42px',
-                    height: '42px',
-                    borderRadius: '10px',
-                    background: 'rgba(59, 130, 246, 0.18)',
-                    border: '1px solid rgba(59, 130, 246, 0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--accent-primary)',
-                    boxShadow: '0 0 14px rgba(59, 130, 246, 0.25)',
-                    flexShrink: 0
-                  }}>
+              <div className="evidence-protection-card">
+                <div className="evidence-protection-inner">
+                  <div className="evidence-protection-icon">
                     <Lock size={20} />
                   </div>
 
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '6px' }}>
-                      <h4 style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <div className="evidence-protection-content">
+                    <div className="evidence-protection-header">
+                      <h4 className="evidence-protection-title">
                         Evidence Protected — Restricted to Complaint Authority
                       </h4>
-                      <span className="badge badge-primary" style={{ fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px' }}>
+                      <span className="evidence-protection-badge">
                         CONFIDENTIAL • AUTHORITY ONLY
                       </span>
                     </div>
 
-                    <p style={{ margin: '0 0 10px 0', fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                      In compliance with citizen privacy protocols, photographic and multimedia evidence submitted with this grievance is strictly confidential and not published to the public. All documentation has been encrypted and delivered exclusively to the designated complaint authority (<strong>{complaint.category || 'Assigned Department'}</strong>) and field resolvers for on-ground verification.
+                    <p className="evidence-protection-desc">
+                      In compliance with citizen privacy protocols, photographic and multimedia evidence submitted with this grievance is strictly confidential and not published to the public. All documentation has been encrypted and delivered exclusively to the designated complaint authority (<strong>{resolvedAuthorityName}</strong>) and field resolvers for on-ground verification.
                     </p>
 
-                    <div style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '0.78rem',
-                      color: '#10b981',
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      padding: '6px 12px',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(16, 185, 129, 0.25)'
-                    }}>
-                      <ShieldCheck size={14} color="#10b981" />
+                    <div className="evidence-protection-status">
+                      <ShieldCheck size={15} />
                       <span>Evidence safely received & restricted to authorized complaint resolvers</span>
                     </div>
                   </div>
@@ -586,19 +574,8 @@ export default function ComplaintDetails({ complaintId, setCurrentRoute }) {
           return (
             <div style={{ marginBottom: '24px' }}>
               {isOwner && !isAuthority && (
-                <div style={{
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                  borderRadius: '10px',
-                  padding: '10px 14px',
-                  marginBottom: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontSize: '0.82rem',
-                  color: '#10b981'
-                }}>
-                  <ShieldCheck size={16} style={{ flexShrink: 0 }} />
+                <div className="evidence-owner-notice">
+                  <ShieldCheck size={18} style={{ flexShrink: 0 }} />
                   <span>
                     <strong>Your Uploaded Evidence:</strong> This documentation is securely submitted to the complaint authority and hidden from public view to protect your privacy.
                   </span>

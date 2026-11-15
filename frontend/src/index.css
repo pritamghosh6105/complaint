@@ -6998,6 +6998,161 @@ body {
 }
 
 /* ========================================================
+   EVIDENCE PROTECTION & CONFIDENTIALITY CALLOUT (LIGHT & DARK)
+   ======================================================== */
+.evidence-protection-card {
+  position: relative;
+  overflow: hidden;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 55%, #f8fafc 100%);
+  border: 1.5px solid #bfdbfe;
+  border-left: 4px solid #2563eb;
+  box-shadow: 0 4px 16px -2px rgba(37, 99, 235, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .evidence-protection-card {
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.25) 0%, rgba(15, 23, 42, 0.85) 100%);
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  border-left: 4px solid #3b82f6;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 15px rgba(59, 130, 246, 0.12);
+}
+
+.evidence-protection-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.evidence-protection-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+  border: 1px solid #93c5fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d4ed8;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .evidence-protection-icon {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  color: #60a5fa;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.25);
+}
+
+.evidence-protection-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.evidence-protection-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.evidence-protection-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+[data-theme="dark"] .evidence-protection-title {
+  color: #f8fafc;
+}
+
+.evidence-protection-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  display: inline-flex;
+  align-items: center;
+}
+
+[data-theme="dark"] .evidence-protection-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.evidence-protection-desc {
+  margin: 0 0 12px 0;
+  font-size: 0.86rem;
+  color: #334155;
+  line-height: 1.58;
+}
+
+[data-theme="dark"] .evidence-protection-desc {
+  color: var(--text-secondary);
+}
+
+.evidence-protection-desc strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .evidence-protection-desc strong {
+  color: #ffffff;
+}
+
+.evidence-protection-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #047857;
+  background: #ecfdf5;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #a7f3d0;
+}
+
+[data-theme="dark"] .evidence-protection-status {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.evidence-owner-notice {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 3px solid #16a34a;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: #166534;
+}
+
+[data-theme="dark"] .evidence-owner-notice {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-left: 3px solid #10b981;
+  color: #34d399;
+}
+
+/* ========================================================
    OFFICIAL PRINTABLE CASE DOSSIER & @MEDIA PRINT STYLES
    ======================================================== */
 @media print {
