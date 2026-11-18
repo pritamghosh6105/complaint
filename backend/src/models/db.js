@@ -942,7 +942,30 @@ class RelationalStorage {
       return { changes: 0 };
     }
 
-    // 9. DELETE complaints
+    // 9. UPDATE users (Password Resets & Profiles)
+    if (qLower.startsWith('update users')) {
+      if (qLower.includes('set password_hash = ?')) {
+        const password_hash = params[0];
+        let targetUser = null;
+        if (qLower.includes('where id = ?')) {
+          const uid = Number(params[1]);
+          targetUser = this.data.users.find(u => Number(u.id) === uid);
+        } else if (qLower.includes('where email = ?')) {
+          const uemail = String(params[1]).toLowerCase().trim();
+          targetUser = this.data.users.find(u => u.email && u.email.toLowerCase() === uemail);
+        }
+        if (targetUser) {
+          targetUser.password_hash = password_hash;
+          targetUser.updated_at = now;
+          this.save();
+          this.pushToMongo('User', { id: targetUser.id }, targetUser);
+          return { changes: 1 };
+        }
+      }
+      return { changes: 0 };
+    }
+
+    // 10. DELETE complaints
     if (qLower.startsWith('delete from complaints')) {
       const id = Number(params[0]);
       this.data.complaints = this.data.complaints.filter(c => c.id !== id);
@@ -951,6 +974,20 @@ class RelationalStorage {
     }
 
     return { changes: 0 };
+  }
+
+  updateUserPassword(idOrEmail, newPasswordHash) {
+    this.load();
+    const isNum = typeof idOrEmail === 'number' || /^\d+$/.test(String(idOrEmail));
+    const user = this.data.users.find(u => 
+      isNum ? Number(u.id) === Number(idOrEmail) : (u.email && u.email.toLowerCase() === String(idOrEmail).toLowerCase().trim())
+    );
+    if (!user) return null;
+    user.password_hash = newPasswordHash;
+    user.updated_at = new Date().toISOString();
+    this.save();
+    this.pushToMongo('User', { id: user.id }, user);
+    return user;
   }
 
   triageComplaint(id, triageData = {}) {

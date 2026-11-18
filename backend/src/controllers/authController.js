@@ -3,6 +3,11 @@ const jwt = require('jsonwebtoken');
 const db = require('../models/db');
 const { JWT_SECRET } = require('../middleware/authMiddleware');
 const demoCredentialService = require('../services/demoCredentialService');
+const emailService = require('../services/emailService');
+
+// In-memory OTP store for password reset
+// Map: email -> { otp, expiresAt, attempts, createdAt }
+const passwordResetStore = new Map();
 
 class AuthController {
   register(req, res) {
@@ -242,6 +247,188 @@ class AuthController {
       });
     } catch (err) {
       return res.status(500).json({ error: err.message || 'Failed to delete user' });
+    }
+  }
+
+  /**
+   * Dispatches a 6-digit OTP code to the user's Gmail address for password reset
+   */
+  async forgotPasswordSendOtp(req, res) {
+    try {
+      const email = (req.body.email || '').toLowerCase().trim();
+      if (!email || !email.includes('@')) {
+        return res.status(400).json({ error: 'A valid email address is required.' });
+      }
+
+      db.load();
+      const user = db.prepare('SELECT id, name, email, role FROM users WHERE email = ?').get(email);
+      if (!user) {
+        return res.status(404).json({ 
+          error: 'No account registered with this email address. Please check your spelling or register a new account.' 
+        });
+      }
+
+      // Rate limiting: Require at least 30 seconds between OTP requests
+      const existing = passwordResetStore.get(email);
+      const now = Date.now();
+      if (existing && (now - existing.createdAt < 30 * 1000)) {
+        const remaining = Math.ceil((30 * 1000 - (now - existing.createdAt)) / 1000);
+        return res.status(429).json({
+          error: `Please wait ${remaining} seconds before requesting another verification code.`
+        });
+      }
+
+      // Generate 6-digit numeric OTP
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = now + 10 * 60 * 1000; // 10 minutes
+
+      passwordResetStore.set(email, {
+        otp: otpCode,
+        expiresAt,
+        attempts: 0,
+        createdAt: now
+      });
+
+      // Dispatch via Gmail SMTP (or development console fallback)
+      const mailResult = await emailService.sendPasswordResetOtp(email, user.name, otpCode);
+
+      // Mask email for privacy: e.g. p***7@gmail.com
+      const parts = email.split('@');
+      const namePart = parts[0];
+      const domainPart = parts[1];
+      const maskedName = namePart.length <= 2 
+        ? namePart[0] + '***' 
+        : namePart[0] + '***' + namePart[namePart.length - 1];
+      const maskedEmail = `${maskedName}@${domainPart}`;
+
+      return res.json({
+        success: true,
+        message: `A 6-digit verification code has been dispatched to ${maskedEmail}`,
+        email: maskedEmail,
+        expiresInSeconds: 600,
+        debugOtp: mailResult.mode === 'console_simulated' ? mailResult.debug_otp : undefined
+      });
+    } catch (err) {
+      console.error('forgotPasswordSendOtp error:', err);
+      return res.status(500).json({ error: 'Failed to dispatch password reset code. Please try again.' });
+    }
+  }
+
+  /**
+   * Verifies the 6-digit OTP code sent to user's Gmail
+   */
+  async forgotPasswordVerifyOtp(req, res) {
+    try {
+      const email = (req.body.email || '').toLowerCase().trim();
+      const otp = String(req.body.otp || '').trim();
+
+      if (!email || !otp) {
+        return res.status(400).json({ error: 'Email and 6-digit verification code are required.' });
+      }
+
+      const record = passwordResetStore.get(email);
+      if (!record) {
+        return res.status(400).json({ error: 'No active verification request found for this email. Please request a new code.' });
+      }
+
+      if (Date.now() > record.expiresAt) {
+        passwordResetStore.delete(email);
+        return res.status(400).json({ error: 'Verification code has expired. Please request a new code.' });
+      }
+
+      if (record.attempts >= 5) {
+        passwordResetStore.delete(email);
+        return res.status(429).json({ error: 'Too many incorrect attempts. Please request a fresh code.' });
+      }
+
+      if (record.otp !== otp) {
+        record.attempts++;
+        return res.status(400).json({ error: 'Incorrect verification code. Please check your Gmail and try again.' });
+      }
+
+      return res.json({
+        success: true,
+        message: 'Verification code confirmed. You may now set your new password.'
+      });
+    } catch (err) {
+      return res.status(500).json({ error: 'Failed to verify verification code.' });
+    }
+  }
+
+  /**
+   * Resets user's password once OTP is verified
+   */
+  async forgotPasswordReset(req, res) {
+    try {
+      const email = (req.body.email || '').toLowerCase().trim();
+      const otp = String(req.body.otp || '').trim();
+      const newPassword = String(req.body.newPassword || '').trim();
+
+      if (!email || !otp || !newPassword) {
+        return res.status(400).json({ error: 'Email, verification code, and new password are required.' });
+      }
+
+      if (newPassword.length < 4) {
+        return res.status(400).json({ error: 'Password must be at least 4 characters long.' });
+      }
+
+      const record = passwordResetStore.get(email);
+      if (!record) {
+        return res.status(400).json({ error: 'No active verification code found. Please request a new code.' });
+      }
+
+      if (Date.now() > record.expiresAt) {
+        passwordResetStore.delete(email);
+        return res.status(400).json({ error: 'Verification code has expired. Please request a new code.' });
+      }
+
+      if (record.otp !== otp) {
+        record.attempts++;
+        return res.status(400).json({ error: 'Invalid verification code.' });
+      }
+
+      // Validated: Hash new password and update user in database
+      const passwordHash = bcrypt.hashSync(newPassword, 10);
+      const updatedUser = db.updateUserPassword(email, passwordHash);
+
+      if (!updatedUser) {
+        return res.status(404).json({ error: 'User record not found.' });
+      }
+
+      // Clear OTP store for this email
+      passwordResetStore.delete(email);
+
+      // Issue fresh session token
+      const token = jwt.sign(
+        { 
+          id: updatedUser.id, 
+          name: updatedUser.name, 
+          email: updatedUser.email, 
+          role: updatedUser.role,
+          department_id: updatedUser.department_id 
+        },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      console.log('\x1b[32m%s\x1b[0m', `✓ [Auth] Password successfully reset for user: ${email} (${updatedUser.role})`);
+
+      return res.json({
+        success: true,
+        message: 'Password reset successfully! You are now logged in.',
+        token,
+        user: {
+          id: updatedUser.id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          ward: updatedUser.ward,
+          department_id: updatedUser.department_id
+        }
+      });
+    } catch (err) {
+      console.error('forgotPasswordReset error:', err);
+      return res.status(500).json({ error: 'Failed to reset password. Please try again.' });
     }
   }
 }

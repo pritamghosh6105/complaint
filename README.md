@@ -62,6 +62,12 @@ An enterprise-grade, full-stack civic governance platform powered by **Machine L
 - Dedicated operational dashboards for Police, Cyber Crime, Women & Child Safety, Traffic, Roads & PWD, Drainage, Water Supply, Solid Waste, Health, and 21 other departments.
 - **Demo Credential Vault**: Password-protected vault (`6105`) unlocking one-click demo access to all 30 departmental officer accounts for academic review and grading.
 
+### 10. 📧 Self-Service Gmail OTP Account Recovery & Password Reset
+- **Direct Gmail SMTP Integration**: Integrated with Nodemailer over secure Gmail SMTP (`service: 'gmail'`) with an official West Bengal / CivicPulse.AI responsive HTML notification template.
+- **Enterprise Security Controls**: Cryptographically secure 6-digit numeric OTPs, 10-minute validity window, 30-second per-address rate limiting, and 5-attempt brute-force mitigation.
+- **Dual-Database Hash Synchronization**: Seamlessly updates bcrypt password hashes across both the local relational store and cloud MongoDB Atlas with automated JWT re-issuance.
+- **Zero-Crash Development Fallback**: When Gmail SMTP credentials are not yet configured, automatically logs verification codes to the server terminal console with `debug_otp` fallback for seamless development and grading.
+
 ---
 
 ## 🏗️ Monorepo System Architecture
@@ -218,6 +224,9 @@ For immediate evaluation, the following pre-configured test accounts are availab
   - `GET /api/database/status` — MongoDB Atlas collection count & active storage engine
   - `POST /api/auth/register` — Citizen account registration
   - `POST /api/auth/login` — Role-based authentication & JWT issuance
+  - `POST /api/auth/forgot-password/send-otp` — Generates and dispatches 6-digit OTP to user's registered Gmail
+  - `POST /api/auth/forgot-password/verify-otp` — Pre-validates OTP without resetting password
+  - `POST /api/auth/forgot-password/reset` — Verifies OTP, updates bcrypt hash in DB & MongoDB Atlas, issues fresh JWT session
   - `POST /api/auth/demo-credentials/verify` — Unlocks 30 department demo accounts
   - `GET /api/complaints` — Retrieve complaints with filters (status, category, ward)
   - `POST /api/complaints` — Submit complaint with AI categorization & image upload

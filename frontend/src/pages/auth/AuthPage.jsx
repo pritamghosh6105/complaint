@@ -18,6 +18,7 @@ import {
   CheckCircle2, 
   AlertCircle, 
   ArrowRight, 
+  ArrowLeft,
   KeyRound, 
   Info,
   Check,
@@ -399,6 +400,115 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
   const [roleRedirectMsg, setRoleRedirectMsg] = useState('');
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
+  // Forgot Password with Gmail OTP State
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotOtp, setForgotOtp] = useState('');
+  const [forgotNewPassword, setForgotNewPassword] = useState('');
+  const [forgotConfirmPassword, setForgotConfirmPassword] = useState('');
+  const [showForgotNewPassword, setShowForgotNewPassword] = useState(false);
+  const [showForgotConfirmPassword, setShowForgotConfirmPassword] = useState(false);
+  const [forgotStep, setForgotStep] = useState('email'); // 'email' or 'otp'
+  const [forgotMaskedEmail, setForgotMaskedEmail] = useState('');
+  const [forgotSuccessMsg, setForgotSuccessMsg] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Resend OTP countdown timer
+  useEffect(() => {
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
+
+  // Handle Send OTP to Gmail
+  const handleSendForgotOtp = async (e) => {
+    if (e) e.preventDefault();
+    const cleanEmail = forgotEmail.trim().toLowerCase();
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setError('Please enter a valid Gmail address.');
+      return;
+    }
+    setError('');
+    setForgotSuccessMsg('');
+    setLoading(true);
+
+    try {
+      const res = await api.post('/auth/forgot-password/send-otp', { email: cleanEmail });
+      setForgotMaskedEmail(res.data.email || cleanEmail);
+      setForgotStep('otp');
+      setResendCooldown(60);
+      setForgotSuccessMsg(res.data.message || `Verification code sent to ${cleanEmail}`);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to send OTP to your Gmail. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle Reset Password with OTP Submit
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setForgotSuccessMsg('');
+
+    const cleanOtp = forgotOtp.trim();
+    if (!cleanOtp || cleanOtp.length !== 6) {
+      setError('Please enter the 6-digit OTP code sent to your Gmail.');
+      return;
+    }
+
+    if (!forgotNewPassword || forgotNewPassword.length < 4) {
+      setError('Password must be at least 4 characters long.');
+      return;
+    }
+
+    if (forgotNewPassword !== forgotConfirmPassword) {
+      setError('New passwords do not match. Please re-enter.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await api.post('/auth/forgot-password/reset', {
+        email: forgotEmail.trim().toLowerCase(),
+        otp: cleanOtp,
+        newPassword: forgotNewPassword
+      });
+
+      // Confetti celebration
+      try {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      } catch (err) {}
+
+      if (res.data?.token && res.data?.user) {
+        localStorage.setItem('civic_token', res.data.token);
+        localStorage.setItem('civic_user', JSON.stringify(res.data.user));
+        if (res.data.user.role === 'officer') {
+          setCurrentRoute('officer-dashboard');
+        } else if (res.data.user.role === 'admin') {
+          setCurrentRoute('admin-dashboard');
+        } else if (onSuccessRoute) {
+          setCurrentRoute(onSuccessRoute);
+        } else {
+          setCurrentRoute('citizen-dashboard');
+        }
+      } else {
+        setForgotSuccessMsg('Password updated successfully! Please sign in with your new password.');
+        setMode('signin');
+        setSignInPassword('');
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to reset password. Please check your OTP.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Active role config
   const currentRole = PORTAL_ROLES.find(r => r.id === selectedRole) || PORTAL_ROLES[0];
 
@@ -563,7 +673,7 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
               role="tab"
               aria-selected={mode === 'signin'}
               className={`auth-tab-item ${mode === 'signin' ? 'active' : ''}`}
-              onClick={() => { setMode('signin'); setError(''); }}
+              onClick={() => { setMode('signin'); setError(''); setForgotSuccessMsg(''); }}
             >
               <LogIn size={16} />
               <span>Sign In</span>
@@ -573,11 +683,23 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
               role="tab"
               aria-selected={mode === 'signup'}
               className={`auth-tab-item ${mode === 'signup' ? 'active' : ''}`}
-              onClick={() => { setMode('signup'); setError(''); }}
+              onClick={() => { setMode('signup'); setError(''); setForgotSuccessMsg(''); }}
             >
               <UserPlus size={16} />
               <span>Create Account</span>
             </button>
+            {mode === 'forgot-password' && (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={true}
+                className="auth-tab-item active"
+                style={{ color: '#0284c7' }}
+              >
+                <KeyRound size={16} />
+                <span>Reset Password</span>
+              </button>
+            )}
           </div>
 
           {/* B. Login Heading */}
@@ -594,7 +716,7 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
               lineHeight: 1.25,
               letterSpacing: '-0.3px'
             }}>
-              {mode === 'signin' ? 'Welcome to CivicPulse AI' : 'Create CivicPulse Account'}
+              {mode === 'signin' ? 'Welcome to CivicPulse AI' : (mode === 'signup' ? 'Create CivicPulse Account' : 'Reset Account Password')}
             </h1>
             <p style={{
               fontSize: '0.85rem',
@@ -604,9 +726,38 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
             }}>
               {mode === 'signin'
                 ? 'Secure access to your dedicated civic administration workspace.'
-                : 'Join the platform to submit civic issues or manage municipal field operations.'}
+                : (mode === 'signup'
+                  ? 'Join the platform to submit civic issues or manage municipal field operations.'
+                  : 'Verify your registered Gmail to receive a one-time secure recovery code.')}
             </p>
           </div>
+
+          {/* Forgot Password Success Banner */}
+          <AnimatePresence mode="wait">
+            {forgotSuccessMsg && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                style={{
+                  background: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5',
+                  border: isDark ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid #10b981',
+                  borderRadius: 'var(--radius-sm, 8px)',
+                  padding: '12px 14px',
+                  marginBottom: '18px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  color: isDark ? '#6ee7b7' : '#047857',
+                  fontSize: '0.85rem',
+                  lineHeight: 1.4
+                }}
+              >
+                <CheckCircle2 size={17} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <span>{forgotSuccessMsg}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Auth Notice (e.g. Sign in required to report an issue) */}
           {authNotice && (
@@ -820,8 +971,8 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                   </div>
                 </div>
 
-                {/* Remember Me Checkbox */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                {/* Remember Me Checkbox & Forgot Password Link */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                     <input
                       type="checkbox"
@@ -831,9 +982,30 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                     />
                     <span>Remember my device</span>
                   </label>
-                  <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                    TLS 1.3 End-to-End Encrypted
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('forgot-password');
+                      setError('');
+                      setForgotSuccessMsg('');
+                      setForgotStep('email');
+                      if (signInEmail && signInEmail.includes('@')) {
+                        setForgotEmail(signInEmail);
+                      }
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--accent-cyan)',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      padding: 0,
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Forgot Password?
+                  </button>
                 </div>
 
                 {/* Submit Sign In Button */}
@@ -872,6 +1044,322 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                 </button>
               </form>
             </div>
+          )}
+
+          {/* ================= FORGOT PASSWORD MODE ================= */}
+          {mode === 'forgot-password' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              {forgotStep === 'email' ? (
+                /* Step 1: Request OTP by entering Gmail */
+                <form onSubmit={handleSendForgotOtp}>
+                  <div style={{
+                    background: isDark ? 'rgba(56, 189, 248, 0.08)' : '#f0f9ff',
+                    border: isDark ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid #bae6fd',
+                    borderRadius: '8px',
+                    padding: '12px 14px',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    fontSize: '0.82rem',
+                    color: isDark ? '#bae6fd' : '#0369a1',
+                    lineHeight: 1.45
+                  }}>
+                    <Info size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <div>
+                      <strong>Self-Service Account Recovery:</strong> Enter your registered Gmail address below. We will send a secure 6-digit one-time password (OTP) valid for 10 minutes to reset your password.
+                    </div>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '16px' }}>
+                    <label htmlFor="forgot-email" className="form-label" style={{ fontSize: '0.82rem', fontWeight: 600 }}>
+                      Registered Gmail / Account Email
+                    </label>
+                    <div className="input-with-icon">
+                      <span className="input-icon-left">
+                        <Mail size={17} />
+                      </span>
+                      <input
+                        id="forgot-email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        className="form-input"
+                        placeholder="e.g. resident@gmail.com"
+                        required
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        style={{ fontSize: '0.88rem' }}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{
+                      width: '100%',
+                      height: '46px',
+                      fontSize: '0.92rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      background: 'linear-gradient(135deg, #0284c7, #0369a1)'
+                    }}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="animate-spin" style={{ display: 'inline-block', width: '16px', height: '16px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%' }} />
+                        <span>Sending OTP to Gmail...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Mail size={17} />
+                        <span>Send Verification OTP</span>
+                        <ArrowRight size={17} />
+                      </>
+                    )}
+                  </button>
+
+                  <div style={{ marginTop: '14px', textAlign: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={() => { setMode('signin'); setError(''); setForgotSuccessMsg(''); }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-secondary)',
+                        fontSize: '0.82rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <ArrowLeft size={14} />
+                      <span>Back to Sign In</span>
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                /* Step 2: Enter OTP & Set New Password */
+                <form onSubmit={handleResetPasswordSubmit}>
+                  <div style={{
+                    background: isDark ? 'rgba(16, 185, 129, 0.08)' : '#f0fdf4',
+                    border: isDark ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid #bbf7d0',
+                    borderRadius: '8px',
+                    padding: '12px 14px',
+                    marginBottom: '16px',
+                    fontSize: '0.82rem',
+                    color: isDark ? '#86efac' : '#15803d',
+                    lineHeight: 1.45
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <span style={{ fontWeight: 700 }}>OTP Sent Successfully</span>
+                      <button
+                        type="button"
+                        onClick={() => { setForgotStep('email'); setError(''); setForgotSuccessMsg(''); }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: isDark ? '#38bdf8' : '#0284c7',
+                          fontSize: '0.76rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        Change Email
+                      </button>
+                    </div>
+                    <div>
+                      A 6-digit verification code was dispatched to <strong>{forgotMaskedEmail || forgotEmail}</strong>. Valid for 10 minutes.
+                    </div>
+                  </div>
+
+                  {/* OTP Input */}
+                  <div className="form-group" style={{ marginBottom: '14px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label htmlFor="forgot-otp" className="form-label" style={{ fontSize: '0.82rem', fontWeight: 600, margin: 0 }}>
+                        Enter 6-Digit Gmail OTP
+                      </label>
+                      {resendCooldown > 0 ? (
+                        <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                          Resend in {resendCooldown}s
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleSendForgotOtp}
+                          disabled={loading}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--accent-cyan)',
+                            fontSize: '0.76rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            textDecoration: 'underline',
+                            padding: 0
+                          }}
+                        >
+                          Resend Code
+                        </button>
+                      )}
+                    </div>
+                    <div className="input-with-icon">
+                      <span className="input-icon-left">
+                        <KeyRound size={17} />
+                      </span>
+                      <input
+                        id="forgot-otp"
+                        name="otp"
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        autoComplete="one-time-code"
+                        className="form-input"
+                        placeholder="••••••"
+                        required
+                        value={forgotOtp}
+                        onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        style={{
+                          fontSize: '1.2rem',
+                          fontWeight: 700,
+                          letterSpacing: '8px',
+                          textAlign: 'center'
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* New Password Input */}
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label htmlFor="forgot-new-password" className="form-label" style={{ fontSize: '0.82rem', fontWeight: 600 }}>
+                      New Password
+                    </label>
+                    <div className="input-with-icon">
+                      <span className="input-icon-left">
+                        <Lock size={17} />
+                      </span>
+                      <input
+                        id="forgot-new-password"
+                        name="new-password"
+                        type={showForgotNewPassword ? 'text' : 'password'}
+                        autoComplete="new-password"
+                        className="form-input"
+                        placeholder="At least 4 characters"
+                        required
+                        value={forgotNewPassword}
+                        onChange={(e) => setForgotNewPassword(e.target.value)}
+                        style={{ paddingRight: '40px', fontSize: '0.88rem' }}
+                      />
+                      <button
+                        type="button"
+                        className="input-action-right"
+                        onClick={() => setShowForgotNewPassword(!showForgotNewPassword)}
+                        aria-label={showForgotNewPassword ? 'Hide password' : 'Show password'}
+                        tabIndex={-1}
+                      >
+                        {showForgotNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Confirm New Password Input */}
+                  <div className="form-group" style={{ marginBottom: '16px' }}>
+                    <label htmlFor="forgot-confirm-password" className="form-label" style={{ fontSize: '0.82rem', fontWeight: 600 }}>
+                      Confirm New Password
+                    </label>
+                    <div className="input-with-icon">
+                      <span className="input-icon-left">
+                        <Lock size={17} />
+                      </span>
+                      <input
+                        id="forgot-confirm-password"
+                        name="confirm-password"
+                        type={showForgotConfirmPassword ? 'text' : 'password'}
+                        autoComplete="new-password"
+                        className="form-input"
+                        placeholder="Re-enter your new password"
+                        required
+                        value={forgotConfirmPassword}
+                        onChange={(e) => setForgotConfirmPassword(e.target.value)}
+                        style={{ paddingRight: '40px', fontSize: '0.88rem' }}
+                      />
+                      <button
+                        type="button"
+                        className="input-action-right"
+                        onClick={() => setShowForgotConfirmPassword(!showForgotConfirmPassword)}
+                        aria-label={showForgotConfirmPassword ? 'Hide password' : 'Show password'}
+                        tabIndex={-1}
+                      >
+                        {showForgotConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Submit Reset Button */}
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{
+                      width: '100%',
+                      height: '46px',
+                      fontSize: '0.92rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      background: 'linear-gradient(135deg, #10b981, #059669)'
+                    }}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="animate-spin" style={{ display: 'inline-block', width: '16px', height: '16px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%' }} />
+                        <span>Resetting Password...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck size={18} />
+                        <span>Verify OTP & Reset Password</span>
+                      </>
+                    )}
+                  </button>
+
+                  <div style={{ marginTop: '14px', textAlign: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={() => { setMode('signin'); setError(''); setForgotSuccessMsg(''); }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-secondary)',
+                        fontSize: '0.82rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <ArrowLeft size={14} />
+                      <span>Back to Sign In</span>
+                    </button>
+                  </div>
+                </form>
+              )}
+            </motion.div>
           )}
 
           {/* ================= SIGN UP MODE ================= */}
@@ -1100,7 +1588,7 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                 Need a new account?{' '}
                 <button
                   type="button"
-                  onClick={() => { setMode('signup'); setError(''); }}
+                  onClick={() => { setMode('signup'); setError(''); setForgotSuccessMsg(''); }}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -1113,12 +1601,12 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                   Create Account Here
                 </button>
               </>
-            ) : (
+            ) : mode === 'signup' ? (
               <>
                 Already registered?{' '}
                 <button
                   type="button"
-                  onClick={() => { setMode('signin'); setError(''); }}
+                  onClick={() => { setMode('signin'); setError(''); setForgotSuccessMsg(''); }}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -1129,6 +1617,24 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                   }}
                 >
                   Sign In to Your Role
+                </button>
+              </>
+            ) : (
+              <>
+                Remembered your password?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setMode('signin'); setError(''); setForgotSuccessMsg(''); }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--accent-cyan)',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Return to Sign In
                 </button>
               </>
             )}
