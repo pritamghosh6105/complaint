@@ -830,20 +830,6 @@
       "__v": 0
     },
     {
-      "_id": "6aaefd04775e39c2cf2585ff",
-      "id": 103,
-      "name": "Amit Roy (Citizen)",
-      "email": "citizen.amit@demo.com",
-      "password_hash": "$2b$10$xUT2WOWEg7w47DIEFVCKNum172w7zkKAw/SX1EDhiH5o3.ehd5nc2",
-      "role": "citizen",
-      "phone": "+91 98333 44556",
-      "department_id": null,
-      "ward": "Ward 12",
-      "created_at": "2026-09-19T21:21:49.423Z",
-      "updated_at": "2026-09-19T21:21:49.423Z",
-      "__v": 0
-    },
-    {
       "_id": "6aaefd04775e39c2cf258600",
       "id": 104,
       "name": "Officer Tanvi Sen (Drainage)",
@@ -856,48 +842,6 @@
       "created_at": "2026-09-19T21:21:49.423Z",
       "updated_at": "2026-09-19T21:21:49.423Z",
       "__v": 0
-    },
-    {
-      "_id": "6aca917fea4a6d20968fe4f6",
-      "id": 105,
-      "__v": 0,
-      "created_at": "2026-10-10T19:26:57.174Z",
-      "department_id": null,
-      "email": "testcitizen_380682@wb.gov.in",
-      "name": "Citizen Test 380682",
-      "password_hash": "$2b$10$2DLUGGTNivXFzIdbIIz01O7t3vPXPtbHep1GcqzNxJnGccfuADxai",
-      "phone": "9876380682",
-      "role": "citizen",
-      "updated_at": "2026-10-10T19:26:57.174Z",
-      "ward": "Ward 1"
-    },
-    {
-      "_id": "6aca9443ea4a6d20968fe507",
-      "id": 106,
-      "__v": 0,
-      "created_at": "2026-10-10T19:38:45.531Z",
-      "department_id": null,
-      "email": "testcitizen_469021@wb.gov.in",
-      "name": "Citizen Test 469021",
-      "password_hash": "$2b$10$alwSyfxgADGjBUvZSR6R2u3KC6GQb7UnMsNAipbPNBuHXr2dWnEWW",
-      "phone": "9876469021",
-      "role": "citizen",
-      "updated_at": "2026-10-10T19:38:45.531Z",
-      "ward": "Ward 1"
-    },
-    {
-      "_id": "6aca95fbea4a6d20968fe520",
-      "id": 107,
-      "__v": 0,
-      "created_at": "2026-10-10T19:46:06.010Z",
-      "department_id": null,
-      "email": "testcitizen_253620@wb.gov.in",
-      "name": "Citizen Test 253620",
-      "password_hash": "$2b$10$MwNUhmThXi/puUxB3lZP0uN.PeZ7DG5NNxCkbCLlfUtPHqBGG.rve",
-      "phone": "9876253620",
-      "role": "citizen",
-      "updated_at": "2026-10-10T19:46:06.010Z",
-      "ward": "Ward 1"
     },
     {
       "_id": "6ae4cf5a6edacea4d9136d16",
