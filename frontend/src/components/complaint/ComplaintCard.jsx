@@ -8,6 +8,26 @@ export default function ComplaintCard({ complaint, onClick }) {
 
   const trackingCode = complaint.tracking_id || `CP-${complaint.id}`;
 
+  // Format meaningful location display: District • Municipality / Ward / Locality
+  const formatLocation = () => {
+    const parts = [];
+    if (complaint.district) parts.push(complaint.district);
+    if (complaint.municipality && complaint.municipality !== complaint.district) {
+      parts.push(complaint.municipality);
+    }
+    const localArea = complaint.ward || complaint.locality || complaint.block || complaint.police_station;
+    if (localArea && !parts.includes(localArea)) {
+      parts.push(localArea);
+    }
+    if (parts.length > 0) return parts.join(' • ');
+
+    if (complaint.address) {
+      const cleanAddr = complaint.address.split(',')[0].trim();
+      if (cleanAddr && cleanAddr.length > 2) return cleanAddr;
+    }
+    return 'West Bengal Jurisdiction';
+  };
+
   return (
     <div 
       className="gov-card gov-card-interactive" 
@@ -75,9 +95,8 @@ export default function ComplaintCard({ complaint, onClick }) {
           marginBottom: '12px'
         }}>
           <MapPin size={14} color="var(--color-accent)" style={{ flexShrink: 0 }} />
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {complaint.district ? `${complaint.district} • ` : ''}
-            {complaint.ward || complaint.police_station || 'Municipal Sector'}
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={formatLocation()}>
+            {formatLocation()}
           </span>
         </div>
 

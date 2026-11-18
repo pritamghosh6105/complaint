@@ -502,7 +502,12 @@ export default function NewComplaint({ setCurrentRoute, setSelectedComplaintId }
       formData.append('department_name', resolvedCategory);
       formData.append('target_department', resolvedCategory);
       formData.append('location_type', locationType);
-      formData.append('ward', locationData.ward || locationData.gram_panchayat || 'Ward 1');
+      const effectiveWard = locationData.ward || 
+                            locationData.gram_panchayat || 
+                            (locationData.municipality ? `${locationData.municipality} Zone` : '') ||
+                            (locationData.block ? `${locationData.block} Block` : '') ||
+                            (locationData.district ? `${locationData.district} Area` : '');
+      formData.append('ward', effectiveWard);
       formData.append('address', locationData.address_formatted || locationData.address || 'West Bengal');
       formData.append('userEnteredAddress', locationData.userEnteredAddress || locationData.address_formatted || title || '');
       formData.append('affected_count', affectedCount);

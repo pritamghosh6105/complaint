@@ -1589,7 +1589,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": ""
+      "ward": "Ward 48 (Bowbazar)"
     },
     {
       "_id": "6abac4713a0951c1ad36f914",
@@ -1716,7 +1716,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": ""
+      "ward": "Ward 31 (Salt Lake)"
     },
     {
       "_id": "6abac5083a0951c1ad36f91b",
@@ -1843,7 +1843,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": ""
+      "ward": "Ward 14 (Belgharia)"
     },
     {
       "_id": "6abac82b3a0951c1ad36f932",
@@ -1970,7 +1970,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": ""
+      "ward": "Ward 12 (City Centre, Durgapur)"
     },
     {
       "_id": "6aca9187ea4a6d20968fe4f9",
@@ -1987,7 +1987,7 @@
       "created_at": "2026-10-10T19:27:05.769Z",
       "department_id": 6,
       "description": "Severe water logging after afternoon heavy showers near Presidency University. Drainage choked.",
-      "district": "Kolkata",
+      "district": "Uttar Dinajpur",
       "duplicate_of_id": null,
       "duplicate_similarity": 0,
       "escalated_to": null,
@@ -2097,7 +2097,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": ""
+      "ward": "Ward 8 (Siliguri More, Raiganj)"
     },
     {
       "_id": "6aca9447ea4a6d20968fe50b",
@@ -2198,7 +2198,7 @@
       "ml_predicted_category": "Higher Education",
       "ml_predicted_priority": "MEDIUM",
       "mouza": "",
-      "municipality": "",
+      "municipality": "KMC",
       "officer_id": null,
       "police_station": "",
       "postal_code": "",
@@ -2224,7 +2224,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": ""
+      "ward": "Ward 44 (College Square)"
     },
     {
       "_id": "6aca95feea4a6d20968fe521",
@@ -2325,7 +2325,7 @@
       "ml_predicted_category": "Higher Education",
       "ml_predicted_priority": "MEDIUM",
       "mouza": "",
-      "municipality": "",
+      "municipality": "KMC",
       "officer_id": null,
       "police_station": "",
       "postal_code": "",
@@ -2351,7 +2351,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": ""
+      "ward": "Ward 66 (Topsia)"
     },
     {
       "_id": "6ae4cf956edacea4d9136d28",
@@ -2781,7 +2781,7 @@
       "created_at": "2026-10-31T16:03:03.446Z",
       "department_id": 2,
       "description": "Paragraph 1: The petitioner hereby submits an official grievance concerning multiple unauthorized transactions executed through the Unified Payments Interface (UPI) platform, which have resulted in substantial monetary loss to several residents. The incidents were identified over the past month and appear to be systematic in nature, indicating possible coordinated fraud.\r\n\r\nParagraph 2: The fraudulent activity is purely digital, involving the misuse of mobile banking applications and virtual payment identifiers. Although no physical infrastructure is directly implicated, the pervasive use of UPI services across the community means that a large number of citizens are vulnerable to such scams.\r\n\r\nParagraph 3: While the situation does not constitute an immediate life‑safety hazard, the financial impact poses a serious threat to the economic well‑being of affected individuals, potentially leading to distress, loss of essential services, and reduced confidence in digital payment systems.\r\n\r\nParagraph 4: The petitioner respectfully urges the concerned municipal authority to initiate a prompt, thorough investigation, coordinate with the relevant banking and cyber‑crime agencies, and implement preventive measures such as public awareness campaigns, stricter verification protocols, and rapid redressal mechanisms for victims.",
-      "district": "Kolkata",
+      "district": "Nadia",
       "duplicate_of_id": null,
       "duplicate_similarity": 0,
       "escalated_to": null,
@@ -2899,7 +2899,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 9 (Kalyani)",
       "triage_reason": "Officer on-ground verification: active life-safety hazard confirmed. Rapid 24-hour emergency SLA locked.",
       "triage_status": "CONFIRMED_CRITICAL",
       "triaged_at": "2026-11-08T19:45:38.931Z",
@@ -3149,7 +3149,7 @@
       "ml_predicted_category": "CLASSIFICATION_UNCERTAIN",
       "ml_predicted_priority": "CRITICAL",
       "mouza": "",
-      "municipality": "",
+      "municipality": "KMC",
       "officer_id": 150,
       "original_predicted_department": "CLASSIFICATION_UNCERTAIN",
       "police_station": "Anandapur Police Station",
@@ -3185,7 +3185,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1"
+      "ward": "Ward 37 (Maniktala)"
     },
     {
       "_id": "6af0dee5f4d7a2d3548029f5",
@@ -3291,7 +3291,7 @@
       "ml_predicted_category": "Railway-related Public Complaints",
       "ml_predicted_priority": "CRITICAL",
       "mouza": "",
-      "municipality": "",
+      "municipality": "KMC",
       "officer_id": 165,
       "original_citizen_input": "A grievance has been submitted regarding: Mobile phone stolen at a railway station. Kindly review the reported issue and assign the relevant field unit for verification.",
       "original_predicted_department": "Railway-related Public Complaints",
@@ -3329,7 +3329,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 50 (Sealdah)",
       "was_overridden_by_citizen": false
     },
     {
@@ -3436,7 +3436,7 @@
       "ml_predicted_category": "Cyber Crime",
       "ml_predicted_priority": "CRITICAL",
       "mouza": "",
-      "municipality": "",
+      "municipality": "KMC",
       "officer_id": 147,
       "original_citizen_input": "I am reporting a suspected fraudulent transaction / cybercrime incident involving: Fake job recruitment scam. Kindly review the complaint, record the incident details, and guide me on the formal cybercrime verification process.",
       "original_predicted_department": "Cyber Crime",
@@ -3474,7 +3474,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 112 (Garia)",
       "was_overridden_by_citizen": false
     },
     {
@@ -3625,7 +3625,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "",
+      "ward": "Ward 48 (Bowbazar)",
       "was_overridden_by_citizen": false
     },
     {
@@ -3650,7 +3650,7 @@
         "Dense, thick black smoke billowing into the sky from the burning structure.",
         "Emergency fire response crew utilizing high-pressure water hoses to control the blaze from ground level."
       ],
-      "district": "Kolkata",
+      "district": "North 24 Parganas",
       "duplicate_of_id": null,
       "duplicate_similarity": 0,
       "escalated_to": null,
@@ -3777,7 +3777,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 31 (Salt Lake)",
       "was_overridden_by_citizen": false
     },
     {
@@ -3802,7 +3802,7 @@
         "Dense, thick black smoke billowing into the sky from the burning structure.",
         "Emergency fire response crew utilizing high-pressure water hoses to control the blaze from ground level."
       ],
-      "district": "Kolkata",
+      "district": "North 24 Parganas",
       "duplicate_of_id": 18,
       "duplicate_similarity": 100,
       "escalated_to": null,
@@ -3929,7 +3929,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 14 (Belgharia)",
       "was_overridden_by_citizen": false
     },
     {
@@ -3954,7 +3954,7 @@
         "Dense, thick black smoke billowing into the sky from the burning structure.",
         "Emergency fire response crew utilizing high-pressure water hoses to control the blaze from ground level."
       ],
-      "district": "Kolkata",
+      "district": "Paschim Bardhaman",
       "duplicate_of_id": 19,
       "duplicate_similarity": 100,
       "escalated_to": null,
@@ -4041,7 +4041,7 @@
       "ml_predicted_category": "Fire & Emergency Services",
       "ml_predicted_priority": "CRITICAL",
       "mouza": "",
-      "municipality": "",
+      "municipality": "Durgapur Municipal Corp",
       "officer_id": 156,
       "original_citizen_input": "An urgent fire / smoke emergency has been reported: Factory building fire. Immediate dispatch and safety cordon required.",
       "original_predicted_department": "Fire & Emergency Services",
@@ -4081,7 +4081,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 12 (City Centre, Durgapur)",
       "was_overridden_by_citizen": false
     },
     {
@@ -4232,7 +4232,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 8 (Siliguri More, Raiganj)",
       "was_overridden_by_citizen": false
     },
     {
@@ -4384,7 +4384,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 44 (College Square)",
       "was_overridden_by_citizen": false
     },
     {
@@ -4495,7 +4495,7 @@
       "ml_predicted_category": "Fire & Emergency Services",
       "ml_predicted_priority": "MEDIUM",
       "mouza": "",
-      "municipality": "",
+      "municipality": "KMC",
       "officer_id": 146,
       "original_citizen_input": "An urgent fire / smoke emergency has been reported: Factory building fire. Immediate dispatch and safety cordon required.",
       "original_predicted_department": "Fire & Emergency Services",
@@ -4535,7 +4535,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "",
+      "ward": "Ward 66 (Topsia)",
       "was_overridden_by_citizen": false,
       "transfer_reason": "i think so",
       "transferred_at": "2026-11-09T17:32:00.134Z",
@@ -4654,7 +4654,7 @@
       "ml_predicted_category": "Fire & Emergency Services",
       "ml_predicted_priority": "CRITICAL",
       "mouza": "",
-      "municipality": "",
+      "municipality": "KMC",
       "officer_id": 156,
       "original_citizen_input": "An urgent fire / smoke emergency has been reported: Factory building fire. Immediate dispatch and safety cordon required.",
       "original_predicted_department": "Fire & Emergency Services",
@@ -4694,7 +4694,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 85 (Ballygunge)",
       "was_overridden_by_citizen": false
     },
     {
@@ -4853,7 +4853,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 101 (Patuli)",
       "was_overridden_by_citizen": false
     },
     {
@@ -5011,7 +5011,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 5 (Barasat)",
       "was_overridden_by_citizen": false
     },
     {
@@ -5036,7 +5036,7 @@
         "Substantial amounts of refuse and plastic bags are scattered on the ground around the bins.",
         "The waste spill encroaches upon the pedestrian walkway and roadside."
       ],
-      "district": "Kolkata",
+      "district": "Nadia",
       "duplicate_of_id": null,
       "duplicate_similarity": 82,
       "escalated_to": null,
@@ -5170,7 +5170,7 @@
       "village": "",
       "visual_analysis_id": null,
       "visual_priority": null,
-      "ward": "Ward 1",
+      "ward": "Ward 9 (Kalyani)",
       "was_overridden_by_citizen": false
     }
   ],

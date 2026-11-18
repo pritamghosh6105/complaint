@@ -30,7 +30,7 @@ class ComplaintController {
         longitude: Number(longitude) || 88.4340,
         severity: severity || 'Medium',
         location_type: location_type || 'Residential',
-        ward: ward || 'Ward 1',
+        ward: ward || '',
         affected_count: Number(affected_count) || 50,
         existing_complaints: activeComplaints
       });
@@ -154,7 +154,7 @@ class ComplaintController {
         longitude: lng,
         severity: severity || 'Medium',
         location_type: location_type || 'Residential',
-        ward: ward || gram_panchayat || 'Ward 1',
+        ward: ward || gram_panchayat || (municipality ? `${municipality} Zone` : (district ? `${district} Sector` : '')),
         affected_count: Number(affected_count) || 50,
         existing_complaints: activeComplaints
       });
@@ -568,8 +568,14 @@ class ComplaintController {
             status: c.status,
             latitude: latJitter,
             longitude: lngJitter,
-            ward: c.ward,
-            address: `${c.ward || 'Municipal Ward'} (Protected Law Enforcement Case)`,
+            state: c.state || 'West Bengal',
+            district: c.district || '',
+            municipality: c.municipality || '',
+            block: c.block || '',
+            ward: c.ward || '',
+            locality: c.locality || '',
+            police_station: c.police_station || '',
+            address: `${c.district ? c.district + ' • ' : ''}${c.ward || c.municipality || 'Municipal Jurisdiction'} (Protected Sensitive Case)`,
             image_url: null, // Redacted for victim privacy
             resolution_image_url: null,
             is_crime: true,
@@ -589,7 +595,13 @@ class ComplaintController {
           status: c.status,
           latitude: c.latitude,
           longitude: c.longitude,
-          ward: c.ward,
+          state: c.state || 'West Bengal',
+          district: c.district || '',
+          municipality: c.municipality || '',
+          block: c.block || '',
+          ward: c.ward || '',
+          locality: c.locality || '',
+          police_station: c.police_station || '',
           address: c.address,
           image_url: null, // Redacted: Evidence not shown to public, only given to complaint authority
           resolution_image_url: null,
