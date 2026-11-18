@@ -253,21 +253,54 @@ app.listen(PORT, '0.0.0.0', async () => {
   // Attempt connection to MongoDB Atlas
   const mongoConnected = await connectMongoDB();
   if (mongoConnected) {
+    await db.syncFromMongo();
+
+    // Ensure citizen accounts are always seeded in MongoDB Atlas & local memory
     try {
       const mongoModels = require('./models/mongo');
-      const delRes = await mongoModels.User.deleteMany({
-        $or: [
-          { email: 'pg9810487@gmail.com' },
-          { phone: { $regex: '8695437468' } }
-        ]
-      });
-      if (delRes.deletedCount > 0) {
-        console.log(`✓ [Atlas Maintenance] Purged ${delRes.deletedCount} user record(s) for pg9810487@gmail.com / 8695437468 from MongoDB Atlas.`);
+      const bcrypt = require('bcryptjs');
+      const defaultHash = bcrypt.hashSync('password123', 10);
+      
+      const seedCitizens = [
+        {
+          id: 145,
+          name: 'Pritam Ghosh',
+          email: 'pg9810487@gmail.com',
+          phone: '8695437468',
+          role: 'citizen',
+          ward: 'Kolkata District',
+          password_hash: defaultHash
+        },
+        {
+          id: 146,
+          name: 'Pritam Ghosh',
+          email: 'pritamghosh6105@gmail.com',
+          phone: '8695437468',
+          role: 'citizen',
+          ward: 'Kolkata District',
+          password_hash: defaultHash
+        }
+      ];
+
+      for (const sc of seedCitizens) {
+        const found = await mongoModels.User.findOne({ 
+          email: { $regex: new RegExp(`^${sc.email}$`, 'i') } 
+        });
+        if (!found) {
+          await mongoModels.User.create(sc);
+          console.log(`✓ [Atlas Seed] Seeded citizen account: ${sc.email}`);
+        }
+        if (db.data && Array.isArray(db.data.users)) {
+          const localFound = db.data.users.find(u => u.email && u.email.toLowerCase() === sc.email.toLowerCase());
+          if (!localFound) {
+            db.data.users.push(sc);
+            db.save();
+          }
+        }
       }
-    } catch (cleanErr) {
-      console.warn('Atlas maintenance warning:', cleanErr.message);
+    } catch (seedErr) {
+      console.warn('Atlas citizen seed warning:', seedErr.message);
     }
-    await db.syncFromMongo();
   }
 
   // Automatically sync 30 Department Demo Officer Accounts

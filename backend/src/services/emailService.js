@@ -143,7 +143,7 @@ class EmailService {
           html: htmlContent
         });
 
-        const timeoutPromise = new Promise((_, reject) => 
+        const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('SMTP timeout: Host may block outbound email ports')), 4500)
         );
 
@@ -164,10 +164,10 @@ class EmailService {
     console.log(`OTP Code: \x1b[32m\x1b[1m${otpCode}\x1b[0m (Valid for 10 minutes)`);
     console.log('='.repeat(70) + '\n');
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       mode: 'console_simulated',
-      debug_otp: otpCode 
+      debug_otp: otpCode
     };
   }
 }
