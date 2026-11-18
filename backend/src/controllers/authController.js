@@ -261,7 +261,10 @@ class AuthController {
       }
 
       db.load();
-      let user = db.prepare('SELECT id, name, email, role FROM users WHERE LOWER(email) = ?').get(email);
+      let user = db.prepare('SELECT id, name, email, role FROM users WHERE email = ?').get(email);
+      if (!user && db.data && Array.isArray(db.data.users)) {
+        user = db.data.users.find(u => u.email && u.email.toLowerCase() === email);
+      }
       if (!user) {
         // Fallback: check MongoDB Atlas directly
         try {
