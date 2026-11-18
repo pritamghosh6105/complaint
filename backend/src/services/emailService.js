@@ -1,3 +1,6 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 class EmailService {
@@ -163,3 +166,4 @@ class EmailService {
 }
 
 module.exports = new EmailService();
+
