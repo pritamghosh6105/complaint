@@ -195,20 +195,7 @@ npm run dev -- --port 3000
 
 ---
 
-## 🔑 Demo & Academic Review Credentials
 
-For immediate evaluation, the following pre-configured test accounts are available:
-
-| Portal Role | Email / Officer ID | Password | Access Description |
-| :--- | :--- | :--- | :--- |
-| **Citizen Portal** | `citizen@demo.com` | `password123` *(or `6105`)* | Grievance reporting, voice filing, tracking |
-| **Municipal Administrator** | `admin@demo.com` | `password123` *(or `6105`)* | System-wide analytics, SLA watchdog, heatmap |
-| **Field Officer (Police)** | `demo.pol@civicpulse.gov.in` | `password123` *(or `6105`)* | Law enforcement task management |
-| **Field Officer (Roads & PWD)** | `demo.rpw@civicpulse.gov.in` | `password123` *(or `6105`)* | Pothole, paving & structural repairs |
-| **Field Officer (Water Supply)** | `demo.wat@civicpulse.gov.in` | `password123` *(or `6105`)* | Pipeline bursts, potable water shortages |
-| **30-Department Vault** | *Any of 30 Officer Accounts* | *Unlock Key: `6105`* | Click **"Unlock Officer Demo Vault"** on the login page |
-
----
 
 ## 🌐 Core API Endpoints
 
