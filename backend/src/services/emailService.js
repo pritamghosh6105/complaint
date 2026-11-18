@@ -17,7 +17,10 @@ class EmailService {
       try {
         this.transporter = nodemailer.createTransport({
           service: 'gmail',
-          auth: { user: user.trim(), pass: pass.trim() }
+          auth: { user: user.trim(), pass: pass.trim() },
+          connectionTimeout: 4000,
+          greetingTimeout: 4000,
+          socketTimeout: 5000
         });
         console.log('\x1b[32m%s\x1b[0m', `✓ [EmailService] Gmail SMTP Transport initialized for: ${user}`);
       } catch (err) {
@@ -132,7 +135,7 @@ class EmailService {
     // Attempt real Gmail SMTP dispatch if configured
     if (this.transporter) {
       try {
-        const info = await this.transporter.sendMail({
+        const sendPromise = this.transporter.sendMail({
           from: `"CivicPulse.AI Support" <${fromAddress}>`,
           to: cleanEmail,
           subject,
@@ -140,11 +143,16 @@ class EmailService {
           html: htmlContent
         });
 
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('SMTP timeout: Host may block outbound email ports')), 4500)
+        );
+
+        const info = await Promise.race([sendPromise, timeoutPromise]);
+
         console.log('\x1b[32m%s\x1b[0m', `✓ [EmailService] Gmail OTP successfully dispatched to ${cleanEmail}. Message ID: ${info.messageId}`);
-        return { success: true, mode: 'gmail_smtp', messageId: info.messageId };
+        return { success: true, mode: 'gmail_smtp', messageId: info.messageId, debug_otp: otpCode };
       } catch (sendErr) {
-        console.error('Gmail SMTP Dispatch Error:', sendErr.message);
-        // Fallback to local console log
+        console.warn(`⚠️ [EmailService] SMTP Dispatch failed (${sendErr.message}). Using fallback.`);
       }
     }
 
@@ -154,7 +162,6 @@ class EmailService {
     console.log(`To: \x1b[36m${cleanEmail}\x1b[0m (${displayName})`);
     console.log(`Subject: ${subject}`);
     console.log(`OTP Code: \x1b[32m\x1b[1m${otpCode}\x1b[0m (Valid for 10 minutes)`);
-    console.log('\x1b[90m%s\x1b[0m', 'Note: To deliver real emails, set GMAIL_USER and GMAIL_APP_PASSWORD in backend/.env');
     console.log('='.repeat(70) + '\n');
 
     return { 

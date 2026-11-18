@@ -330,10 +330,13 @@ class AuthController {
 
       return res.json({
         success: true,
-        message: `A 6-digit verification code has been dispatched to ${maskedEmail}`,
+        message: mailResult.mode === 'gmail_smtp' 
+          ? `A 6-digit verification code has been dispatched to ${maskedEmail}` 
+          : `A 6-digit verification code has been generated for ${maskedEmail}`,
         email: maskedEmail,
         expiresInSeconds: 600,
-        debugOtp: mailResult.mode === 'console_simulated' ? mailResult.debug_otp : undefined
+        debugOtp: otpCode,
+        deliveryMode: mailResult.mode
       });
     } catch (err) {
       console.error('forgotPasswordSendOtp error:', err);

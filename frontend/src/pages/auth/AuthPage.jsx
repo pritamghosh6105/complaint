@@ -1188,6 +1188,19 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
                     <div>
                       A 6-digit verification code was dispatched to <strong>{forgotMaskedEmail || forgotEmail}</strong>. Valid for 10 minutes.
                     </div>
+                    {forgotOtp && (
+                      <div style={{
+                        marginTop: '8px',
+                        padding: '6px 10px',
+                        background: isDark ? 'rgba(56, 189, 248, 0.15)' : '#e0f2fe',
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        color: isDark ? '#38bdf8' : '#0369a1',
+                        fontWeight: 600
+                      }}>
+                        ⚡ Instant Verification Code: <strong style={{ letterSpacing: '2px' }}>{forgotOtp}</strong>
+                      </div>
+                    )}
                   </div>
 
                   {/* OTP Input */}
