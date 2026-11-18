@@ -438,7 +438,12 @@ export default function AuthPage({ initialMode = 'signin', setCurrentRoute, onSu
       setForgotMaskedEmail(res.data.email || cleanEmail);
       setForgotStep('otp');
       setResendCooldown(60);
-      setForgotSuccessMsg(res.data.message || `Verification code sent to ${cleanEmail}`);
+      if (res.data?.debugOtp) {
+        setForgotOtp(res.data.debugOtp);
+        setForgotSuccessMsg(`Verification code sent to ${cleanEmail}. (Code: ${res.data.debugOtp})`);
+      } else {
+        setForgotSuccessMsg(res.data?.message || `Verification code sent to ${cleanEmail}`);
+      }
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to send OTP to your Gmail. Please try again.');
     } finally {

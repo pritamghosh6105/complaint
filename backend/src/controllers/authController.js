@@ -261,18 +261,45 @@ class AuthController {
       }
 
       db.load();
-      const user = db.prepare('SELECT id, name, email, role FROM users WHERE email = ?').get(email);
+      let user = db.prepare('SELECT id, name, email, role FROM users WHERE LOWER(email) = ?').get(email);
+      if (!user) {
+        // Fallback: check MongoDB Atlas directly
+        try {
+          const mongoModels = require('../models/mongo');
+          const mongoUser = await mongoModels.User.findOne({ 
+            email: { $regex: new RegExp(`^${email}$`, 'i') } 
+          }).lean();
+          if (mongoUser) {
+            user = {
+              id: mongoUser.id || mongoUser._id,
+              name: mongoUser.name,
+              email: mongoUser.email,
+              role: mongoUser.role
+            };
+            if (db.data && Array.isArray(db.data.users)) {
+              const alreadyHas = db.data.users.some(u => u.email && u.email.toLowerCase() === email);
+              if (!alreadyHas) {
+                db.data.users.push(mongoUser);
+                db.save();
+              }
+            }
+          }
+        } catch (mErr) {
+          console.warn('Mongo fallback lookup error:', mErr.message);
+        }
+      }
+
       if (!user) {
         return res.status(404).json({ 
           error: 'No account registered with this email address. Please check your spelling or register a new account.' 
         });
       }
 
-      // Rate limiting: Require at least 30 seconds between OTP requests
+      // Rate limiting: Require at least 15 seconds between OTP requests
       const existing = passwordResetStore.get(email);
       const now = Date.now();
-      if (existing && (now - existing.createdAt < 30 * 1000)) {
-        const remaining = Math.ceil((30 * 1000 - (now - existing.createdAt)) / 1000);
+      if (existing && (now - existing.createdAt < 15 * 1000)) {
+        const remaining = Math.ceil((15 * 1000 - (now - existing.createdAt)) / 1000);
         return res.status(429).json({
           error: `Please wait ${remaining} seconds before requesting another verification code.`
         });
@@ -389,7 +416,30 @@ class AuthController {
 
       // Validated: Hash new password and update user in database
       const passwordHash = bcrypt.hashSync(newPassword, 10);
-      const updatedUser = db.updateUserPassword(email, passwordHash);
+      let updatedUser = db.updateUserPassword(email, passwordHash);
+
+      if (!updatedUser) {
+        try {
+          const mongoModels = require('../models/mongo');
+          const mUser = await mongoModels.User.findOneAndUpdate(
+            { email: { $regex: new RegExp(`^${email}$`, 'i') } },
+            { $set: { password_hash: passwordHash, updated_at: new Date() } },
+            { new: true }
+          ).lean();
+          if (mUser) {
+            updatedUser = {
+              id: mUser.id || mUser._id,
+              name: mUser.name,
+              email: mUser.email,
+              role: mUser.role,
+              ward: mUser.ward,
+              department_id: mUser.department_id
+            };
+          }
+        } catch (mErr) {
+          console.warn('Mongo fallback password update error:', mErr.message);
+        }
+      }
 
       if (!updatedUser) {
         return res.status(404).json({ error: 'User record not found.' });

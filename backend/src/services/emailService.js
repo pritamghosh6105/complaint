@@ -10,8 +10,8 @@ class EmailService {
   }
 
   initTransporter() {
-    const user = process.env.GMAIL_USER || process.env.EMAIL_USER || process.env.SMTP_USER;
-    const pass = process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASS || process.env.SMTP_PASS;
+    const user = process.env.GMAIL_USER || process.env.EMAIL_USER || process.env.SMTP_USER || 'projectasps12345@gmail.com';
+    const pass = process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASS || process.env.SMTP_PASS || 'pjvaxrsbknvmnwyw';
 
     if (user && pass) {
       try {
@@ -30,8 +30,8 @@ class EmailService {
   }
 
   isConfigured() {
-    const user = process.env.GMAIL_USER || process.env.EMAIL_USER || process.env.SMTP_USER;
-    const pass = process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASS || process.env.SMTP_PASS;
+    const user = process.env.GMAIL_USER || process.env.EMAIL_USER || process.env.SMTP_USER || 'projectasps12345@gmail.com';
+    const pass = process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASS || process.env.SMTP_PASS || 'pjvaxrsbknvmnwyw';
     return Boolean(user && pass);
   }
 
@@ -39,7 +39,7 @@ class EmailService {
    * Send Password Reset OTP Email
    */
   async sendPasswordResetOtp(toEmail, userName, otpCode) {
-    const fromAddress = process.env.GMAIL_USER || process.env.EMAIL_USER || 'no-reply@civicpulse.wb.gov.in';
+    const fromAddress = process.env.GMAIL_USER || process.env.EMAIL_USER || 'projectasps12345@gmail.com';
     const cleanEmail = toEmail.toLowerCase().trim();
     const displayName = userName || 'Citizen / Officer';
     const currentYear = new Date().getFullYear();
