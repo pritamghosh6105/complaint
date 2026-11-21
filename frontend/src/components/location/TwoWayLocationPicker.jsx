@@ -242,6 +242,74 @@ function CustomMapControls({ lat, lng, gpsDotLocation }) {
   );
 }
 
+/**
+ * Strict Granularity Reverse Geocode Formatter conforming to:
+ * - Priority 1 (Specific POI / Road): amenity / building / shop / railway / road
+ * - Priority 2 (Local Settlement): neighbourhood || suburb || village || town || city_district || hamlet
+ * - Priority 3 (Block / Tehsil - only if Priority 2 missing): county || state_district
+ * - Format: [Road/Landmark if available], [Village/Town/Suburb], [District], [State] - [Postcode]
+ * - Never prepend "Near <Block>" when a valid settlement exists
+ */
+function formatGranularAddress(addr, nearbyPoi = '') {
+  if (!addr) return { formatted: '', settlement: '', road: '', district: '', pin: '' };
+
+  // Priority 1: Specific POI / Road
+  let p1 = addr.amenity || addr.building || addr.shop || addr.railway || addr.road || addr.highway || addr.pedestrian || addr.footway || nearbyPoi || '';
+  if (['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(p1).toLowerCase())) {
+    p1 = nearbyPoi || '';
+  }
+
+  // Priority 2: Local Settlement
+  const p2 = addr.neighbourhood || addr.suburb || addr.village || addr.town || addr.city_district || addr.hamlet || addr.city || '';
+
+  // Priority 3: Block / Tehsil (ONLY use if Priority 2 is missing)
+  const p3 = (!p2) ? (addr.county || addr.subdistrict || '') : '';
+
+  const settlement = (p2 || p3 || '').trim();
+
+  // District: prefer state_district over county to avoid CD blocks like 'Habra - II'
+  let district = '';
+  if (addr.state_district) {
+    district = addr.state_district;
+  } else if (addr.county && !addr.county.includes('-') && !addr.county.toLowerCase().includes('block')) {
+    district = addr.county;
+  } else {
+    district = addr.county || 'North 24 Parganas';
+  }
+  district = district.replace(/\s*district\s*/gi, '').trim();
+
+  const state = addr.state || 'West Bengal';
+  const pin = addr.postcode || '';
+
+  const parts = [];
+  if (p1 && p1.toLowerCase() !== settlement.toLowerCase()) {
+    parts.push(p1);
+  }
+  if (settlement) {
+    parts.push(settlement);
+  }
+  if (district && district.toLowerCase() !== settlement.toLowerCase()) {
+    parts.push(district);
+  }
+  if (state) {
+    parts.push(state);
+  }
+
+  let formatted = parts.join(', ');
+  if (pin) {
+    formatted += ` - ${pin}`;
+  }
+
+  return {
+    formatted,
+    settlement,
+    road: p1,
+    district,
+    state,
+    pin
+  };
+}
+
 export default function TwoWayLocationPicker({
   initialLat = 22.7230,
   initialLng = 88.4800,
@@ -434,6 +502,70 @@ export default function TwoWayLocationPicker({
     setLoadingReverse(true);
     setErrorMessage('');
     try {
+      // 1. High-Detail Client-Side Reverse Geocoding via Nominatim (zoom=18&addressdetails=1)
+      let clientGranular = null;
+      try {
+        const clientRes = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18&addressdetails=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+
+        if (clientRes.ok) {
+          const cData = await clientRes.json();
+          const cAddr = cData?.address || {};
+
+          // Priority 1: Specific POI / Road
+          let p1 = cAddr.amenity || cAddr.building || cAddr.shop || cAddr.railway || cAddr.road || cAddr.highway || cAddr.pedestrian || cAddr.footway || '';
+          if (['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(p1).toLowerCase())) {
+            p1 = '';
+          }
+
+          // If exact point lacks a street name at zoom=18, probe nearby features (zoom=17 or nearby station/feature)
+          let nearbyFeature = '';
+          if (!p1) {
+            try {
+              const z17Res = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=17&addressdetails=1`,
+                { headers: { 'Accept-Language': 'en' } }
+              );
+              if (z17Res.ok) {
+                const z17Data = await z17Res.json();
+                const z17Addr = z17Data?.address || {};
+                const candidate = z17Addr.road || z17Addr.railway || z17Addr.amenity || z17Addr.building || z17Addr.shop || '';
+                if (candidate && !['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(candidate).toLowerCase())) {
+                  nearbyFeature = candidate;
+                }
+              }
+            } catch (e17) {
+              // Ignore zoom 17 probe error
+            }
+
+            if (!nearbyFeature) {
+              try {
+                const searchRes = await fetch(
+                  `https://nominatim.openstreetmap.org/search?format=json&bounded=1&viewbox=${targetLng - 0.004},${targetLat + 0.004},${targetLng + 0.004},${targetLat - 0.004}&q=station&addressdetails=1`,
+                  { headers: { 'Accept-Language': 'en' } }
+                );
+                if (searchRes.ok) {
+                  const sData = await searchRes.json();
+                  if (Array.isArray(sData) && sData.length > 0) {
+                    const sAddr = sData[0].address || {};
+                    nearbyFeature = sAddr.road || sAddr.railway || sData[0].name || '';
+                  }
+                }
+              } catch (sErr) {
+                // Ignore search error
+              }
+            }
+          }
+
+          clientGranular = formatGranularAddress(cAddr, nearbyFeature);
+        }
+      } catch (cFetchErr) {
+        console.warn('Client-side Nominatim reverse geocode error:', cFetchErr);
+      }
+
+      // 2. Authoritative backend resolution (Police stations, jurisdiction, administrative divisions)
       const res = await api.get(`/locations/resolve?lat=${targetLat}&lng=${targetLng}`);
       if (res.data && (res.data.resolution || res.data.success)) {
         const r = res.data.resolution || res.data;
@@ -442,66 +574,54 @@ export default function TwoWayLocationPicker({
         const resolvedLat = r.coordinates?.latitude || targetLat;
         const resolvedLng = r.coordinates?.longitude || targetLng;
 
-        // 2. Candidate Reverse-Geocoded Address
-        let resolvedAddress = r.address?.displayName || r.formattedAddress || '';
-        let resolvedDistrict = r.administrative?.district || r.district?.name || r.district || '';
-        let resolvedPin = r.postal?.pincode || r.pincode || '';
-
-        // 3. Police Station Resolution
+        // 2. Police Station Resolution
         const nearestObj = r.police?.nearestStation || null;
         const nearestDist = r.police?.nearestStationDistance !== undefined ? r.police.nearestStationDistance : (nearestObj?.distanceKm ?? null);
         const jurisdictionObj = r.police?.jurisdictionStation || null;
         const isJurisdictionVerified = Boolean(r.police?.jurisdictionVerified);
         const activePsName = nearestObj ? nearestObj.name : '';
 
-        // If backend returned raw coordinates (e.g., external geocoder timed out), attempt client-side resolution
-        if (!resolvedAddress || resolvedAddress.startsWith('Coordinates:') || resolvedAddress.startsWith('Location at')) {
-          try {
-            const clientRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18`, {
-              headers: { 'Accept-Language': 'en' }
-            });
-            if (clientRes.ok) {
-              const cData = await clientRes.json();
-              if (cData && cData.display_name) {
-                resolvedAddress = cData.display_name;
-                const cAddr = cData.address || {};
-                if (!resolvedDistrict) {
-                  resolvedDistrict = cAddr.state_district || cAddr.county || cAddr.city || '';
-                }
-                if (!resolvedPin) {
-                  resolvedPin = cAddr.postcode || '';
-                }
-              }
-            }
-          } catch (cErr) {
-            // Client fetch error
-          }
+        // 3. Candidate Reverse-Geocoded Address (Prioritize strict granularity hierarchy)
+        let resolvedAddress = clientGranular?.formatted || '';
+        let resolvedDistrict = clientGranular?.district || r.administrative?.district || r.district?.name || r.district || '';
+        let resolvedPin = clientGranular?.pin || r.postal?.pincode || r.pincode || '';
+
+        // Fallback to backend address if client Nominatim didn't return
+        if (!resolvedAddress) {
+          resolvedAddress = r.address?.displayName || r.formattedAddress || '';
         }
 
-        // If still raw coordinates, construct a clean descriptive address with District / Thana
+        // Clean any residual "Near Amdanga" if locality is Bira or another valid settlement
+        if (resolvedAddress.includes('Near Amdanga') && (clientGranular?.settlement || r.administrative?.village || r.administrative?.block)) {
+          const validSettlement = clientGranular?.settlement || r.administrative?.village || 'Bira';
+          resolvedAddress = resolvedAddress.replace(/Near Amdanga/g, validSettlement);
+        }
+
+        // If still raw coordinates, construct a clean descriptive address with District / Settlement
         if (!resolvedAddress || resolvedAddress.startsWith('Coordinates:') || resolvedAddress.startsWith('Location at')) {
           const areaParts = [
             r.administrative?.ulb || r.municipality,
-            nearestObj ? nearestObj.name.replace(' Police Station', '') : null,
+            clientGranular?.settlement || r.administrative?.village || r.administrative?.block,
             resolvedDistrict || 'West Bengal',
             'West Bengal'
           ].filter(Boolean);
           resolvedAddress = areaParts.length > 1
-            ? `Near ${areaParts.join(', ')} (GPS: ${targetLat.toFixed(5)}, ${targetLng.toFixed(5)})`
+            ? `${areaParts.join(', ')} (GPS: ${targetLat.toFixed(5)}, ${targetLng.toFixed(5)})`
             : `Coordinates: ${targetLat.toFixed(5)}, ${targetLng.toFixed(5)}`;
         }
 
+        // 4. CRITICAL SYNC: Keep both top search bar and Decoded Incident Address card 100% synced!
         setDetectedAddress(resolvedAddress);
         setCustomAddressInput(resolvedAddress);
         setSearchInput(resolvedAddress);
 
-        // 4. Administrative Boundary Matching (Clean reset - never keep old values)
+        // 5. Administrative Boundary Matching (Clean reset - never keep old values)
         const resolvedSubdivision = r.administrative?.subdivision || r.subdivision || '';
         const resolvedUlb = r.administrative?.ulb || r.municipality || '';
         const resolvedWard = r.administrative?.ward || r.ward || '';
         const resolvedBlock = r.administrative?.block || r.block || '';
         const resolvedGp = r.administrative?.gramPanchayat || r.gramPanchayat || '';
-        const resolvedVillage = r.administrative?.village || r.village || '';
+        const resolvedVillage = clientGranular?.settlement || r.administrative?.village || r.village || '';
         const resolvedAdminType = r.administrative?.urbanRural || (resolvedUlb ? 'Urban' : 'Rural');
 
         setDistrict(resolvedDistrict);
@@ -513,7 +633,7 @@ export default function TwoWayLocationPicker({
         setVillage(resolvedVillage);
         setAdministrativeUnit(resolvedAdminType);
 
-        // 5. Postal Verification
+        // 6. Postal Verification
         const resolvedPo = r.postal?.postOffice || r.postOffice || '';
         setPincode(resolvedPin);
         setPostOffice(resolvedPo);
@@ -525,7 +645,7 @@ export default function TwoWayLocationPicker({
         setSelectedPoliceStation(activePsName);
         setPoliceStationDetails(nearestObj);
 
-        // 6. Verification Flags & Sources
+        // 7. Verification Flags & Sources
         const verif = r.verification || {
           districtVerified: Boolean(resolvedDistrict),
           subdivisionVerified: Boolean(resolvedSubdivision),
@@ -600,6 +720,7 @@ export default function TwoWayLocationPicker({
       const fallbackAddr = `Location at ${targetLat.toFixed(6)}, ${targetLng.toFixed(6)}`;
       setDetectedAddress(fallbackAddr);
       setCustomAddressInput(fallbackAddr);
+      setSearchInput(fallbackAddr);
       setConfirmed(true);
       emitLocationPayload({
         latitude: targetLat,
@@ -720,6 +841,7 @@ export default function TwoWayLocationPicker({
           if (fastAddr) {
             setDetectedAddress(fastAddr);
             setCustomAddressInput(fastAddr);
+            setSearchInput(fastAddr);
           }
           if (r.district) setDistrict(r.district);
           if (r.pincode) setPincode(r.pincode);
@@ -814,6 +936,7 @@ export default function TwoWayLocationPicker({
     const trimmed = customAddressInput.trim();
     if (!trimmed) return;
     setDetectedAddress(trimmed);
+    setSearchInput(trimmed);
     setIsEditingAddress(false);
     setSuccessMessage('✓ Address updated.');
     emitLocationPayload({ address: trimmed, userEnteredAddress: trimmed });

@@ -29,7 +29,25 @@ const KNOWN_WB_LOCATIONS = [
     locality: 'Berhampore',
     formattedAddress: 'Berhampore, Murshidabad, West Bengal - 742101'
   },
-  // North 24 Parganas - Adhata / Habra / Amdanga / Barasat / Ashoknagar
+  // North 24 Parganas - Adhata / Habra / Amdanga / Barasat / Ashoknagar / Bira
+  {
+    keys: ['bira', 'bira station', 'bira railway station', 'bira station road'],
+    lat: 22.7906,
+    lng: 88.5714,
+    district: 'North 24 Parganas',
+    pincode: '743221',
+    locality: 'Bira',
+    formattedAddress: 'Bira Station Road, Bira, North 24 Parganas, West Bengal - 743221'
+  },
+  {
+    keys: ['guma', 'guma station', 'guma railway station'],
+    lat: 22.8100,
+    lng: 88.5900,
+    district: 'North 24 Parganas',
+    pincode: '743223',
+    locality: 'Guma',
+    formattedAddress: 'Guma, North 24 Parganas, West Bengal - 743223'
+  },
   {
     keys: ['adhata', 'adhata gram panchayat', 'adhata gp'],
     lat: 22.8250,
@@ -1077,12 +1095,66 @@ class GeocodingService {
     const data = response.data || {};
     const addr = data.address || {};
 
-    const street = addr.road || addr.street || addr.pedestrian || addr.footway || '';
-    const locality = addr.suburb || addr.neighbourhood || addr.residential || addr.city_district || addr.town || addr.village || addr.hamlet || '';
+    // Strict Granularity Fallback Hierarchy
+    // Priority 1 (Specific POI / Road): amenity / building / shop / railway / road
+    let street = addr.amenity || addr.building || addr.shop || addr.railway || addr.road || addr.highway || addr.pedestrian || addr.footway || '';
+    if (['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(street).toLowerCase())) {
+      street = '';
+    }
+
+    // If exact point lacks a street name at zoom=18, probe zoom=17 or nearby station/feature
+    if (!street) {
+      try {
+        const z17Resp = await axios.get(url, {
+          params: { format: 'json', lat, lon: lng, addressdetails: 1, zoom: 17 },
+          headers: { 'User-Agent': this.userAgent, 'Accept-Language': 'en' },
+          timeout: 2500
+        });
+        const z17Addr = z17Resp.data?.address || {};
+        const z17Street = z17Addr.road || z17Addr.railway || z17Addr.amenity || z17Addr.building || z17Addr.shop || '';
+        if (z17Street && !['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(z17Street).toLowerCase())) {
+          street = z17Street;
+        }
+      } catch (zErr) {
+        // Continue if zoom 17 fails
+      }
+    }
+
+    // Priority 2 (Local Settlement): neighbourhood || suburb || village || town || city_district || hamlet || city
+    const localSettlement = addr.neighbourhood || addr.suburb || addr.village || addr.town || addr.city_district || addr.hamlet || addr.city || '';
+
+    // Priority 3 (Block / Tehsil - ONLY use if Priority 2 is missing): county || state_district
+    const blockOrTehsil = (!localSettlement) ? (addr.county || addr.subdistrict || '') : '';
+
+    const locality = (localSettlement || blockOrTehsil || '').trim();
     const landmark = addr.landmark || addr.amenity || addr.shop || addr.building || '';
     const pincode = addr.postcode || '';
-    const district = addr.state_district || addr.county || addr.city || '';
+
+    // District: prefer state_district to avoid CD blocks like 'Habra - II'
+    let district = (addr.state_district || addr.county || addr.city || '').replace(/\s*district\s*/gi, '').trim();
+    if (district.includes('-') && addr.state_district) {
+      district = addr.state_district.replace(/\s*district\s*/gi, '').trim();
+    }
     const state = addr.state || 'West Bengal';
+
+    // Format clean address: [Road/Landmark if available], [Village/Town/Suburb], [District], [State] - [Postcode]
+    const parts = [];
+    if (street && street.toLowerCase() !== locality.toLowerCase()) {
+      parts.push(street);
+    }
+    if (locality) {
+      parts.push(locality);
+    }
+    if (district && district.toLowerCase() !== locality.toLowerCase()) {
+      parts.push(district);
+    }
+    if (state) {
+      parts.push(state);
+    }
+    let formatted = parts.join(', ');
+    if (pincode) {
+      formatted += ` - ${pincode}`;
+    }
 
     const result = {
       street: String(street).trim(),
@@ -1091,7 +1163,7 @@ class GeocodingService {
       pincode: String(pincode).trim(),
       district: String(district).trim(),
       state: String(state).trim(),
-      rawAddress: data.display_name || `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+      rawAddress: formatted || data.display_name || `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
       provider: 'OpenStreetMap Nominatim',
       attribution: 'Data © OpenStreetMap contributors, ODbL 1.0.'
     };
@@ -1121,7 +1193,8 @@ class GeocodingService {
             locality: loc.locality,
             district: loc.district,
             pincode: loc.pincode || '',
-            landmark: loc.locality
+            landmark: loc.locality,
+            formattedAddress: loc.formattedAddress
           };
         }
       }
@@ -1140,7 +1213,8 @@ class GeocodingService {
             locality: cleanName,
             district: distObj ? distObj.name : 'North 24 Parganas',
             pincode: '',
-            landmark: u.name
+            landmark: u.name,
+            formattedAddress: `${cleanName}, ${distObj?.name || 'North 24 Parganas'}, West Bengal`
           };
         }
       }
@@ -1157,20 +1231,51 @@ class GeocodingService {
             locality: d.headquarters || d.name,
             district: d.name,
             pincode: '',
-            landmark: d.name
+            landmark: d.name,
+            formattedAddress: `${d.headquarters || d.name}, ${d.name}, West Bengal`
           };
         }
       }
     }
 
-    if (bestLoc && minKm <= 60) {
-      const pinStr = bestLoc.pincode ? ` - ${bestLoc.pincode}` : '';
-      const prefix = minKm < 1.5 ? '' : 'Near ';
-      const resolvedAddr = `${prefix}${bestLoc.locality}, ${bestLoc.district}, West Bengal${pinStr}`;
+    // Strict Granularity: If direct match within 1km and has formattedAddress, use it directly
+    if (bestLoc && minKm <= 1.0 && bestLoc.formattedAddress) {
       return {
         street: '',
         locality: bestLoc.locality,
         landmark: bestLoc.landmark || bestLoc.locality,
+        pincode: bestLoc.pincode || '',
+        district: bestLoc.district,
+        state: 'West Bengal',
+        rawAddress: bestLoc.formattedAddress,
+        provider: 'Local West Bengal Spatial Registry'
+      };
+    }
+
+    // If within 2.5km, format locality cleanly - NEVER prepend "Near <Block>" when settlement is matched
+    if (bestLoc && minKm <= 2.5) {
+      const pinStr = bestLoc.pincode ? ` - ${bestLoc.pincode}` : '';
+      const resolvedAddr = `${bestLoc.locality}, ${bestLoc.district}, West Bengal${pinStr}`;
+      return {
+        street: '',
+        locality: bestLoc.locality,
+        landmark: bestLoc.landmark || bestLoc.locality,
+        pincode: bestLoc.pincode || '',
+        district: bestLoc.district,
+        state: 'West Bengal',
+        rawAddress: resolvedAddr,
+        provider: 'Local West Bengal Spatial Registry'
+      };
+    }
+
+    // If beyond 2.5km, do NOT fabricate "Near <CD Block>". Return District + GPS coordinates cleanly
+    if (bestLoc && minKm <= 60) {
+      const pinStr = bestLoc.pincode ? ` - ${bestLoc.pincode}` : '';
+      const resolvedAddr = `${bestLoc.district}, West Bengal (GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)})${pinStr}`;
+      return {
+        street: '',
+        locality: bestLoc.district,
+        landmark: '',
         pincode: bestLoc.pincode || '',
         district: bestLoc.district,
         state: 'West Bengal',
