@@ -497,6 +497,21 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
               <span style={{ color: 'var(--text-muted)' }}>District:</span>
               <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.district || 'West Bengal'}</div>
             </div>
+            <div style={{ gridColumn: '1 / -1', marginTop: '6px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+              <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', marginBottom: '3px' }}>
+                <MapPin size={13} color="var(--accent-cyan)" /> Full Incident Location & Address:
+              </span>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.92rem', lineHeight: 1.45 }}>
+                {complaint.address || [complaint.ward, complaint.municipality || complaint.block, complaint.police_station ? `PS: ${complaint.police_station}` : null, complaint.district, complaint.pincode].filter(Boolean).join(', ') || 'West Bengal'}
+              </div>
+              {(complaint.municipality || complaint.police_station || complaint.ward) && complaint.address && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginTop: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                  {complaint.municipality && <span>🏛️ <strong>Municipality/ULB:</strong> {complaint.municipality}</span>}
+                  {complaint.ward && <span>📍 <strong>Ward:</strong> {complaint.ward}</span>}
+                  {complaint.police_station && <span>🚓 <strong>Thana / PS:</strong> {complaint.police_station}</span>}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
