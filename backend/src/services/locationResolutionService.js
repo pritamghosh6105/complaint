@@ -296,6 +296,26 @@ class LocationResolutionService {
       }
     }
 
+    // Spatial proximity fallback for District if boundary and geocoder did not provide one
+    if (!matchedDistrict) {
+      let closestDist = null;
+      let minDist = Infinity;
+      const allDistricts = db.data.districts || [];
+      for (const d of allDistricts) {
+        if (d.center_lat && d.center_lng) {
+          const dMeters = haversineMeters(lat, lng, d.center_lat, d.center_lng);
+          if (dMeters < minDist) {
+            minDist = dMeters;
+            closestDist = d;
+          }
+        }
+      }
+      if (closestDist) {
+        matchedDistrict = closestDist.name;
+        districtSource = 'SPATIAL_PROXIMITY';
+      }
+    }
+
     // -------------------------------------------------------------
     // LEVEL 3: India Post Authoritative PIN & Post Office Verification
     // -------------------------------------------------------------
@@ -445,7 +465,9 @@ class LocationResolutionService {
       unresolvedReason,
 
       address: {
-        displayName: geocoded?.rawAddress || `Coordinates: ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        displayName: (geocoded?.rawAddress && !geocoded.rawAddress.startsWith('Coordinates:'))
+          ? geocoded.rawAddress
+          : (matchedDistrict ? `${matchedDistrict} Jurisdiction (Coordinates: ${lat.toFixed(5)}, ${lng.toFixed(5)})` : `Coordinates: ${lat.toFixed(6)}, ${lng.toFixed(6)}`),
         locality: geocoded?.locality || '',
         street: geocoded?.street || '',
         landmark: geocoded?.landmark || ''

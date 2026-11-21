@@ -1100,6 +1100,85 @@ class GeocodingService {
   }
 
   fallbackGeocode(lat, lng) {
+    let bestLoc = null;
+    let minKm = Infinity;
+
+    const haversineKm = (lat1, lon1, lat2, lon2) => {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    // 1. Check against authoritative KNOWN_WB_LOCATIONS in West Bengal registry
+    for (const loc of KNOWN_WB_LOCATIONS) {
+      if (loc.lat && loc.lng) {
+        const d = haversineKm(lat, lng, loc.lat, loc.lng);
+        if (d < minKm) {
+          minKm = d;
+          bestLoc = {
+            locality: loc.locality,
+            district: loc.district,
+            pincode: loc.pincode || '',
+            landmark: loc.locality
+          };
+        }
+      }
+    }
+
+    // 2. Check against all 54 Municipalities / ULBs in West Bengal database
+    const ulbs = (db.data && db.data.ulbs) || [];
+    for (const u of ulbs) {
+      if (u.lat && u.lng) {
+        const d = haversineKm(lat, lng, u.lat, u.lng);
+        if (d < minKm) {
+          minKm = d;
+          const distObj = (db.data.districts || []).find(dist => dist.id === u.district_id);
+          const cleanName = u.name.replace(/(Municipality|Municipal Corporation|Corporation)/i, '').trim();
+          bestLoc = {
+            locality: cleanName,
+            district: distObj ? distObj.name : 'North 24 Parganas',
+            pincode: '',
+            landmark: u.name
+          };
+        }
+      }
+    }
+
+    // 3. Check against all 23 West Bengal district headquarters
+    const allDistricts = (db.data && db.data.districts) || [];
+    for (const d of allDistricts) {
+      if (d.center_lat && d.center_lng) {
+        const distKm = haversineKm(lat, lng, d.center_lat, d.center_lng);
+        if (distKm < minKm) {
+          minKm = distKm;
+          bestLoc = {
+            locality: d.headquarters || d.name,
+            district: d.name,
+            pincode: '',
+            landmark: d.name
+          };
+        }
+      }
+    }
+
+    if (bestLoc && minKm <= 60) {
+      const pinStr = bestLoc.pincode ? ` - ${bestLoc.pincode}` : '';
+      const prefix = minKm < 1.5 ? '' : 'Near ';
+      const resolvedAddr = `${prefix}${bestLoc.locality}, ${bestLoc.district}, West Bengal${pinStr}`;
+      return {
+        street: '',
+        locality: bestLoc.locality,
+        landmark: bestLoc.landmark || bestLoc.locality,
+        pincode: bestLoc.pincode || '',
+        district: bestLoc.district,
+        state: 'West Bengal',
+        rawAddress: resolvedAddr,
+        provider: 'Local West Bengal Spatial Registry'
+      };
+    }
+
     return {
       street: '',
       locality: 'West Bengal Location',

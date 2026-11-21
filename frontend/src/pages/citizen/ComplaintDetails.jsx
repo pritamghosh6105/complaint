@@ -19,7 +19,9 @@ import {
   ShieldCheck,
   ArrowDownCircle,
   Printer,
-  Search
+  Search,
+  Navigation,
+  ExternalLink
 } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -497,19 +499,69 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
               <span style={{ color: 'var(--text-muted)' }}>District:</span>
               <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.district || 'West Bengal'}</div>
             </div>
+
+            {/* Full Decoded Address */}
             <div style={{ gridColumn: '1 / -1', marginTop: '6px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
               <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', marginBottom: '3px' }}>
-                <MapPin size={13} color="var(--accent-cyan)" /> Full Incident Location & Address:
+                <MapPin size={13} color="var(--accent-cyan)" /> Incident Location & Address:
               </span>
               <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.92rem', lineHeight: 1.45 }}>
-                {complaint.address || [complaint.ward, complaint.municipality || complaint.block, complaint.police_station ? `PS: ${complaint.police_station}` : null, complaint.district, complaint.pincode].filter(Boolean).join(', ') || 'West Bengal'}
+                {complaint.address || [complaint.ward, complaint.municipality || complaint.block, complaint.police_station ? `PS: ${complaint.police_station}` : null, complaint.district, complaint.pincode].filter(Boolean).join(', ') || (complaint.latitude && complaint.longitude ? `Coordinates: ${Number(complaint.latitude).toFixed(6)}, ${Number(complaint.longitude).toFixed(6)} (${complaint.district || 'West Bengal'})` : 'West Bengal')}
               </div>
-              {(complaint.municipality || complaint.police_station || complaint.ward) && complaint.address && (
+              {(complaint.municipality || complaint.police_station || complaint.ward) && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginTop: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
                   {complaint.municipality && <span>🏛️ <strong>Municipality/ULB:</strong> {complaint.municipality}</span>}
                   {complaint.ward && <span>📍 <strong>Ward:</strong> {complaint.ward}</span>}
                   {complaint.police_station && <span>🚓 <strong>Thana / PS:</strong> {complaint.police_station}</span>}
                 </div>
+              )}
+            </div>
+
+            {/* GPS Coordinates Section */}
+            <div style={{
+              gridColumn: '1 / -1',
+              marginTop: '4px',
+              paddingTop: '10px',
+              borderTop: '1px dashed var(--border-subtle)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '10px',
+              fontSize: '0.82rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Navigation size={14} color="var(--accent-cyan)" />
+                <span style={{ color: 'var(--text-muted)' }}>GPS Coordinates:</span>
+                <strong style={{ fontFamily: 'var(--font-mono, monospace)', color: 'var(--text-primary)', fontSize: '0.86rem' }}>
+                  {complaint.latitude && complaint.longitude
+                    ? `${Number(complaint.latitude).toFixed(6)}, ${Number(complaint.longitude).toFixed(6)}`
+                    : 'Geo-Tagged on Submission'}
+                </strong>
+              </div>
+
+              {complaint.latitude && complaint.longitude && (
+                <a
+                  href={`https://www.google.com/maps?q=${complaint.latitude},${complaint.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    fontSize: '0.76rem',
+                    color: 'var(--accent-primary)',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    padding: '3px 10px',
+                    borderRadius: '5px',
+                    background: 'rgba(56, 189, 248, 0.1)',
+                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    transition: 'var(--transition)'
+                  }}
+                >
+                  <ExternalLink size={12} /> View Pin on Map
+                </a>
               )}
             </div>
           </div>

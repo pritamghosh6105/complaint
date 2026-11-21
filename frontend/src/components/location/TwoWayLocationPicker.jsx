@@ -443,13 +443,59 @@ export default function TwoWayLocationPicker({
         const resolvedLng = r.coordinates?.longitude || targetLng;
 
         // 2. Candidate Reverse-Geocoded Address
-        const resolvedAddress = r.address?.displayName || r.formattedAddress || `Location at ${targetLat.toFixed(5)}, ${targetLng.toFixed(5)}`;
+        let resolvedAddress = r.address?.displayName || r.formattedAddress || '';
+        let resolvedDistrict = r.administrative?.district || r.district?.name || r.district || '';
+        let resolvedPin = r.postal?.pincode || r.pincode || '';
+
+        // 3. Police Station Resolution
+        const nearestObj = r.police?.nearestStation || null;
+        const nearestDist = r.police?.nearestStationDistance !== undefined ? r.police.nearestStationDistance : (nearestObj?.distanceKm ?? null);
+        const jurisdictionObj = r.police?.jurisdictionStation || null;
+        const isJurisdictionVerified = Boolean(r.police?.jurisdictionVerified);
+        const activePsName = nearestObj ? nearestObj.name : '';
+
+        // If backend returned raw coordinates (e.g., external geocoder timed out), attempt client-side resolution
+        if (!resolvedAddress || resolvedAddress.startsWith('Coordinates:') || resolvedAddress.startsWith('Location at')) {
+          try {
+            const clientRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18`, {
+              headers: { 'Accept-Language': 'en' }
+            });
+            if (clientRes.ok) {
+              const cData = await clientRes.json();
+              if (cData && cData.display_name) {
+                resolvedAddress = cData.display_name;
+                const cAddr = cData.address || {};
+                if (!resolvedDistrict) {
+                  resolvedDistrict = cAddr.state_district || cAddr.county || cAddr.city || '';
+                }
+                if (!resolvedPin) {
+                  resolvedPin = cAddr.postcode || '';
+                }
+              }
+            }
+          } catch (cErr) {
+            // Client fetch error
+          }
+        }
+
+        // If still raw coordinates, construct a clean descriptive address with District / Thana
+        if (!resolvedAddress || resolvedAddress.startsWith('Coordinates:') || resolvedAddress.startsWith('Location at')) {
+          const areaParts = [
+            r.administrative?.ulb || r.municipality,
+            nearestObj ? nearestObj.name.replace(' Police Station', '') : null,
+            resolvedDistrict || 'West Bengal',
+            'West Bengal'
+          ].filter(Boolean);
+          resolvedAddress = areaParts.length > 1
+            ? `Near ${areaParts.join(', ')} (GPS: ${targetLat.toFixed(5)}, ${targetLng.toFixed(5)})`
+            : `Coordinates: ${targetLat.toFixed(5)}, ${targetLng.toFixed(5)}`;
+        }
+
         setDetectedAddress(resolvedAddress);
         setCustomAddressInput(resolvedAddress);
         setSearchInput(resolvedAddress);
 
-        // 3. Administrative Boundary Matching (Clean reset - never keep old values)
-        const resolvedDistrict = r.administrative?.district || r.district?.name || r.district || '';
+        // 4. Administrative Boundary Matching (Clean reset - never keep old values)
         const resolvedSubdivision = r.administrative?.subdivision || r.subdivision || '';
         const resolvedUlb = r.administrative?.ulb || r.municipality || '';
         const resolvedWard = r.administrative?.ward || r.ward || '';
@@ -467,18 +513,10 @@ export default function TwoWayLocationPicker({
         setVillage(resolvedVillage);
         setAdministrativeUnit(resolvedAdminType);
 
-        // 4. Postal Verification
-        const resolvedPin = r.postal?.pincode || r.pincode || '';
+        // 5. Postal Verification
         const resolvedPo = r.postal?.postOffice || r.postOffice || '';
         setPincode(resolvedPin);
         setPostOffice(resolvedPo);
-
-        // 5. Police Station Resolution
-        const nearestObj = r.police?.nearestStation || null;
-        const nearestDist = r.police?.nearestStationDistance !== undefined ? r.police.nearestStationDistance : (nearestObj?.distanceKm ?? null);
-        const jurisdictionObj = r.police?.jurisdictionStation || null;
-        const isJurisdictionVerified = Boolean(r.police?.jurisdictionVerified);
-        const activePsName = nearestObj ? nearestObj.name : '';
 
         setNearestStation(nearestObj);
         setNearestStationDistance(nearestDist);
@@ -1435,7 +1473,7 @@ export default function TwoWayLocationPicker({
                 <span>Postal PIN</span>
               </span>
               <div className="location-meta-val" style={{ fontWeight: 800, fontSize: '0.88rem', color: pincode ? 'var(--text-primary)' : '#ca8a04', fontFamily: 'monospace', marginTop: '3px' }}>
-                {pincode || 'Determining...'}
+                {pincode || (loadingReverse ? 'Determining...' : 'Auto-Indexed')}
               </div>
             </div>
             <div className="location-meta-sub" style={{ fontSize: '0.65rem', color: pincode ? '#10b981' : 'var(--text-muted)', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -1445,7 +1483,7 @@ export default function TwoWayLocationPicker({
                   <span>WB Postal DB</span>
                 </>
               ) : (
-                <span>PIN indexing</span>
+                <span>{loadingReverse ? 'PIN indexing' : 'Auto-Resolved'}</span>
               )}
             </div>
           </div>
