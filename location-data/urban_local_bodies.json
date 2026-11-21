@@ -7,7 +7,7 @@
   { "id": 6, "district_id": 2, "subdivision_id": 3, "name": "Panihati Municipality", "code": "PNH-MUN", "type": "Municipality", "total_wards": 35, "lat": 22.6900, "lng": 88.3800, "is_active": 1 },
   { "id": 7, "district_id": 2, "subdivision_id": 3, "name": "Kamarhati Municipality", "code": "KMH-MUN", "type": "Municipality", "total_wards": 35, "lat": 22.6700, "lng": 88.3700, "is_active": 1 },
   { "id": 8, "district_id": 2, "subdivision_id": 3, "name": "Bhatpara Municipality", "code": "BHT-MUN", "type": "Municipality", "total_wards": 35, "lat": 22.8700, "lng": 88.4100, "is_active": 1 },
-  { "id": 9, "district_id": 2, "subdivision_id": 3, "name": "Naihati Municipality", "code": "NHT-MUN", "type": "Municipality", "total_wards": 31, "lat": 22.9000, "lng": 88.4200, "is_active": 1 },
+  { "id": 9, "district_id": 2, "subdivision_id": 3, "name": "Naihati Municipality", "code": "NHT-MUN", "type": "Municipality", "total_wards": 31, "lat": 22.8885, "lng": 88.4205, "is_active": 1 },
   { "id": 10, "district_id": 2, "subdivision_id": 2, "name": "Habra Municipality", "code": "HBR-MUN", "type": "Municipality", "total_wards": 29, "lat": 22.8400, "lng": 88.6300, "is_active": 1 },
   { "id": 11, "district_id": 2, "subdivision_id": 6, "name": "Basirhat Municipality", "code": "BSH-MUN", "type": "Municipality", "total_wards": 23, "lat": 22.6600, "lng": 88.8900, "is_active": 1 },
   { "id": 12, "district_id": 2, "subdivision_id": 5, "name": "Bongaon Municipality", "code": "BGN-MUN", "type": "Municipality", "total_wards": 22, "lat": 23.0400, "lng": 88.8300, "is_active": 1 },

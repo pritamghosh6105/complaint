@@ -11648,8 +11648,8 @@
       "code": "NHT-MUN",
       "type": "Municipality",
       "total_wards": 31,
-      "lat": 22.9,
-      "lng": 88.42,
+      "lat": 22.8885,
+      "lng": 88.4205,
       "is_active": 1
     },
     {
@@ -28466,7 +28466,7 @@
       "_id": "6aadbb363a0951c1ad3579b7",
       "name": "Naihati Police Station",
       "__v": 0,
-      "address": "Naihati Police Station, Kolkata, West Bengal",
+      "address": "Naihati Police Station, SC Paul Road, Naihati, North 24 Parganas, West Bengal",
       "commissionerate": "Barrackpore Police Commissionerate",
       "contact": {
         "phone": "+91 33 2214 3000",
@@ -28479,8 +28479,8 @@
       "location": {
         "type": "Point",
         "coordinates": [
-          88.3639,
-          22.5726
+          88.4180,
+          22.8880
         ]
       },
       "policeDistrict": "Barrackpore Police Commissionerate",
@@ -28489,7 +28489,7 @@
       "subdivision": null,
       "subdivisionId": null,
       "updatedAt": "2026-09-28T14:06:22.470Z",
-      "districtName": "Kolkata",
+      "districtName": "North 24 Parganas",
       "id": "6aadbb363a0951c1ad3579b7"
     },
     {
@@ -51975,8 +51975,8 @@
       "districtId": "6aadbabe3a0951c1ad35558a",
       "gramPanchayatId": null,
       "isActive": true,
-      "latitude": 22.9,
-      "longitude": 88.42,
+      "latitude": 22.8885,
+      "longitude": 88.4205,
       "name": "Naihati Municipality",
       "parentId": "6aadbac53a0951c1ad3555a2",
       "source": "Government of India LGD",

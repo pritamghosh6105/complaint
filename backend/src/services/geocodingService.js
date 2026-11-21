@@ -184,13 +184,31 @@ const KNOWN_WB_LOCATIONS = [
     formattedAddress: 'Bhatpara, North 24 Parganas, West Bengal - 743123'
   },
   {
-    keys: ['naihati'],
-    lat: 22.9000,
-    lng: 88.4200,
+    keys: ['naihati', 'naihati town', 'naihati bazar', 'naihati market', 'naihati so'],
+    lat: 22.8900,
+    lng: 88.4230,
     district: 'North 24 Parganas',
     pincode: '743165',
     locality: 'Naihati',
     formattedAddress: 'Naihati, North 24 Parganas, West Bengal - 743165'
+  },
+  {
+    keys: ['naihati station', 'naihati junction', 'naihati railway station'],
+    lat: 22.8870,
+    lng: 88.4177,
+    district: 'North 24 Parganas',
+    pincode: '743165',
+    locality: 'Naihati',
+    formattedAddress: 'Naihati Junction, Naihati, North 24 Parganas, West Bengal - 743165'
+  },
+  {
+    keys: ['naihati municipality', 'naihati rbc road', 'rbc road naihati'],
+    lat: 22.8885,
+    lng: 88.4205,
+    district: 'North 24 Parganas',
+    pincode: '743165',
+    locality: 'Naihati',
+    formattedAddress: 'Naihati Municipality, RBC Road, Naihati, North 24 Parganas, West Bengal - 743165'
   },
   // Kolkata
   {
@@ -672,9 +690,25 @@ class GeocodingService {
     }
 
     // 2. Direct match or keyword match in KNOWN_WB_LOCATIONS
+    // Pass 1: Exact key match
     for (const loc of KNOWN_WB_LOCATIONS) {
       for (const k of loc.keys) {
-        if (clean === k || clean.startsWith(k + ' ') || clean.endsWith(' ' + k) || clean.includes(' ' + k + ' ') || (clean.length >= 4 && k.includes(clean))) {
+        if (clean === k) {
+          return this._formatFastResult(loc, raw);
+        }
+      }
+    }
+
+    // Pass 2: Prefix / phrase match (prioritize longer/more specific keys first)
+    const sortedLocations = [...KNOWN_WB_LOCATIONS].sort((a, b) => {
+      const maxLenA = Math.max(...a.keys.map(k => k.length));
+      const maxLenB = Math.max(...b.keys.map(k => k.length));
+      return maxLenB - maxLenA;
+    });
+
+    for (const loc of sortedLocations) {
+      for (const k of loc.keys) {
+        if (clean.startsWith(k + ' ') || clean.endsWith(' ' + k) || clean.includes(' ' + k + ' ') || (clean.length >= 4 && k.includes(clean))) {
           return this._formatFastResult(loc, raw);
         }
       }

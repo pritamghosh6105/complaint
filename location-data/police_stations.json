@@ -353,14 +353,14 @@
   {
     "id": 28,
     "district_id": 2,
-    "district_name": "Kolkata",
+    "district_name": "North 24 Parganas",
     "subdivision_id": 3,
     "commissionerate": "Barrackpore Police Commissionerate",
     "name": "Naihati Police Station",
     "code": "BKPC-NHT",
     "phone": "+91 33 2214 3000",
-    "center_lat": 22.5726,
-    "center_lng": 88.3639,
+    "center_lat": 22.8880,
+    "center_lng": 88.4180,
     "is_active": 1
   },
   {
