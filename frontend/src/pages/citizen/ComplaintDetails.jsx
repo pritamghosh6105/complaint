@@ -494,8 +494,8 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
               <div style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>{complaint.officer_name || 'Pending Assignment'}</div>
             </div>
             <div>
-              <span style={{ color: 'var(--text-muted)' }}>Location / Ward:</span>
-              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.address || complaint.ward || 'West Bengal'}</div>
+              <span style={{ color: 'var(--text-muted)' }}>Location:</span>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.address || complaint.municipality || complaint.district || 'West Bengal'}</div>
             </div>
           </div>
         </div>

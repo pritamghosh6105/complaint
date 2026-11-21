@@ -262,19 +262,8 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
               >
                 <Popup>
                   <div style={{ minWidth: '240px', padding: '4px' }}>
-                    {/* Header: Tracking ID + Priority */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span style={{ 
-                        fontFamily: 'monospace', 
-                        fontWeight: 700, 
-                        color: 'var(--accent-cyan)', 
-                        fontSize: '0.8rem',
-                        background: 'rgba(6, 182, 212, 0.1)',
-                        padding: '2px 6px',
-                        borderRadius: '4px'
-                      }}>
-                        #{comp.tracking_id || `CMP-${comp.id}`}
-                      </span>
+                    {/* Header: Priority Badge (Complaint number hidden per preference) */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginBottom: '8px' }}>
                       <span className={`badge ${
                         comp.priority === 'CRITICAL' ? 'badge-critical' : comp.priority === 'HIGH' ? 'badge-high' : comp.priority === 'LOW' ? 'badge-low' : 'badge-medium'
                       }`}>
@@ -322,12 +311,6 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <span style={{ color: 'var(--text-muted)' }}>Pincode:</span>
                           <span style={{ color: 'var(--text-secondary)' }}>{comp.pincode || comp.postal_code || comp.location?.pincode}</span>
-                        </div>
-                      )}
-                      {comp.ward && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>Ward:</span>
-                          <span style={{ color: 'var(--text-secondary)' }}>{comp.ward}</span>
                         </div>
                       )}
                       {comp.created_at && (

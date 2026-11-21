@@ -347,7 +347,7 @@ export default function CitizenDashboard({ setCurrentRoute, setSelectedComplaint
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <MapPin size={13} color="var(--color-accent)" /> 
-                        {comp.district ? `${comp.district} • ` : ''}{comp.ward || comp.police_station || 'Municipal Area'}
+                        {comp.district ? `${comp.district} • ` : ''}{comp.municipality || comp.locality || comp.police_station || 'Municipal Area'}
                       </span>
                       <span>•</span>
                       <span>Category: <strong style={{ color: 'var(--text-primary)' }}>{comp.category}</strong></span>

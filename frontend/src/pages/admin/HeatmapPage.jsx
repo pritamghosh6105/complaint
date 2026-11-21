@@ -491,8 +491,8 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
                     <Popup>
                       <div style={{ minWidth: '240px', padding: '6px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                          <span style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.88rem' }}>
-                            #{pt.tracking_id}
+                          <span style={{ fontSize: '0.8rem', color: 'var(--accent-cyan)', fontWeight: 600 }}>
+                            {pt.category} • {pt.priority}
                           </span>
                           {pt.is_crime && (
                             <span style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#a855f7', padding: '2px 6px', borderRadius: '4px', fontSize: '0.68rem', fontWeight: 700 }}>
@@ -501,13 +501,8 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
                           )}
                         </div>
 
-                        <div style={{ fontSize: '0.8rem', color: 'var(--accent-cyan)', fontWeight: 600 }}>
-                          {pt.category} • {pt.priority}
-                        </div>
-
                         <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', margin: '4px 0', lineHeight: 1.4 }}>
                           📍 {pt.municipality || pt.block || pt.district || 'West Bengal'}
-                          {pt.ward && ` • Ward ${pt.ward}`}
                           {pt.gram_panchayat && ` • GP ${pt.gram_panchayat}`}
                         </div>
 
@@ -1027,10 +1022,7 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
             {/* Selected Incident Quick-Inspector */}
             {activeInspectorPoint ? (
               <Card style={{ padding: '18px', borderLeft: `4px solid ${getHeatColor(activeInspectorPoint)}` }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '0.78rem', fontFamily: 'monospace', fontWeight: 700, color: 'var(--accent-cyan)' }}>
-                    #{activeInspectorPoint.tracking_id}
-                  </span>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '8px' }}>
                   <Badge variant={activeInspectorPoint.priority}>
                     {activeInspectorPoint.priority}
                   </Badge>
@@ -1050,7 +1042,7 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
                   </div>
                   <div style={{ paddingLeft: '18px', color: 'var(--text-muted)' }}>
                     {activeInspectorPoint.municipality ? (
-                      <span>🏛️ ULB: {activeInspectorPoint.municipality} {activeInspectorPoint.ward ? `(Ward: ${activeInspectorPoint.ward})` : ''}</span>
+                      <span>🏛️ ULB: {activeInspectorPoint.municipality}</span>
                     ) : activeInspectorPoint.block ? (
                       <span>🌾 Block: {activeInspectorPoint.block} {activeInspectorPoint.gram_panchayat ? `(GP: ${activeInspectorPoint.gram_panchayat})` : ''}</span>
                     ) : null}

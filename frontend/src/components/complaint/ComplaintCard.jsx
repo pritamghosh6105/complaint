@@ -6,16 +6,14 @@ import { StatusBadge } from '../ui/StatusBadge';
 export default function ComplaintCard({ complaint, onClick }) {
   if (!complaint) return null;
 
-  const trackingCode = complaint.tracking_id || `CP-${complaint.id}`;
-
-  // Format meaningful location display: District • Municipality / Ward / Locality
+  // Format meaningful location display: District • Municipality / Locality (Ward section excluded)
   const formatLocation = () => {
     const parts = [];
     if (complaint.district) parts.push(complaint.district);
     if (complaint.municipality && complaint.municipality !== complaint.district) {
       parts.push(complaint.municipality);
     }
-    const localArea = complaint.ward || complaint.locality || complaint.block || complaint.police_station;
+    const localArea = complaint.locality || complaint.block || complaint.police_station;
     if (localArea && !parts.includes(localArea)) {
       parts.push(localArea);
     }
@@ -23,10 +21,14 @@ export default function ComplaintCard({ complaint, onClick }) {
 
     if (complaint.address) {
       const cleanAddr = complaint.address.split(',')[0].trim();
-      if (cleanAddr && cleanAddr.length > 2) return cleanAddr;
+      if (cleanAddr && cleanAddr.length > 2 && !cleanAddr.toLowerCase().startsWith('ward')) {
+        return cleanAddr;
+      }
     }
-    return 'West Bengal Jurisdiction';
+    return null;
   };
+
+  const locationDisplay = formatLocation();
 
   return (
     <div 
@@ -49,21 +51,9 @@ export default function ComplaintCard({ complaint, onClick }) {
       }}
     >
       <div>
-        {/* Card Header: Tracking ID & Priority Badge */}
+        {/* Card Header: Priority Badge & Date (Complaint number hidden per preference) */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ 
-              fontFamily: 'var(--font-mono)', 
-              fontSize: '0.78125rem', 
-              fontWeight: 700, 
-              color: 'var(--color-accent)',
-              background: 'var(--color-accent-subtle)',
-              padding: '2px 8px',
-              borderRadius: 'var(--radius-xs)',
-              border: '1px solid rgba(37, 99, 235, 0.2)'
-            }}>
-              #{trackingCode}
-            </span>
             {complaint.created_at && (
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 {new Date(complaint.created_at).toLocaleDateString()}
@@ -85,20 +75,22 @@ export default function ComplaintCard({ complaint, onClick }) {
           {complaint.title || complaint.category}
         </h4>
 
-        {/* Location & Jurisdiction Details */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '6px', 
-          fontSize: '0.8125rem', 
-          color: 'var(--text-secondary)',
-          marginBottom: '12px'
-        }}>
-          <MapPin size={14} color="var(--color-accent)" style={{ flexShrink: 0 }} />
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={formatLocation()}>
-            {formatLocation()}
-          </span>
-        </div>
+        {/* Location & Jurisdiction Details (Ward section excluded) */}
+        {locationDisplay && (
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            fontSize: '0.8125rem', 
+            color: 'var(--text-secondary)',
+            marginBottom: '12px'
+          }}>
+            <MapPin size={14} color="var(--color-accent)" style={{ flexShrink: 0 }} />
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={locationDisplay}>
+              {locationDisplay}
+            </span>
+          </div>
+        )}
 
         {/* AI Categorization Summary */}
         <div style={{ 
