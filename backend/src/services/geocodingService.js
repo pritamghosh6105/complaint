@@ -279,6 +279,24 @@ const KNOWN_WB_LOCATIONS = [
   },
   // Nadia
   {
+    keys: ['b-12', 'b-12 kalyani', 'block b-12'],
+    lat: 22.9704,
+    lng: 88.4393,
+    district: 'Nadia',
+    pincode: '741235',
+    locality: 'Kalyani',
+    formattedAddress: 'B-12, Kalyani, Nadia, West Bengal - 741235'
+  },
+  {
+    keys: ['b-10', 'b-10 kalyani', 'block b-10'],
+    lat: 22.9740,
+    lng: 88.4390,
+    district: 'Nadia',
+    pincode: '741235',
+    locality: 'Kalyani',
+    formattedAddress: 'B-10, Kalyani, Nadia, West Bengal - 741235'
+  },
+  {
     keys: ['krishnanagar', 'krishnagar'],
     lat: 23.4013,
     lng: 88.5015,
@@ -1083,7 +1101,8 @@ class GeocodingService {
         lat,
         lon: lng,
         addressdetails: 1,
-        zoom: 18
+        zoom: 18,
+        layer: 'address,poi'
       },
       headers: {
         'User-Agent': this.userAgent,
@@ -1095,18 +1114,23 @@ class GeocodingService {
     const data = response.data || {};
     const addr = data.address || {};
 
-    // Strict Granularity Fallback Hierarchy
+    const isBlockPattern = (val) =>
+      /^[A-Z]-\d+$/i.test(String(val).trim()) ||
+      /^Sector\s*[0-9A-Z]+/i.test(String(val).trim()) ||
+      /^Block\s*[0-9A-Z]+/i.test(String(val).trim()) ||
+      /^Action\s*Area\s*[0-9A-Z]+/i.test(String(val).trim());
+
     // Priority 1 (Specific POI / Road): amenity / building / shop / railway / road
     let street = addr.amenity || addr.building || addr.shop || addr.railway || addr.road || addr.highway || addr.pedestrian || addr.footway || '';
-    if (['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(street).toLowerCase())) {
+    if (['yes', 'no', 'residential', 'unclassified', 'service', 'tertiary', 'secondary', 'primary', 'trunk'].includes(String(street).toLowerCase())) {
       street = '';
     }
 
-    // If exact point lacks a street name at zoom=18, probe zoom=17 or nearby station/feature
+    // If exact point lacks a street name at zoom=18, probe zoom=17
     if (!street) {
       try {
         const z17Resp = await axios.get(url, {
-          params: { format: 'json', lat, lon: lng, addressdetails: 1, zoom: 17 },
+          params: { format: 'json', lat, lon: lng, addressdetails: 1, zoom: 17, layer: 'address,poi' },
           headers: { 'User-Agent': this.userAgent, 'Accept-Language': 'en' },
           timeout: 2500
         });
@@ -1120,46 +1144,82 @@ class GeocodingService {
       }
     }
 
-    // Priority 2 (Local Settlement): neighbourhood || suburb || village || town || city_district || hamlet || city
-    const localSettlement = addr.neighbourhood || addr.suburb || addr.village || addr.town || addr.city_district || addr.hamlet || addr.city || '';
+    // Priority 2: Sub-locality (Block / Sector / Quarter / Neighbourhood / Hamlet)
+    let subLocality = '';
+    if (isBlockPattern(addr.suburb) && isBlockPattern(addr.neighbourhood)) {
+      // In planned townships (e.g. Kalyani), suburb is the enclosing administrative boundary relation (admin_level 10, e.g. "B-12")
+      subLocality = addr.suburb;
+    } else if (isBlockPattern(addr.quarter)) {
+      subLocality = addr.quarter;
+    } else if (isBlockPattern(addr.suburb)) {
+      subLocality = addr.suburb;
+    } else if (isBlockPattern(addr.neighbourhood)) {
+      subLocality = addr.neighbourhood;
+    } else {
+      const dTokens = String(data.display_name || '').split(',').map(s => s.trim());
+      const blockToken = dTokens.find(t => isBlockPattern(t));
+      if (blockToken) {
+        subLocality = blockToken;
+      } else {
+        subLocality = addr.quarter || addr.neighbourhood || '';
+        const hasCity = Boolean(addr.city || addr.town || addr.municipality);
+        if (!subLocality && hasCity && addr.suburb) {
+          subLocality = addr.suburb;
+        }
+      }
+    }
 
-    // Priority 3 (Block / Tehsil - ONLY use if Priority 2 is missing): county || state_district
-    const blockOrTehsil = (!localSettlement) ? (addr.county || addr.subdistrict || '') : '';
-
-    const locality = (localSettlement || blockOrTehsil || '').trim();
-    const landmark = addr.landmark || addr.amenity || addr.shop || addr.building || '';
-    const pincode = addr.postcode || '';
+    // Priority 3: City / Town / Village (Never overwritten by subLocality)
+    let cityCandidate = addr.city || addr.town || addr.village || addr.municipality || addr.county || '';
+    let cleanCity = cityCandidate.replace(/\s*city\s*/gi, '').trim();
+    if (cleanCity.toLowerCase() === 'greater kolkata') {
+      cleanCity = (addr.county && addr.county.toLowerCase() !== 'greater kolkata') ? addr.county : (addr.town || 'Kalyani');
+    }
+    if (!cleanCity && addr.suburb && !isBlockPattern(addr.suburb)) {
+      cleanCity = addr.suburb;
+    }
+    const cityOrTown = cleanCity;
 
     // District: prefer state_district to avoid CD blocks like 'Habra - II'
-    let district = (addr.state_district || addr.county || addr.city || '').replace(/\s*district\s*/gi, '').trim();
+    let district = (addr.state_district || addr.county || '').replace(/\s*district\s*/gi, '').trim();
     if (district.includes('-') && addr.state_district) {
       district = addr.state_district.replace(/\s*district\s*/gi, '').trim();
     }
     const state = addr.state || 'West Bengal';
+    const pincode = addr.postcode || '';
 
-    // Format clean address: [Road/Landmark if available], [Village/Town/Suburb], [District], [State] - [Postcode]
+    // Format clean address in order: [Road/POI], [subLocality], [cityOrTown], [district], [state] - [postcode]
     const parts = [];
-    if (street && street.toLowerCase() !== locality.toLowerCase()) {
-      parts.push(street);
-    }
-    if (locality) {
-      parts.push(locality);
-    }
-    if (district && district.toLowerCase() !== locality.toLowerCase()) {
-      parts.push(district);
-    }
-    if (state) {
-      parts.push(state);
-    }
+    const added = new Set();
+    const addPart = (val) => {
+      if (!val) return;
+      const v = String(val).trim();
+      const lower = v.toLowerCase();
+      if (v && !added.has(lower)) {
+        parts.push(v);
+        added.add(lower);
+      }
+    };
+
+    addPart(street);
+    addPart(subLocality);
+    addPart(cityOrTown);
+    addPart(district);
+    addPart(state);
+
     let formatted = parts.join(', ');
     if (pincode) {
       formatted += ` - ${pincode}`;
     }
 
+    const locality = subLocality ? (cityOrTown ? `${subLocality}, ${cityOrTown}` : subLocality) : cityOrTown;
+
     const result = {
       street: String(street).trim(),
+      subLocality: String(subLocality).trim(),
+      cityOrTown: String(cityOrTown).trim(),
       locality: String(locality).trim(),
-      landmark: String(landmark).trim(),
+      landmark: String(addr.landmark || addr.amenity || addr.shop || addr.building || '').trim(),
       pincode: String(pincode).trim(),
       district: String(district).trim(),
       state: String(state).trim(),

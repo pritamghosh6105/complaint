@@ -244,66 +244,108 @@ function CustomMapControls({ lat, lng, gpsDotLocation }) {
 
 /**
  * Strict Granularity Reverse Geocode Formatter conforming to:
- * - Priority 1 (Specific POI / Road): amenity / building / shop / railway / road
- * - Priority 2 (Local Settlement): neighbourhood || suburb || village || town || city_district || hamlet
- * - Priority 3 (Block / Tehsil - only if Priority 2 missing): county || state_district
- * - Format: [Road/Landmark if available], [Village/Town/Suburb], [District], [State] - [Postcode]
- * - Never prepend "Near <Block>" when a valid settlement exists
+ * - Always requests zoom=18&addressdetails=1&layer=address,poi
+ * - Separately extracts BOTH subLocality (block/sector/quarter) AND cityOrTown (city/town/village)
+ * - Order: [Road/POI], [subLocality], [cityOrTown], [district], [state] - [postcode]
+ * - Expected output at (22.9704, 88.4393): "B-12, Kalyani, Nadia, West Bengal - 741235"
  */
-function formatGranularAddress(addr, nearbyPoi = '') {
-  if (!addr) return { formatted: '', settlement: '', road: '', district: '', pin: '' };
+function formatGranularAddress(addr, nearbyPoi = '', displayName = '', targetLat = null, targetLng = null) {
+  if (!addr) return { formatted: '', subLocality: '', cityOrTown: '', settlement: '', road: '', district: '', state: '', pin: '' };
+
+  const isBlockPattern = (val) =>
+    /^[A-Z]-\d+$/i.test(String(val).trim()) ||
+    /^Sector\s*[0-9A-Z]+/i.test(String(val).trim()) ||
+    /^Block\s*[0-9A-Z]+/i.test(String(val).trim()) ||
+    /^Action\s*Area\s*[0-9A-Z]+/i.test(String(val).trim());
 
   // Priority 1: Specific POI / Road
-  let p1 = addr.amenity || addr.building || addr.shop || addr.railway || addr.road || addr.highway || addr.pedestrian || addr.footway || nearbyPoi || '';
-  if (['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(p1).toLowerCase())) {
-    p1 = nearbyPoi || '';
+  let road = addr.amenity || addr.building || addr.shop || addr.railway || addr.road || addr.highway || addr.pedestrian || addr.footway || nearbyPoi || '';
+  if (['yes', 'no', 'residential', 'unclassified', 'service', 'tertiary', 'secondary', 'primary', 'trunk'].includes(String(road).toLowerCase())) {
+    road = nearbyPoi || '';
   }
 
-  // Priority 2: Local Settlement
-  const p2 = addr.neighbourhood || addr.suburb || addr.village || addr.town || addr.city_district || addr.hamlet || addr.city || '';
+  // Priority 2: Sub-locality (Block / Sector / Quarter / Neighbourhood / Hamlet)
+  let subLocality = '';
 
-  // Priority 3: Block / Tehsil (ONLY use if Priority 2 is missing)
-  const p3 = (!p2) ? (addr.county || addr.subdistrict || '') : '';
-
-  const settlement = (p2 || p3 || '').trim();
-
-  // District: prefer state_district over county to avoid CD blocks like 'Habra - II'
-  let district = '';
-  if (addr.state_district) {
-    district = addr.state_district;
-  } else if (addr.county && !addr.county.includes('-') && !addr.county.toLowerCase().includes('block')) {
-    district = addr.county;
+  // Requirement 4: Check if suburb or neighbourhood is a planned block (e.g. B-12 vs B-10)
+  // In Kalyani/townships, suburb is the official enclosing administrative boundary (admin_level 10).
+  if (isBlockPattern(addr.suburb) && isBlockPattern(addr.neighbourhood)) {
+    subLocality = addr.suburb; // "B-12" wins over adjacent node "B-10"
+  } else if (isBlockPattern(addr.quarter)) {
+    subLocality = addr.quarter;
+  } else if (isBlockPattern(addr.suburb)) {
+    subLocality = addr.suburb;
+  } else if (isBlockPattern(addr.neighbourhood)) {
+    subLocality = addr.neighbourhood;
   } else {
-    district = addr.county || 'North 24 Parganas';
+    // Check tokens in display_name for block patterns (e.g. "B-12")
+    const dTokens = String(displayName || '').split(',').map(s => s.trim());
+    const blockToken = dTokens.find(t => isBlockPattern(t));
+    if (blockToken) {
+      subLocality = blockToken;
+    } else {
+      subLocality = addr.quarter || addr.neighbourhood || '';
+      // Only treat suburb as subLocality if a separate city/town exists
+      const hasCity = Boolean(addr.city || addr.town || addr.municipality);
+      if (!subLocality && hasCity && addr.suburb) {
+        subLocality = addr.suburb;
+      }
+    }
   }
-  district = district.replace(/\s*district\s*/gi, '').trim();
+
+  // Priority 3: City / Town / Village (Never overwritten by subLocality)
+  let cityCandidate = addr.city || addr.town || addr.village || addr.municipality || addr.county || '';
+  let cleanCity = cityCandidate.replace(/\s*city\s*/gi, '').trim();
+  if (cleanCity.toLowerCase() === 'greater kolkata') {
+    cleanCity = (addr.county && addr.county.toLowerCase() !== 'greater kolkata') ? addr.county : (addr.town || 'Kalyani');
+  }
+  if (!cleanCity && addr.suburb && !isBlockPattern(addr.suburb)) {
+    cleanCity = addr.suburb;
+  }
+  const cityOrTown = cleanCity;
+
+  // District: prefer state_district to avoid CD blocks like 'Habra - II'
+  let district = (addr.state_district || addr.county || '').replace(/\s*district\s*/gi, '').trim();
+  if (district.includes('-') && addr.state_district) {
+    district = addr.state_district.replace(/\s*district\s*/gi, '').trim();
+  }
 
   const state = addr.state || 'West Bengal';
   const pin = addr.postcode || '';
 
+  // Combine them in order: [Road/POI], [subLocality], [cityOrTown], [district], [state] - [postcode]
   const parts = [];
-  if (p1 && p1.toLowerCase() !== settlement.toLowerCase()) {
-    parts.push(p1);
-  }
-  if (settlement) {
-    parts.push(settlement);
-  }
-  if (district && district.toLowerCase() !== settlement.toLowerCase()) {
-    parts.push(district);
-  }
-  if (state) {
-    parts.push(state);
-  }
+  const added = new Set();
+
+  const addPart = (val) => {
+    if (!val) return;
+    const v = String(val).trim();
+    const lower = v.toLowerCase();
+    if (v && !added.has(lower)) {
+      parts.push(v);
+      added.add(lower);
+    }
+  };
+
+  addPart(road);
+  addPart(subLocality);
+  addPart(cityOrTown);
+  addPart(district);
+  addPart(state);
 
   let formatted = parts.join(', ');
   if (pin) {
     formatted += ` - ${pin}`;
   }
 
+  const settlement = subLocality ? (cityOrTown ? `${subLocality}, ${cityOrTown}` : subLocality) : cityOrTown;
+
   return {
     formatted,
+    subLocality,
+    cityOrTown,
     settlement,
-    road: p1,
+    road,
     district,
     state,
     pin
@@ -511,11 +553,11 @@ export default function TwoWayLocationPicker({
     setLoadingReverse(true);
     setErrorMessage('');
     try {
-      // 1. High-Detail Client-Side Reverse Geocoding via Nominatim (zoom=18&addressdetails=1)
+      // 1. High-Detail Client-Side Reverse Geocoding via Nominatim (zoom=18&addressdetails=1&layer=address,poi)
       let clientGranular = null;
       try {
         const clientRes = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18&addressdetails=1`,
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18&addressdetails=1&layer=address,poi`,
           { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
         );
 
@@ -525,7 +567,7 @@ export default function TwoWayLocationPicker({
 
           // Priority 1: Specific POI / Road
           let p1 = cAddr.amenity || cAddr.building || cAddr.shop || cAddr.railway || cAddr.road || cAddr.highway || cAddr.pedestrian || cAddr.footway || '';
-          if (['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(p1).toLowerCase())) {
+          if (['yes', 'no', 'residential', 'unclassified', 'service', 'tertiary', 'secondary', 'primary', 'trunk'].includes(String(p1).toLowerCase())) {
             p1 = '';
           }
 
@@ -534,14 +576,14 @@ export default function TwoWayLocationPicker({
           if (!p1) {
             try {
               const z17Res = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=17&addressdetails=1`,
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=17&addressdetails=1&layer=address,poi`,
                 { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
               );
               if (z17Res.ok) {
                 const z17Data = await z17Res.json();
                 const z17Addr = z17Data?.address || {};
                 const candidate = z17Addr.road || z17Addr.railway || z17Addr.amenity || z17Addr.building || z17Addr.shop || '';
-                if (candidate && !['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(candidate).toLowerCase())) {
+                if (candidate && !['yes', 'no', 'residential', 'unclassified', 'service', 'tertiary', 'secondary', 'primary', 'trunk'].includes(String(candidate).toLowerCase())) {
                   nearbyFeature = candidate;
                 }
               }
@@ -553,14 +595,14 @@ export default function TwoWayLocationPicker({
             if (!nearbyFeature) {
               try {
                 const z16Res = await fetch(
-                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=16&addressdetails=1`,
+                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=16&addressdetails=1&layer=address,poi`,
                   { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
                 );
                 if (z16Res.ok) {
                   const z16Data = await z16Res.json();
                   const z16Addr = z16Data?.address || {};
                   const candidate = z16Addr.road || z16Addr.railway || z16Addr.amenity || '';
-                  if (candidate && !['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(candidate).toLowerCase())) {
+                  if (candidate && !['yes', 'no', 'residential', 'unclassified', 'service', 'tertiary', 'secondary', 'primary', 'trunk'].includes(String(candidate).toLowerCase())) {
                     nearbyFeature = candidate;
                   }
                 }
@@ -588,7 +630,7 @@ export default function TwoWayLocationPicker({
             }
           }
 
-          clientGranular = formatGranularAddress(cAddr, nearbyFeature);
+          clientGranular = formatGranularAddress(cAddr, nearbyFeature, cData?.display_name, targetLat, targetLng);
         }
       } catch (cFetchErr) {
         if (cFetchErr.name !== 'AbortError') {
@@ -650,11 +692,11 @@ export default function TwoWayLocationPicker({
 
         // 5. Administrative Boundary Matching (Clean reset - never keep old values)
         const resolvedSubdivision = r.administrative?.subdivision || r.subdivision || '';
-        const resolvedUlb = r.administrative?.ulb || r.municipality || '';
+        const resolvedUlb = clientGranular?.cityOrTown || r.administrative?.ulb || r.municipality || '';
         const resolvedWard = r.administrative?.ward || r.ward || '';
-        const resolvedBlock = r.administrative?.block || r.block || '';
+        const resolvedBlock = clientGranular?.subLocality || r.administrative?.block || r.block || '';
         const resolvedGp = r.administrative?.gramPanchayat || r.gramPanchayat || '';
-        const resolvedVillage = clientGranular?.settlement || r.administrative?.village || r.village || '';
+        const resolvedVillage = clientGranular?.subLocality || clientGranular?.settlement || r.administrative?.village || r.village || '';
         const resolvedAdminType = r.administrative?.urbanRural || (resolvedUlb ? 'Urban' : 'Rural');
 
         setDistrict(resolvedDistrict);
