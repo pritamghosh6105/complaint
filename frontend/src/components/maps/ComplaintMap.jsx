@@ -301,18 +301,6 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
                         <span style={{ color: 'var(--text-muted)' }}>District:</span>
                         <span style={{ color: 'var(--text-secondary)' }}>{comp.district || comp.location?.district || 'West Bengal'}</span>
                       </div>
-                      {(comp.police_station || comp.policeStation || comp.location?.policeStation) && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>Police Station:</span>
-                          <span style={{ color: 'var(--text-secondary)' }}>{comp.police_station || comp.policeStation || comp.location?.policeStation}</span>
-                        </div>
-                      )}
-                      {(comp.pincode || comp.postal_code || comp.location?.pincode) && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>Pincode:</span>
-                          <span style={{ color: 'var(--text-secondary)' }}>{comp.pincode || comp.postal_code || comp.location?.pincode}</span>
-                        </div>
-                      )}
                       {comp.created_at && (
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <span style={{ color: 'var(--text-muted)' }}>Date:</span>
@@ -326,7 +314,7 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
                       <p style={{ 
                         fontSize: '0.78rem', 
                         color: 'var(--text-secondary)', 
-                        margin: '6px 0 8px', 
+                        margin: '6px 0 2px', 
                         lineHeight: 1.4,
                         display: '-webkit-box',
                         WebkitLineClamp: 3,
@@ -335,34 +323,6 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
                       }}>
                         {comp.description}
                       </p>
-                    )}
-
-                    {(comp.has_evidence || comp.image_url) && (
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        background: 'rgba(59, 130, 246, 0.1)',
-                        border: '1px solid rgba(59, 130, 246, 0.25)',
-                        padding: '5px 8px',
-                        borderRadius: '6px',
-                        fontSize: '0.72rem',
-                        color: 'var(--accent-primary)',
-                        marginBottom: '8px'
-                      }}>
-                        <Shield size={12} />
-                        <span>Evidence Protected (Authority Only)</span>
-                      </div>
-                    )}
-
-                    {onSelectComplaint && (
-                      <button 
-                        className="btn btn-primary btn-sm" 
-                        style={{ width: '100%', marginTop: '4px', fontSize: '0.8rem' }}
-                        onClick={() => onSelectComplaint(comp)}
-                      >
-                        <Eye size={13} /> View Full Audit Stepper
-                      </button>
                     )}
                   </div>
                 </Popup>

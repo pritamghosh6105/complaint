@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Calendar, 
-  UserCheck, 
-  Building, 
-  Clock, 
-  AlertTriangle, 
-  Star, 
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  UserCheck,
+  Building,
+  Clock,
+  AlertTriangle,
+  Star,
   ShieldAlert,
   CheckCircle2,
   Sparkles,
@@ -43,7 +43,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
         if (fromUrl) return fromUrl;
         return sessionStorage.getItem('civic_selected_complaint_id');
       }
-    } catch (e) {}
+    } catch (e) { }
     return null;
   })();
 
@@ -61,7 +61,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
           evidence: parsed.evidence || []
         };
       }
-    } catch (e) {}
+    } catch (e) { }
     return null;
   };
 
@@ -98,7 +98,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
             sessionStorage.setItem(`civic_complaint_cache_${res.data.complaint.tracking_id}`, JSON.stringify(res.data.complaint));
           }
           sessionStorage.setItem('civic_selected_complaint_id', String(res.data.complaint.id));
-        } catch (e) {}
+        } catch (e) { }
       } else {
         if (!data) setFetchError('Complaint record not found');
       }
@@ -127,7 +127,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
             );
           }
         }
-      } catch (e) {}
+      } catch (e) { }
 
       fetchDetails(resolvedTargetId);
     } else {
@@ -158,7 +158,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
             '',
             `/complaint-details?id=${encodeURIComponent(res.data.complaint.id)}`
           );
-        } catch (e) {}
+        } catch (e) { }
       } else {
         setFetchError(`No complaint found with ID #${q}`);
         addToast('error', 'Not Found', `No complaint found with ID #${q}`);
@@ -305,9 +305,9 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
                 style={{ flex: 1, padding: '10px 14px', fontSize: '0.9rem' }}
                 autoFocus
               />
-              <button 
-                type="submit" 
-                className="btn btn-primary" 
+              <button
+                type="submit"
+                className="btn btn-primary"
                 style={{ padding: '10px 18px', fontWeight: 600 }}
                 disabled={searchingManual}
               >
@@ -316,9 +316,9 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
             </form>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
-              <button 
-                type="button" 
-                className="btn btn-secondary btn-sm" 
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
                 onClick={() => {
                   if (user?.role === 'officer') setCurrentRoute('officer-dashboard');
                   else if (user?.role === 'admin') setCurrentRoute('admin-dashboard');
@@ -376,12 +376,12 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
       <div className="container" style={{ maxWidth: '960px' }}>
         {/* Back Button & Print Dossier Bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
-          <button 
+          <button
             onClick={() => {
               if (user?.role === 'officer') setCurrentRoute('officer-dashboard');
               else if (user?.role === 'admin') setCurrentRoute('admin-dashboard');
               else setCurrentRoute('citizen-dashboard');
-            }} 
+            }}
             className="btn btn-secondary btn-sm"
           >
             <ArrowLeft size={16} /> {user?.role === 'officer' ? 'Back to Taskforce Queue' : user?.role === 'admin' ? 'Back to Admin Portal' : 'Back to My Complaints'}
@@ -407,7 +407,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
                 <span>Print Case Dossier</span>
               </button>
             ) : (
-              <div 
+              <div
                 style={{
                   fontSize: '0.78rem',
                   color: 'var(--text-secondary)',
@@ -494,8 +494,8 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
               <div style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>{complaint.officer_name || 'Pending Assignment'}</div>
             </div>
             <div>
-              <span style={{ color: 'var(--text-muted)' }}>Location:</span>
-              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.address || complaint.municipality || complaint.district || 'West Bengal'}</div>
+              <span style={{ color: 'var(--text-muted)' }}>District:</span>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{complaint.district || 'West Bengal'}</div>
             </div>
           </div>
         </div>
@@ -735,7 +735,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
               )}
 
               {/* Official Vision AI Scene Description in Case Report */}
-              <SceneDescriptionCard 
+              <SceneDescriptionCard
                 sceneDescription={complaint.scene_description || complaint.evidence?.[0]?.scene_description || complaint.evidence?.[0]?.visual_analysis?.scene?.description || complaint.evidence?.[0]?.visual_analysis?.scene_description}
                 sceneType={complaint.scene_type || complaint.evidence?.[0]?.scene_type || complaint.evidence?.[0]?.visual_analysis?.scene?.scene_type || complaint.evidence?.[0]?.visual_analysis?.scene_type}
                 directObservations={complaint.direct_observations || complaint.evidence?.[0]?.direct_observations || complaint.evidence?.[0]?.visual_analysis?.evidence?.direct_observations || complaint.evidence?.[0]?.visual_analysis?.direct_observations}
@@ -743,7 +743,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
                 compact={false}
               />
 
-              <EvidenceGallery 
+              <EvidenceGallery
                 evidence={complaint.evidence || []}
                 initialImageUrl={complaint.image_url}
                 resolutionImage={complaint.resolution_image_url}
@@ -777,7 +777,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                 {!feedback ? (
-                  <button 
+                  <button
                     className="btn btn-primary"
                     onClick={() => setIsFeedbackOpen(true)}
                   >
@@ -810,7 +810,7 @@ export default function ComplaintDetails({ complaintId, setSelectedComplaintId, 
         )}
 
         {/* Feedback Modal */}
-        <FeedbackModal 
+        <FeedbackModal
           isOpen={isFeedbackOpen}
           onClose={() => setIsFeedbackOpen(false)}
           complaint={complaint}

@@ -502,8 +502,7 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
                         </div>
 
                         <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', margin: '4px 0', lineHeight: 1.4 }}>
-                          📍 {pt.municipality || pt.block || pt.district || 'West Bengal'}
-                          {pt.gram_panchayat && ` • GP ${pt.gram_panchayat}`}
+                          📍 {pt.district || 'West Bengal'}
                         </div>
 
                         <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '6px 0', fontWeight: 500 }}>

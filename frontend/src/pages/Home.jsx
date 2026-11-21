@@ -392,7 +392,7 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
           {loading ? (
             <CardSkeleton count={3} />
           ) : complaints && complaints.length > 0 ? (
-            <div className="grid-cols-3">
+            <div className="grid-cols-3" style={{ alignItems: 'stretch' }}>
               {complaints.slice(0, 6).map(complaint => (
                 <ComplaintCard 
                   key={complaint.id}

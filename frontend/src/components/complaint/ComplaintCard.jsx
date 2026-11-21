@@ -6,26 +6,16 @@ import { StatusBadge } from '../ui/StatusBadge';
 export default function ComplaintCard({ complaint, onClick }) {
   if (!complaint) return null;
 
-  // Format meaningful location display: District • Municipality / Locality (Ward section excluded)
+  // Format location display: District ONLY (No police station, municipality, or ward)
   const formatLocation = () => {
-    const parts = [];
-    if (complaint.district) parts.push(complaint.district);
-    if (complaint.municipality && complaint.municipality !== complaint.district) {
-      parts.push(complaint.municipality);
+    if (complaint.district && complaint.district.trim()) {
+      return complaint.district.trim();
     }
-    const localArea = complaint.locality || complaint.block || complaint.police_station;
-    if (localArea && !parts.includes(localArea)) {
-      parts.push(localArea);
-    }
-    if (parts.length > 0) return parts.join(' • ');
-
     if (complaint.address) {
-      const cleanAddr = complaint.address.split(',')[0].trim();
-      if (cleanAddr && cleanAddr.length > 2 && !cleanAddr.toLowerCase().startsWith('ward')) {
-        return cleanAddr;
-      }
+      const match = complaint.address.match(/(North 24 Parganas|South 24 Parganas|Kolkata|Howrah|Hooghly|Nadia|Murshidabad|Malda|Uttar Dinajpur|Dakshin Dinajpur|Darjeeling|Jalpaiguri|Alipurduar|Cooch Behar|Kalimpong|Purba Bardhaman|Paschim Bardhaman|Birbhum|Bankura|Purulia|Jhargram|Purba Medinipur|Paschim Medinipur)/i);
+      if (match) return match[1];
     }
-    return null;
+    return 'West Bengal';
   };
 
   const locationDisplay = formatLocation();
@@ -35,10 +25,12 @@ export default function ComplaintCard({ complaint, onClick }) {
       className="gov-card gov-card-interactive" 
       onClick={onClick}
       style={{
-        padding: '18px 20px',
+        padding: '20px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        height: '100%',
+        boxSizing: 'border-box',
         position: 'relative'
       }}
       role="button"
@@ -50,12 +42,13 @@ export default function ComplaintCard({ complaint, onClick }) {
         }
       }}
     >
-      <div>
-        {/* Card Header: Priority Badge & Date (Complaint number hidden per preference) */}
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+        {/* Card Header: Priority Badge & Date */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Clock size={13} style={{ color: 'var(--text-muted)' }} />
             {complaint.created_at && (
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              <span style={{ fontSize: '0.78125rem', color: 'var(--text-muted)', fontWeight: 500 }}>
                 {new Date(complaint.created_at).toLocaleDateString()}
               </span>
             )}
@@ -64,33 +57,36 @@ export default function ComplaintCard({ complaint, onClick }) {
           <PriorityBadge priority={complaint.priority} />
         </div>
 
-        {/* Issue Title */}
+        {/* Issue Title (Normalized 2-line height for uniform grid layout) */}
         <h4 style={{ 
           fontSize: '1rem', 
           fontWeight: 700, 
           color: 'var(--text-primary)', 
           marginBottom: '8px',
-          lineHeight: 1.35
-        }}>
+          lineHeight: 1.35,
+          minHeight: '2.7rem',
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden'
+        }} title={complaint.title || complaint.category}>
           {complaint.title || complaint.category}
         </h4>
 
-        {/* Location & Jurisdiction Details (Ward section excluded) */}
-        {locationDisplay && (
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '6px', 
-            fontSize: '0.8125rem', 
-            color: 'var(--text-secondary)',
-            marginBottom: '12px'
-          }}>
-            <MapPin size={14} color="var(--color-accent)" style={{ flexShrink: 0 }} />
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={locationDisplay}>
-              {locationDisplay}
-            </span>
-          </div>
-        )}
+        {/* Location: District ONLY */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '6px', 
+          fontSize: '0.8125rem', 
+          color: 'var(--text-secondary)',
+          marginBottom: '12px'
+        }}>
+          <MapPin size={14} color="var(--color-accent)" style={{ flexShrink: 0 }} />
+          <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={locationDisplay}>
+            {locationDisplay}
+          </span>
+        </div>
 
         {/* AI Categorization Summary */}
         <div style={{ 
@@ -129,7 +125,8 @@ export default function ComplaintCard({ complaint, onClick }) {
         alignItems: 'center', 
         justifyContent: 'space-between', 
         paddingTop: '12px',
-        borderTop: '1px solid var(--border-subtle)'
+        borderTop: '1px solid var(--border-subtle)',
+        marginTop: 'auto'
       }}>
         <StatusBadge status={complaint.status} />
 
