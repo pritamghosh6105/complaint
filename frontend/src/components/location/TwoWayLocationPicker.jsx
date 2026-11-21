@@ -399,6 +399,8 @@ export default function TwoWayLocationPicker({
   const [currentProvider, setCurrentProvider] = useState(getSavedProviderId());
 
   const markerRef = useRef(null);
+  const abortControllerRef = useRef(null);
+  const debounceTimerRef = useRef(null);
 
   // -------------------------------------------------------------
   // Emit updated location payload to parent (NewComplaint.jsx)
@@ -499,6 +501,13 @@ export default function TwoWayLocationPicker({
   // Reverse Geocode on map click / pin drag
   // -------------------------------------------------------------
   const handleReverseGeocode = useCallback(async (targetLat, targetLng) => {
+    // Abort previous in-flight requests to prevent out-of-order responses
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setLoadingReverse(true);
     setErrorMessage('');
     try {
@@ -507,7 +516,7 @@ export default function TwoWayLocationPicker({
       try {
         const clientRes = await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18&addressdetails=1`,
-          { headers: { 'Accept-Language': 'en' } }
+          { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
         );
 
         if (clientRes.ok) {
@@ -520,13 +529,13 @@ export default function TwoWayLocationPicker({
             p1 = '';
           }
 
-          // If exact point lacks a street name at zoom=18, probe nearby features (zoom=17 or nearby station/feature)
+          // If exact point lacks a street name at zoom=18, probe nearby features (zoom=17 -> zoom=16 -> nearby station/feature)
           let nearbyFeature = '';
           if (!p1) {
             try {
               const z17Res = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=17&addressdetails=1`,
-                { headers: { 'Accept-Language': 'en' } }
+                { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
               );
               if (z17Res.ok) {
                 const z17Data = await z17Res.json();
@@ -540,11 +549,31 @@ export default function TwoWayLocationPicker({
               // Ignore zoom 17 probe error
             }
 
+            // Probe zoom 16 for major corridor/thoroughfare snap
+            if (!nearbyFeature) {
+              try {
+                const z16Res = await fetch(
+                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=16&addressdetails=1`,
+                  { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
+                );
+                if (z16Res.ok) {
+                  const z16Data = await z16Res.json();
+                  const z16Addr = z16Data?.address || {};
+                  const candidate = z16Addr.road || z16Addr.railway || z16Addr.amenity || '';
+                  if (candidate && !['yes', 'no', 'residential', 'unclassified', 'service'].includes(String(candidate).toLowerCase())) {
+                    nearbyFeature = candidate;
+                  }
+                }
+              } catch (e16) {
+                // Ignore zoom 16 probe error
+              }
+            }
+
             if (!nearbyFeature) {
               try {
                 const searchRes = await fetch(
                   `https://nominatim.openstreetmap.org/search?format=json&bounded=1&viewbox=${targetLng - 0.004},${targetLat + 0.004},${targetLng + 0.004},${targetLat - 0.004}&q=station&addressdetails=1`,
-                  { headers: { 'Accept-Language': 'en' } }
+                  { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
                 );
                 if (searchRes.ok) {
                   const sData = await searchRes.json();
@@ -562,11 +591,15 @@ export default function TwoWayLocationPicker({
           clientGranular = formatGranularAddress(cAddr, nearbyFeature);
         }
       } catch (cFetchErr) {
-        console.warn('Client-side Nominatim reverse geocode error:', cFetchErr);
+        if (cFetchErr.name !== 'AbortError') {
+          console.warn('Client-side Nominatim reverse geocode notice:', cFetchErr.message);
+        }
       }
 
       // 2. Authoritative backend resolution (Police stations, jurisdiction, administrative divisions)
-      const res = await api.get(`/locations/resolve?lat=${targetLat}&lng=${targetLng}`);
+      const res = await api.get(`/locations/resolve?lat=${targetLat}&lng=${targetLng}`, {
+        signal: controller.signal
+      });
       if (res.data && (res.data.resolution || res.data.success)) {
         const r = res.data.resolution || res.data;
 
@@ -716,6 +749,10 @@ export default function TwoWayLocationPicker({
         }
       }
     } catch (err) {
+      if (err.name === 'AbortError' || err.message === 'canceled') {
+        // Request was aborted due to newer pin movement; do not overwrite state
+        return;
+      }
       console.warn('Reverse geocode error:', err);
       const fallbackAddr = `Location at ${targetLat.toFixed(6)}, ${targetLng.toFixed(6)}`;
       setDetectedAddress(fallbackAddr);
@@ -858,7 +895,7 @@ export default function TwoWayLocationPicker({
   };
 
   // -------------------------------------------------------------
-  // Map Pin Drag & Map Click Handlers (DIRECT INTERACTION)
+  // Map Pin Drag & Map Click Handlers (DIRECT INTERACTION WITH DEBOUNCE)
   // -------------------------------------------------------------
   const handleMarkerDragEnd = () => {
     const marker = markerRef.current;
@@ -868,14 +905,36 @@ export default function TwoWayLocationPicker({
       const roundedLng = parseFloat(newLng.toFixed(6));
       setLat(roundedLat);
       setLng(roundedLng);
-      handleReverseGeocode(roundedLat, roundedLng);
+
+      // Debounce rapid movements and abort any previous pending request
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      if (abortControllerRef.current) abortControllerRef.current.abort();
+
+      setDetectedAddress(`📍 Pinned: ${roundedLat.toFixed(5)}, ${roundedLng.toFixed(5)} — Resolving exact locality...`);
+      setSearchInput(`Coordinates: ${roundedLat.toFixed(5)}, ${roundedLng.toFixed(5)}`);
+
+      debounceTimerRef.current = setTimeout(() => {
+        handleReverseGeocode(roundedLat, roundedLng);
+      }, 250);
     }
   };
 
   const handleMapClick = (clickedLat, clickedLng) => {
-    setLat(clickedLat);
-    setLng(clickedLng);
-    handleReverseGeocode(clickedLat, clickedLng);
+    const roundedLat = parseFloat(clickedLat.toFixed(6));
+    const roundedLng = parseFloat(clickedLng.toFixed(6));
+    setLat(roundedLat);
+    setLng(roundedLng);
+
+    // Debounce rapid clicks and abort any previous pending request
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    if (abortControllerRef.current) abortControllerRef.current.abort();
+
+    setDetectedAddress(`📍 Pinned: ${roundedLat.toFixed(5)}, ${roundedLng.toFixed(5)} — Resolving exact locality...`);
+    setSearchInput(`Coordinates: ${roundedLat.toFixed(5)}, ${roundedLng.toFixed(5)}`);
+
+    debounceTimerRef.current = setTimeout(() => {
+      handleReverseGeocode(roundedLat, roundedLng);
+    }, 250);
   };
 
   // -------------------------------------------------------------
