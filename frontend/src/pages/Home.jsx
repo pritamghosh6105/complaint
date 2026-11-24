@@ -19,6 +19,7 @@ import {
   Layers,
   ChevronRight
 } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import ComplaintMap from '../components/maps/ComplaintMap';
@@ -37,6 +38,46 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
   const [trackingSearch, setTrackingSearch] = useState('');
   const [trackingError, setTrackingError] = useState('');
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 640 : false);
+
+  const shouldReduceMotion = useReducedMotion();
+
+  // Apple Fluid Interface Spring Presets (Critically Damped, Zero Latency)
+  const appleSpring = shouldReduceMotion 
+    ? { duration: 0.15 } 
+    : { type: 'spring', stiffness: 280, damping: 26, mass: 0.85 };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.08,
+        delayChildren: shouldReduceMotion ? 0 : 0.04
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 16 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: appleSpring
+    }
+  };
+
+  const heroVariants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        ...appleSpring,
+        staggerChildren: shouldReduceMotion ? 0 : 0.08,
+        delayChildren: shouldReduceMotion ? 0 : 0.03
+      }
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640);
@@ -121,107 +162,143 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
       <div className="container">
         
         {/* =========================================================================
-            1. CIVIC PLATFORM HERO SECTION
+            1. CIVIC PLATFORM HERO SECTION (APPLE TRANSLUCENT & FLUID SPRING)
         ========================================================================= */}
-        <div style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--radius-lg)',
-          padding: 'clamp(16px, 4vw, 44px)',
-          marginBottom: '32px',
-          boxShadow: 'var(--shadow-sm)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+        <motion.div 
+          className="apple-hero-card"
+          initial="hidden"
+          animate="visible"
+          variants={heroVariants}
+          style={{
+            padding: 'clamp(18px, 4vw, 44px)',
+            marginBottom: '32px'
+          }}
+        >
+          {/* Apple Atmospheric Mesh Background */}
+          <div className="apple-hero-mesh" aria-hidden="true" />
+
           {/* Subtle civic header bar */}
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '5px 14px',
-            borderRadius: 'var(--radius-xs)',
-            background: 'var(--color-accent-subtle)',
-            border: '1px solid rgba(37, 99, 235, 0.25)',
-            color: 'var(--color-accent)',
-            fontSize: '0.78125rem',
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em',
-            marginBottom: '16px'
-          }}>
+          <motion.div 
+            variants={itemVariants}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '6px 14px',
+              borderRadius: 'var(--radius-full)',
+              background: 'var(--color-accent-subtle)',
+              border: '1px solid rgba(37, 99, 235, 0.28)',
+              color: 'var(--color-accent)',
+              fontSize: '0.78125rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              marginBottom: '18px',
+              position: 'relative',
+              zIndex: 1,
+              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.08)'
+            }}
+          >
             <ShieldCheck size={14} />
             <span>Public Civic Grievance & Issue Resolution Portal</span>
-          </div>
+          </motion.div>
 
-          <div style={{ maxWidth: '820px' }}>
-            <h1 style={{ 
-              fontSize: 'clamp(1.75rem, 4.5vw, 3rem)', 
-              fontWeight: 800, 
-              color: 'var(--text-primary)', 
-              lineHeight: 1.15,
-              letterSpacing: '-0.03em',
-              marginBottom: '14px'
-            }}>
+          <div style={{ maxWidth: '820px', position: 'relative', zIndex: 1 }}>
+            <motion.h1 
+              variants={itemVariants}
+              className="apple-display-heading"
+              style={{ 
+                fontSize: 'clamp(1.85rem, 4.5vw, 3rem)', 
+                fontWeight: 800, 
+                color: 'var(--text-primary)', 
+                lineHeight: 1.14,
+                marginBottom: '16px'
+              }}
+            >
               Report civic issues. Track resolution. Make your community better.
-            </h1>
+            </motion.h1>
 
-            <p style={{ 
-              fontSize: '1.0625rem', 
-              color: 'var(--text-secondary)', 
-              lineHeight: 1.6, 
-              marginBottom: '26px',
-              maxWidth: '720px'
-            }}>
+            <motion.p 
+              variants={itemVariants}
+              style={{ 
+                fontSize: 'clamp(0.95rem, 2vw, 1.0625rem)', 
+                color: 'var(--text-secondary)', 
+                lineHeight: 1.6, 
+                marginBottom: '28px',
+                maxWidth: '720px'
+              }}
+            >
               An AI-powered citizen complaint and public issue-reporting platform connecting citizens directly with the appropriate municipal and state authorities across West Bengal.
-            </p>
+            </motion.p>
 
             {/* Primary Action Buttons */}
-            <div className="home-hero-actions">
+            <motion.div variants={itemVariants} className="home-hero-actions">
               {user?.role === 'officer' ? (
-                <PrimaryButton
-                  size="lg"
-                  className="home-hero-btn"
-                  icon={<Briefcase size={16} />}
-                  onClick={() => setCurrentRoute('officer-dashboard')}
+                <motion.div 
+                  whileHover={shouldReduceMotion ? {} : { y: -2, scale: 1.015 }} 
+                  whileTap={shouldReduceMotion ? {} : { scale: 0.965 }}
+                  transition={{ type: 'spring', stiffness: 450, damping: 25 }}
                 >
-                  <span className="btn-text-full">Open Field Queue</span>
-                  <span className="btn-text-short">Field Queue</span>
-                </PrimaryButton>
+                  <PrimaryButton
+                    size="lg"
+                    className="home-hero-btn"
+                    icon={<Briefcase size={16} />}
+                    onClick={() => setCurrentRoute('officer-dashboard')}
+                  >
+                    <span className="btn-text-full">Open Field Queue</span>
+                    <span className="btn-text-short">Field Queue</span>
+                  </PrimaryButton>
+                </motion.div>
               ) : (
-                <PrimaryButton
-                  size="lg"
-                  className="home-hero-btn"
-                  icon={<FilePlus2 size={16} />}
-                  onClick={() => {
-                    if (user) setCurrentRoute('new-complaint');
-                    else setCurrentRoute('login');
-                  }}
+                <motion.div 
+                  whileHover={shouldReduceMotion ? {} : { y: -2, scale: 1.015 }} 
+                  whileTap={shouldReduceMotion ? {} : { scale: 0.965 }}
+                  transition={{ type: 'spring', stiffness: 450, damping: 25 }}
                 >
-                  <span className="btn-text-full">Report an Issue</span>
-                  <span className="btn-text-short">Report Issue</span>
-                </PrimaryButton>
+                  <PrimaryButton
+                    size="lg"
+                    className="home-hero-btn"
+                    icon={<FilePlus2 size={16} />}
+                    onClick={() => {
+                      if (user) setCurrentRoute('new-complaint');
+                      else setCurrentRoute('login');
+                    }}
+                  >
+                    <span className="btn-text-full">Report an Issue</span>
+                    <span className="btn-text-short">Report Issue</span>
+                  </PrimaryButton>
+                </motion.div>
               )}
 
-              <SecondaryButton
-                size="lg"
-                className="home-hero-btn"
-                icon={<Building2 size={16} />}
-                onClick={() => setCurrentRoute('departments')}
+              <motion.div 
+                whileHover={shouldReduceMotion ? {} : { y: -2, scale: 1.015 }} 
+                whileTap={shouldReduceMotion ? {} : { scale: 0.965 }}
+                transition={{ type: 'spring', stiffness: 450, damping: 25 }}
               >
-                <span className="btn-text-full">Explore 30 Departments</span>
-                <span className="btn-text-short">30 Departments</span>
-              </SecondaryButton>
-            </div>
+                <SecondaryButton
+                  size="lg"
+                  className="home-hero-btn"
+                  icon={<Building2 size={16} />}
+                  onClick={() => setCurrentRoute('departments')}
+                >
+                  <span className="btn-text-full">Explore 30 Departments</span>
+                  <span className="btn-text-short">30 Departments</span>
+                </SecondaryButton>
+              </motion.div>
+            </motion.div>
 
             {/* Quick Complaint Tracking Input */}
-            <form onSubmit={handleQuickTrack} style={{ maxWidth: '480px', width: '100%' }}>
+            <motion.form 
+              variants={itemVariants}
+              onSubmit={handleQuickTrack} 
+              style={{ maxWidth: '480px', width: '100%' }}
+            >
               <div 
-                className="quick-track-bar"
+                className="quick-track-bar apple-search-field"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   background: 'var(--bg-input)',
-                  border: '1px solid var(--border-subtle)',
                   borderRadius: 'var(--radius-sm)',
                   padding: '4px 6px',
                   boxShadow: 'var(--shadow-xs)',
@@ -268,53 +345,72 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
                   {trackingError}
                 </div>
               )}
-            </form>
+            </motion.form>
           </div>
-        </div>
+        </motion.div>
 
         {/* =========================================================================
             2. REAL DATA KPI COUNTERS (TRANSPARENT SYSTEM METRICS)
         ========================================================================= */}
-        <div className="grid-cols-4" style={{ marginBottom: '36px' }}>
-          <StatCard
-            title="Total Registered Complaints"
-            value={kpis ? kpis.total.toLocaleString() : '—'}
-            subtitle={kpis?.total > 0 ? `${kpis.pending || 0} under active review` : 'Total complaints in database'}
-            icon={Activity}
-            color="blue"
-          />
+        <motion.div 
+          className="grid-cols-4" 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-30px" }}
+          style={{ marginBottom: '36px' }}
+        >
+          <motion.div variants={itemVariants} whileHover={shouldReduceMotion ? {} : { y: -3 }} transition={{ type: 'spring', stiffness: 350, damping: 25 }}>
+            <StatCard
+              title="Total Registered Complaints"
+              value={kpis ? kpis.total.toLocaleString() : '—'}
+              subtitle={kpis?.total > 0 ? `${kpis.pending || 0} under active review` : 'Total complaints in database'}
+              icon={Activity}
+              color="blue"
+            />
+          </motion.div>
 
-          <StatCard
-            title="Resolved with Proof"
-            value={kpis ? kpis.resolved.toLocaleString() : '—'}
-            subtitle="Verified by officer completion photo"
-            icon={CheckCircle2}
-            color="emerald"
-          />
+          <motion.div variants={itemVariants} whileHover={shouldReduceMotion ? {} : { y: -3 }} transition={{ type: 'spring', stiffness: 350, damping: 25 }}>
+            <StatCard
+              title="Resolved with Proof"
+              value={kpis ? kpis.resolved.toLocaleString() : '—'}
+              subtitle="Verified by officer completion photo"
+              icon={CheckCircle2}
+              color="emerald"
+            />
+          </motion.div>
 
-          <StatCard
-            title="In Progress / Dispatched"
-            value={kpis ? kpis.inProgress.toLocaleString() : '—'}
-            subtitle="Field crew assigned with active SLA"
-            icon={Clock}
-            color="amber"
-          />
+          <motion.div variants={itemVariants} whileHover={shouldReduceMotion ? {} : { y: -3 }} transition={{ type: 'spring', stiffness: 350, damping: 25 }}>
+            <StatCard
+              title="In Progress / Dispatched"
+              value={kpis ? kpis.inProgress.toLocaleString() : '—'}
+              subtitle="Field crew assigned with active SLA"
+              icon={Clock}
+              color="amber"
+            />
+          </motion.div>
 
-          <StatCard
-            title="SLA Compliance Rate"
-            value={kpis && kpis.total > 0 ? `${kpis.resolutionRate || 92}%` : '96.4%'}
-            subtitle={kpis && kpis.avgResolutionDays ? `Avg resolution: ${kpis.avgResolutionDays} days` : 'Predictive SLA watchdog'}
-            icon={Sparkles}
-            color="purple"
-          />
-        </div>
-
-
+          <motion.div variants={itemVariants} whileHover={shouldReduceMotion ? {} : { y: -3 }} transition={{ type: 'spring', stiffness: 350, damping: 25 }}>
+            <StatCard
+              title="SLA Compliance Rate"
+              value={kpis && kpis.total > 0 ? `${kpis.resolutionRate || 92}%` : '96.4%'}
+              subtitle={kpis && kpis.avgResolutionDays ? `Avg resolution: ${kpis.avgResolutionDays} days` : 'Predictive SLA watchdog'}
+              icon={Sparkles}
+              color="purple"
+            />
+          </motion.div>
+        </motion.div>
 
         {/* =========================================================================
             4. LIVE PUBLIC GIS CIVIC MAP
         ========================================================================= */}
-        <div style={{ marginBottom: '44px' }}>
+        <motion.div 
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 22 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={appleSpring}
+          style={{ marginBottom: '44px' }}
+        >
           <div style={{
             display: 'flex',
             alignItems: 'flex-end',
@@ -324,7 +420,7 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
             marginBottom: '14px'
           }}>
             <div>
-              <h2 style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              <h2 style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.025em' }}>
                 Live Public Civic Map
               </h2>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '4px', margin: 0 }}>
@@ -353,12 +449,17 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
             onSelectComplaint={handleSelectComplaint}
             height="min(560px, 65vh)"
           />
-        </div>
+        </motion.div>
 
         {/* =========================================================================
             5. RECENT PUBLIC COMPLAINTS & RESOLUTIONS
         ========================================================================= */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 22 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={appleSpring}
+        >
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -368,7 +469,7 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
             marginBottom: '16px'
           }}>
             <div>
-              <h2 style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              <h2 style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.025em' }}>
                 Recent Public Grievance Feed
               </h2>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '4px', margin: 0 }}>
@@ -392,15 +493,30 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
           {loading ? (
             <CardSkeleton count={3} />
           ) : complaints && complaints.length > 0 ? (
-            <div className="grid-cols-3" style={{ alignItems: 'stretch' }}>
+            <motion.div 
+              className="grid-cols-3" 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-30px" }}
+              style={{ alignItems: 'stretch' }}
+            >
               {complaints.slice(0, 6).map(complaint => (
-                <ComplaintCard 
+                <motion.div 
                   key={complaint.id}
-                  complaint={complaint}
-                  onClick={() => handleSelectComplaint(complaint)}
-                />
+                  variants={itemVariants}
+                  whileHover={shouldReduceMotion ? {} : { y: -3 }}
+                  whileTap={shouldReduceMotion ? {} : { scale: 0.985 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                  style={{ display: 'flex', flexDirection: 'column' }}
+                >
+                  <ComplaintCard 
+                    complaint={complaint}
+                    onClick={() => handleSelectComplaint(complaint)}
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
             <div className="gov-card" style={{ padding: '36px 20px', textAlign: 'center' }}>
               <CheckCircle2 size={32} color="var(--color-success)" style={{ margin: '0 auto 10px' }} />
@@ -434,7 +550,7 @@ export default function Home({ setCurrentRoute, setSelectedComplaintId }) {
               )}
             </div>
           )}
-        </div>
+        </motion.div>
 
       </div>
     </div>
