@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Navigation, MapPin, Sparkles, CheckCircle2 } from 'lucide-react';
-import { MapAutoInvalidate, FastTileLayer, getSavedProviderId, MAPPLS_ACCESS_TOKEN } from './MapConfig';
+import { MapAutoInvalidate, FastTileLayer, getSavedProviderId, GOOGLE_MAPS_API_KEY, MAPPLS_ACCESS_TOKEN } from './MapConfig';
 import UserGpsMarker from './UserGpsMarker';
 
 const pinIcon = L.divIcon({
@@ -55,7 +55,36 @@ export default function LocationPicker({ latitude, longitude, onLocationChange }
   const [userGps, setUserGps] = useState(null);
 
   const fetchLocality = async (lat, lng) => {
-    // 1. Try Mappls API if token available
+    // 1. Try Google Maps Geocoding API if key available
+    if (GOOGLE_MAPS_API_KEY) {
+      try {
+        const gRes = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`
+        );
+        if (gRes.ok) {
+          const gData = await gRes.json();
+          const top = gData.results?.[0];
+          if (top) {
+            let localName = '';
+            for (const comp of top.address_components || []) {
+              const types = comp.types || [];
+              if (types.includes('sublocality') || types.includes('locality') || types.includes('neighborhood')) {
+                localName = comp.long_name;
+                break;
+              }
+            }
+            if (localName) setDetectedLocality(localName);
+            if (top.formatted_address) {
+              return { locality: localName, displayName: top.formatted_address };
+            }
+          }
+        }
+      } catch (err) {
+        // Fallback
+      }
+    }
+
+    // 2. Try Mappls API if token available
     if (MAPPLS_ACCESS_TOKEN) {
       try {
         const mapplsRes = await fetch(

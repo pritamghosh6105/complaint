@@ -26,7 +26,7 @@ import {
   Smartphone
 } from 'lucide-react';
 import api from '../../services/api';
-import { FastTileLayer, MapAutoInvalidate, MapLayerSwitcher, getSavedProviderId, MAPPLS_ACCESS_TOKEN } from '../maps/MapConfig';
+import { FastTileLayer, MapAutoInvalidate, MapLayerSwitcher, getSavedProviderId, GOOGLE_MAPS_API_KEY, MAPPLS_ACCESS_TOKEN } from '../maps/MapConfig';
 import UserGpsMarker from '../maps/UserGpsMarker';
 
 // High-visibility Glowing Incident Marker
@@ -553,8 +553,65 @@ export default function TwoWayLocationPicker({
     setLoadingReverse(true);
     setErrorMessage('');
     try {
-      // 1. High-Detail Client-Side Reverse Geocoding via Mappls (MapmyIndia) or Granular Fallback
+      // 1. High-Detail Client-Side Reverse Geocoding via Google Maps, Mappls, or Granular Fallback
       let clientGranular = null;
+
+      if (GOOGLE_MAPS_API_KEY) {
+        try {
+          const gRes = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${targetLat},${targetLng}&key=${GOOGLE_MAPS_API_KEY}`,
+            { signal: controller.signal }
+          );
+          if (gRes.ok) {
+            const gData = await gRes.json();
+            const top = gData?.results?.[0];
+            if (top) {
+              let roadOrPoi = '';
+              let subLoc = '';
+              let cityOrTown = '';
+              let dist = '';
+              let st = 'West Bengal';
+              let pin = '';
+
+              for (const comp of top.address_components || []) {
+                const types = comp.types || [];
+                if (types.includes('route') || types.includes('street_number')) {
+                  roadOrPoi = roadOrPoi ? `${comp.long_name} ${roadOrPoi}` : comp.long_name;
+                } else if (types.includes('sublocality') || types.includes('sublocality_level_1') || types.includes('neighborhood')) {
+                  subLoc = comp.long_name;
+                } else if (types.includes('locality')) {
+                  cityOrTown = comp.long_name;
+                } else if (types.includes('administrative_area_level_2')) {
+                  dist = comp.long_name;
+                } else if (types.includes('administrative_area_level_1')) {
+                  st = comp.long_name;
+                } else if (types.includes('postal_code')) {
+                  pin = comp.long_name;
+                }
+              }
+
+              const parts = [];
+              if (roadOrPoi) parts.push(roadOrPoi);
+              if (subLoc && subLoc !== roadOrPoi) parts.push(subLoc);
+              if (cityOrTown && cityOrTown !== subLoc && cityOrTown !== roadOrPoi) parts.push(cityOrTown);
+              if (dist && dist !== cityOrTown) parts.push(dist);
+              if (st) parts.push(st);
+
+              clientGranular = {
+                formattedAddress: top.formatted_address || (parts.join(', ') + (pin ? ` - ${pin}` : '')),
+                roadOrPoi,
+                subLocality: subLoc,
+                cityOrTown,
+                district: dist,
+                state: st,
+                pincode: pin
+              };
+            }
+          }
+        } catch (gErr) {
+          // Fallback
+        }
+      }
 
       if (MAPPLS_ACCESS_TOKEN) {
         try {
@@ -1489,7 +1546,7 @@ export default function TwoWayLocationPicker({
             <>
               <Compass size={14} color="#10b981" style={{ flexShrink: 0 }} />
               <span>
-                📍 <strong>Tap Mappls map or drag marker</strong> to pinpoint address
+                📍 <strong>Tap Google Map or drag marker</strong> to pinpoint address
               </span>
             </>
           )}

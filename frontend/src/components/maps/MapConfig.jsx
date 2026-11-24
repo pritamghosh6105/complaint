@@ -3,15 +3,15 @@ import { TileLayer, useMap } from 'react-leaflet';
 import { Layers, Loader2, CheckCircle2, Wifi, Zap, Globe, MapPin } from 'lucide-react';
 
 /**
- * Mappls (MapmyIndia) Architecture for Indian National & State Civic Systems
+ * Google Maps Architecture for Indian National & State Civic Systems
  * 
  * Performance & Architecture Features:
- * 1. Direct Mappls Tile Service Integration with configurable Access Token (VITE_MAPPLS_KEY / VITE_MAPPLS_ACCESS_TOKEN)
- * 2. Ultra-smooth Indian road & landmark vector-raster basemap with automatic fallback
+ * 1. High-Speed Quad-CDN Google Maps Tile Integration across mt0, mt1, mt2, mt3 edge servers
+ * 2. True Google Maps Street-level precision across India & West Bengal
  * 3. Minimal Tile Buffer (keepBuffer: 1-2): High-efficiency viewport prioritization
  * 4. Idle-Only Updates (updateWhenIdle: true): Zero network thrashing during pan/zoom
  * 5. Automatic Slow Network Detection: Automatically throttles on 2G/3G connections
- * 6. Live Mappls GIS Status Badge: Real-time user feedback on map ready state
+ * 6. Live Google Maps GIS Status Badge: Real-time user feedback on map ready state
  */
 
 // Detect whether user is on 2G, 3G or low data mode
@@ -25,23 +25,24 @@ function isSlowConnection() {
   return false;
 }
 
-// Client-side access token from environment (or empty for auto-fallback)
-export const MAPPLS_ACCESS_TOKEN = 
-  (typeof import.meta !== 'undefined' && import.meta.env && (import.meta.env.VITE_MAPPLS_KEY || import.meta.env.VITE_MAPPLS_ACCESS_TOKEN)) || '';
+// Client-side Google Maps API key from environment (optional, tiles work directly)
+export const GOOGLE_MAPS_API_KEY = 
+  (typeof import.meta !== 'undefined' && import.meta.env && (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.VITE_GOOGLE_MAPS_KEY)) || '';
 
-export const MAPPLS_CONFIG = {
-  id: 'mappls',
-  name: 'Mappls (MapmyIndia)',
-  // Primary: Official Mappls raster tile service if token exists; fallback to crisp high-contrast voyager basemap
-  url: MAPPLS_ACCESS_TOKEN
-    ? `https://apis.mappls.com/advancedmaps/v1/${MAPPLS_ACCESS_TOKEN}/map_v2/raster/{z}/{x}/{y}.png`
-    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-  fallbackUrl: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  attribution: '&copy; <a href="https://www.mappls.com" target="_blank" rel="noreferrer">Mappls</a> | MapmyIndia | West Bengal GIS',
-  subdomains: ['a', 'b', 'c', 'd'],
-  maxZoom: 19,
+// Backwards-compatibility alias
+export const MAPPLS_ACCESS_TOKEN = GOOGLE_MAPS_API_KEY;
+
+export const GOOGLE_MAPS_CONFIG = {
+  id: 'google',
+  name: 'Google Maps',
+  // High-speed distributed Google Maps Tile services across mt0-mt3
+  url: 'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+  fallbackUrl: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+  attribution: '&copy; <a href="https://maps.google.com" target="_blank" rel="noreferrer">Google Maps</a> | West Bengal Civic GIS',
+  subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+  maxZoom: 20,
   minZoom: 3,
-  maxNativeZoom: 19,
+  maxNativeZoom: 20,
   tileSize: 256,
   // Low buffer: load visible viewport first without hogging bandwidth
   keepBuffer: isSlowConnection() ? 1 : 2,
@@ -52,26 +53,42 @@ export const MAPPLS_CONFIG = {
   detectRetina: false
 };
 
+// Aliased for backwards compatibility
+export const MAPPLS_CONFIG = GOOGLE_MAPS_CONFIG;
+
 export const MAP_PROVIDERS = {
-  mappls: MAPPLS_CONFIG,
+  google: GOOGLE_MAPS_CONFIG,
+  google_satellite: {
+    ...GOOGLE_MAPS_CONFIG,
+    id: 'google_satellite',
+    name: 'Google Satellite',
+    url: 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+  },
+  google_terrain: {
+    ...GOOGLE_MAPS_CONFIG,
+    id: 'google_terrain',
+    name: 'Google Terrain',
+    url: 'https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}'
+  },
   osm: {
-    ...MAPPLS_CONFIG,
+    ...GOOGLE_MAPS_CONFIG,
     id: 'osm',
-    name: 'OpenStreetMap (Fallback)',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    name: 'Carto Voyager (Fallback)',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    subdomains: ['a', 'b', 'c', 'd']
   }
 };
 
 export function getSavedProviderId() {
-  return 'mappls';
+  return 'google';
 }
 
 export function saveProviderId() {
-  // Always locked to Mappls
+  // Locked to Google Maps
 }
 
 export function getActiveTileConfig() {
-  return MAPPLS_CONFIG;
+  return GOOGLE_MAPS_CONFIG;
 }
 
 // Global lightweight event emitter for tile loading state
@@ -96,24 +113,27 @@ export function MapAutoInvalidate({ extraDep = null }) {
 
     const invalidate = () => {
       try {
-        map.invalidateSize({ animate: false });
+        map.invalidateSize({ animate: false, pan: false });
       } catch (e) {
-        // Container might be detached
+        // Safe catch for detached elements
       }
     };
 
-    // Staged triggers to catch layout reflows immediately
+    // Immediate layout pass
     invalidate();
-    const t1 = setTimeout(invalidate, 60);
-    const t2 = setTimeout(invalidate, 200);
-    const t3 = setTimeout(invalidate, 500);
 
+    // Staggered frames: covers tab transitions, drawer opening, modal animations
+    const t1 = setTimeout(invalidate, 100);
+    const t2 = setTimeout(invalidate, 350);
+    const t3 = setTimeout(invalidate, 800);
+
+    // Watch resize of map DOM container
     let resizeObserver = null;
     try {
       const container = map.getContainer();
       if (container && typeof ResizeObserver !== 'undefined') {
         resizeObserver = new ResizeObserver(() => {
-          invalidate();
+          requestAnimationFrame(invalidate);
         });
         resizeObserver.observe(container);
       }
@@ -137,12 +157,12 @@ export function MapAutoInvalidate({ extraDep = null }) {
 }
 
 /**
- * High-Performance TileLayer with Mappls Integration & Automatic Drop Retry
+ * High-Performance TileLayer with Google Maps Multi-Subdomain Quad-CDN
  */
 export function FastTileLayer(props) {
   const tileLayerRef = useRef(null);
   const pendingCountRef = useRef(0);
-  const [activeUrl, setActiveUrl] = useState(MAPPLS_CONFIG.url);
+  const [activeUrl, setActiveUrl] = useState(GOOGLE_MAPS_CONFIG.url);
 
   const handleTileLoadStart = () => {
     pendingCountRef.current++;
@@ -162,13 +182,13 @@ export function FastTileLayer(props) {
     pendingCountRef.current = Math.max(0, pendingCountRef.current - 1);
     notifyLoadingState(pendingCountRef.current > 0, pendingCountRef.current);
 
-    // If Mappls direct token encounters authentication (401/403) or is blocked, switch seamlessly
-    if (activeUrl.includes('apis.mappls.com')) {
-      setActiveUrl(MAPPLS_CONFIG.fallbackUrl);
+    // Auto-fallback if Google server is temporarily unreachable
+    if (activeUrl.includes('google.com')) {
+      setActiveUrl(GOOGLE_MAPS_CONFIG.fallbackUrl);
       return;
     }
 
-    // Auto-retry dropped tiles on slow/flaky connections (up to 2 times)
+    // Auto-retry dropped tiles on flaky connections (up to 2 times)
     const img = error?.tile;
     if (img) {
       const retryCount = parseInt(img.dataset.retries || '0', 10);
@@ -176,16 +196,14 @@ export function FastTileLayer(props) {
         img.dataset.retries = (retryCount + 1).toString();
         setTimeout(() => {
           const currentSrc = img.src;
-          if (currentSrc.includes('//a.basemaps.')) {
-            img.src = currentSrc.replace('//a.basemaps.', '//b.basemaps.');
-          } else if (currentSrc.includes('//b.basemaps.')) {
-            img.src = currentSrc.replace('//b.basemaps.', '//c.basemaps.');
-          } else if (currentSrc.includes('//c.basemaps.')) {
-            img.src = currentSrc.replace('//c.basemaps.', '//d.basemaps.');
+          if (currentSrc.includes('mt0.')) {
+            img.src = currentSrc.replace('mt0.', 'mt1.');
+          } else if (currentSrc.includes('mt1.')) {
+            img.src = currentSrc.replace('mt1.', 'mt2.');
           } else {
             img.src = currentSrc;
           }
-        }, 1200);
+        }, 400 * (retryCount + 1));
       }
     }
   };
@@ -193,20 +211,19 @@ export function FastTileLayer(props) {
   return (
     <TileLayer
       ref={tileLayerRef}
-      key={`mappls-layer-${activeUrl}`}
       url={activeUrl}
-      attribution={MAPPLS_CONFIG.attribution}
-      subdomains={MAPPLS_CONFIG.subdomains}
-      maxZoom={MAPPLS_CONFIG.maxZoom}
-      minZoom={MAPPLS_CONFIG.minZoom}
-      maxNativeZoom={MAPPLS_CONFIG.maxNativeZoom}
-      tileSize={MAPPLS_CONFIG.tileSize}
-      keepBuffer={MAPPLS_CONFIG.keepBuffer}
-      updateWhenZooming={MAPPLS_CONFIG.updateWhenZooming}
-      updateWhenIdle={MAPPLS_CONFIG.updateWhenIdle}
-      updateInterval={MAPPLS_CONFIG.updateInterval}
-      crossOrigin={MAPPLS_CONFIG.crossOrigin}
-      detectRetina={MAPPLS_CONFIG.detectRetina}
+      subdomains={activeUrl.includes('google.com') ? GOOGLE_MAPS_CONFIG.subdomains : ['a', 'b', 'c', 'd']}
+      attribution={GOOGLE_MAPS_CONFIG.attribution}
+      maxZoom={GOOGLE_MAPS_CONFIG.maxZoom}
+      minZoom={GOOGLE_MAPS_CONFIG.minZoom}
+      maxNativeZoom={GOOGLE_MAPS_CONFIG.maxNativeZoom}
+      tileSize={GOOGLE_MAPS_CONFIG.tileSize}
+      keepBuffer={GOOGLE_MAPS_CONFIG.keepBuffer}
+      updateWhenZooming={GOOGLE_MAPS_CONFIG.updateWhenZooming}
+      updateWhenIdle={GOOGLE_MAPS_CONFIG.updateWhenIdle}
+      updateInterval={GOOGLE_MAPS_CONFIG.updateInterval}
+      crossOrigin={GOOGLE_MAPS_CONFIG.crossOrigin}
+      detectRetina={GOOGLE_MAPS_CONFIG.detectRetina}
       eventHandlers={{
         tileloadstart: handleTileLoadStart,
         tileload: handleTileLoad,
@@ -218,7 +235,7 @@ export function FastTileLayer(props) {
 }
 
 /**
- * Intelligent Mappls Map Status & Live GIS Feedback Badge
+ * Intelligent Google Maps Status & Live GIS Feedback Badge
  */
 export function MapLayerSwitcher({ style = {} }) {
   const [isLoading, setIsLoading] = useState(globalIsLoading);
@@ -270,11 +287,11 @@ export function MapLayerSwitcher({ style = {} }) {
       >
         {isLoading ? (
           <>
-            <Loader2 size={13} color="var(--accent-primary)" className="spin-animation" style={{ animation: 'spin 1s linear infinite' }} />
-            <span className="map-badge-text-full" style={{ color: 'var(--accent-primary)' }}>
-              {slowNet ? 'Slow Connection • Loading Mappls...' : 'Loading Mappls Map...'}
+            <Loader2 size={13} color="#4285F4" className="spin-animation" style={{ animation: 'spin 1s linear infinite' }} />
+            <span className="map-badge-text-full" style={{ color: '#4285F4' }}>
+              {slowNet ? 'Slow Connection • Loading Google Maps...' : 'Loading Google Maps...'}
             </span>
-            <span className="map-badge-text-short" style={{ color: 'var(--accent-primary)', display: 'none' }}>
+            <span className="map-badge-text-short" style={{ color: '#4285F4', display: 'none' }}>
               Loading...
             </span>
           </>
@@ -284,20 +301,20 @@ export function MapLayerSwitcher({ style = {} }) {
               width: '8px',
               height: '8px',
               borderRadius: '50%',
-              background: '#10b981',
-              boxShadow: '0 0 8px #10b981',
+              background: '#34A853',
+              boxShadow: '0 0 8px #34A853',
               flexShrink: 0
             }} />
             <span className="map-badge-text-full" style={{ color: 'var(--text-primary)' }}>
-              Mappls (MapmyIndia)
+              Google Maps
             </span>
             <span className="map-badge-text-short" style={{ color: 'var(--text-primary)', display: 'none' }}>
-              Mappls
+              Google Maps
             </span>
             <span className="map-badge-fast-tag" style={{ 
               fontSize: '0.65rem', 
-              color: 'var(--color-accent)', 
-              background: 'var(--color-accent-subtle)',
+              color: '#1a73e8', 
+              background: 'rgba(66, 133, 244, 0.12)',
               padding: '1px 7px',
               borderRadius: '9999px',
               display: 'flex',
@@ -305,7 +322,7 @@ export function MapLayerSwitcher({ style = {} }) {
               gap: '3px',
               fontWeight: 700
             }}>
-              <CheckCircle2 size={10} /> India GIS
+              <CheckCircle2 size={10} /> Google GIS
             </span>
           </>
         )}
@@ -320,4 +337,4 @@ export function MapLayerSwitcher({ style = {} }) {
   );
 }
 
-export default MAPPLS_CONFIG;
+export default GOOGLE_MAPS_CONFIG;
