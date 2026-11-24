@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Layers, Crosshair, ZoomIn, ZoomOut } from 'lucide-react';
 import UserGpsMarker from '../maps/UserGpsMarker';
+import { FastTileLayer, MapAutoInvalidate } from '../maps/MapConfig';
 
 // Custom glowing pin icon for incident marking
 const incidentPinIcon = L.divIcon({
@@ -116,10 +117,8 @@ export default function LocationMapPicker({
         scrollWheelZoom={false}
         style={{ width: '100%', height: '100%' }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <FastTileLayer />
+        <MapAutoInvalidate />
         
         <MapCenterController lat={safeLat} lng={safeLng} />
         

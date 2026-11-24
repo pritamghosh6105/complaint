@@ -26,7 +26,7 @@ import {
   Smartphone
 } from 'lucide-react';
 import api from '../../services/api';
-import { FastTileLayer, MapAutoInvalidate, MapLayerSwitcher, getSavedProviderId } from '../maps/MapConfig';
+import { FastTileLayer, MapAutoInvalidate, MapLayerSwitcher, getSavedProviderId, MAPPLS_ACCESS_TOKEN } from '../maps/MapConfig';
 import UserGpsMarker from '../maps/UserGpsMarker';
 
 // High-visibility Glowing Incident Marker
@@ -553,13 +553,55 @@ export default function TwoWayLocationPicker({
     setLoadingReverse(true);
     setErrorMessage('');
     try {
-      // 1. High-Detail Client-Side Reverse Geocoding via Nominatim (zoom=18&addressdetails=1&layer=address,poi)
+      // 1. High-Detail Client-Side Reverse Geocoding via Mappls (MapmyIndia) or Granular Fallback
       let clientGranular = null;
-      try {
-        const clientRes = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18&addressdetails=1&layer=address,poi`,
-          { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
-        );
+
+      if (MAPPLS_ACCESS_TOKEN) {
+        try {
+          const mRes = await fetch(
+            `https://apis.mappls.com/advancedmaps/v1/${MAPPLS_ACCESS_TOKEN}/rev_geocode?lat=${targetLat}&lng=${targetLng}`,
+            { signal: controller.signal }
+          );
+          if (mRes.ok) {
+            const mData = await mRes.json();
+            const top = mData?.results?.[0];
+            if (top) {
+              const roadOrPoi = top.street || top.poi || top.houseName || '';
+              const subLoc = top.subSubLocality || top.subLocality || '';
+              const cityOrTown = top.locality || top.village || top.city || '';
+              const dist = top.district || top.subDistrict || '';
+              const st = top.state || 'West Bengal';
+              const pin = top.pincode || '';
+
+              const parts = [];
+              if (roadOrPoi) parts.push(roadOrPoi);
+              if (subLoc && subLoc !== roadOrPoi) parts.push(subLoc);
+              if (cityOrTown && cityOrTown !== subLoc && cityOrTown !== roadOrPoi) parts.push(cityOrTown);
+              if (dist && dist !== cityOrTown) parts.push(dist);
+              if (st) parts.push(st);
+
+              clientGranular = {
+                formattedAddress: parts.join(', ') + (pin ? ` - ${pin}` : ''),
+                roadOrPoi,
+                subLocality: subLoc,
+                cityOrTown,
+                district: dist,
+                state: st,
+                pincode: pin
+              };
+            }
+          }
+        } catch (mErr) {
+          // Fallback to high-detail Nominatim/backend pipeline
+        }
+      }
+
+      if (!clientGranular) {
+        try {
+          const clientRes = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18&addressdetails=1&layer=address,poi`,
+            { headers: { 'Accept-Language': 'en' }, signal: controller.signal }
+          );
 
         if (clientRes.ok) {
           const cData = await clientRes.json();
@@ -636,6 +678,7 @@ export default function TwoWayLocationPicker({
         if (cFetchErr.name !== 'AbortError') {
           console.warn('Client-side Nominatim reverse geocode notice:', cFetchErr.message);
         }
+      }
       }
 
       // 2. Authoritative backend resolution (Police stations, jurisdiction, administrative divisions)
@@ -1446,7 +1489,7 @@ export default function TwoWayLocationPicker({
             <>
               <Compass size={14} color="#10b981" style={{ flexShrink: 0 }} />
               <span>
-                📍 <strong>Tap map or drag marker</strong> to pinpoint address
+                📍 <strong>Tap Mappls map or drag marker</strong> to pinpoint address
               </span>
             </>
           )}

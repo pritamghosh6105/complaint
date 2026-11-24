@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Navigation, MapPin, Sparkles, CheckCircle2 } from 'lucide-react';
-import { MapAutoInvalidate, FastTileLayer, getSavedProviderId } from './MapConfig';
+import { MapAutoInvalidate, FastTileLayer, getSavedProviderId, MAPPLS_ACCESS_TOKEN } from './MapConfig';
 import UserGpsMarker from './UserGpsMarker';
 
 const pinIcon = L.divIcon({
@@ -55,6 +55,28 @@ export default function LocationPicker({ latitude, longitude, onLocationChange }
   const [userGps, setUserGps] = useState(null);
 
   const fetchLocality = async (lat, lng) => {
+    // 1. Try Mappls API if token available
+    if (MAPPLS_ACCESS_TOKEN) {
+      try {
+        const mapplsRes = await fetch(
+          `https://apis.mappls.com/advancedmaps/v1/${MAPPLS_ACCESS_TOKEN}/rev_geocode?lat=${lat}&lng=${lng}`
+        );
+        if (mapplsRes.ok) {
+          const mData = await mapplsRes.json();
+          const r = mData.results?.[0] || {};
+          const localName = r.subLocality || r.locality || r.city || r.district || r.subDistrict || '';
+          if (localName) {
+            setDetectedLocality(localName);
+          }
+          if (r.formatted_address) {
+            return { locality: localName, displayName: r.formatted_address };
+          }
+        }
+      } catch (err) {
+        // Fallback to OSM / Nominatim
+      }
+    }
+
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16`, {
         headers: { 'Accept-Language': 'en' }

@@ -622,8 +622,9 @@ const KNOWN_WB_LOCATIONS = [
 
 class GeocodingService {
   constructor(options = {}) {
-    this.provider = options.provider || process.env.GEOCODING_PROVIDER || 'nominatim';
+    this.provider = options.provider || process.env.GEOCODING_PROVIDER || 'mappls';
     this.apiKey = options.apiKey || process.env.GEOCODING_API_KEY || '';
+    this.mapplsApiKey = options.mapplsApiKey || process.env.MAPPLS_API_KEY || process.env.MAPPLS_KEY || '';
     this.userAgent = options.userAgent || process.env.GEOCODING_USER_AGENT || 'CivicPulse-AI-Citizen-System/1.0 (contact: admin@civicpulse.gov.in)';
   }
 
@@ -890,7 +891,15 @@ class GeocodingService {
     }
 
     try {
-      if (this.provider === 'nominatim') {
+      if (this.mapplsApiKey) {
+        const mapplsFwd = await this.forwardGeocodeMappls(cleanAddress, options);
+        if (mapplsFwd) {
+          forwardCache.set(cacheKey, mapplsFwd);
+          return mapplsFwd;
+        }
+      }
+
+      if (this.provider === 'nominatim' || this.provider === 'mappls') {
         const result = await this.forwardGeocodeNominatim(cleanAddress, options);
         if (result && result.latitude && result.longitude) {
           forwardCache.set(cacheKey, result);
@@ -1112,7 +1121,15 @@ class GeocodingService {
     }
 
     try {
-      if (this.provider === 'nominatim') {
+      if (this.mapplsApiKey) {
+        const mapplsRes = await this.reverseGeocodeMappls(lat, lng);
+        if (mapplsRes) {
+          reverseCache.set(cacheKey, mapplsRes);
+          return mapplsRes;
+        }
+      }
+
+      if (this.provider === 'nominatim' || this.provider === 'mappls') {
         const result = await this.reverseGeocodeNominatim(lat, lng);
         reverseCache.set(cacheKey, result);
         return result;
@@ -1122,6 +1139,75 @@ class GeocodingService {
     } catch (err) {
       console.warn(`[GeocodingService] Reverse geocode failed: ${err.message}. Falling back.`);
       return this.fallbackGeocode(lat, lng);
+    }
+  }
+
+  /**
+   * Mappls (MapmyIndia) Reverse Geocode: Coordinates -> Official Indian Address
+   */
+  async reverseGeocodeMappls(lat, lng) {
+    if (!this.mapplsApiKey) return null;
+    try {
+      const url = `https://apis.mappls.com/advancedmaps/v1/${this.mapplsApiKey}/rev_geocode`;
+      const response = await axios.get(url, {
+        params: { lat, lng },
+        timeout: 4000
+      });
+      const results = response.data?.results;
+      if (!Array.isArray(results) || results.length === 0) return null;
+      const r = results[0];
+      return {
+        street: String(r.street || r.houseName || r.poi || '').trim(),
+        locality: String(r.subLocality || r.locality || r.village || '').trim(),
+        landmark: String(r.poi || '').trim(),
+        pincode: String(r.pincode || '').trim(),
+        district: String(r.district || r.subDistrict || '').trim(),
+        state: String(r.state || 'West Bengal').trim(),
+        rawAddress: String(r.formatted_address || '').trim(),
+        provider: 'Mappls (MapmyIndia)'
+      };
+    } catch (e) {
+      console.warn('[GeocodingService] Mappls reverse geocode notice:', e.message);
+      return null;
+    }
+  }
+
+  /**
+   * Mappls (MapmyIndia) Forward Geocode: Address/Landmark -> Coordinates
+   */
+  async forwardGeocodeMappls(address) {
+    if (!this.mapplsApiKey) return null;
+    try {
+      const url = `https://apis.mappls.com/advancedmaps/v1/${this.mapplsApiKey}/autosuggest`;
+      const response = await axios.get(url, {
+        params: { query: address },
+        timeout: 4000
+      });
+      const suggested = response.data?.suggestedLocations;
+      if (!Array.isArray(suggested) || suggested.length === 0) return null;
+      const top = suggested[0];
+      if (!top.latitude || !top.longitude) return null;
+      const lat = parseFloat(top.latitude);
+      const lng = parseFloat(top.longitude);
+      return {
+        latitude: lat,
+        longitude: lng,
+        coordinates: [lng, lat],
+        formattedAddress: top.placeAddress || top.placeName,
+        userEnteredAddress: address,
+        street: '',
+        locality: top.placeName || '',
+        landmark: top.placeName || '',
+        pincode: top.pincode || '',
+        district: '',
+        state: 'West Bengal',
+        isWestBengal: true,
+        confidence: 0.92,
+        provider: 'Mappls (MapmyIndia)'
+      };
+    } catch (e) {
+      console.warn('[GeocodingService] Mappls forward geocode notice:', e.message);
+      return null;
     }
   }
 
