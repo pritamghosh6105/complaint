@@ -333,11 +333,82 @@ a {
   box-shadow: 0 0 0 3px var(--color-accent-subtle), 0 4px 14px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* 5. Smooth System Scrolling */
+/* 5. Smooth System Scrolling & Global Optical Typography */
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* 6. Apple Surface & Translucency across Entire Application */
+.glass-panel, .gov-panel {
+  background: var(--bg-surface) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-lg, 16px) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2), 0 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+.glass-card, .gov-card {
+  border-radius: var(--radius-lg, 16px) !important;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.07), 0 0 1px 1px rgba(255, 255, 255, 0.04) !important;
+  position: relative;
+}
+
+.glass-card:hover, .gov-card:hover {
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.14), 0 0 1px 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+.gov-card-interactive:hover, .glass-card-interactive:hover {
+  transform: translateY(-2.5px) !important;
+  box-shadow: 0 12px 36px -6px rgba(0, 0, 0, 0.2), 0 0 1px 1px rgba(37, 99, 235, 0.25) !important;
+}
+
+/* 7. Apple Form Controls & Input Physics */
+.form-input, input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+  border-radius: 10px !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease !important;
+  font-family: inherit;
+}
+
+.form-input:focus, input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px var(--color-accent-subtle), 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  outline: none !important;
+}
+
+/* 8. Apple Pill Badges & Chips */
+.badge, .status-badge, .priority-badge {
+  border-radius: 9999px !important;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+  transition: transform 0.18s ease;
+}
+
+/* 9. iOS Frosted Tab Bar for Mobile */
+@media (max-width: 640px) {
+  .mobile-bottom-nav {
+    background: rgba(17, 24, 39, 0.84) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3) !important;
+    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  [data-theme="light"] .mobile-bottom-nav {
+    background: rgba(255, 255, 255, 0.86) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06) !important;
+  }
+
+  .mobile-bottom-nav-item:active {
+    transform: scale(0.91) !important;
+    transition: transform 60ms cubic-bezier(0.2, 0, 0, 1) !important;
+  }
 }
 
 /* Compact Map Search Bar & Button */
