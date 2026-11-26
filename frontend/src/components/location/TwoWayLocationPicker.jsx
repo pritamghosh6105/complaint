@@ -564,7 +564,8 @@ export default function TwoWayLocationPicker({
           );
           if (gRes.ok) {
             const gData = await gRes.json();
-            const top = gData?.results?.[0];
+            if (gData.status === 'OK' && gData.results?.length > 0) {
+              const top = gData.results[0];
             if (top) {
               let roadOrPoi = '';
               let subLoc = '';
@@ -608,7 +609,8 @@ export default function TwoWayLocationPicker({
               };
             }
           }
-        } catch (gErr) {
+        }
+      } catch (gErr) {
           // Fallback
         }
       }

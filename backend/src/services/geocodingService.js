@@ -1171,7 +1171,7 @@ class GeocodingService {
         timeout: 4000
       });
       const results = response.data?.results;
-      if (!Array.isArray(results) || results.length === 0) return null;
+      if (response.data?.status !== 'OK' || !Array.isArray(results) || results.length === 0) return null;
       const top = results[0];
       
       let street = '';
@@ -1227,7 +1227,7 @@ class GeocodingService {
         timeout: 4000
       });
       const results = response.data?.results;
-      if (!Array.isArray(results) || results.length === 0) return null;
+      if (response.data?.status !== 'OK' || !Array.isArray(results) || results.length === 0) return null;
       const top = results[0];
       const lat = top.geometry?.location?.lat;
       const lng = top.geometry?.location?.lng;
@@ -1276,7 +1276,7 @@ class GeocodingService {
         timeout: 4000
       });
       const results = response.data?.results;
-      if (!Array.isArray(results) || results.length === 0) return null;
+      if (response.data?.status !== 'OK' || !Array.isArray(results) || results.length === 0) return null;
       const r = results[0];
       return {
         street: String(r.street || r.houseName || r.poi || '').trim(),
