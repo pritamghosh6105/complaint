@@ -622,9 +622,8 @@ const KNOWN_WB_LOCATIONS = [
 
 class GeocodingService {
   constructor(options = {}) {
-    this.provider = options.provider || process.env.GEOCODING_PROVIDER || 'google';
+    this.provider = options.provider || process.env.GEOCODING_PROVIDER || 'mappls';
     this.apiKey = options.apiKey || process.env.GEOCODING_API_KEY || '';
-    this.googleApiKey = options.googleApiKey || process.env.GOOGLE_MAPS_API_KEY || process.env.GOOGLE_API_KEY || '';
     this.mapplsApiKey = options.mapplsApiKey || process.env.MAPPLS_API_KEY || process.env.MAPPLS_KEY || '';
     this.userAgent = options.userAgent || process.env.GEOCODING_USER_AGENT || 'CivicPulse-AI-Citizen-System/1.0 (contact: admin@civicpulse.gov.in)';
   }
@@ -892,14 +891,6 @@ class GeocodingService {
     }
 
     try {
-      if (this.googleApiKey) {
-        const googleFwd = await this.forwardGeocodeGoogle(cleanAddress, options);
-        if (googleFwd) {
-          forwardCache.set(cacheKey, googleFwd);
-          return googleFwd;
-        }
-      }
-
       if (this.mapplsApiKey) {
         const mapplsFwd = await this.forwardGeocodeMappls(cleanAddress, options);
         if (mapplsFwd) {
@@ -1130,14 +1121,6 @@ class GeocodingService {
     }
 
     try {
-      if (this.googleApiKey) {
-        const googleRes = await this.reverseGeocodeGoogle(lat, lng);
-        if (googleRes) {
-          reverseCache.set(cacheKey, googleRes);
-          return googleRes;
-        }
-      }
-
       if (this.mapplsApiKey) {
         const mapplsRes = await this.reverseGeocodeMappls(lat, lng);
         if (mapplsRes) {
@@ -1156,111 +1139,6 @@ class GeocodingService {
     } catch (err) {
       console.warn(`[GeocodingService] Reverse geocode failed: ${err.message}. Falling back.`);
       return this.fallbackGeocode(lat, lng);
-    }
-  }
-
-  /**
-   * Google Maps Reverse Geocode: Coordinates -> Address Components
-   */
-  async reverseGeocodeGoogle(lat, lng) {
-    if (!this.googleApiKey) return null;
-    try {
-      const url = 'https://maps.googleapis.com/maps/api/geocode/json';
-      const response = await axios.get(url, {
-        params: { latlng: `${lat},${lng}`, key: this.googleApiKey },
-        timeout: 4000
-      });
-      const results = response.data?.results;
-      if (response.data?.status !== 'OK' || !Array.isArray(results) || results.length === 0) return null;
-      const top = results[0];
-      
-      let street = '';
-      let subLocality = '';
-      let locality = '';
-      let district = '';
-      let state = 'West Bengal';
-      let pincode = '';
-
-      for (const comp of top.address_components || []) {
-        const types = comp.types || [];
-        if (types.includes('route') || types.includes('street_number')) {
-          street = street ? `${comp.long_name} ${street}` : comp.long_name;
-        } else if (types.includes('sublocality') || types.includes('sublocality_level_1') || types.includes('neighborhood')) {
-          subLocality = comp.long_name;
-        } else if (types.includes('locality')) {
-          locality = comp.long_name;
-        } else if (types.includes('administrative_area_level_2')) {
-          district = comp.long_name;
-        } else if (types.includes('administrative_area_level_1')) {
-          state = comp.long_name;
-        } else if (types.includes('postal_code')) {
-          pincode = comp.long_name;
-        }
-      }
-
-      return {
-        street,
-        locality: subLocality || locality,
-        subdivision: locality,
-        landmark: street,
-        pincode,
-        district,
-        state,
-        rawAddress: top.formatted_address,
-        provider: 'Google Maps'
-      };
-    } catch (e) {
-      console.warn('[GeocodingService] Google reverse geocode notice:', e.message);
-      return null;
-    }
-  }
-
-  /**
-   * Google Maps Forward Geocode: Address/Landmark -> Coordinates
-   */
-  async forwardGeocodeGoogle(address) {
-    if (!this.googleApiKey) return null;
-    try {
-      const url = 'https://maps.googleapis.com/maps/api/geocode/json';
-      const response = await axios.get(url, {
-        params: { address, key: this.googleApiKey },
-        timeout: 4000
-      });
-      const results = response.data?.results;
-      if (response.data?.status !== 'OK' || !Array.isArray(results) || results.length === 0) return null;
-      const top = results[0];
-      const lat = top.geometry?.location?.lat;
-      const lng = top.geometry?.location?.lng;
-      if (!lat || !lng) return null;
-
-      let locality = '';
-      let district = '';
-      let pincode = '';
-      for (const comp of top.address_components || []) {
-        const types = comp.types || [];
-        if (types.includes('sublocality') || types.includes('locality')) locality = comp.long_name;
-        if (types.includes('administrative_area_level_2')) district = comp.long_name;
-        if (types.includes('postal_code')) pincode = comp.long_name;
-      }
-
-      return {
-        latitude: lat,
-        longitude: lng,
-        coordinates: [lng, lat],
-        formattedAddress: top.formatted_address,
-        userEnteredAddress: address,
-        street: '',
-        locality: locality,
-        landmark: locality,
-        pincode: pincode,
-        district: district,
-        state: 'West Bengal',
-        confidence: 0.95,
-        source: 'Google Maps'
-      };
-    } catch (e) {
-      console.warn('[GeocodingService] Google forward geocode notice:', e.message);
-      return null;
     }
   }
 

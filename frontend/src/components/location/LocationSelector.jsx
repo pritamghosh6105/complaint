@@ -1079,7 +1079,7 @@ export default function LocationSelector({
       <div style={{ marginTop: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
           <span style={{ fontSize: '0.82rem', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Layers size={14} color="#4285F4" /> Google Maps GIS Incident Location:
+            <Layers size={14} color="#38bdf8" /> Mappls (MapmyIndia) GIS Incident Location:
           </span>
           <span style={{ fontSize: '0.76rem', color: '#38bdf8' }}>
             *Click on map or drag pin to update incident coordinates
