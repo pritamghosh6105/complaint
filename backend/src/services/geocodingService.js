@@ -1148,20 +1148,29 @@ class GeocodingService {
   async reverseGeocodeMappls(lat, lng) {
     if (!this.mapplsApiKey) return null;
     try {
-      const url = `https://apis.mappls.com/advancedmaps/v1/${this.mapplsApiKey}/rev_geocode`;
+      const url = 'https://search.mappls.com/search/address/rev-geocode';
       const response = await axios.get(url, {
-        params: { lat, lng },
-        timeout: 4000
+        params: { access_token: this.mapplsApiKey, lat, lng },
+        timeout: 4500
       });
       const results = response.data?.results;
-      if (response.data?.status !== 'OK' || !Array.isArray(results) || results.length === 0) return null;
+      if (response.data?.responseCode !== 200 || !Array.isArray(results) || results.length === 0) return null;
       const r = results[0];
+      const subLoc = String(r.subSubLocality || r.subLocality || (r.city && r.locality && r.locality !== r.city ? r.locality : '') || '').trim();
+      const cityOrTown = String(r.city || r.village || (!subLoc ? r.locality : '') || '').trim();
+      const cleanDistrict = String(r.district || r.subDistrict || '')
+        .replace(/\s+District$/i, '')
+        .replace(/Twenty Four/i, '24')
+        .trim();
+      const street = String(r.street || r.houseName || r.poi || '').trim();
+      const localityCombined = [subLoc, cityOrTown].filter((v, i, a) => v && a.indexOf(v) === i).join(', ');
       return {
-        street: String(r.street || r.houseName || r.poi || '').trim(),
-        locality: String(r.subLocality || r.locality || r.village || '').trim(),
-        landmark: String(r.poi || '').trim(),
+        street,
+        locality: localityCombined || cityOrTown || subLoc,
+        subdivision: cityOrTown || String(r.subDistrict || '').trim(),
+        landmark: String(r.poi || street || '').trim(),
         pincode: String(r.pincode || '').trim(),
-        district: String(r.district || r.subDistrict || '').trim(),
+        district: cleanDistrict,
         state: String(r.state || 'West Bengal').trim(),
         rawAddress: String(r.formatted_address || '').trim(),
         provider: 'Mappls (MapmyIndia)'
@@ -1178,10 +1187,10 @@ class GeocodingService {
   async forwardGeocodeMappls(address) {
     if (!this.mapplsApiKey) return null;
     try {
-      const url = `https://apis.mappls.com/advancedmaps/v1/${this.mapplsApiKey}/autosuggest`;
+      const url = 'https://search.mappls.com/search/places/autosuggest/json';
       const response = await axios.get(url, {
-        params: { query: address },
-        timeout: 4000
+        params: { query: address, access_token: this.mapplsApiKey },
+        timeout: 4500
       });
       const suggested = response.data?.suggestedLocations;
       if (!Array.isArray(suggested) || suggested.length === 0) return null;

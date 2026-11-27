@@ -59,7 +59,7 @@ export default function LocationPicker({ latitude, longitude, onLocationChange }
     if (MAPPLS_ACCESS_TOKEN) {
       try {
         const mapplsRes = await fetch(
-          `https://apis.mappls.com/advancedmaps/v1/${MAPPLS_ACCESS_TOKEN}/rev_geocode?lat=${lat}&lng=${lng}`
+          `https://search.mappls.com/search/address/rev-geocode?access_token=${MAPPLS_ACCESS_TOKEN}&lat=${lat}&lng=${lng}`
         );
         if (mapplsRes.ok) {
           const mData = await mapplsRes.json();

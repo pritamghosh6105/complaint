@@ -559,19 +559,22 @@ export default function TwoWayLocationPicker({
       if (MAPPLS_ACCESS_TOKEN) {
         try {
           const mRes = await fetch(
-            `https://apis.mappls.com/advancedmaps/v1/${MAPPLS_ACCESS_TOKEN}/rev_geocode?lat=${targetLat}&lng=${targetLng}`,
+            `https://search.mappls.com/search/address/rev-geocode?access_token=${MAPPLS_ACCESS_TOKEN}&lat=${targetLat}&lng=${targetLng}`,
             { signal: controller.signal }
           );
           if (mRes.ok) {
             const mData = await mRes.json();
             const top = mData?.results?.[0];
             if (top) {
-              const roadOrPoi = top.street || top.poi || top.houseName || '';
-              const subLoc = top.subSubLocality || top.subLocality || '';
-              const cityOrTown = top.locality || top.village || top.city || '';
-              const dist = top.district || top.subDistrict || '';
-              const st = top.state || 'West Bengal';
-              const pin = top.pincode || '';
+              const roadOrPoi = String(top.street || top.poi || top.houseName || '').trim();
+              const subLoc = String(top.subSubLocality || top.subLocality || (top.city && top.locality && top.locality !== top.city ? top.locality : '') || '').trim();
+              const cityOrTown = String(top.city || top.village || (!subLoc ? top.locality : '') || '').trim();
+              const dist = String(top.district || top.subDistrict || '')
+                .replace(/\s+District$/i, '')
+                .replace(/Twenty Four/i, '24')
+                .trim();
+              const st = String(top.state || 'West Bengal').trim();
+              const pin = String(top.pincode || '').trim();
 
               const parts = [];
               if (roadOrPoi) parts.push(roadOrPoi);

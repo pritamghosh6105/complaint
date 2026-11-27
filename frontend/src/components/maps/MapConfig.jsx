@@ -32,11 +32,9 @@ export const MAPPLS_ACCESS_TOKEN =
 export const MAPPLS_CONFIG = {
   id: 'mappls',
   name: 'Mappls (MapmyIndia)',
-  // Primary: Official Mappls raster tile service if token exists; fallback to crisp high-contrast voyager basemap
-  url: MAPPLS_ACCESS_TOKEN
-    ? `https://apis.mappls.com/advancedmaps/v1/${MAPPLS_ACCESS_TOKEN}/map_v2/raster/{z}/{x}/{y}.png`
-    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-  fallbackUrl: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+  // Crisp high-contrast Indian spatial tile canvas paired with live Mappls Search & Reverse-Geocode APIs
+  url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+  fallbackUrl: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   attribution: '&copy; <a href="https://www.mappls.com" target="_blank" rel="noreferrer">Mappls</a> | MapmyIndia | West Bengal GIS',
   subdomains: ['a', 'b', 'c', 'd'],
   maxZoom: 19,
