@@ -34,7 +34,7 @@ export const MAP_PROVIDERS = {
     shortName: 'Google',
     url: 'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    attribution: '&copy; Google Maps | Address Decoding: Mappls (MapmyIndia)',
+    attribution: '&copy; Google Maps | Address Decoding: Mappls ',
     maxZoom: 20,
     minZoom: 3,
     maxNativeZoom: 20,
@@ -78,20 +78,20 @@ export const MAP_PROVIDERS = {
   },
   ...(MAPPLS_ACCESS_TOKEN
     ? {
-        mappls_raster: {
-          id: 'mappls_raster',
-          name: 'Mappls Raster',
-          shortName: 'Mappls',
-          url: '',
-          subdomains: [],
-          attribution: '&copy; <a href="https://www.mappls.com" target="_blank" rel="noreferrer">Mappls</a> | MapmyIndia',
-          maxZoom: 19,
-          minZoom: 4,
-          minNativeZoom: 4,
-          maxNativeZoom: 18,
-          tileSize: 512
-        }
+      mappls_raster: {
+        id: 'mappls_raster',
+        name: 'Mappls Raster',
+        shortName: 'Mappls',
+        url: '',
+        subdomains: [],
+        attribution: '&copy; <a href="https://www.mappls.com" target="_blank" rel="noreferrer">Mappls</a> | MapmyIndia',
+        maxZoom: 19,
+        minZoom: 4,
+        minNativeZoom: 4,
+        maxNativeZoom: 18,
+        tileSize: 512
       }
+    }
     : {})
 };
 
