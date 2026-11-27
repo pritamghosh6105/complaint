@@ -1368,6 +1368,7 @@ export default function TwoWayLocationPicker({
         className={`location-map-container ${isExpanded ? 'is-expanded' : ''}`}
         style={{
           height: isExpanded ? '540px' : 'clamp(260px, 42vh, 400px)',
+          minHeight: '260px',
           width: '100%',
           borderRadius: '14px',
           overflow: 'hidden',
@@ -1492,7 +1493,7 @@ export default function TwoWayLocationPicker({
             <>
               <Compass size={14} color="#10b981" style={{ flexShrink: 0 }} />
               <span>
-                📍 <strong>Tap Mappls map or drag marker</strong> to pinpoint address
+                📍 <strong>Tap map or drag marker</strong> (Mappls GIS decoding)
               </span>
             </>
           )}

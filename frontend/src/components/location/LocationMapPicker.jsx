@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { MapContainer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Layers, Crosshair, ZoomIn, ZoomOut } from 'lucide-react';
 import UserGpsMarker from '../maps/UserGpsMarker';
-import { FastTileLayer, MapAutoInvalidate } from '../maps/MapConfig';
+import { FastTileLayer, MapAutoInvalidate, getSavedProviderId } from '../maps/MapConfig';
 
 // Custom glowing pin icon for incident marking
 const incidentPinIcon = L.divIcon({
@@ -88,7 +88,7 @@ export default function LocationMapPicker({
   const markerRef = useRef(null);
 
   // Drag handler for precise pin placement
-  const eventHandlers = {
+  const eventHandlers = useMemo(() => ({
     dragend() {
       const marker = markerRef.current;
       if (marker && onLocationChange && !readOnly) {
@@ -96,15 +96,17 @@ export default function LocationMapPicker({
         onLocationChange(parseFloat(newLat.toFixed(6)), parseFloat(newLng.toFixed(6)));
       }
     }
-  };
+  }), [onLocationChange, readOnly]);
 
   const safeLat = typeof lat === 'number' && !isNaN(lat) ? lat : 22.5726;
   const safeLng = typeof lng === 'number' && !isNaN(lng) ? lng : 88.3639;
+  const initialCenter = useMemo(() => [safeLat, safeLng], []); // stable initial center; MapCenterController handles pans
 
   return (
     <div style={{
       width: '100%',
       height,
+      minHeight: '240px',
       borderRadius: '12px',
       overflow: 'hidden',
       border: '1px solid rgba(56, 189, 248, 0.25)',
@@ -112,12 +114,12 @@ export default function LocationMapPicker({
       boxShadow: 'inset 0 0 20px rgba(0, 0, 0, 0.4)'
     }}>
       <MapContainer
-        center={[safeLat, safeLng]}
+        center={initialCenter}
         zoom={zoom}
         scrollWheelZoom={false}
         style={{ width: '100%', height: '100%' }}
       >
-        <FastTileLayer />
+        <FastTileLayer providerId={getSavedProviderId()} />
         <MapAutoInvalidate />
         
         <MapCenterController lat={safeLat} lng={safeLng} />

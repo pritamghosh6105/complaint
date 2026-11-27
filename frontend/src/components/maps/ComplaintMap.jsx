@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Eye, AlertTriangle, Clock, Search, Navigation, Layers, Flame, MapPin, Maximize2, Minimize2, Filter, Shield } from 'lucide-react';
@@ -7,7 +7,15 @@ import UserGpsMarker from './UserGpsMarker';
 
 delete L.Icon.Default.prototype._getIconUrl;
 
+const DEFAULT_MAP_CENTER = [22.9750, 88.4340];
+const ICON_CACHE = new Map();
+
 const createCustomIcon = (priority, status) => {
+  const key = `${priority || 'DEFAULT'}:${status || 'Open'}`;
+  if (ICON_CACHE.has(key)) {
+    return ICON_CACHE.get(key);
+  }
+
   let color = '#3b82f6';
   if (status === 'Resolved') color = '#10b981';
   else if (priority === 'CRITICAL') color = '#ef4444';
@@ -35,13 +43,15 @@ const createCustomIcon = (priority, status) => {
     </div>
   `;
 
-  return L.divIcon({
+  const icon = L.divIcon({
     html: svgHtml,
     className: 'custom-leaflet-marker',
     iconSize: [32, 32],
     iconAnchor: [16, 16],
     popupAnchor: [0, -16]
   });
+  ICON_CACHE.set(key, icon);
+  return icon;
 };
 
 function LocationCenterButton() {
@@ -125,16 +135,17 @@ function LocationCenterButton() {
 function MapResizeHandler({ isExpanded }) {
   const map = useMap();
   useEffect(() => {
+    // Run after the 300ms CSS height transition completes
     const timer = setTimeout(() => {
-      map.invalidateSize();
-    }, 250);
+      map.invalidateSize({ animate: false, pan: false });
+    }, 340);
     return () => clearTimeout(timer);
   }, [isExpanded, map]);
   return null;
 }
 
-export default function ComplaintMap({ complaints = [], onSelectComplaint, center = [22.9750, 88.4340], zoom = 13, height = '680px' }) {
-  const [currentProvider, setCurrentProvider] = useState(getSavedProviderId());
+export default function ComplaintMap({ complaints = [], onSelectComplaint, center = DEFAULT_MAP_CENTER, zoom = 13, height = '680px' }) {
+  const [currentProvider, setCurrentProvider] = useState(getSavedProviderId);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedPriority, setSelectedPriority] = useState('All');
   const [selectedWard, setSelectedWard] = useState('All');
@@ -143,26 +154,24 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
   const [isExpanded, setIsExpanded] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  const categories = ['All', ...new Set(complaints.map(c => c.category).filter(Boolean))];
-  const priorities = ['All', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
-  const wards = ['All', ...new Set(complaints.map(c => c.ward).filter(Boolean))];
-
-  const filtered = complaints.filter(c => {
-    if (!c.latitude || !c.longitude || Math.abs(c.latitude) < 0.1) return false;
-    if (selectedCategory !== 'All' && c.category !== selectedCategory) return false;
-    if (selectedPriority !== 'All' && c.priority !== selectedPriority) return false;
-    if (selectedWard !== 'All' && c.ward !== selectedWard) return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      return (
-        (c.title || '').toLowerCase().includes(q) ||
-        (c.tracking_id || '').toLowerCase().includes(q) ||
-        (c.category || '').toLowerCase().includes(q) ||
-        (c.ward || '').toLowerCase().includes(q)
-      );
-    }
-    return true;
-  });
+  const filtered = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return complaints.filter(c => {
+      if (!c.latitude || !c.longitude || Math.abs(c.latitude) < 0.1) return false;
+      if (selectedCategory !== 'All' && c.category !== selectedCategory) return false;
+      if (selectedPriority !== 'All' && c.priority !== selectedPriority) return false;
+      if (selectedWard !== 'All' && c.ward !== selectedWard) return false;
+      if (q) {
+        return (
+          (c.title || '').toLowerCase().includes(q) ||
+          (c.tracking_id || '').toLowerCase().includes(q) ||
+          (c.category || '').toLowerCase().includes(q) ||
+          (c.ward || '').toLowerCase().includes(q)
+        );
+      }
+      return true;
+    });
+  }, [complaints, selectedCategory, selectedPriority, selectedWard, searchQuery]);
 
   const activeFilterCount = (selectedCategory !== 'All' ? 1 : 0) + (selectedPriority !== 'All' ? 1 : 0) + (selectedWard !== 'All' ? 1 : 0);
 
@@ -177,6 +186,7 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
         bottom: isExpanded ? 0 : 'auto',
         width: isExpanded ? '100vw' : '100%',
         height: isExpanded ? '100vh' : height,
+        minHeight: isExpanded ? '100vh' : '300px',
         zIndex: isExpanded ? 99999 : 1,
         borderRadius: isExpanded ? 0 : 'var(--radius-md)',
         overflow: 'hidden',
@@ -227,6 +237,7 @@ export default function ComplaintMap({ complaints = [], onSelectComplaint, cente
         center={center} 
         zoom={zoom} 
         scrollWheelZoom={true}
+        preferCanvas={true}
         style={{ width: '100%', height: '100%' }}
       >
         <MapAutoInvalidate extraDep={isExpanded} />

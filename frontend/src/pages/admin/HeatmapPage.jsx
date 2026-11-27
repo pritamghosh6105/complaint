@@ -454,6 +454,7 @@ export default function HeatmapPage({ setCurrentRoute, setSelectedComplaintId })
               center={mapCenter} 
               zoom={mapZoom} 
               scrollWheelZoom={true}
+              preferCanvas={true}
               style={{ width: '100%', height: '100%' }}
             >
               <MapAutoInvalidate extraDep={points.length} />

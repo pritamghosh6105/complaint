@@ -1,26 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Loader2, CheckCircle2, Zap } from 'lucide-react';
+import { Loader2, CheckCircle2, AlertTriangle, RefreshCw, Layers, Zap } from 'lucide-react';
 
 /**
- * Mappls (MapmyIndia) Architecture for Indian National & State Civic Systems
+ * Hybrid GIS Map Configuration:
+ * - Visual Map Canvas: High-speed Google Maps Quad-CDN Tiles (mt0-mt3: Roadmap, Satellite, Terrain)
+ * - Address & Locality Decoding: Live Mappls (MapmyIndia) v3 Search & Reverse-Geocode APIs
  *
- * Performance & Reliability Features:
- * 1. 512px Macro-Tile GridLayer (tile.mappls.com/map/raster_tile/still_image):
- *    - Requests 576x576 Mappls tiles and crops 32px borders to crisp 512x512 tiles
- *    - Reduces HTTP requests per screen by 75% (only 3-6 tiles on desktop, 2-4 on mobile)
- * 2. Center-Out Priority Queue + Concurrency Limiter (max 2 on 2G/3G, 3 on 4G/WiFi):
- *    - Prevents Mappls rate-limiting/drops caused by 15+ simultaneous tile bursts
- *    - Prioritizes tiles closest to the viewport center / incident marker first
- * 3. Browser Cache Fast-Path + Light Canvas Placeholder:
- *    - Instant 0ms render for previously viewed tiles (14-day Cache-Control)
- *    - Soft #eef2f6 canvas + subtle pulse while streaming on slow connections
- * 4. Per-Tile Timeout & Seamless 2x2 Quadrant Fallback:
- *    - Retries once on transient errors, then falls back seamlessly per-tile
+ * Root-Cause Fixes Included:
+ * 1. Instant Tile Delivery: Google Maps mt0-mt3 CDN eliminates Mappls still_image 2-10s latency & blank areas.
+ * 2. Lifecycle & Visibility Invalidation: ResizeObserver + IntersectionObserver + transitionend listeners.
+ * 3. Accurate Loading / Error Lifecycle: Bound directly to Leaflet loading, tileload, tileerror, and load events.
  */
 
-// Detect whether user is on 2G, 3G or low data mode
 function isSlowConnection() {
   if (typeof navigator !== 'undefined' && navigator.connection) {
     const { effectiveType, saveData } = navigator.connection;
@@ -31,68 +24,130 @@ function isSlowConnection() {
   return false;
 }
 
-// Client-side Mappls access token from environment
 export const MAPPLS_ACCESS_TOKEN =
   (typeof import.meta !== 'undefined' && import.meta.env && (import.meta.env.VITE_MAPPLS_KEY || import.meta.env.VITE_MAPPLS_ACCESS_TOKEN)) || '';
 
-export const MAPPLS_CONFIG = {
-  id: 'mappls',
-  name: 'Mappls (MapmyIndia)',
-  url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  fallbackUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-  attribution: '&copy; <a href="https://www.mappls.com" target="_blank" rel="noreferrer">Mappls</a> | MapmyIndia | West Bengal GIS',
-  subdomains: ['a', 'b', 'c'],
-  maxZoom: 19,
-  minZoom: 4,
-  minNativeZoom: 4,
-  maxNativeZoom: 18,
-  tileSize: 512,
-  keepBuffer: 0, // Strict viewport-only loading: avoids 20-tile burst on Mappls still_image
-  updateWhenZooming: false,
-  updateWhenIdle: true,
-  updateInterval: 280,
-  detectRetina: false
+export const MAP_PROVIDERS = {
+  google: {
+    id: 'google',
+    name: 'Google Maps',
+    shortName: 'Google',
+    url: 'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    attribution: '&copy; Google Maps | Address Decoding: Mappls (MapmyIndia)',
+    maxZoom: 20,
+    minZoom: 3,
+    maxNativeZoom: 20,
+    tileSize: 256
+  },
+  google_satellite: {
+    id: 'google_satellite',
+    name: 'Google Satellite',
+    shortName: 'Satellite',
+    url: 'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    attribution: '&copy; Google Satellite | Address Decoding: Mappls (MapmyIndia)',
+    maxZoom: 20,
+    minZoom: 3,
+    maxNativeZoom: 20,
+    tileSize: 256
+  },
+  google_terrain: {
+    id: 'google_terrain',
+    name: 'Google Terrain',
+    shortName: 'Terrain',
+    url: 'https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    attribution: '&copy; Google Terrain | Address Decoding: Mappls (MapmyIndia)',
+    maxZoom: 20,
+    minZoom: 3,
+    maxNativeZoom: 20,
+    tileSize: 256
+  },
+  esri_fallback: {
+    id: 'esri_fallback',
+    name: 'Esri Street (Backup)',
+    shortName: 'Backup',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+    subdomains: [],
+    attribution: '&copy; Esri | Address Decoding: Mappls (MapmyIndia)',
+    maxZoom: 19,
+    minZoom: 3,
+    maxNativeZoom: 18,
+    tileSize: 256
+  },
+  ...(MAPPLS_ACCESS_TOKEN
+    ? {
+        mappls_raster: {
+          id: 'mappls_raster',
+          name: 'Mappls Raster',
+          shortName: 'Mappls',
+          url: '',
+          subdomains: [],
+          attribution: '&copy; <a href="https://www.mappls.com" target="_blank" rel="noreferrer">Mappls</a> | MapmyIndia',
+          maxZoom: 19,
+          minZoom: 4,
+          minNativeZoom: 4,
+          maxNativeZoom: 18,
+          tileSize: 512
+        }
+      }
+    : {})
 };
 
-export const MAP_PROVIDERS = {
-  mappls: MAPPLS_CONFIG,
-  osm: {
-    ...MAPPLS_CONFIG,
-    id: 'osm',
-    name: 'OpenStreetMap (Fallback)',
-    tileSize: 256,
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-  }
-};
+export const DEFAULT_PROVIDER_ID = 'google';
+const STORAGE_KEY = 'civicpulse_map_layer_v3';
 
 export function getSavedProviderId() {
-  return 'mappls';
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved && MAP_PROVIDERS[saved]) return saved;
+  } catch (e) {
+    // ignore storage restriction
+  }
+  return DEFAULT_PROVIDER_ID;
 }
 
-export function saveProviderId() {
-  // Always locked to Mappls
+export function saveProviderId(id) {
+  try {
+    if (MAP_PROVIDERS[id]) {
+      localStorage.setItem(STORAGE_KEY, id);
+    }
+  } catch (e) {
+    // ignore
+  }
 }
 
-export function getActiveTileConfig() {
-  return MAPPLS_CONFIG;
+export function getActiveTileConfig(providerId) {
+  return MAP_PROVIDERS[providerId] || MAP_PROVIDERS[DEFAULT_PROVIDER_ID];
 }
 
-// Track URLs already loaded into browser HTTP cache for 0ms instant re-display
-const loadedMapplsTileUrls = new Set();
+// Lightweight status emitter for MapLayerSwitcher
+const statusListeners = new Set();
+let currentTileStatus = {
+  isLoading: false,
+  hasError: false,
+  providerId: DEFAULT_PROVIDER_ID,
+  retryTrigger: 0
+};
 
-// Global lightweight event emitter for tile loading state
-const tileLoadingListeners = new Set();
-let globalIsLoading = false;
-let globalPendingTiles = 0;
+function emitTileStatus(partial) {
+  currentTileStatus = { ...currentTileStatus, ...partial };
+  statusListeners.forEach(fn => fn(currentTileStatus));
+}
 
-function notifyLoadingState(isLoading, pending) {
-  globalIsLoading = isLoading;
-  globalPendingTiles = pending;
-  tileLoadingListeners.forEach(listener => listener(isLoading, pending));
+export function requestMapTileRetry() {
+  emitTileStatus({
+    hasError: false,
+    isLoading: true,
+    retryTrigger: currentTileStatus.retryTrigger + 1
+  });
 }
 
 /**
- * Bulletproof Leaflet Container Invalidation with Staggered Priority Reflows
+ * Ensures Leaflet recalculates exact viewport bounds whenever the container
+ * mounts, becomes visible (IntersectionObserver), resizes (ResizeObserver),
+ * or completes a CSS / Framer Motion transition (transitionend).
  */
 export function MapAutoInvalidate({ extraDep = null }) {
   const map = useMap();
@@ -104,38 +159,69 @@ export function MapAutoInvalidate({ extraDep = null }) {
       try {
         map.invalidateSize({ animate: false, pan: false });
       } catch (e) {
-        // Safe catch for detached elements
+        // Safe guard if map container detached mid-unmount
       }
     };
 
-    invalidate();
-
-    const t1 = setTimeout(invalidate, 100);
-    const t2 = setTimeout(invalidate, 350);
-    const t3 = setTimeout(invalidate, 800);
+    const rafId = requestAnimationFrame(invalidate);
+    const t1 = setTimeout(invalidate, 120);
+    const t2 = setTimeout(invalidate, 380);
+    const t3 = setTimeout(invalidate, 750);
 
     let resizeObserver = null;
+    let intersectionObserver = null;
+    let container = null;
+    let parentEl = null;
+
     try {
-      const container = map.getContainer();
+      container = map.getContainer();
+      parentEl = container?.parentElement || null;
+
       if (container && typeof ResizeObserver !== 'undefined') {
         resizeObserver = new ResizeObserver(() => {
           requestAnimationFrame(invalidate);
         });
         resizeObserver.observe(container);
       }
+
+      if (container && typeof IntersectionObserver !== 'undefined') {
+        intersectionObserver = new IntersectionObserver(
+          (entries) => {
+            if (entries.some(entry => entry.isIntersecting)) {
+              requestAnimationFrame(invalidate);
+            }
+          },
+          { threshold: 0.05 }
+        );
+        intersectionObserver.observe(container);
+      }
     } catch (e) {
-      // ignore
+      // ignore observer errors
     }
 
-    const handleWindowResize = () => invalidate();
+    const handleTransitionEnd = (e) => {
+      if (!e || e.propertyName === 'height' || e.propertyName === 'width' || e.propertyName === 'transform') {
+        invalidate();
+      }
+    };
+
+    const handleWindowResize = () => requestAnimationFrame(invalidate);
     window.addEventListener('resize', handleWindowResize, { passive: true });
+    if (parentEl) {
+      parentEl.addEventListener('transitionend', handleTransitionEnd, { passive: true });
+    }
 
     return () => {
+      cancelAnimationFrame(rafId);
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
       if (resizeObserver) resizeObserver.disconnect();
+      if (intersectionObserver) intersectionObserver.disconnect();
       window.removeEventListener('resize', handleWindowResize);
+      if (parentEl) {
+        parentEl.removeEventListener('transitionend', handleTransitionEnd);
+      }
     };
   }, [map, extraDep]);
 
@@ -143,68 +229,29 @@ export function MapAutoInvalidate({ extraDep = null }) {
 }
 
 /**
- * Render an aligned 2x2 grid of 256px fallback street tiles inside a 512px tile container.
+ * Optional Mappls Raster 512px GridLayer (when user explicitly selects Mappls Raster layer).
  */
-function render512FallbackQuadrant(tile, coords, onComplete) {
-  tile.innerHTML = '';
-  tile.style.display = 'grid';
-  tile.style.gridTemplateColumns = '256px 256px';
-  tile.style.gridTemplateRows = '256px 256px';
+const loadedMapplsUrls = new Set();
 
-  let remaining = 4;
-  const finishOne = () => {
-    remaining -= 1;
-    if (remaining <= 0) {
-      onComplete?.();
-    }
-  };
-
-  for (let dy = 0; dy < 2; dy++) {
-    for (let dx = 0; dx < 2; dx++) {
-      const qx = coords.x * 2 + dx;
-      const qy = coords.y * 2 + dy;
-      const qImg = document.createElement('img');
-      qImg.alt = '';
-      qImg.setAttribute('role', 'presentation');
-      qImg.style.width = '256px';
-      qImg.style.height = '256px';
-      qImg.style.display = 'block';
-      qImg.style.pointerEvents = 'none';
-      const sub = ['a', 'b', 'c'][Math.abs(qx + qy) % 3];
-      qImg.onload = finishOne;
-      qImg.onerror = finishOne;
-      qImg.src = `https://${sub}.tile.openstreetmap.org/${coords.z}/${qx}/${qy}.png`;
-      tile.appendChild(qImg);
-    }
-  }
-}
-
-/**
- * Custom 512px Leaflet GridLayer rendering genuine Mappls (MapmyIndia) map tiles
- * with center-out priority queue, concurrency throttling, timeout recovery, and caching.
- */
-function createMapplsGridLayer(map, accessToken, callbacks) {
+function createMapplsGridLayer(map, accessToken, onStatus) {
   const slowNet = isSlowConnection();
-  const maxConcurrent = slowNet ? 3 : 4;
-  const tileTimeoutMs = slowNet ? 8000 : 6500;
-  let activeRequests = 0;
+  const maxConcurrent = slowNet ? 2 : 3;
+  const tileTimeoutMs = 9000;
+  let active = 0;
   const queue = [];
 
-  const pumpQueue = () => {
-    while (activeRequests < maxConcurrent && queue.length > 0) {
-      // Pick tile closest to current viewport center
+  const pump = () => {
+    while (active < maxConcurrent && queue.length > 0) {
       let bestIdx = 0;
       for (let i = 1; i < queue.length; i++) {
-        if (queue[i].distSq < queue[bestIdx].distSq) {
-          bestIdx = i;
-        }
+        if (queue[i].distSq < queue[bestIdx].distSq) bestIdx = i;
       }
       const [job] = queue.splice(bestIdx, 1);
       if (job.cancelled) continue;
-      activeRequests++;
+      active++;
       job.start(() => {
-        activeRequests = Math.max(0, activeRequests - 1);
-        pumpQueue();
+        active = Math.max(0, active - 1);
+        pump();
       });
     }
   };
@@ -219,7 +266,6 @@ function createMapplsGridLayer(map, accessToken, callbacks) {
       tile.style.backgroundColor = '#eef2f6';
 
       const z = Math.min(Math.max(coords.z, 4), 18);
-      // In Leaflet with tileSize=512, world width is 256 * 2^z, so there are 2^(z-1) tiles across
       const n = Math.pow(2, z - 1);
       const x = ((coords.x % n) + n) % n;
       const y = coords.y;
@@ -233,85 +279,59 @@ function createMapplsGridLayer(map, accessToken, callbacks) {
       const latRad = Math.atan(Math.sinh(Math.PI * (1 - (2 * (y + 0.5)) / n)));
       const lat = (latRad * 180) / Math.PI;
 
-      // On slow networks, request lightweight 320x320 @ zoom (z-1) (~35KB vs ~180KB) and scale 2x cleanly
-      const useLiteTile = slowNet && z > 4;
-      const reqZoom = useLiteTile ? z - 1 : z;
-      const reqSize = useLiteTile ? 320 : 576;
-      const mapplsSrc = `https://tile.mappls.com/map/raster_tile/still_image?center=${lat.toFixed(6)},${lng.toFixed(6)}&zoom=${reqZoom}&size=${reqSize}x${reqSize}&access_token=${accessToken}`;
+      const useLite = slowNet && z > 4;
+      const reqZoom = useLite ? z - 1 : z;
+      const reqSize = useLite ? 320 : 576;
+      const src = `https://tile.mappls.com/map/raster_tile/still_image?center=${lat.toFixed(6)},${lng.toFixed(6)}&zoom=${reqZoom}&size=${reqSize}x${reqSize}&access_token=${accessToken}`;
 
       const img = document.createElement('img');
       img.alt = '';
       img.setAttribute('role', 'presentation');
       img.style.position = 'absolute';
-      img.style.top = useLiteTile ? '-64px' : '-32px';
-      img.style.left = useLiteTile ? '-64px' : '-32px';
-      img.style.width = useLiteTile ? '640px' : '576px';
-      img.style.height = useLiteTile ? '640px' : '576px';
+      img.style.top = useLite ? '-64px' : '-32px';
+      img.style.left = useLite ? '-64px' : '-32px';
+      img.style.width = useLite ? '640px' : '576px';
+      img.style.height = useLite ? '640px' : '576px';
       img.style.maxWidth = 'none';
       img.style.pointerEvents = 'none';
       img.style.userSelect = 'none';
-      img.style.opacity = loadedMapplsTileUrls.has(mapplsSrc) ? '1' : '0';
-      img.style.transition = 'opacity 0.18s ease';
       tile.appendChild(img);
 
       let settled = false;
-      let retried = false;
-      let timeoutId = null;
+      let timerId = null;
       let releaseSlot = null;
 
-      const cleanupTimerAndSlot = () => {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-          timeoutId = null;
+      const release = () => {
+        if (timerId) {
+          clearTimeout(timerId);
+          timerId = null;
         }
         if (releaseSlot) {
-          const rel = releaseSlot;
+          const fn = releaseSlot;
           releaseSlot = null;
-          rel();
+          fn();
         }
       };
 
-      const finishSuccess = () => {
+      img.onload = () => {
         if (settled) return;
         settled = true;
-        cleanupTimerAndSlot();
-        loadedMapplsTileUrls.add(mapplsSrc);
-        if (loadedMapplsTileUrls.size > 200) {
-          const oldest = loadedMapplsTileUrls.values().next().value;
-          loadedMapplsTileUrls.delete(oldest);
-        }
-        img.style.opacity = '1';
-        callbacks?.onTileLoad?.();
+        release();
+        loadedMapplsUrls.add(src);
+        onStatus?.tileLoaded();
         done(null, tile);
       };
 
-      const triggerFallback = () => {
-        if (settled) return;
-        settled = true;
-        cleanupTimerAndSlot();
-        render512FallbackQuadrant(tile, coords, () => {
-          callbacks?.onTileLoad?.();
-          done(null, tile);
-        });
-      };
-
-      img.onload = finishSuccess;
       img.onerror = () => {
         if (settled) return;
-        if (!retried) {
-          retried = true;
-          setTimeout(() => {
-            if (!settled && !job.cancelled) {
-              img.src = `${mapplsSrc}&_r=${Date.now()}`;
-            }
-          }, 500);
-        } else {
-          triggerFallback();
-        }
+        settled = true;
+        release();
+        onStatus?.tileFailed();
+        done(new Error('Mappls tile failed'), tile);
       };
 
-      const mapCenter = map ? map.getCenter() : { lat: 22.8, lng: 88.5 };
-      const distSq = Math.pow(lat - mapCenter.lat, 2) + Math.pow(lng - mapCenter.lng, 2);
+      const center = map.getCenter();
+      const distSq = Math.pow(lat - center.lat, 2) + Math.pow(lng - center.lng, 2);
 
       const job = {
         distSq,
@@ -319,37 +339,35 @@ function createMapplsGridLayer(map, accessToken, callbacks) {
         start: (doneSlot) => {
           releaseSlot = doneSlot;
           if (job.cancelled || settled) {
-            cleanupTimerAndSlot();
+            release();
             return;
           }
-          timeoutId = setTimeout(() => {
+          timerId = setTimeout(() => {
             if (!settled && !job.cancelled) {
-              triggerFallback();
+              settled = true;
+              release();
+              onStatus?.tileFailed();
+              done(new Error('Mappls tile timeout'), tile);
             }
           }, tileTimeoutMs);
-          img.src = mapplsSrc;
+          img.src = src;
         }
       };
 
-      // Attach cancel hook for tileunload
-      tile._cancelMapplsJob = () => {
+      tile._cancelMappls = () => {
         job.cancelled = true;
-        cleanupTimerAndSlot();
+        release();
         if (!settled) {
           settled = true;
           img.src = '';
-          callbacks?.onTileCancel?.();
         }
       };
 
-      callbacks?.onTileStart?.();
-
-      // Instant fast-path if already cached by browser
-      if (loadedMapplsTileUrls.has(mapplsSrc)) {
-        img.src = mapplsSrc;
+      if (loadedMapplsUrls.has(src)) {
+        img.src = src;
       } else {
         queue.push(job);
-        pumpQueue();
+        pump();
       }
 
       return tile;
@@ -362,165 +380,209 @@ function createMapplsGridLayer(map, accessToken, callbacks) {
     minNativeZoom: 4,
     maxNativeZoom: 18,
     tileSize: 512,
-    keepBuffer: slowNet ? 0 : 1,
+    keepBuffer: 0,
     updateWhenZooming: false,
     updateWhenIdle: true,
-    updateInterval: 200,
-    attribution: MAPPLS_CONFIG.attribution
+    updateInterval: 260,
+    attribution: MAP_PROVIDERS.mappls_raster?.attribution || ''
   });
 
   layer.on('tileunload', (e) => {
-    if (e?.tile?._cancelMapplsJob) {
-      e.tile._cancelMapplsJob();
-    }
+    e?.tile?._cancelMappls?.();
   });
 
   return layer;
 }
 
 /**
- * High-Performance TileLayer with Genuine 512px Mappls Rendering & Automatic Fallback
+ * Reliable FastTileLayer defaulting to Google Maps Quad-CDN tiles with
+ * automatic fallback, accurate loading/load lifecycle, and tileerror recovery.
  */
-export function FastTileLayer(props) {
+export function FastTileLayer({ providerId = DEFAULT_PROVIDER_ID }) {
   const map = useMap();
-  const tileLayerRef = useRef(null);
-  const pendingCountRef = useRef(0);
-  const [activeUrl, setActiveUrl] = useState(MAPPLS_CONFIG.url);
-
-  const handleTileLoadStart = () => {
-    pendingCountRef.current++;
-    notifyLoadingState(true, pendingCountRef.current);
-  };
-
-  const handleTileLoad = () => {
-    pendingCountRef.current = Math.max(0, pendingCountRef.current - 1);
-    if (pendingCountRef.current === 0) {
-      notifyLoadingState(false, 0);
-    } else {
-      notifyLoadingState(true, pendingCountRef.current);
-    }
-  };
-
-  const handleTileError = (error) => {
-    pendingCountRef.current = Math.max(0, pendingCountRef.current - 1);
-    notifyLoadingState(pendingCountRef.current > 0, pendingCountRef.current);
-
-    if (activeUrl.includes('tile.openstreetmap.org') && error?.tile?.dataset?.retries === '2') {
-      setActiveUrl(MAPPLS_CONFIG.fallbackUrl);
-      return;
-    }
-
-    const img = error?.tile;
-    if (img) {
-      const retryCount = parseInt(img.dataset.retries || '0', 10);
-      if (retryCount < 2) {
-        img.dataset.retries = (retryCount + 1).toString();
-        setTimeout(() => {
-          const currentSrc = img.src;
-          if (currentSrc.includes('//a.tile.openstreetmap.')) {
-            img.src = currentSrc.replace('//a.tile.openstreetmap.', '//b.tile.openstreetmap.');
-          } else if (currentSrc.includes('//b.tile.openstreetmap.')) {
-            img.src = currentSrc.replace('//b.tile.openstreetmap.', '//c.tile.openstreetmap.');
-          } else {
-            img.src = currentSrc;
-          }
-        }, 400 * (retryCount + 1));
-      }
-    }
-  };
+  const [effectiveId, setEffectiveId] = useState(() =>
+    MAP_PROVIDERS[providerId] ? providerId : DEFAULT_PROVIDER_ID
+  );
+  const [retryNonce, setRetryNonce] = useState(0);
+  const errorCountRef = useRef(0);
+  const loadedCountRef = useRef(0);
+  const watchdogRef = useRef(null);
 
   useEffect(() => {
-    if (!map) return;
+    const nextId = MAP_PROVIDERS[providerId] ? providerId : DEFAULT_PROVIDER_ID;
+    setEffectiveId(nextId);
+    errorCountRef.current = 0;
+    loadedCountRef.current = 0;
+    emitTileStatus({ providerId: nextId, hasError: false });
+  }, [providerId]);
 
-    // Match map container backdrop to Mappls light neutral canvas instead of dark void
-    try {
-      const container = map.getContainer();
-      if (container) {
-        container.style.backgroundColor = '#eef2f6';
+  useEffect(() => {
+    const onStatus = (status) => {
+      if (status.retryTrigger > 0) {
+        setRetryNonce(status.retryTrigger);
+        errorCountRef.current = 0;
+        loadedCountRef.current = 0;
       }
-    } catch (e) {
-      // ignore
+    };
+    statusListeners.add(onStatus);
+    return () => statusListeners.delete(onStatus);
+  }, []);
+
+  const clearWatchdog = useCallback(() => {
+    if (watchdogRef.current) {
+      clearTimeout(watchdogRef.current);
+      watchdogRef.current = null;
     }
+  }, []);
 
-    if (!MAPPLS_ACCESS_TOKEN) return;
+  const startWatchdog = useCallback(() => {
+    clearWatchdog();
+    watchdogRef.current = setTimeout(() => {
+      emitTileStatus({
+        isLoading: false,
+        hasError: loadedCountRef.current === 0 && errorCountRef.current > 0
+      });
+    }, 10000);
+  }, [clearWatchdog]);
 
-    const mapplsLayer = createMapplsGridLayer(map, MAPPLS_ACCESS_TOKEN, {
-      onTileStart: handleTileLoadStart,
-      onTileLoad: handleTileLoad,
-      onTileCancel: handleTileLoad
+  useEffect(() => {
+    return () => {
+      clearWatchdog();
+      emitTileStatus({ isLoading: false, hasError: false });
+    };
+  }, [clearWatchdog]);
+
+  const handleLoading = useCallback(() => {
+    errorCountRef.current = 0;
+    emitTileStatus({ isLoading: true, hasError: false, providerId: effectiveId });
+    startWatchdog();
+  }, [effectiveId, startWatchdog]);
+
+  const handleTileLoad = useCallback(() => {
+    loadedCountRef.current += 1;
+  }, []);
+
+  const handleLoad = useCallback(() => {
+    clearWatchdog();
+    const failedAll = loadedCountRef.current === 0 && errorCountRef.current > 0;
+    emitTileStatus({ isLoading: false, hasError: failedAll, providerId: effectiveId });
+  }, [clearWatchdog, effectiveId]);
+
+  const handleTileError = useCallback(
+    (err) => {
+      errorCountRef.current += 1;
+
+      const img = err?.tile;
+      if (img && !img.dataset.retried) {
+        img.dataset.retried = '1';
+        const src = img.src || '';
+        if (src.includes('//mt0.google.com')) {
+          img.src = src.replace('//mt0.google.com', '//mt1.google.com');
+          return;
+        }
+        if (src.includes('//mt1.google.com')) {
+          img.src = src.replace('//mt1.google.com', '//mt2.google.com');
+          return;
+        }
+      }
+
+      // If primary Google tile server encounters blocks/failures, fail over seamlessly
+      if (effectiveId.startsWith('google') && errorCountRef.current >= 4 && loadedCountRef.current === 0) {
+        clearWatchdog();
+        errorCountRef.current = 0;
+        setEffectiveId('esri_fallback');
+        emitTileStatus({ providerId: 'esri_fallback', hasError: false, isLoading: true });
+      } else if (loadedCountRef.current === 0 && errorCountRef.current >= 6) {
+        clearWatchdog();
+        emitTileStatus({ isLoading: false, hasError: true, providerId: effectiveId });
+      }
+    },
+    [clearWatchdog, effectiveId]
+  );
+
+  useEffect(() => {
+    if (!map || effectiveId !== 'mappls_raster' || !MAPPLS_ACCESS_TOKEN) return;
+
+    handleLoading();
+    const gridLayer = createMapplsGridLayer(map, MAPPLS_ACCESS_TOKEN, {
+      tileLoaded: handleTileLoad,
+      tileFailed: () => {
+        errorCountRef.current += 1;
+      }
     });
 
-    const onLayerLoad = () => {
-      pendingCountRef.current = 0;
-      notifyLoadingState(false, 0);
-    };
-
-    mapplsLayer.on('load', onLayerLoad);
-    mapplsLayer.addTo(map);
+    gridLayer.on('loading', handleLoading);
+    gridLayer.on('load', handleLoad);
+    gridLayer.addTo(map);
 
     return () => {
-      mapplsLayer.off('load', onLayerLoad);
-      if (map.hasLayer(mapplsLayer)) {
-        map.removeLayer(mapplsLayer);
+      gridLayer.off('loading', handleLoading);
+      gridLayer.off('load', handleLoad);
+      if (map.hasLayer(gridLayer)) {
+        map.removeLayer(gridLayer);
       }
-      pendingCountRef.current = 0;
-      notifyLoadingState(false, 0);
+      clearWatchdog();
     };
-  }, [map]);
+  }, [map, effectiveId, retryNonce, handleLoading, handleLoad, handleTileLoad, clearWatchdog]);
 
-  // If no Mappls token is configured, render standard street fallback layer
-  if (!MAPPLS_ACCESS_TOKEN) {
-    return (
-      <TileLayer
-        ref={tileLayerRef}
-        url={activeUrl}
-        subdomains={MAPPLS_CONFIG.subdomains}
-        attribution={MAPPLS_CONFIG.attribution}
-        maxZoom={MAPPLS_CONFIG.maxZoom}
-        minZoom={MAPPLS_CONFIG.minZoom}
-        maxNativeZoom={MAPPLS_CONFIG.maxNativeZoom}
-        tileSize={256}
-        keepBuffer={MAPPLS_CONFIG.keepBuffer}
-        updateWhenZooming={MAPPLS_CONFIG.updateWhenZooming}
-        updateWhenIdle={MAPPLS_CONFIG.updateWhenIdle}
-        updateInterval={MAPPLS_CONFIG.updateInterval}
-        detectRetina={MAPPLS_CONFIG.detectRetina}
-        eventHandlers={{
-          tileloadstart: handleTileLoadStart,
-          tileload: handleTileLoad,
-          tileerror: handleTileError,
-          load: () => {
-            pendingCountRef.current = 0;
-            notifyLoadingState(false, 0);
-          }
-        }}
-        {...props}
-      />
-    );
+  if (effectiveId === 'mappls_raster' && MAPPLS_ACCESS_TOKEN) {
+    return null;
   }
 
-  return null;
+  const config = getActiveTileConfig(effectiveId);
+  const slowNet = isSlowConnection();
+
+  return (
+    <TileLayer
+      key={`${config.id}-${retryNonce}`}
+      url={config.url}
+      subdomains={config.subdomains}
+      attribution={config.attribution}
+      maxZoom={config.maxZoom}
+      minZoom={config.minZoom}
+      maxNativeZoom={config.maxNativeZoom}
+      tileSize={config.tileSize}
+      keepBuffer={slowNet ? 1 : 2}
+      updateWhenZooming={false}
+      updateWhenIdle={false}
+      updateInterval={150}
+      detectRetina={false}
+      eventHandlers={{
+        loading: handleLoading,
+        tileload: handleTileLoad,
+        tileerror: handleTileError,
+        load: handleLoad
+      }}
+    />
+  );
 }
 
 /**
- * Intelligent Mappls Map Status & Live GIS Feedback Badge
+ * Interactive Map Layer & Status Switcher Pill
+ * Displays visual Google Maps tile status + Mappls address decoding badge,
+ * handles tile retry on error, and allows switching Google Roadmap/Satellite/Terrain/Mappls.
  */
-export function MapLayerSwitcher({ style = {} }) {
-  const [isLoading, setIsLoading] = useState(globalIsLoading);
-  const [pendingTiles, setPendingTiles] = useState(globalPendingTiles);
+export function MapLayerSwitcher({ currentProvider = DEFAULT_PROVIDER_ID, onProviderChange, style = {} }) {
+  const [status, setStatus] = useState(currentTileStatus);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [slowNet] = useState(isSlowConnection());
 
   useEffect(() => {
-    const handleUpdate = (loading, pending) => {
-      setIsLoading(loading);
-      setPendingTiles(pending);
-    };
-
-    tileLoadingListeners.add(handleUpdate);
-    return () => {
-      tileLoadingListeners.delete(handleUpdate);
-    };
+    const listener = (next) => setStatus(next);
+    statusListeners.add(listener);
+    return () => statusListeners.delete(listener);
   }, []);
+
+  const activeConfig = getActiveTileConfig(status.providerId || currentProvider);
+  const providersList = Object.values(MAP_PROVIDERS);
+
+  const handleSelectProvider = (id) => {
+    saveProviderId(id);
+    setMenuOpen(false);
+    if (onProviderChange) {
+      onProviderChange(id);
+    }
+  };
 
   return (
     <div
@@ -530,79 +592,168 @@ export function MapLayerSwitcher({ style = {} }) {
         top: '12px',
         left: '52px',
         zIndex: 1000,
-        pointerEvents: 'none',
+        pointerEvents: 'auto',
         ...style
       }}
     >
-      <div
-        className="map-layer-switcher-badge"
-        style={{
-          background: 'var(--bg-surface)',
-          backdropFilter: 'blur(16px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '9999px',
-          color: 'var(--text-primary)',
-          padding: '5px 12px',
-          fontSize: '0.74rem',
-          fontWeight: 700,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '7px',
-          boxShadow: '0 4px 14px rgba(0, 0, 0, 0.12)',
-          transition: 'all 0.25s ease'
-        }}
-      >
-        {isLoading ? (
-          <>
-            <Loader2 size={13} color="var(--accent-primary)" className="spin-animation" style={{ animation: 'spin 1s linear infinite' }} />
-            <span className="map-badge-text-full" style={{ color: 'var(--accent-primary)' }}>
-              {slowNet ? 'Low-Bandwidth • Loading Mappls...' : 'Loading Mappls Map...'}
-            </span>
-            <span className="map-badge-text-short" style={{ color: 'var(--accent-primary)', display: 'none' }}>
-              Loading...
-            </span>
-          </>
-        ) : (
-          <>
-            <span style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: '#10b981',
-              boxShadow: '0 0 8px #10b981',
-              flexShrink: 0
-            }} />
-            <span className="map-badge-text-full" style={{ color: 'var(--text-primary)' }}>
-              Mappls (MapmyIndia)
-            </span>
-            <span className="map-badge-text-short" style={{ color: 'var(--text-primary)', display: 'none' }}>
-              Mappls
-            </span>
-            <span className="map-badge-fast-tag" style={{
-              fontSize: '0.65rem',
-              color: 'var(--color-accent)',
-              background: 'var(--color-accent-subtle)',
-              padding: '1px 7px',
-              borderRadius: '9999px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '3px',
-              fontWeight: 700
-            }}>
-              <CheckCircle2 size={10} /> India GIS
-            </span>
-          </>
-        )}
+      <div style={{ position: 'relative' }}>
+        <button
+          type="button"
+          onClick={() => setMenuOpen(prev => !prev)}
+          className="map-layer-switcher-badge"
+          title="Switch map layer (Google Maps / Satellite / Terrain / Mappls)"
+          style={{
+            background: 'var(--bg-surface)',
+            backdropFilter: 'blur(16px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+            border: status.hasError ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid var(--border-subtle)',
+            borderRadius: '9999px',
+            color: 'var(--text-primary)',
+            padding: '5px 12px',
+            fontSize: '0.74rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '7px',
+            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.12)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          {status.isLoading ? (
+            <>
+              <Loader2 size={13} color="#4285F4" style={{ animation: 'spin 1s linear infinite' }} />
+              <span className="map-badge-text-full" style={{ color: '#4285F4' }}>
+                Loading {activeConfig.shortName}...
+              </span>
+              <span className="map-badge-text-short" style={{ color: '#4285F4', display: 'none' }}>
+                Loading...
+              </span>
+            </>
+          ) : status.hasError ? (
+            <>
+              <AlertTriangle size={13} color="#ef4444" />
+              <span style={{ color: '#ef4444' }}>Tiles failed</span>
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  requestMapTileRetry();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.stopPropagation();
+                    requestMapTileRetry();
+                  }
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  color: '#ef4444',
+                  padding: '1px 7px',
+                  borderRadius: '9999px',
+                  fontSize: '0.66rem'
+                }}
+              >
+                <RefreshCw size={10} /> Retry
+              </span>
+            </>
+          ) : (
+            <>
+              <span style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: '#34A853',
+                boxShadow: '0 0 8px #34A853',
+                flexShrink: 0
+              }} />
+              <span className="map-badge-text-full" style={{ color: 'var(--text-primary)' }}>
+                {activeConfig.name}
+              </span>
+              <span className="map-badge-text-short" style={{ color: 'var(--text-primary)', display: 'none' }}>
+                {activeConfig.shortName}
+              </span>
+              <span className="map-badge-fast-tag" style={{
+                fontSize: '0.65rem',
+                color: 'var(--color-accent)',
+                background: 'var(--color-accent-subtle)',
+                padding: '1px 7px',
+                borderRadius: '9999px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px',
+                fontWeight: 700
+              }}>
+                <Layers size={10} /> Mappls GIS
+              </span>
+            </>
+          )}
 
-        {slowNet && (
-          <span title="Low-Bandwidth Mode Active" style={{ color: '#f59e0b', display: 'flex', alignItems: 'center' }}>
-            <Zap size={11} />
-          </span>
+          {slowNet && (
+            <span title="Low-Bandwidth Mode Active" style={{ color: '#f59e0b', display: 'flex', alignItems: 'center' }}>
+              <Zap size={11} />
+            </span>
+          )}
+        </button>
+
+        {menuOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '38px',
+              left: 0,
+              minWidth: '190px',
+              background: 'var(--bg-surface)',
+              backdropFilter: 'blur(20px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '12px',
+              padding: '6px',
+              boxShadow: '0 10px 28px rgba(0, 0, 0, 0.2)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2px',
+              zIndex: 1001
+            }}
+          >
+            {providersList.map((p) => {
+              const isSelected = p.id === (status.providerId || currentProvider);
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => handleSelectProvider(p.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '8px',
+                    width: '100%',
+                    padding: '7px 10px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: isSelected ? 'var(--color-accent-subtle)' : 'transparent',
+                    color: isSelected ? 'var(--color-accent)' : 'var(--text-primary)',
+                    fontSize: '0.76rem',
+                    fontWeight: isSelected ? 700 : 500,
+                    cursor: 'pointer',
+                    textAlign: 'left'
+                  }}
+                >
+                  <span>{p.name}</span>
+                  {isSelected && <CheckCircle2 size={12} />}
+                </button>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-export default MAPPLS_CONFIG;
+export default MAP_PROVIDERS[DEFAULT_PROVIDER_ID];
