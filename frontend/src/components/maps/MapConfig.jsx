@@ -47,10 +47,10 @@ export const MAPPLS_CONFIG = {
   minNativeZoom: 4,
   maxNativeZoom: 18,
   tileSize: 512,
-  keepBuffer: isSlowConnection() ? 0 : 1,
+  keepBuffer: 0, // Strict viewport-only loading: avoids 20-tile burst on Mappls still_image
   updateWhenZooming: false,
   updateWhenIdle: true,
-  updateInterval: 200,
+  updateInterval: 280,
   detectRetina: false
 };
 
@@ -185,8 +185,8 @@ function render512FallbackQuadrant(tile, coords, onComplete) {
  */
 function createMapplsGridLayer(map, accessToken, callbacks) {
   const slowNet = isSlowConnection();
-  const maxConcurrent = slowNet ? 2 : 3;
-  const tileTimeoutMs = slowNet ? 12000 : 8500;
+  const maxConcurrent = slowNet ? 3 : 4;
+  const tileTimeoutMs = slowNet ? 8000 : 6500;
   let activeRequests = 0;
   const queue = [];
 
@@ -233,21 +233,25 @@ function createMapplsGridLayer(map, accessToken, callbacks) {
       const latRad = Math.atan(Math.sinh(Math.PI * (1 - (2 * (y + 0.5)) / n)));
       const lat = (latRad * 180) / Math.PI;
 
-      const mapplsSrc = `https://tile.mappls.com/map/raster_tile/still_image?center=${lat.toFixed(6)},${lng.toFixed(6)}&zoom=${z}&size=576x576&access_token=${accessToken}`;
+      // On slow networks, request lightweight 320x320 @ zoom (z-1) (~35KB vs ~180KB) and scale 2x cleanly
+      const useLiteTile = slowNet && z > 4;
+      const reqZoom = useLiteTile ? z - 1 : z;
+      const reqSize = useLiteTile ? 320 : 576;
+      const mapplsSrc = `https://tile.mappls.com/map/raster_tile/still_image?center=${lat.toFixed(6)},${lng.toFixed(6)}&zoom=${reqZoom}&size=${reqSize}x${reqSize}&access_token=${accessToken}`;
 
       const img = document.createElement('img');
       img.alt = '';
       img.setAttribute('role', 'presentation');
       img.style.position = 'absolute';
-      img.style.top = '-32px';
-      img.style.left = '-32px';
-      img.style.width = '576px';
-      img.style.height = '576px';
+      img.style.top = useLiteTile ? '-64px' : '-32px';
+      img.style.left = useLiteTile ? '-64px' : '-32px';
+      img.style.width = useLiteTile ? '640px' : '576px';
+      img.style.height = useLiteTile ? '640px' : '576px';
       img.style.maxWidth = 'none';
       img.style.pointerEvents = 'none';
       img.style.userSelect = 'none';
       img.style.opacity = loadedMapplsTileUrls.has(mapplsSrc) ? '1' : '0';
-      img.style.transition = 'opacity 0.2s ease';
+      img.style.transition = 'opacity 0.18s ease';
       tile.appendChild(img);
 
       let settled = false;
