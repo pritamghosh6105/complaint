@@ -32,11 +32,11 @@ export const MAPPLS_ACCESS_TOKEN =
 export const MAPPLS_CONFIG = {
   id: 'mappls',
   name: 'Mappls (MapmyIndia)',
-  // Crisp high-contrast Indian spatial tile canvas paired with live Mappls Search & Reverse-Geocode APIs
-  url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-  fallbackUrl: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  // Crisp watermark-free street map canvas paired with live Mappls Search & Reverse-Geocode APIs
+  url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  fallbackUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
   attribution: '&copy; <a href="https://www.mappls.com" target="_blank" rel="noreferrer">Mappls</a> | MapmyIndia | West Bengal GIS',
-  subdomains: ['a', 'b', 'c', 'd'],
+  subdomains: ['a', 'b', 'c'],
   maxZoom: 19,
   minZoom: 3,
   maxNativeZoom: 19,
@@ -46,7 +46,7 @@ export const MAPPLS_CONFIG = {
   updateWhenZooming: false,     // Don't fetch intermediate tiles during zoom animations
   updateWhenIdle: true,         // Only fetch tiles once user finishes panning or zooming
   updateInterval: 180,          // Debounce prevents queue saturation during continuous drag
-  crossOrigin: 'anonymous',     // Allows full browser disk & memory cache utilization
+  crossOrigin: false,
   detectRetina: false
 };
 
@@ -56,7 +56,7 @@ export const MAP_PROVIDERS = {
     ...MAPPLS_CONFIG,
     id: 'osm',
     name: 'OpenStreetMap (Fallback)',
-    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
   }
 };
 
@@ -163,8 +163,8 @@ export function FastTileLayer(props) {
     pendingCountRef.current = Math.max(0, pendingCountRef.current - 1);
     notifyLoadingState(pendingCountRef.current > 0, pendingCountRef.current);
 
-    // If Mappls direct token encounters authentication (401/403) or is blocked, switch seamlessly
-    if (activeUrl.includes('apis.mappls.com')) {
+    // If primary tile server is unreachable, switch seamlessly to fallback
+    if (activeUrl.includes('tile.openstreetmap.org') && error?.tile?.dataset?.retries === '2') {
       setActiveUrl(MAPPLS_CONFIG.fallbackUrl);
       return;
     }
@@ -177,10 +177,10 @@ export function FastTileLayer(props) {
         img.dataset.retries = (retryCount + 1).toString();
         setTimeout(() => {
           const currentSrc = img.src;
-          if (currentSrc.includes('//a.basemaps.')) {
-            img.src = currentSrc.replace('//a.basemaps.', '//b.basemaps.');
-          } else if (currentSrc.includes('//b.basemaps.')) {
-            img.src = currentSrc.replace('//b.basemaps.', '//c.basemaps.');
+          if (currentSrc.includes('//a.tile.openstreetmap.')) {
+            img.src = currentSrc.replace('//a.tile.openstreetmap.', '//b.tile.openstreetmap.');
+          } else if (currentSrc.includes('//b.tile.openstreetmap.')) {
+            img.src = currentSrc.replace('//b.tile.openstreetmap.', '//c.tile.openstreetmap.');
           } else {
             img.src = currentSrc;
           }
@@ -203,12 +203,15 @@ export function FastTileLayer(props) {
       updateWhenZooming={MAPPLS_CONFIG.updateWhenZooming}
       updateWhenIdle={MAPPLS_CONFIG.updateWhenIdle}
       updateInterval={MAPPLS_CONFIG.updateInterval}
-      crossOrigin={MAPPLS_CONFIG.crossOrigin}
       detectRetina={MAPPLS_CONFIG.detectRetina}
       eventHandlers={{
         tileloadstart: handleTileLoadStart,
         tileload: handleTileLoad,
-        tileerror: handleTileError
+        tileerror: handleTileError,
+        load: () => {
+          pendingCountRef.current = 0;
+          notifyLoadingState(false, 0);
+        }
       }}
       {...props}
     />
