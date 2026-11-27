@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { TileLayer, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import { Layers, Loader2, CheckCircle2, Wifi, Zap, Globe, MapPin } from 'lucide-react';
 
 /**
  * Mappls (MapmyIndia) Architecture for Indian National & State Civic Systems
  * 
  * Performance & Architecture Features:
- * 1. Direct Mappls Tile Service Integration with configurable Access Token (VITE_MAPPLS_KEY)
- * 2. Ultra-smooth Indian road & landmark vector-raster basemap with automatic fallback
+ * 1. Authentic Mappls Tile GridLayer Renderer (tile.mappls.com/map/raster_tile/still_image)
+ *    - Computes exact Web Mercator tile centers and crops 320x320 renders to seamless 256x256 tiles
+ * 2. Automatic Failover: Seamless per-tile & layer fallback if Mappls key is absent or network drops
  * 3. Minimal Tile Buffer (keepBuffer: 1-2): High-efficiency viewport prioritization
  * 4. Idle-Only Updates (updateWhenIdle: true): Zero network thrashing during pan/zoom
  * 5. Automatic Slow Network Detection: Automatically throttles on 2G/3G connections
@@ -25,28 +27,27 @@ function isSlowConnection() {
   return false;
 }
 
-// Client-side Mappls access token from environment (or empty for auto-fallback)
+// Client-side Mappls access token from environment
 export const MAPPLS_ACCESS_TOKEN = 
   (typeof import.meta !== 'undefined' && import.meta.env && (import.meta.env.VITE_MAPPLS_KEY || import.meta.env.VITE_MAPPLS_ACCESS_TOKEN)) || '';
 
 export const MAPPLS_CONFIG = {
   id: 'mappls',
   name: 'Mappls (MapmyIndia)',
-  // Crisp watermark-free street map canvas paired with live Mappls Search & Reverse-Geocode APIs
+  // Primary fallback URL if Mappls token is missing or offline
   url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   fallbackUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
   attribution: '&copy; <a href="https://www.mappls.com" target="_blank" rel="noreferrer">Mappls</a> | MapmyIndia | West Bengal GIS',
   subdomains: ['a', 'b', 'c'],
   maxZoom: 19,
-  minZoom: 3,
-  maxNativeZoom: 19,
+  minZoom: 4,
+  maxNativeZoom: 18,
   tileSize: 256,
   // Low buffer: load visible viewport first without hogging bandwidth
   keepBuffer: isSlowConnection() ? 1 : 2,
   updateWhenZooming: false,     // Don't fetch intermediate tiles during zoom animations
   updateWhenIdle: true,         // Only fetch tiles once user finishes panning or zooming
   updateInterval: 180,          // Debounce prevents queue saturation during continuous drag
-  crossOrigin: false,
   detectRetina: false
 };
 
@@ -138,9 +139,99 @@ export function MapAutoInvalidate({ extraDep = null }) {
 }
 
 /**
- * High-Performance TileLayer with Mappls Integration & Automatic Drop Retry
+ * Custom Leaflet GridLayer rendering genuine Mappls (MapmyIndia) map tiles.
+ * Requests 320x320 renders centered at each Web Mercator tile and displays
+ * the center 256x256 pixels for pixel-accurate seamless stitching.
+ */
+function createMapplsGridLayer(accessToken, callbacks) {
+  const MapplsGrid = L.GridLayer.extend({
+    createTile(coords, done) {
+      const tile = document.createElement('div');
+      tile.style.width = '256px';
+      tile.style.height = '256px';
+      tile.style.overflow = 'hidden';
+      tile.style.position = 'relative';
+
+      const img = document.createElement('img');
+      img.alt = '';
+      img.setAttribute('role', 'presentation');
+      img.style.position = 'absolute';
+      img.style.top = '-32px';
+      img.style.left = '-32px';
+      img.style.width = '320px';
+      img.style.height = '320px';
+      img.style.maxWidth = 'none';
+      img.style.pointerEvents = 'none';
+      img.style.userSelect = 'none';
+
+      const z = Math.min(Math.max(coords.z, 4), 18);
+      const n = Math.pow(2, z);
+      const x = ((coords.x % n) + n) % n;
+      const y = coords.y;
+
+      if (y < 0 || y >= n) {
+        done(null, tile);
+        return tile;
+      }
+
+      const lng = ((x + 0.5) / n) * 360 - 180;
+      const latRad = Math.atan(Math.sinh(Math.PI * (1 - (2 * (y + 0.5)) / n)));
+      const lat = (latRad * 180) / Math.PI;
+
+      const mapplsSrc = `https://tile.mappls.com/map/raster_tile/still_image?center=${lat.toFixed(6)},${lng.toFixed(6)}&zoom=${z}&size=320x320&access_token=${accessToken}`;
+
+      callbacks?.onTileStart?.();
+
+      let settled = false;
+      img.onload = () => {
+        if (!settled) {
+          settled = true;
+          callbacks?.onTileLoad?.();
+          done(null, tile);
+        }
+      };
+
+      img.onerror = () => {
+        if (!img.dataset.fallbackApplied) {
+          img.dataset.fallbackApplied = '1';
+          // Seamless per-tile fallback if Mappls temporarily rate-limits or rejects
+          img.style.top = '0px';
+          img.style.left = '0px';
+          img.style.width = '256px';
+          img.style.height = '256px';
+          const sub = ['a', 'b', 'c'][Math.abs(coords.x + coords.y) % 3];
+          img.src = `https://${sub}.tile.openstreetmap.org/${coords.z}/${coords.x}/${coords.y}.png`;
+        } else if (!settled) {
+          settled = true;
+          callbacks?.onTileError?.();
+          done(new Error('Tile failed'), tile);
+        }
+      };
+
+      img.src = mapplsSrc;
+      tile.appendChild(img);
+      return tile;
+    }
+  });
+
+  return new MapplsGrid({
+    minZoom: 4,
+    maxZoom: 19,
+    maxNativeZoom: 18,
+    tileSize: 256,
+    keepBuffer: isSlowConnection() ? 1 : 2,
+    updateWhenZooming: false,
+    updateWhenIdle: true,
+    updateInterval: 180,
+    attribution: MAPPLS_CONFIG.attribution
+  });
+}
+
+/**
+ * High-Performance TileLayer with Genuine Mappls Rendering & Automatic Fallback
  */
 export function FastTileLayer(props) {
+  const map = useMap();
   const tileLayerRef = useRef(null);
   const pendingCountRef = useRef(0);
   const [activeUrl, setActiveUrl] = useState(MAPPLS_CONFIG.url);
@@ -163,13 +254,11 @@ export function FastTileLayer(props) {
     pendingCountRef.current = Math.max(0, pendingCountRef.current - 1);
     notifyLoadingState(pendingCountRef.current > 0, pendingCountRef.current);
 
-    // If primary tile server is unreachable, switch seamlessly to fallback
     if (activeUrl.includes('tile.openstreetmap.org') && error?.tile?.dataset?.retries === '2') {
       setActiveUrl(MAPPLS_CONFIG.fallbackUrl);
       return;
     }
 
-    // Auto-retry dropped tiles on slow/flaky connections (up to 2 times)
     const img = error?.tile;
     if (img) {
       const retryCount = parseInt(img.dataset.retries || '0', 10);
@@ -189,33 +278,68 @@ export function FastTileLayer(props) {
     }
   };
 
-  return (
-    <TileLayer
-      ref={tileLayerRef}
-      url={activeUrl}
-      subdomains={MAPPLS_CONFIG.subdomains}
-      attribution={MAPPLS_CONFIG.attribution}
-      maxZoom={MAPPLS_CONFIG.maxZoom}
-      minZoom={MAPPLS_CONFIG.minZoom}
-      maxNativeZoom={MAPPLS_CONFIG.maxNativeZoom}
-      tileSize={MAPPLS_CONFIG.tileSize}
-      keepBuffer={MAPPLS_CONFIG.keepBuffer}
-      updateWhenZooming={MAPPLS_CONFIG.updateWhenZooming}
-      updateWhenIdle={MAPPLS_CONFIG.updateWhenIdle}
-      updateInterval={MAPPLS_CONFIG.updateInterval}
-      detectRetina={MAPPLS_CONFIG.detectRetina}
-      eventHandlers={{
-        tileloadstart: handleTileLoadStart,
-        tileload: handleTileLoad,
-        tileerror: handleTileError,
-        load: () => {
-          pendingCountRef.current = 0;
-          notifyLoadingState(false, 0);
-        }
-      }}
-      {...props}
-    />
-  );
+  useEffect(() => {
+    if (!map || !MAPPLS_ACCESS_TOKEN) return;
+
+    const mapplsLayer = createMapplsGridLayer(MAPPLS_ACCESS_TOKEN, {
+      onTileStart: handleTileLoadStart,
+      onTileLoad: handleTileLoad,
+      onTileError: () => {
+        pendingCountRef.current = Math.max(0, pendingCountRef.current - 1);
+        notifyLoadingState(pendingCountRef.current > 0, pendingCountRef.current);
+      }
+    });
+
+    const onLayerLoad = () => {
+      pendingCountRef.current = 0;
+      notifyLoadingState(false, 0);
+    };
+
+    mapplsLayer.on('load', onLayerLoad);
+    mapplsLayer.addTo(map);
+
+    return () => {
+      mapplsLayer.off('load', onLayerLoad);
+      if (map.hasLayer(mapplsLayer)) {
+        map.removeLayer(mapplsLayer);
+      }
+      pendingCountRef.current = 0;
+      notifyLoadingState(false, 0);
+    };
+  }, [map]);
+
+  // If no Mappls token is configured, render standard street fallback layer
+  if (!MAPPLS_ACCESS_TOKEN) {
+    return (
+      <TileLayer
+        ref={tileLayerRef}
+        url={activeUrl}
+        subdomains={MAPPLS_CONFIG.subdomains}
+        attribution={MAPPLS_CONFIG.attribution}
+        maxZoom={MAPPLS_CONFIG.maxZoom}
+        minZoom={MAPPLS_CONFIG.minZoom}
+        maxNativeZoom={MAPPLS_CONFIG.maxNativeZoom}
+        tileSize={MAPPLS_CONFIG.tileSize}
+        keepBuffer={MAPPLS_CONFIG.keepBuffer}
+        updateWhenZooming={MAPPLS_CONFIG.updateWhenZooming}
+        updateWhenIdle={MAPPLS_CONFIG.updateWhenIdle}
+        updateInterval={MAPPLS_CONFIG.updateInterval}
+        detectRetina={MAPPLS_CONFIG.detectRetina}
+        eventHandlers={{
+          tileloadstart: handleTileLoadStart,
+          tileload: handleTileLoad,
+          tileerror: handleTileError,
+          load: () => {
+            pendingCountRef.current = 0;
+            notifyLoadingState(false, 0);
+          }
+        }}
+        {...props}
+      />
+    );
+  }
+
+  return null;
 }
 
 /**
